@@ -17,8 +17,8 @@ services:
       - db
       - redis
     volumes:
-      - ./public/assets:/mastodon/public/assets
-      - ./public/system:/mastodon/public/system
+      - /srv/mastodon/vulpine.club/public/assets:/mastodon/public/assets
+      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
   streaming:
     restart: always
     build: .
@@ -38,4 +38,4 @@ services:
       - db
       - redis
     volumes:
-      - ./public/system:/mastodon/public/system
+      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
