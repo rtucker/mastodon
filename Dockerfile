@@ -26,6 +26,7 @@ RUN BUILD_DEPS=" \
     ffmpeg \
     file \
     imagemagick \
+    postgresql-client \
  && npm install -g npm@3 && npm install -g yarn \
  && bundle install --deployment --without test development \
  && yarn \
