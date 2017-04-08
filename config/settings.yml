@@ -1,15 +1,10 @@
 # config/app.yml for rails-settings-cached
 defaults: &defaults
   site_title: 'Mastodon'
-  site_description: 'The Vulpine Club is an experimental Mastodon instance for cool people.  You probably do not want to create an account here, but who are we to judge?'
-  site_extended_description: '
-<p>The Vulpine Club generally adheres to the guidelines and policies of <a href="https://mastodon.social/about/more">the mastodon.social flagship</a>.  We believe strongly in civility and respectfulness as a cornerstone of any online community.</p>
-
-<p>At some point, we may update this text to include more details.  In the meantime, be advised your access may be revoked at any time for any reason, especially if you are a douchebag, Nazi, transphobe, mens rights activist, fascist, alt-right, alt-furry, and/or member of the Republican Party in the United States.  For the safety of our women and children, Republicans and transphobes may be required to submit to DNA testing and a genital examination by a qualified medical specialist, at their expense, to verify their biological sex before accessing the site.</p>
-
-<p>This server is operated by OwO Group, LLC, in Rochester, New York, United States.  For First Amendment Defense Act purposes, our legal religion is The Satanic Temple, and we adhere to <a href="https://thesatanictemple.com/about-us/tenets/">all tenets within</a>.  18+ only please.</p>'
-  site_contact_username: 'rey'
-  site_contact_email: 'rey@owogroupllc.com'
+  site_description: ''
+  site_extended_description: ''
+  site_contact_username: ''
+  site_contact_email: ''
   open_registrations: true
   closed_registrations_message: ''
   notification_emails:
