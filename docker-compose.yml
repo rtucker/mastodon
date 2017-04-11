@@ -47,7 +47,17 @@ services:
     restart: always
     build: .
     env_file: .env.production
-    command: bundle exec sidekiq -c 15 -q default -q mailers -q pull -q push
+    command: bundle exec sidekiq -c 10 -q default -q mailers -q pull
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
+  sidekiq_push:
+    restart: always
+    build: .
+    env_file: .env.production
+    command: bundle exec sidekiq -c 10 -q push
     depends_on:
       - db
       - redis
