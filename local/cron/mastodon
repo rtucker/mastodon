@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Note: .mastodon-pingurl should contain one URL, which will be hit when
+# this process completes successfully.
+#
+# This should be a HTTP (not HTTPS) URL because the 'web' container doesn't
+# have enough smartz to verify certificates and idgaf atm
+
+cd /home/rtucker/dev/mastodon
+docker-compose run --rm web sh -c "\
+	rake mastodon:media:clear && \
+	rake mastodon:push:refresh && \
+	rake mastodon:feeds:clear && \
+	rake mastodon:emails:digest && \
+	wget -O /dev/null \"$(cat `dirname $0`/.mastodon-pingurl)\""

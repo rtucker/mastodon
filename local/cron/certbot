@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Note: .certbot-pingurl should contain one URL, which will be hit when
+# this process completes successfully.
+
+/usr/bin/certbot renew --renew-hook "/usr/sbin/service nginx reload" \
+  && curl "$(cat `dirname $0`/.certbot-pingurl)"
+
