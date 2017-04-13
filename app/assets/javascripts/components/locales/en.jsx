@@ -50,6 +50,7 @@ const en = {
   "follow_request.reject": "Reject",
   "getting_started.apps": "Various apps are available",
   "getting_started.heading": "Getting started",
+  "getting_started.local_notice": "Please see the {info} page for more information about this instance, including guidelines and contact information.",
   "getting_started.open_source_notice": "Mastodon is open source software. You can contribute or report issues on GitHub at {github}. {apps}.",
   "home.column_settings.advanced": "Advanced",
   "home.column_settings.basic": "Basic",
