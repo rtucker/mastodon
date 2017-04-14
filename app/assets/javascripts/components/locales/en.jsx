@@ -43,7 +43,7 @@ const en = {
   "empty_column.community": "The local timeline is empty. Write something publicly to get the ball rolling!",
   "empty_column.hashtag": "There is nothing in this hashtag yet.",
   "empty_column.home.public_timeline": "the public timeline",
-  "empty_column.home": "You aren't following anyone yet ¯\_(ツ)_/¯ ... Visit {public} or use search to get started and meet other users.",
+  "empty_column.home": "You aren't following anyone yet ¯\\\\_(ツ)_/¯ ... Visit {public} or use search to get started and meet other users.",
   "empty_column.notifications": "You don't have any notifications yet =;.;= ... Interact with others to start the conversation.",
   "empty_column.public": "There is nothing here! Write something publicly, or manually follow users from other instances to fill it up",
   "follow_request.authorize": "Authorize",
