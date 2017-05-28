@@ -5,31 +5,34 @@ services:
     restart: always
     image: postgres:alpine
 ### Uncomment to enable DB persistance
-#    volumes:
-#      - ./postgres:/var/lib/postgresql/data
+    volumes:
+      - /srv/mastodon/vulpine.club/postgres:/var/lib/postgresql/data
 
   redis:
     restart: always
     image: redis:alpine
 ### Uncomment to enable REDIS persistance
-#    volumes:
-#      - ./redis:/data
+    volumes:
+      - /srv/mastodon/vulpine.club/redis:/data
 
   web:
     build: .
     image: gargron/mastodon
     restart: always
     env_file: .env.production
+    environment:
+      - WEB_CONCURRENCY=2
+      - MAX_THREADS=15
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - db
       - redis
     volumes:
-      - ./public/assets:/mastodon/public/assets
-      - ./public/packs:/mastodon/public/packs
-      - ./public/system:/mastodon/public/system
+      - /srv/mastodon/vulpine.club/public/assets:/mastodon/public/assets
+      - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
+      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
 
   streaming:
     build: .
@@ -38,7 +41,7 @@ services:
     env_file: .env.production
     command: npm run start
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4000:4000"
     depends_on:
       - db
       - redis
@@ -48,9 +51,31 @@ services:
     image: gargron/mastodon
     restart: always
     env_file: .env.production
-    command: bundle exec sidekiq -q default -q mailers -q pull -q push
+    command: bundle exec sidekiq -c 10 -q default -q mailers -q push
     depends_on:
       - db
       - redis
     volumes:
-      - ./public/system:/mastodon/public/system
+      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
+
+  sidekiq_pull:
+    restart: always
+    build: .
+    image: gargron/mastodon
+    env_file: .env.production
+    command: bundle exec sidekiq -c 10 -q pull
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
+
+  # for things like pg_dump, etc.
+  dbmaint:
+    #restart: no
+    image: postgres:alpine
+    command: /bin/true
+    depends_on:
+      - db
+    volumes:
+      - /srv/mastodon/vulpine.club/pg_dump:/dump
