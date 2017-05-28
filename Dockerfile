@@ -49,6 +49,8 @@ COPY docker_entrypoint.sh /usr/local/bin/run
 
 RUN chmod +x /usr/local/bin/run
 
+RUN find /mastodon -path /mastodon/public/system -prune -o -not -user 991 -not -group 991 -print0 | xargs -0 chown -f 991:991
+
 VOLUME /mastodon/public/system /mastodon/public/assets /mastodon/public/packs
 
 ENTRYPOINT ["/usr/local/bin/run"]
