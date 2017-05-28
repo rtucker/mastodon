@@ -1,0 +1,183 @@
+# LE certs generated with:
+# certbot certonly --webroot -w /srv/mastodon/vulpine.club/public/ -d vulpine.club -d assets.vulpine.club -d www.vulpine.club
+#
+# LE certs renewal check (/etc/cron.daily/certbot):
+# /usr/bin/certbot renew --renew-hook "/usr/sbin/service nginx reload"
+
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  ''      close;
+}
+
+server {
+  listen 80;
+  listen [::]:80;
+  server_name vulpine.club assets.vulpine.club www.vulpine.club;
+
+  # Useful for Let's Encrypt
+  location /.well-known/acme-challenge/ { allow all; }
+
+  location / { return 301 https://$host$request_uri; }
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  server_name vulpine.club;
+
+  include /etc/nginx/ssl-include.conf;
+
+  ssl_certificate     /etc/letsencrypt/live/vulpine.club/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/vulpine.club/privkey.pem;
+
+  keepalive_timeout    70;
+  sendfile             on;
+  client_max_body_size 0;
+
+  gzip on;
+  gzip_disable "msie6";
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 6;
+  gzip_buffers 16 8k;
+  gzip_http_version 1.1;
+  gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+  root /srv/mastodon/vulpine.club/public;
+
+  # doesn't work quite well yet
+  #add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: https://vulpine.club; connect-src 'self' wss://vulpine.club";
+
+  # strict-origin-when-cross-origin is probably a better setting, but
+  # it isn't supported by chrome, so going straight for the killshot
+  add_header Referrer-Policy "no-referrer";
+  #add_header Referrer-Policy "strict-origin-when-cross-origin";
+
+  # TLS 4eva
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+  # hello header-readers
+  add_header X-Code-of-Conduct "https://vulpine.club/about/more";
+  add_header X-Source-Code "https://github.com/rtucker/mastodon/tree/production";
+  add_header X-Fox "=^^=";
+
+  # necessary access control for font files
+  location ~* \.(eot|ttf|woff|woff2)$ {
+    add_header Access-Control-Allow-Origin https://vulpine.club;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+  }
+
+  # redirect file requests to S3
+  location ~ ^/system/(?<req>(media_attachments|accounts|preview_cards)/.+) {
+    return 301 https://vulpine-club-assets.s3.dualstack.us-east-1.amazonaws.com/$req;
+  }
+
+  # files that will live forever (note: should mostly be in S3 nowadays)
+  location ~ ^/(packs|system/media_attachments/files|system/accounts/avatars) {
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    try_files $uri @proxy;
+  }
+
+  # emoji, which are long-lived but not versioned well
+  location /emoji {
+    # symlink /srv/mastodon/vulpine.club/public/emoji -> /home/rtucker/dev/mastodon/public/emoji/
+    add_header Cache-Control "public, max-age=86400";
+    try_files $uri @proxy;
+  }
+
+  # logos, etc
+  location /assets {
+    add_header Cache-Control "public, max-age=31536000, immutable";
+  }
+
+  # everything else
+  location / {
+    try_files $uri @proxy;
+  }
+
+  # proxy requests to mastodon
+  location @proxy {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+
+    proxy_pass_header Server;
+
+    proxy_pass http://127.0.0.1:3000;
+    proxy_buffering off;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+
+    tcp_nodelay on;
+  }
+
+  # proxy requests to streaming API
+  location /api/v1/streaming {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+
+    proxy_pass http://127.0.0.1:4000;
+    proxy_buffering off;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+
+    tcp_nodelay on;
+  }
+
+  # error pages...
+  error_page 500 501 502 503 504 /500.html;
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  server_name assets.vulpine.club;
+
+  include /etc/nginx/ssl-include.conf;
+
+  ssl_certificate     /etc/letsencrypt/live/vulpine.club/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/vulpine.club/privkey.pem;
+
+  keepalive_timeout    70;
+  sendfile             on;
+  client_max_body_size 0;
+  #gzip off;
+  gzip on;
+  gzip_types text/plain application/javascript text/css;
+
+  root /srv/mastodon/vulpine.club/public;
+
+  #add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: https://vulpine.club; connect-src 'self' wss://vulpine.club";
+  add_header Referrer-Policy "strict-origin-when-cross-origin";
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+  location ~* \.(eot|ttf|woff|woff2)$ {
+    add_header Access-Control-Allow-Origin https://vulpine.club;
+  }
+
+  error_page 500 501 502 503 504 /500.html;
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  server_name www.vulpine.club;
+
+  include /etc/nginx/ssl-include.conf;
+
+  ssl_certificate     /etc/letsencrypt/live/vulpine.club/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/vulpine.club/privkey.pem;
+
+  #add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: https://vulpine.club; connect-src 'self' wss://vulpine.club";
+  add_header Referrer-Policy "strict-origin-when-cross-origin";
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+  return 301 https://vulpine.club$request_uri;
+}
