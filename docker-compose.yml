@@ -72,9 +72,10 @@ services:
 
   # for things like pg_dump, etc.
   dbmaint:
-    #restart: no
+    restart: "no"
     image: postgres:alpine
-    command: /bin/true
+    env_file: .env.production
+    command: sh -c "psql -h $${DB_HOST} -p $${DB_PORT} -d $${DB_NAME} -U $${DB_USER}"
     depends_on:
       - db
     volumes:
