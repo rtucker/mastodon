@@ -21,6 +21,7 @@ public/system
 public/assets
 public/packs
 .env
+.env.ambassador
 .env.production
 node_modules/
 build/

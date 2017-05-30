@@ -80,3 +80,9 @@ services:
       - db
     volumes:
       - /srv/mastodon/vulpine.club/pg_dump:/dump
+
+  ambassador:
+    build: ./local/ambassador
+    image: mbilokonsky/ambassador
+    env_file: .env.ambassador
+    command: yarn start
