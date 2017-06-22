@@ -1826,6 +1826,7 @@
   padding-bottom: 235px;
   background: url('../images/170084_vulpineclub_D.png') no-repeat 0 100%;
   flex: 1 0 auto;
+  background-size: contain;
 
   p {
     color: $ui-secondary-color;
