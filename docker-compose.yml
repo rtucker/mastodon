@@ -82,6 +82,7 @@ services:
       - /srv/mastodon/vulpine.club/pg_dump:/dump
 
   ambassador:
+    restart: always
     build: ./local/ambassador
     image: mbilokonsky/ambassador
     env_file: .env.ambassador
