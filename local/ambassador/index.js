@@ -7,7 +7,6 @@ var DB_PASSWORD = process.env.DB_PASSWORD || '';
 var DB_HOST = process.env.DB_HOST || '/var/run/postgresql';
 var AMBASSADOR_TOKEN = process.env.AMBASSADOR_TOKEN;
 var INSTANCE_HOST = process.env.INSTANCE_HOST;
-var ACCOUNT_ID = process.env.ACCOUNT_ID;
 var BOOSTS_PER_CYCLE = process.env.BOOSTS_PER_CYCLE || 2;
 var THRESHOLD_INTERVAL_DAYS = process.env.THRESHOLD_INTERVAL_DAYS || 30;
 var BOOST_MAX_DAYS = process.env.BOOST_MAX_DAYS || 5;
@@ -52,16 +51,14 @@ console.log('\tDB_PASSWORD:', DB_PASSWORD.split('').map(function() { return "*" 
 console.log('\tDB_HOST:', DB_HOST);
 console.log('\tAMBASSADOR_TOKEN:', AMBASSADOR_TOKEN);
 console.log('\tINSTANCE_HOST:', INSTANCE_HOST);
-console.log('\tACCOUNT_ID:', ACCOUNT_ID);
 console.log('\tBOOSTS_PER_CYCLE:', BOOSTS_PER_CYCLE);
 console.log('\tTHRESHOLD_INTERVAL_DAYS:', THRESHOLD_INTERVAL_DAYS);
 console.log('\tBOOST_MAX_DAYS:', BOOST_MAX_DAYS);
 
-//console.log('Query:', query);
-
 var client = new pg.Client(config);
 
 function cycle() {
+  console.log('Cycle beginning');
   client.connect(function (err) {
     if (err) {
       console.error('error connecting to client');
@@ -77,20 +74,22 @@ function cycle() {
       console.log('Current threshold: ' + result.rows[0].threshold);
     });
 
-    client.query(query, [ACCOUNT_ID, BOOSTS_PER_CYCLE], function (err, result) {
-      if(err) {
-        console.error('error running toot query');
-        throw err;
-      }
-
-      client.end(function (err) {
-        if (err) {
-          console.error('error disconnecting from client');
+    whoami(function (account_id) {
+      client.query(query, [account_id, BOOSTS_PER_CYCLE], function (err, result) {
+        if(err) {
+          console.error('error running toot query');
           throw err;
         }
-      });
 
-      boost(result.rows);
+        client.end(function (err) {
+          if (err) {
+            console.error('error disconnecting from client');
+            throw err;
+          }
+        });
+
+        boost(result.rows);
+      });
     });
   });
 }
@@ -99,6 +98,17 @@ var M = new mastodon({
   access_token: AMBASSADOR_TOKEN,
   api_url: INSTANCE_HOST + '/api/v1'
 });
+
+function whoami(f) {
+  M.get('/accounts/verify_credentials', function(err, result) {
+    if (err) {
+      console.error('error getting current user id');
+      throw err;
+    }
+    console.log('Authenticated as ' + result.id + ' (' + result.display_name + ')');
+    return f(result.id);
+  })
+}
 
 function boost(rows) {
   rows.forEach(function(row) {
