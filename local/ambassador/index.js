@@ -32,7 +32,7 @@ var thresh_query = `SELECT ceil(avg(favourites_count)) AS threshold
 var query = `SELECT id, created_at
   FROM public_toots
   WHERE
-    favourites_count > (` + thresh_query + `)
+    favourites_count >= (` + thresh_query + `)
     AND NOT EXISTS (
       SELECT 1
       FROM public_toots AS pt2
