@@ -1,23 +1,16 @@
 var mastodon = require('mastodon');
 var pg = require('pg');
 
-var query = `SELECT id, created_at 
-FROM public_toots
-WHERE favourites_count > (
-  SELECT avg(favourites_count) 
-  FROM public_toots
-  WHERE 
-    favourites_count > 1
-    AND created_at > NOW() - INTERVAL '30 days'
-)
-AND created_at > NOW() - INTERVAL '5 days';`
-
 var DB_USER = process.env.DB_USER || 'ambassador';
 var DB_NAME = process.env.DB_NAME || 'mastodon_production';
 var DB_PASSWORD = process.env.DB_PASSWORD || '';
 var DB_HOST = process.env.DB_HOST || '/var/run/postgresql';
 var AMBASSADOR_TOKEN = process.env.AMBASSADOR_TOKEN;
 var INSTANCE_HOST = process.env.INSTANCE_HOST;
+var ACCOUNT_ID = process.env.ACCOUNT_ID;
+var BOOSTS_PER_CYCLE = process.env.BOOSTS_PER_CYCLE || 2;
+var THRESHOLD_INTERVAL_DAYS = process.env.THRESHOLD_INTERVAL_DAYS || 30;
+var BOOST_MAX_DAYS = process.env.BOOST_MAX_DAYS || 5;
 
 var config = {
   user: process.env.DB_USER || 'ambassador',
@@ -29,6 +22,28 @@ var config = {
   idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
 };
 
+// Define our threshold (average faves over the past x days)
+var thresh_query = `SELECT ceil(avg(favourites_count)) AS threshold
+  FROM public_toots
+  WHERE
+    favourites_count > 1
+    AND created_at > NOW() - INTERVAL '` + THRESHOLD_INTERVAL_DAYS + ` days'`
+
+// Find all toots we haven't boosted yet, but ought to
+var query = `SELECT id, created_at
+  FROM public_toots
+  WHERE
+    favourites_count > (` + thresh_query + `)
+    AND NOT EXISTS (
+      SELECT 1
+      FROM public_toots AS pt2
+      WHERE
+        pt2.reblog_of_id = public_toots.id
+        AND pt2.account_id = $1
+    )
+    AND created_at > NOW() - INTERVAL '` + BOOST_MAX_DAYS + ` days'
+  ORDER BY created_at
+  LIMIT $2`
 
 console.dir('STARTING AMBASSADOR');
 console.log('\tDB_USER:', DB_USER);
@@ -37,6 +52,12 @@ console.log('\tDB_PASSWORD:', DB_PASSWORD.split('').map(function() { return "*" 
 console.log('\tDB_HOST:', DB_HOST);
 console.log('\tAMBASSADOR_TOKEN:', AMBASSADOR_TOKEN);
 console.log('\tINSTANCE_HOST:', INSTANCE_HOST);
+console.log('\tACCOUNT_ID:', ACCOUNT_ID);
+console.log('\tBOOSTS_PER_CYCLE:', BOOSTS_PER_CYCLE);
+console.log('\tTHRESHOLD_INTERVAL_DAYS:', THRESHOLD_INTERVAL_DAYS);
+console.log('\tBOOST_MAX_DAYS:', BOOST_MAX_DAYS);
+
+//console.log('Query:', query);
 
 var client = new pg.Client(config);
 
@@ -47,16 +68,25 @@ function cycle() {
       return console.dir(err);
     }
 
-    client.query(query, [], function (err, result) {
+    client.query(thresh_query, [], function (err, result) {
       if(err) {
-        console.error('error running query');
-        return console.dir(err);
+        console.error('error running threshold query');
+        throw err;
+      }
+
+      console.log('Current threshold: ' + result.rows[0].threshold);
+    });
+
+    client.query(query, [ACCOUNT_ID, BOOSTS_PER_CYCLE], function (err, result) {
+      if(err) {
+        console.error('error running toot query');
+        throw err;
       }
 
       client.end(function (err) {
         if (err) {
           console.error('error disconnecting from client');
-          console.dir(err);
+          throw err;
         }
       });
 
@@ -70,56 +100,21 @@ var M = new mastodon({
   api_url: INSTANCE_HOST + '/api/v1'
 });
 
-var boosted = (function() {
-  const bucketSpan = 3600; // 1 hour buckets => up to 121 buckets over 5 days
-  const buckets = new Map();
-
-  function prune() {
-    // Bucket id for 5 days ago
-    const threshold = (Date.now() - 5 * 24 * 3600 * 1000) / bucketSpan;
-
-    for (var bucket of buckets.keys()) {
-      if (bucket < threshold) buckets.delete(bucket);
-    }
-  }
-
-  function bucket(row) {
-    return row.created_at.getTime() / bucketSpan;
-  }
-
-  function already(row) {
-    const b = bucket(row);
-    return buckets.has(b) && buckets.get(b).has(row.id);
-  }
-
-  function set(row) {
-    const b = bucket(row);
-    if (!buckets.has(b)) buckets.set(b, new Set());
-    buckets.get(b).add(row.id);
-  }
-
-  return { already: already, prune: prune, set: set };
-})();
-
 function boost(rows) {
-  rows.filter(function(x) { return !boosted.already(x); })
-  .forEach(function(row) {
+  rows.forEach(function(row) {
     M.post('/statuses/' + row.id + '/reblog', function(err, result) {
       if (err) {
         if (err.message === 'Validation failed: Reblog of status already exists') {
-          boosted.set(row);
-          return console.log('Warning: tried to boost #' + row.id + ' but it had already been boosted by this account. Adding to cache.');
+          return console.log('Warning: tried to boost #' + row.id + ' but it had already been boosted by this account.');
         }
 
         return console.log(err);
       }
-      boosted.set(row);
       console.log('boosted status #' + row.id);
     });
   })
 }
 
 cycle();
-// Prune the set of boosted toots every hour
-setInterval(boosted.prune, 1000 * 3600);
+// Run every 15 minutes
 setInterval(cycle, 1000 * 60 * 15);
