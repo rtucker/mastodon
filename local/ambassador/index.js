@@ -118,6 +118,10 @@ function boost(rows) {
           return console.log('Warning: tried to boost #' + row.id + ' but it had already been boosted by this account.');
         }
 
+        if (err.message === 'This action is not allowed') {
+          return console.log('Warning: tried to boost #' + row.id + ' but it was not allowed. (Are we blocked?)');
+        }
+
         return console.log(err);
       }
       console.log('boosted status #' + row.id);
