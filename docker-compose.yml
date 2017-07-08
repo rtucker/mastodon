@@ -51,19 +51,9 @@ services:
     image: gargron/mastodon
     restart: always
     env_file: .env.production
-    command: bundle exec sidekiq -c 10 -q default -q mailers -q push
-    depends_on:
-      - db
-      - redis
-    volumes:
-      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
-
-  sidekiq_pull:
-    restart: always
-    build: .
-    image: gargron/mastodon
-    env_file: .env.production
-    command: bundle exec sidekiq -c 10 -q pull
+    environment:
+      - DB_POOL=30
+    command: bundle exec sidekiq -c 25 -q pull -q default -q push -q mailers
     depends_on:
       - db
       - redis
