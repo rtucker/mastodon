@@ -8,14 +8,12 @@ export default class ImageLoader extends React.PureComponent {
     alt: PropTypes.string,
     src: PropTypes.string.isRequired,
     previewSrc: PropTypes.string.isRequired,
-    width: PropTypes.number,
-    height: PropTypes.number,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
     alt: '',
-    width: null,
-    height: null,
   };
 
   state = {
@@ -48,8 +46,8 @@ export default class ImageLoader extends React.PureComponent {
     this.setState({ loading: true, error: false });
     Promise.all([
       this.loadPreviewCanvas(props),
-      this.hasSize() && this.loadOriginalImage(props),
-    ].filter(Boolean))
+      this.loadOriginalImage(props),
+    ])
       .then(() => {
         this.setState({ loading: false, error: false });
         this.clearPreviewCanvas();
@@ -108,11 +106,6 @@ export default class ImageLoader extends React.PureComponent {
     this.removers = [];
   }
 
-  hasSize () {
-    const { width, height } = this.props;
-    return typeof width === 'number' && typeof height === 'number';
-  }
-
   setCanvasRef = c => {
     this.canvas = c;
   }
@@ -123,7 +116,6 @@ export default class ImageLoader extends React.PureComponent {
 
     const className = classNames('image-loader', {
       'image-loader--loading': loading,
-      'image-loader--amorphous': !this.hasSize(),
     });
 
     return (
@@ -133,7 +125,6 @@ export default class ImageLoader extends React.PureComponent {
           width={width}
           height={height}
           ref={this.setCanvasRef}
-          style={{ opacity: loading ? 1 : 0 }}
         />
 
         {!loading && (

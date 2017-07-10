@@ -2,7 +2,6 @@ import React from 'react';
 import Dropdown, { DropdownTrigger, DropdownContent } from 'react-simple-dropdown';
 import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
-import { EmojiPicker as EmojiPickerAsync } from '../../ui/util/async-components';
 
 const messages = defineMessages({
   emoji: { id: 'emoji_button.label', defaultMessage: 'Insert emoji' },
@@ -51,7 +50,7 @@ export default class EmojiPickerDropdown extends React.PureComponent {
     this.setState({ active: true });
     if (!EmojiPicker) {
       this.setState({ loading: true });
-      EmojiPickerAsync().then(TheEmojiPicker => {
+      import(/* webpackChunkName: "emojione_picker" */ 'emojione-picker').then(TheEmojiPicker => {
         EmojiPicker = TheEmojiPicker.default;
         this.setState({ loading: false });
       }).catch(() => {

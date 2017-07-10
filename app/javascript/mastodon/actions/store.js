@@ -1,7 +1,6 @@
 import Immutable from 'immutable';
 
 export const STORE_HYDRATE = 'STORE_HYDRATE';
-export const STORE_HYDRATE_LAZY = 'STORE_HYDRATE_LAZY';
 
 const convertState = rawState =>
   Immutable.fromJS(rawState, (k, v) =>
