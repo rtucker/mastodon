@@ -10,7 +10,7 @@ export default class ColumnHeader extends React.PureComponent {
   };
 
   static propTypes = {
-    title: PropTypes.node.isRequired,
+    title: PropTypes.string.isRequired,
     icon: PropTypes.string.isRequired,
     active: PropTypes.bool,
     multiColumn: PropTypes.bool,

@@ -11,7 +11,6 @@ node(:meta) do
     boost_modal: current_account.user.setting_boost_modal,
     delete_modal: current_account.user.setting_delete_modal,
     auto_play_gif: current_account.user.setting_auto_play_gif,
-    system_font_ui: current_account.user.setting_system_font_ui,
   }
 end
 
