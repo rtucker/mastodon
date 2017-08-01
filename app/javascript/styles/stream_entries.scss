@@ -36,6 +36,18 @@
     }
   }
 
+  &.with-header {
+    .entry {
+      &:first-child {
+        &,
+        .detailed-status.light,
+        .status.light {
+          border-radius: 0;
+        }
+      }
+    }
+  }
+
   .status.light {
     padding: 14px 14px 14px (48px + 14px * 2);
     position: relative;
@@ -326,6 +338,18 @@
       &:last-child {
         font-size: 11px;
         font-weight: 500;
+      }
+    }
+  }
+
+  .media-spoiler-wrapper {
+    &.media-spoiler-wrapper__visible {
+      .media-spoiler {
+        display: none;
+      }
+
+      .spoiler-button {
+        display: block;
       }
     }
   }
