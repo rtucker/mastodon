@@ -6,7 +6,7 @@ import StatusContainer from '../containers/status_container';
 import LoadMore from './load_more';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 import IntersectionObserverWrapper from '../features/ui/util/intersection_observer_wrapper';
-import { debounce } from 'lodash';
+import { throttle } from 'lodash';
 
 export default class StatusList extends ImmutablePureComponent {
 
@@ -30,19 +30,21 @@ export default class StatusList extends ImmutablePureComponent {
 
   intersectionObserverWrapper = new IntersectionObserverWrapper();
 
-  handleScroll = debounce(() => {
-    const { scrollTop, scrollHeight, clientHeight } = this.node;
-    const offset = scrollHeight - scrollTop - clientHeight;
-    this._oldScrollPosition = scrollHeight - scrollTop;
+  handleScroll = throttle(() => {
+    if (this.node) {
+      const { scrollTop, scrollHeight, clientHeight } = this.node;
+      const offset = scrollHeight - scrollTop - clientHeight;
+      this._oldScrollPosition = scrollHeight - scrollTop;
 
-    if (250 > offset && this.props.onScrollToBottom && !this.props.isLoading) {
-      this.props.onScrollToBottom();
-    } else if (scrollTop < 100 && this.props.onScrollToTop) {
-      this.props.onScrollToTop();
-    } else if (this.props.onScroll) {
-      this.props.onScroll();
+      if (400 > offset && this.props.onScrollToBottom && !this.props.isLoading) {
+        this.props.onScrollToBottom();
+      } else if (scrollTop < 100 && this.props.onScrollToTop) {
+        this.props.onScrollToTop();
+      } else if (this.props.onScroll) {
+        this.props.onScroll();
+      }
     }
-  }, 200, {
+  }, 150, {
     trailing: true,
   });
 
@@ -102,6 +104,32 @@ export default class StatusList extends ImmutablePureComponent {
     this.props.onScrollToBottom();
   }
 
+  handleKeyDown = (e) => {
+    if (['PageDown', 'PageUp', 'End', 'Home'].includes(e.key)) {
+      const article = (() => {
+        switch (e.key) {
+        case 'PageDown':
+          return e.nativeEvent.path[0].nodeName === 'ARTICLE' && e.nativeEvent.path[0].nextElementSibling;
+        case 'PageUp':
+          return e.nativeEvent.path[0].nodeName === 'ARTICLE' && e.nativeEvent.path[0].previousElementSibling;
+        case 'End':
+          return this.node.querySelector('[role="feed"] > article:last-of-type');
+        case 'Home':
+          return this.node.querySelector('[role="feed"] > article:first-of-type');
+        default:
+          return null;
+        }
+      })();
+
+
+      if (article) {
+        e.preventDefault();
+        article.focus();
+        article.scrollIntoView();
+      }
+    }
+  }
+
   render () {
     const { statusIds, scrollKey, trackScroll, shouldUpdateScroll, isLoading, hasMore, prepend, emptyMessage } = this.props;
 
@@ -111,11 +139,11 @@ export default class StatusList extends ImmutablePureComponent {
     if (isLoading || statusIds.size > 0 || !emptyMessage) {
       scrollableArea = (
         <div className='scrollable' ref={this.setRef}>
-          <div className='status-list'>
+          <div role='feed' className='status-list' onKeyDown={this.handleKeyDown}>
             {prepend}
 
-            {statusIds.map((statusId) => {
-              return <StatusContainer key={statusId} id={statusId} intersectionObserverWrapper={this.intersectionObserverWrapper} />;
+            {statusIds.map((statusId, index) => {
+              return <StatusContainer key={statusId} id={statusId} index={index} listLength={statusIds.size} intersectionObserverWrapper={this.intersectionObserverWrapper} />;
             })}
 
             {loadMore}
