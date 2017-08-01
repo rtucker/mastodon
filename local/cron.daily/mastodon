@@ -13,6 +13,5 @@ docker-compose run --rm dbmaint sh -c " \
 	umask 0377 &&
 	pg_dump -Fc -h db -d postgres -U postgres -f /dump/daily.$(date -Iseconds).pgdump" && \
 docker-compose run --rm web sh -c "\
-	rake mastodon:daily && \
 	wget -O /dev/null \"$(cat `dirname $0`/.mastodon-pingurl)\""
 
