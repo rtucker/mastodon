@@ -9,5 +9,7 @@
     = javascript_pack_tag 'common', integrity: true, crossorigin: 'anonymous'
     = javascript_pack_tag "locale_#{I18n.locale}", integrity: true, crossorigin: 'anonymous'
     = javascript_pack_tag 'public', integrity: true, crossorigin: 'anonymous'
+    %script{:src => "/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"}
+
   %body.embed
     = yield
