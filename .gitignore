@@ -22,6 +22,7 @@ public/assets
 public/packs
 public/packs-test
 .env
+.env.ambassador
 .env.production
 node_modules/
 build/
