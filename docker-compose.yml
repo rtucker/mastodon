@@ -56,6 +56,7 @@ services:
       - db
       - redis
     volumes:
+      - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
 
   sidekiq_pull:
@@ -68,9 +69,8 @@ services:
       - db
       - redis
     volumes:
+      - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
-      - ./public/packs:/mastodon/public/packs
-      - ./public/system:/mastodon/public/system
 
   # for things like pg_dump, etc.
   dbmaint:
