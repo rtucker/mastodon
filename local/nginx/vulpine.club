@@ -64,6 +64,9 @@ server {
   # in memory of @tipsytentacle@glitch.social
   add_header X-Clacks-Overhead "GNU Natalie Nguyen";
 
+  # in memory of kepsega (lgbtq.technology slack)
+  add_header X-Clacks-Overhead "GNU Amelia Perry";
+
   # necessary access control for font files
   location ~* \.(eot|ttf|woff|woff2)$ {
     add_header Access-Control-Allow-Origin https://vulpine.club;
