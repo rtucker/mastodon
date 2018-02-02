@@ -41,14 +41,17 @@ class User < ApplicationRecord
 
   ACTIVE_DURATION = 14.days
 
-  devise :registerable, :recoverable,
-         :rememberable, :trackable, :validatable, :confirmable,
-         :two_factor_authenticatable, :two_factor_backupable,
-         otp_secret_encryption_key: ENV['OTP_SECRET'],
+  devise :two_factor_authenticatable,
+         otp_secret_encryption_key: ENV['OTP_SECRET']
+
+  devise :two_factor_backupable,
          otp_number_of_backup_codes: 10
 
-  belongs_to :account, inverse_of: :user, required: true
-  belongs_to :invite, counter_cache: :uses
+  devise :registerable, :recoverable, :rememberable, :trackable, :validatable,
+         :confirmable
+
+  belongs_to :account, inverse_of: :user
+  belongs_to :invite, counter_cache: :uses, optional: true
   accepts_nested_attributes_for :account
 
   has_many :applications, class_name: 'Doorkeeper::Application', as: :owner
@@ -122,9 +125,24 @@ class User < ApplicationRecord
     update!(disabled: false)
   end
 
+  def confirm
+    new_user = !confirmed?
+
+    super
+    prepare_new_user! if new_user
+  end
+
   def confirm!
+    new_user = !confirmed?
+
     skip_confirmation!
     save!
+    prepare_new_user! if new_user
+  end
+
+  def update_tracked_fields!(request)
+    super
+    prepare_returning_user!
   end
 
   def promote!
@@ -155,6 +173,10 @@ class User < ApplicationRecord
 
   def setting_default_privacy
     settings.default_privacy || (account.locked? ? 'private' : 'public')
+  end
+
+  def allows_digest_emails?
+    settings.notification_emails['digest']
   end
 
   def token_for_app(a)
@@ -201,5 +223,25 @@ class User < ApplicationRecord
 
   def sanitize_languages
     filtered_languages.reject!(&:blank?)
+  end
+
+  def prepare_new_user!
+    BootstrapTimelineWorker.perform_async(account_id)
+    ActivityTracker.increment('activity:accounts:local')
+    UserMailer.welcome(self).deliver_later
+  end
+
+  def prepare_returning_user!
+    ActivityTracker.record('activity:logins', id)
+    regenerate_feed! if needs_feed_update?
+  end
+
+  def regenerate_feed!
+    Redis.current.setnx("account:#{account_id}:regeneration", true) && Redis.current.expire("account:#{account_id}:regeneration", 1.day.seconds)
+    RegenerationWorker.perform_async(account_id)
+  end
+
+  def needs_feed_update?
+    last_sign_in_at < ACTIVE_DURATION.ago
   end
 end

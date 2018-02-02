@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'optparse'
+require 'colorize'
+
 namespace :mastodon do
   desc 'Execute daily tasks (deprecated)'
   task :daily do
@@ -168,11 +171,10 @@ namespace :mastodon do
   end
 
   namespace :emails do
-    desc 'Send out digest e-mails'
+    desc 'Send out digest e-mails (deprecated)'
     task digest: :environment do
-      User.confirmed.joins(:account).where(accounts: { silenced: false, suspended: false }).where('current_sign_in_at < ?', 20.days.ago).find_each do |user|
-        DigestMailerWorker.perform_async(user.id)
-      end
+      # No-op
+      # This task is now executed via sidekiq-scheduler
     end
   end
 
@@ -338,5 +340,84 @@ namespace :mastodon do
       PreviewCard.where(embed_url: '', type: :photo).delete_all
       LinkCrawlWorker.push_bulk status_ids
     end
+
+    desc 'Remove all home feed regeneration markers'
+    task remove_regeneration_markers: :environment do
+      keys = Redis.current.keys('account:*:regeneration')
+
+      Redis.current.pipelined do
+        keys.each { |key| Redis.current.del(key) }
+      end
+    end
+
+    desc 'Check every known remote account and delete those that no longer exist in origin'
+    task purge_removed_accounts: :environment do
+      prepare_for_options!
+
+      options = {}
+
+      OptionParser.new do |opts|
+        opts.banner = 'Usage: rails mastodon:maintenance:purge_removed_accounts [options]'
+
+        opts.on('-f', '--force', 'Remove all encountered accounts without asking for confirmation') do
+          options[:force] = true
+        end
+
+        opts.on('-h', '--help', 'Display this message') do
+          puts opts
+          exit
+        end
+      end.parse!
+
+      disable_log_stdout!
+
+      total        = Account.remote.where(protocol: :activitypub).count
+      progress_bar = ProgressBar.create(total: total, format: '%c/%C |%w>%i| %e')
+
+      Account.remote.where(protocol: :activitypub).partitioned.find_each do |account|
+        progress_bar.increment
+
+        begin
+          res = Request.new(:head, account.uri).perform
+        rescue StandardError
+          # This could happen due to network timeout, DNS timeout, wrong SSL cert, etc,
+          # which should probably not lead to perceiving the account as deleted, so
+          # just skip till next time
+          next
+        end
+
+        if [404, 410].include?(res.code)
+          if options[:force]
+            account.destroy
+          else
+            progress_bar.pause
+            progress_bar.clear
+            print "\nIt seems like #{account.acct} no longer exists. Purge the account from the database? [Y/n]: ".colorize(:yellow)
+            confirm = STDIN.gets.chomp
+            puts ''
+            progress_bar.resume
+
+            if confirm.casecmp('n').zero?
+              next
+            else
+              account.destroy
+            end
+          end
+        end
+      end
+    end
   end
+end
+
+def disable_log_stdout!
+  dev_null = Logger.new('/dev/null')
+
+  Rails.logger                 = dev_null
+  ActiveRecord::Base.logger    = dev_null
+  HttpLog.configuration.logger = dev_null
+  Paperclip.options[:log]      = false
+end
+
+def prepare_for_options!
+  2.times { ARGV.shift }
 end

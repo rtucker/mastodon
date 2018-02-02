@@ -136,6 +136,10 @@
       {
         "defaultMessage": "Not found",
         "id": "missing_indicator.label"
+      },
+      {
+        "defaultMessage": "This resource could not be found",
+        "id": "missing_indicator.sublabel"
       }
     ],
     "path": "app/javascript/mastodon/components/missing_indicator.json"
@@ -254,6 +258,19 @@
       }
     ],
     "path": "app/javascript/mastodon/components/status_content.json"
+  },
+  {
+    "descriptors": [
+      {
+        "defaultMessage": "Loading…",
+        "id": "regeneration_indicator.label"
+      },
+      {
+        "defaultMessage": "Your home feed is being prepared!",
+        "id": "regeneration_indicator.sublabel"
+      }
+    ],
+    "path": "app/javascript/mastodon/components/status_list.json"
   },
   {
     "descriptors": [
@@ -727,6 +744,10 @@
       {
         "defaultMessage": "locked",
         "id": "compose_form.lock_disclaimer.lock"
+      },
+      {
+        "defaultMessage": "This toot won't be listed under any hashtag as it is unlisted. Only public toots can be searched by hashtag.",
+        "id": "compose_form.hashtag_warning"
       }
     ],
     "path": "app/javascript/mastodon/features/compose/containers/warning_container.json"
@@ -1053,7 +1074,7 @@
         "id": "lists.delete"
       },
       {
-        "defaultMessage": "There is nothing in this list yet.",
+        "defaultMessage": "There is nothing in this list yet. When members of this list post new statuses, they will appear here.",
         "id": "empty_column.list"
       }
     ],
@@ -1245,6 +1266,22 @@
         "id": "status.favourite"
       },
       {
+        "defaultMessage": "Mute @{name}",
+        "id": "status.mute"
+      },
+      {
+        "defaultMessage": "Mute conversation",
+        "id": "status.mute_conversation"
+      },
+      {
+        "defaultMessage": "Unmute conversation",
+        "id": "status.unmute_conversation"
+      },
+      {
+        "defaultMessage": "Block @{name}",
+        "id": "status.block"
+      },
+      {
         "defaultMessage": "Report @{name}",
         "id": "status.report"
       },
@@ -1276,6 +1313,14 @@
       {
         "defaultMessage": "Are you sure you want to delete this status?",
         "id": "confirmations.delete.message"
+      },
+      {
+        "defaultMessage": "Block",
+        "id": "confirmations.block.confirm"
+      },
+      {
+        "defaultMessage": "Are you sure you want to block {name}?",
+        "id": "confirmations.block.message"
       }
     ],
     "path": "app/javascript/mastodon/features/status/index.json"
@@ -1418,8 +1463,12 @@
         "id": "onboarding.page_one.federation"
       },
       {
-        "defaultMessage": "You are on {domain}, so your full handle is {handle}",
-        "id": "onboarding.page_one.handle"
+        "defaultMessage": "Your full handle",
+        "id": "onboarding.page_one.full_handle"
+      },
+      {
+        "defaultMessage": "This is what you would tell your friends to search for.",
+        "id": "onboarding.page_one.handle_hint"
       },
       {
         "defaultMessage": "Write posts from the compose column. You can upload images, change privacy settings, and add content warnings with the icons below.",
