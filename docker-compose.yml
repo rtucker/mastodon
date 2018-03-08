@@ -4,6 +4,8 @@ services:
   db:
     restart: always
     image: postgres:9.6-alpine
+    networks:
+      - internal_network
 ### Uncomment to enable DB persistance
     volumes:
       - /srv/mastodon/vulpine.club/postgres:/var/lib/postgresql/data
@@ -11,9 +13,22 @@ services:
   redis:
     restart: always
     image: redis:4.0-alpine
+    networks:
+      - internal_network
 ### Uncomment to enable REDIS persistance
     volumes:
       - /srv/mastodon/vulpine.club/redis:/data
+
+#  es:
+#    restart: always
+#    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.3
+#    environment:
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    networks:
+#      - internal_network
+#### Uncomment to enable ES persistance
+##    volumes:
+##      - ./elasticsearch:/usr/share/elasticsearch/data
 
   web:
     build: .
@@ -24,11 +39,15 @@ services:
       - WEB_CONCURRENCY=2
       - MAX_THREADS=15
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    networks:
+      - external_network
+      - internal_network
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
       - db
       - redis
+#      - es
     volumes:
       - /srv/mastodon/vulpine.club/public/assets:/mastodon/public/assets
       - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
@@ -40,6 +59,9 @@ services:
     restart: always
     env_file: .env.production
     command: npm run start
+    networks:
+      - external_network
+      - internal_network
     ports:
       - "127.0.0.1:4000:4000"
     depends_on:
@@ -55,6 +77,9 @@ services:
     depends_on:
       - db
       - redis
+    networks:
+      - external_network
+      - internal_network
     volumes:
       - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
@@ -68,6 +93,9 @@ services:
     depends_on:
       - db
       - redis
+    networks:
+      - external_network
+      - internal_network
     volumes:
       - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
@@ -80,6 +108,8 @@ services:
     command: sh -c "psql -h $${DB_HOST} -p $${DB_PORT} -d $${DB_NAME} -U $${DB_USER}"
     depends_on:
       - db
+    networks:
+      - internal_network
     volumes:
       - /srv/mastodon/vulpine.club/pg_dump:/dump
 
@@ -89,14 +119,18 @@ services:
     image: mbilokonsky/ambassador
     env_file: .env.ambassador
     command: yarn start
+    networks:
+      - internal_network
 
 networks:
- default:
-   driver: bridge
-   enable_ipv6: true
-   ipam:
-     driver: default
-     config:
-     - subnet: 172.18.0.0/16
-     - subnet: 2600:3c03:e000:027b::/64
+  external_network:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+        - subnet: 2600:3c03:e000:027b::/64
+  internal_network:
+    internal: true
 

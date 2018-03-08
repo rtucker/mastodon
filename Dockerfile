@@ -3,8 +3,10 @@ FROM ruby:2.5.0-alpine3.7
 LABEL maintainer="https://github.com/tootsuite/mastodon" \
       description="A GNU Social-compatible microblogging server"
 
-ENV UID=991 GID=991 \
-    RAILS_SERVE_STATIC_FILES=true \
+ARG UID=991
+ARG GID=991
+
+ENV RAILS_SERVE_STATIC_FILES=true \
     RAILS_ENV=production NODE_ENV=production
 
 ARG YARN_VERSION=1.3.2
@@ -71,14 +73,14 @@ RUN bundle config build.nokogiri --with-iconv-lib=/usr/local/lib --with-iconv-in
  && yarn --pure-lockfile \
  && yarn cache clean
 
-COPY . /mastodon
+RUN addgroup -g ${GID} mastodon && adduser -h /mastodon -s /bin/sh -D -G mastodon -u ${UID} mastodon
 
-COPY docker_entrypoint.sh /usr/local/bin/run
-
-RUN chmod +x /usr/local/bin/run
+COPY --chown=mastodon:mastodon . /mastodon
 
 RUN find /mastodon -path /mastodon/public/system -prune -o -not -user 991 -not -group 991 -print0 | xargs -0 chown -f 991:991
 
 VOLUME /mastodon/public/system /mastodon/public/assets /mastodon/public/packs
 
-ENTRYPOINT ["/usr/local/bin/run"]
+USER mastodon
+
+ENTRYPOINT ["/sbin/tini", "--"]
