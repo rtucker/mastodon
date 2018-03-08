@@ -50,8 +50,9 @@ server {
 
   # strict-origin-when-cross-origin is probably a better setting, but
   # it isn't supported by chrome, so going straight for the killshot
-  add_header Referrer-Policy "no-referrer";
+  #add_header Referrer-Policy "no-referrer";
   #add_header Referrer-Policy "strict-origin-when-cross-origin";
+  add_header Referrer-Policy "same-origin";
 
   # TLS 4eva
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
@@ -63,6 +64,9 @@ server {
 
   # in memory of @tipsytentacle@glitch.social
   add_header X-Clacks-Overhead "GNU Natalie Nguyen";
+
+  # in memory of kepsega (lgbtq.technology slack)
+  add_header X-Clacks-Overhead "GNU Amelia Perry";
 
   # necessary access control for font files
   location ~* \.(eot|ttf|woff|woff2)$ {
