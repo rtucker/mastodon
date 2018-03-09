@@ -100,4 +100,6 @@ Rails.application.configure do
     'Strict-Transport-Security' => 'max-age=63072000; includeSubDomains; preload',
     #'X-Clacks-Overhead' => 'GNU Natalie Nguyen'
   }
+
+  config.x.otp_secret = ENV.fetch('OTP_SECRET')
 end

@@ -32,7 +32,7 @@ services:
 
   web:
     build: .
-    image: gargron/mastodon
+    image: tootsuite/mastodon
     restart: always
     env_file: .env.production
     environment:
@@ -55,10 +55,10 @@ services:
 
   streaming:
     build: .
-    image: gargron/mastodon
+    image: tootsuite/mastodon
     restart: always
     env_file: .env.production
-    command: npm run start
+    command: yarn start
     networks:
       - external_network
       - internal_network
@@ -70,7 +70,7 @@ services:
 
   sidekiq:
     build: .
-    image: gargron/mastodon
+    image: tootsuite/mastodon
     restart: always
     env_file: .env.production
     command: bundle exec sidekiq -c 6 -q mailers -q push
