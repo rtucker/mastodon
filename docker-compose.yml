@@ -87,7 +87,7 @@ services:
   sidekiq_pull:
     restart: always
     build: .
-    image: gargron/mastodon
+    image: tootsuite/mastodon
     env_file: .env.production
     command: bundle exec sidekiq -c 12 -q default -q pull
     depends_on:
