@@ -73,6 +73,8 @@ services:
     image: tootsuite/mastodon
     restart: always
     env_file: .env.production
+    environment:
+      - MAX_THREADS=12
     command: bundle exec sidekiq -c 6 -q mailers -q push
     depends_on:
       - db
@@ -89,7 +91,9 @@ services:
     build: .
     image: tootsuite/mastodon
     env_file: .env.production
-    command: bundle exec sidekiq -c 12 -q default -q pull
+    environment:
+      - MAX_THREADS=12
+    command: bundle exec sidekiq -c 6 -q default -q pull
     depends_on:
       - db
       - redis
@@ -103,7 +107,7 @@ services:
   # for things like pg_dump, etc.
   dbmaint:
     restart: "no"
-    image: postgres:alpine
+    image: postgres:9.6-alpine
     env_file: .env.production
     command: sh -c "psql -h $${DB_HOST} -p $${DB_PORT} -d $${DB_NAME} -U $${DB_USER}"
     depends_on:
