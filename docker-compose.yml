@@ -73,27 +73,7 @@ services:
     image: tootsuite/mastodon
     restart: always
     env_file: .env.production
-    environment:
-      - MAX_THREADS=12
-    command: bundle exec sidekiq -c 6 -q mailers -q push
-    depends_on:
-      - db
-      - redis
-    networks:
-      - external_network
-      - internal_network
-    volumes:
-      - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
-      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
-
-  sidekiq_pull:
-    restart: always
-    build: .
-    image: tootsuite/mastodon
-    env_file: .env.production
-    environment:
-      - MAX_THREADS=12
-    command: bundle exec sidekiq -c 6 -q default -q pull
+    command: bundle exec sidekiq -q default -q mailers -q pull -q push
     depends_on:
       - db
       - redis
