@@ -55,10 +55,9 @@ console.log('\tBOOSTS_PER_CYCLE:', BOOSTS_PER_CYCLE);
 console.log('\tTHRESHOLD_INTERVAL_DAYS:', THRESHOLD_INTERVAL_DAYS);
 console.log('\tBOOST_MAX_DAYS:', BOOST_MAX_DAYS);
 
-var client = new pg.Client(config);
-
 function cycle() {
   console.log('Cycle beginning');
+  var client = new pg.Client(config);
   client.connect(function (err) {
     if (err) {
       console.error('error connecting to client');
