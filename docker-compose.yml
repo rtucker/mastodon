@@ -103,7 +103,11 @@ services:
     image: mbilokonsky/ambassador
     env_file: .env.ambassador
     command: yarn start
+    depends_on:
+      - db
+      - web
     networks:
+      - external_network
       - internal_network
 
 networks:
