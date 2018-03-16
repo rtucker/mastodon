@@ -11,7 +11,7 @@
     "pm2": "^2.4.4"
   },
   "scripts": {
-    "start": "pm2 start --no-daemon index.js",
-    "restart": "pm2 restart --no-daemon index"
+    "start": "pm2 start --no-daemon index.js --restart-delay 10000",
+    "restart": "pm2 restart --no-daemon index.js --restart-delay 10000"
   }
 }
