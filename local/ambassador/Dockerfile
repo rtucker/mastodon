@@ -26,8 +26,8 @@ COPY index.js package.json yarn.lock /ambassador/
 
 RUN yarn
 
-COPY docker_entrypoint.sh /usr/local/bin/run
+RUN addgroup -g ${GID} ambassador && adduser -h /ambassador -s /bin/sh -D -G ambassador -u ${UID} ambassador && chown -R ambassador:ambassador /ambassador
 
-RUN chmod +x /usr/local/bin/run
+USER ambassador
 
-ENTRYPOINT ["/usr/local/bin/run"]
+ENTRYPOINT ["/sbin/tini", "--"]
