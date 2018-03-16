@@ -104,6 +104,10 @@ function whoami(f) {
       console.error('error getting current user id');
       throw err;
     }
+    if (result.id === undefined) {
+      console.error('verify_credentials result is undefined');
+      throw "verify_credentials failed";
+    }
     console.log('Authenticated as ' + result.id + ' (' + result.display_name + ')');
     return f(result.id);
   })
