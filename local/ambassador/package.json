@@ -6,9 +6,9 @@
   "author": "@mykola@a.weirder.earth",
   "license": "MIT",
   "dependencies": {
-    "mastodon": "^1.1.1",
-    "pg": "^6.1.5",
-    "pm2": "^2.4.4"
+    "mastodon": "^1.2.1",
+    "pg": "^7.4.1",
+    "pm2": "^2.10.1"
   },
   "scripts": {
     "start": "pm2 start --no-daemon index.js --restart-delay 10000",

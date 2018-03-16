@@ -16,7 +16,6 @@ RUN echo "@edge https://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/reposit
     libuv@edge \
     nodejs-npm@edge \
     nodejs@edge \
-    su-exec \
     tini \
  && npm install -g npm@3 && npm install -g yarn \
  && update-ca-certificates \
