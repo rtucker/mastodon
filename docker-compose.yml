@@ -105,7 +105,6 @@ services:
     command: yarn start
     depends_on:
       - db
-      - web
     networks:
       - external_network
       - internal_network
