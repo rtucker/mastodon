@@ -24,6 +24,7 @@
 #  application_id         :integer
 #  in_reply_to_account_id :integer
 #  local_only             :boolean
+#  tsv                    :tsvector
 #
 
 class Status < ApplicationRecord
