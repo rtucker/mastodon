@@ -30,8 +30,15 @@ services:
     volumes:
       - /srv/mastodon/vulpine.club/elasticsearch:/usr/share/elasticsearch/data
 
-  web:
+  mastodonbuild:
     build: .
+    image: tootsuite/mastodon
+    restart: "no"
+    command: /bin/true
+    networks:
+      - internal_network
+
+  web:
     image: tootsuite/mastodon
     restart: always
     env_file: .env.production
@@ -54,7 +61,6 @@ services:
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
 
   streaming:
-    build: .
     image: tootsuite/mastodon
     restart: always
     env_file: .env.production
@@ -69,7 +75,6 @@ services:
       - redis
 
   sidekiq:
-    build: .
     image: tootsuite/mastodon
     restart: always
     env_file: .env.production
