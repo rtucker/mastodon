@@ -5,8 +5,7 @@ services:
     restart: always
     image: postgres:9.6-alpine
     networks:
-      - internal_network
-### Uncomment to enable DB persistance
+      - db_network
     volumes:
       - /srv/mastodon/vulpine.club/postgres:/var/lib/postgresql/data
 
@@ -19,7 +18,7 @@ services:
     depends_on:
       - db
     networks:
-      - internal_network
+      - db_network
     volumes:
       - /srv/mastodon/vulpine.club/pg_dump:/dump
 
@@ -27,8 +26,7 @@ services:
     restart: always
     image: redis:4.0-alpine
     networks:
-      - internal_network
-### Uncomment to enable REDIS persistance
+      - redis_network
     volumes:
       - /srv/mastodon/vulpine.club/redis:/data
 
@@ -38,8 +36,7 @@ services:
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     networks:
-      - internal_network
-### Uncomment to enable ES persistance
+      - es_network
     volumes:
       - /srv/mastodon/vulpine.club/elasticsearch:/usr/share/elasticsearch/data
 
@@ -49,7 +46,7 @@ services:
     restart: "no"
     command: /bin/true
     networks:
-      - internal_network
+      - external_network
 
   web:
     image: tootsuite/mastodon
@@ -61,7 +58,9 @@ services:
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
     networks:
       - external_network
-      - internal_network
+      - db_network
+      - redis_network
+      - es_network
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
@@ -80,7 +79,8 @@ services:
     command: yarn start
     networks:
       - external_network
-      - internal_network
+      - db_network
+      - redis_network
     ports:
       - "127.0.0.1:4000:4000"
     depends_on:
@@ -99,7 +99,8 @@ services:
       - redis
     networks:
       - external_network
-      - internal_network
+      - db_network
+      - redis_network
     volumes:
       - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
@@ -114,7 +115,7 @@ services:
       - db
     networks:
       - external_network
-      - internal_network
+      - db_network
 
 networks:
   external_network:
@@ -125,6 +126,10 @@ networks:
       config:
         - subnet: 172.18.0.0/16
         - subnet: 2600:3c03:e000:027b::/64
-  internal_network:
+  db_network:
+    internal: true
+  redis_network:
+    internal: true
+  es_network:
     internal: true
 
