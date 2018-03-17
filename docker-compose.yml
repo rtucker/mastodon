@@ -96,10 +96,12 @@ services:
     command: bundle exec sidekiq -q default -q mailers -q pull -q push
     depends_on:
       - db
+      - es
       - redis
     networks:
       - external_network
       - db_network
+      - es_network
       - redis_network
     volumes:
       - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
