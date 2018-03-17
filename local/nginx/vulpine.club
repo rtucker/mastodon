@@ -47,41 +47,21 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
-  # doesn't work quite well yet
-  #add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: https://vulpine.club; connect-src 'self' wss://vulpine.club";
-
-  # now handled by config/environments/production.rb
-  #add_header Referrer-Policy "same-origin";
-
-  # TLS 4eva: now handled by config/environments/production.rb
-  #add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-  # hello header-readers
-  add_header X-Code-of-Conduct "https://vulpine.club/about/more";
-  add_header X-Source-Code "https://github.com/rtucker/mastodon/tree/production";
-  add_header X-Fox "=^^=";
-
-  # in memory of @tipsytentacle@glitch.social
-  add_header X-Clacks-Overhead "GNU Natalie Nguyen";
-
-  # in memory of kepsega (lgbtq.technology slack)
-  add_header X-Clacks-Overhead "GNU Amelia Perry";
-
   # necessary access control for font files
   location ~* \.(eot|ttf|woff|woff2)$ {
     add_header Access-Control-Allow-Origin https://vulpine.club;
     add_header Cache-Control "public, max-age=31536000, immutable";
   }
 
-  # redirect file requests to S3
-  location ~ ^/system/(?<req>(media_attachments|accounts|preview_cards)/.+) {
-    return 301 https://vulpine-club-assets.s3.dualstack.us-east-1.amazonaws.com/$req;
-  }
-
-  # stuff
+  # precompiled static assets
   location ~ ^/(emoji|packs|sounds) {
     add_header Cache-Control "public, max-age=31536000, immutable";
     try_files $uri @proxy;
+  }
+
+  # redirect file requests to S3
+  location ~ ^/system/(?<req>(media_attachments|accounts|preview_cards)/.+) {
+    return 301 https://vulpine-club-assets.s3.dualstack.us-east-1.amazonaws.com/$req;
   }
 
   # everything else
@@ -115,6 +95,8 @@ server {
     tcp_nodelay on;
 
     add_header X-Cache-Status $upstream_cache_status;
+
+    include /etc/nginx/vulpine-headers-include.conf;
   }
 
   # proxy requests to streaming API
