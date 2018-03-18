@@ -45,15 +45,8 @@ services:
     volumes:
       - /srv/mastodon/vulpine.club/elasticsearch:/usr/share/elasticsearch/data
 
-  mastodonbuild:
-    build: .
-    image: tootsuite/mastodon
-    restart: "no"
-    command: /bin/true
-    networks:
-      - external_network
-
   web:
+    build: .
     image: tootsuite/mastodon
     restart: always
     env_file: .env.production
