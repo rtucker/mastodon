@@ -85,7 +85,9 @@ RUN bundle config build.nokogiri --with-iconv-lib=/usr/local/lib --with-iconv-in
 # Docker Hub doesn't support the --chown flag, wtf
 #COPY --chown=mastodon:mastodon . /mastodon
 COPY . /mastodon
+USER root
 RUN chown -R mastodon:mastodon /mastodon
+USER mastodon
 
 RUN SECRET_KEY_BASE=_ OTP_SECRET=_ rake assets:precompile
 
