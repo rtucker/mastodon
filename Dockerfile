@@ -62,30 +62,30 @@ RUN apk -U upgrade \
  && cd /mastodon \
  && rm -rf /tmp/* /var/cache/apk/*
 
-COPY Gemfile Gemfile.lock package.json yarn.lock .yarnclean /mastodon/
 COPY stack-fix.c /lib
-RUN gcc -shared -fPIC /lib/stack-fix.c -o /lib/stack-fix.so
-RUN rm /lib/stack-fix.c
+
+RUN gcc -shared -fPIC /lib/stack-fix.c -o /lib/stack-fix.so && rm /lib/stack-fix.c
+
+RUN addgroup -g ${GID} mastodon \
+ && adduser -h /mastodon -s /bin/sh -D -G mastodon -u ${UID} mastodon \
+ && chown -R mastodon:mastodon /mastodon
+
+USER mastodon
+
+RUN mkdir -p /mastodon/public/system /mastodon/public/assets /mastodon/public/packs
+
+# Do this as its own operation, to improve probability of a cache hit
+COPY Gemfile Gemfile.lock package.json yarn.lock .yarnclean /mastodon/
 
 RUN bundle config build.nokogiri --with-iconv-lib=/usr/local/lib --with-iconv-include=/usr/local/include \
  && bundle install -j$(getconf _NPROCESSORS_ONLN) --deployment --without test development \
  && yarn --pure-lockfile \
  && yarn cache clean
 
-RUN addgroup -g ${GID} mastodon && adduser -h /mastodon -s /bin/sh -D -G mastodon -u ${UID} mastodon \
- && mkdir -p /mastodon/public/system /mastodon/public/assets /mastodon/public/packs \
- && chown -R mastodon:mastodon /mastodon/public
+COPY --chown=mastodon:mastodon . /mastodon
 
-COPY . /mastodon
-
-RUN chown -R mastodon:mastodon /mastodon
-
-RUN SECRET_KEY_BASE=_ OTP_SECRET=_ rake assets:precompile \
- && chown -R mastodon:mastodon /mastodon/build \
- && chown -R mastodon:mastodon /mastodon/tmp
+RUN SECRET_KEY_BASE=_ OTP_SECRET=_ rake assets:precompile
 
 VOLUME /mastodon/public/system
-
-USER mastodon
 
 ENTRYPOINT ["/sbin/tini", "--"]
