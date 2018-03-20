@@ -11,3 +11,6 @@ cp /etc/cron.daily/mastodon cron.daily/
 
 cp /etc/cron.hourly/mastodon cron.hourly/
 
+mkdir -p ../public/assets/
+curl http://127.0.0.1:3000/assets/500.html > ../public/assets/500.html
+curl http://127.0.0.1:3000/assets/sw.js > ../public/assets/sw.js
