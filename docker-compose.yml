@@ -67,6 +67,7 @@ services:
       - es
     volumes:
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
+      - /etc/localtime:/etc/localtime:ro
 
   streaming:
     image: vulpineclub/mastodon:production
@@ -100,7 +101,6 @@ services:
       - es_network
       - redis_network
     volumes:
-      - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
 
   ambassador:
