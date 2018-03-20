@@ -46,8 +46,8 @@ services:
       - /srv/mastodon/vulpine.club/elasticsearch:/usr/share/elasticsearch/data
 
   web:
-    build: .
-    image: tootsuite/mastodon
+    #build: .
+    image: vulpineclub/mastodon:production
     restart: always
     env_file: .env.production
     environment:
@@ -66,12 +66,10 @@ services:
       - redis
       - es
     volumes:
-      - /srv/mastodon/vulpine.club/public/assets:/mastodon/public/assets
-      - /srv/mastodon/vulpine.club/public/packs:/mastodon/public/packs
       - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
 
   streaming:
-    image: tootsuite/mastodon
+    image: vulpineclub/mastodon:production
     restart: always
     env_file: .env.production
     command: yarn start
@@ -86,7 +84,7 @@ services:
       - redis
 
   sidekiq:
-    image: tootsuite/mastodon
+    image: vulpineclub/mastodon:production
     restart: always
     env_file: .env.production
     environment:
@@ -107,8 +105,8 @@ services:
 
   ambassador:
     restart: always
-    build: ./local/ambassador
-    image: mbilokonsky/ambassador
+    #build: ./local/ambassador
+    image: vulpineclub/ambassador
     env_file: .env.ambassador
     command: yarn start
     depends_on:

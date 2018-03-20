@@ -80,7 +80,11 @@ COPY . /mastodon
 
 RUN chown -R mastodon:mastodon /mastodon
 
-VOLUME /mastodon/public/system /mastodon/public/assets /mastodon/public/packs
+RUN SECRET_KEY_BASE=_ OTP_SECRET=_ rake assets:precompile \
+ && chown -R mastodon:mastodon /mastodon/build \
+ && chown -R mastodon:mastodon /mastodon/tmp
+
+VOLUME /mastodon/public/system
 
 USER mastodon
 
