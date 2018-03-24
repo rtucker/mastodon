@@ -93,4 +93,5 @@ RUN SECRET_KEY_BASE=_ OTP_SECRET=_ rake assets:precompile
 
 VOLUME /mastodon/public/system
 
+ENV LD_PRELOAD=/lib/stack-fix.so
 ENTRYPOINT ["/sbin/tini", "--"]
