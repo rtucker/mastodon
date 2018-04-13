@@ -125,6 +125,7 @@ Rails.application.routes.draw do
   get '/media_proxy/:id/(*any)', to: 'media_proxy#show', as: :media_proxy
 
   # Remote follow
+  resource :remote_unfollow, only: [:create]
   resource :authorize_follow, only: [:show, :create]
   resource :share, only: [:show, :create]
 
@@ -159,6 +160,7 @@ Rails.application.routes.draw do
         post :memorialize
       end
 
+      resource :change_email, only: [:show, :update]
       resource :reset, only: [:create]
       resource :silence, only: [:create, :destroy]
       resource :suspension, only: [:create, :destroy]
