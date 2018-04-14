@@ -80,6 +80,7 @@ class Account < ApplicationRecord
   has_many :stream_entries, inverse_of: :account, dependent: :destroy
   has_many :statuses, inverse_of: :account, dependent: :destroy
   has_many :favourites, inverse_of: :account, dependent: :destroy
+  has_many :bookmarks, inverse_of: :account, dependent: :destroy
   has_many :mentions, inverse_of: :account, dependent: :destroy
   has_many :notifications, inverse_of: :account, dependent: :destroy
 
@@ -246,11 +247,11 @@ class Account < ApplicationRecord
     end
 
     def domains
-      reorder(nil).pluck('distinct accounts.domain')
+      reorder(nil).pluck(Arel.sql('distinct accounts.domain'))
     end
 
     def inboxes
-      urls = reorder(nil).where(protocol: :activitypub).pluck("distinct coalesce(nullif(accounts.shared_inbox_url, ''), accounts.inbox_url)")
+      urls = reorder(nil).where(protocol: :activitypub).pluck(Arel.sql("distinct coalesce(nullif(accounts.shared_inbox_url, ''), accounts.inbox_url)"))
       DeliveryFailureTracker.filter(urls)
     end
 
