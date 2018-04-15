@@ -42,7 +42,7 @@ class MediaAttachment < ApplicationRecord
 
   IMAGE_STYLES = {
     original: {
-      pixels: 1_638_400, # 1280x1280px
+      pixels: 16777216, # 4096x4096px
       file_geometry_parser: FastGeometryParser,
     },
 
