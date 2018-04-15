@@ -6,15 +6,15 @@ class CustomEmojiPolicy < ApplicationPolicy
   end
 
   def create?
-    admin?
+    staff?
   end
 
   def update?
-    admin?
+    staff?
   end
 
   def copy?
-    admin?
+    staff?
   end
 
   def enable?
@@ -26,6 +26,6 @@ class CustomEmojiPolicy < ApplicationPolicy
   end
 
   def destroy?
-    admin?
+    staff?
   end
 end
