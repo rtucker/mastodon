@@ -19,7 +19,7 @@ defaults: &defaults
   default_sensitive: false
   hide_network: true
   unfollow_modal: true
-  boost_modal: false
+  boost_modal: true
   favourite_modal: false
   delete_modal: true
   auto_play_gif: false
