@@ -29,9 +29,9 @@ defaults: &defaults
   reduce_motion: false
   show_application: false
   system_font_ui: false
-  noindex: false
   hide_followers_count: false
   enable_keybase: true
+  noindex: true
   flavour: 'glitch'
   skin: 'default'
   aggregate_reblogs: true
