@@ -17,8 +17,8 @@ defaults: &defaults
   min_invite_role: 'admin'
   show_staff_badge: true
   default_sensitive: false
-  hide_network: false
-  unfollow_modal: false
+  hide_network: true
+  unfollow_modal: true
   boost_modal: false
   favourite_modal: false
   delete_modal: true
