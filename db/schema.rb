@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180410220657) do
+ActiveRecord::Schema.define(version: 2018_04_10_220657) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "account_domain_blocks", force: :cascade do |t|
@@ -75,6 +74,7 @@ ActiveRecord::Schema.define(version: 20180410220657) do
     t.boolean "memorial", default: false, null: false
     t.bigint "moved_to_account_id"
     t.string "featured_collection_url"
+    t.jsonb "fields"
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
     t.index "lower((username)::text), lower((domain)::text)", name: "index_accounts_on_username_and_domain_lower"
     t.index ["uri"], name: "index_accounts_on_uri"
@@ -463,6 +463,7 @@ ActiveRecord::Schema.define(version: 20180410220657) do
     t.bigint "application_id"
     t.bigint "in_reply_to_account_id"
     t.boolean "local_only"
+    t.text "full_status_text", default: "", null: false
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20180106", order: { id: :desc }
     t.index ["conversation_id"], name: "index_statuses_on_conversation_id"
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id"
