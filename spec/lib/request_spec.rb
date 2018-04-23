@@ -111,7 +111,7 @@ describe Request do
     end
 
     it 'rejects too large monolithic body' do
-      stub_request(:any, 'http://example.com').to_return(body: SecureRandom.random_bytes(3.megabytes), headers: { 'Content-Length' => 2.megabytes })
+      stub_request(:any, 'http://example.com').to_return(body: SecureRandom.random_bytes(3.megabytes), headers: { 'Content-Length' => 3.megabytes })
       expect { subject.perform { |response| response.body_with_limit } }.to raise_error Mastodon::LengthValidationError
     end
 
