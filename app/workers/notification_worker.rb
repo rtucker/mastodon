@@ -20,7 +20,7 @@ class NotificationWorker
 
   def process_notification
     light = Stoplight(@target_account.domain) do
-      SendInteractionService.new.call(xml, @source_account, @target_account)
+      SendInteractionService.new.call(@xml, @source_account, @target_account)
     end
 
     light.run
