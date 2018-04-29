@@ -6,6 +6,19 @@ class ResolveAccountWorker
   sidekiq_options queue: 'pull', unique: :until_executed
 
   def perform(uri)
-    ResolveAccountService.new.call(uri)
+    @username, @domain = uri.split('@')
+    @uri = uri
+
+    process_resolve
+  end
+
+  private
+
+  def process_resolve
+    light = Stoplight(@domain) do
+      ResolveAccountService.new.call(@uri)
+    end
+
+    light.run
   end
 end
