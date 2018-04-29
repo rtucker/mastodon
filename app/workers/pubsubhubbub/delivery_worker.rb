@@ -23,7 +23,7 @@ class Pubsubhubbub::DeliveryWorker
   private
 
   def process_delivery
-    light = Stoplight(@inbox_url) do
+    light = Stoplight(host) do
       callback_post_payload do |payload_delivery|
         raise Mastodon::UnexpectedResponseError, payload_delivery unless response_successful? payload_delivery
       end
