@@ -6,6 +6,19 @@ class ProcessingWorker
   sidekiq_options backtrace: true
 
   def perform(account_id, body)
-    ProcessFeedService.new.call(body, Account.find(account_id), override_timestamps: true)
+    @account = Account.find(account_id)
+    @body = body
+
+    process_feed
+  end
+
+  private
+
+  def process_feed
+    light = Stoplight(@account.domain) do
+      ProcessFeedService.new.call(@body, @account, override_timestamps: true)
+    end
+
+    light.run
   end
 end
