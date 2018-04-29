@@ -25,10 +25,22 @@ class Pubsubhubbub::SubscribeWorker
   end
 
   def perform(account_id)
-    account = Account.find(account_id)
-    logger.debug "PuSH re-subscribing to #{account.acct}"
-    ::SubscribeService.new.call(account)
+    @account = Account.find(account_id)
+
+    process
   rescue => e
-    raise e.class, "Subscribe failed for #{account&.acct}: #{e.message}", e.backtrace[0]
+    raise e.class, "Subscribe failed for #{@account&.acct}: #{e.message}", e.backtrace[0]
   end
+
+  private
+
+  def process
+    light = Stoplight(@account.domain) do
+      logger.debug "PuSH re-subscribing to #{@account.acct}"
+      ::SubscribeService.new.call(@account)
+    end
+
+    light.run
+  end
+
 end
