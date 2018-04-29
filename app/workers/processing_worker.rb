@@ -9,12 +9,14 @@ class ProcessingWorker
     @account = Account.find(account_id)
     @body = body
 
-    process_feed
+    process
+  rescue => e
+    raise e.class, "Processing feed failed for #{@account.uri}: #{e.message}", e.backtrace[0]
   end
 
   private
 
-  def process_feed
+  def process
     light = Stoplight(@account.domain) do
       ProcessFeedService.new.call(@body, @account, override_timestamps: true)
     end

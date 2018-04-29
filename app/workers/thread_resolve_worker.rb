@@ -14,12 +14,14 @@ class ThreadResolveWorker
     @parent_url = parent_url
     @host = Addressable::URI.parse(parent_url).normalized_host
 
-    process_resolve
+    process
+  rescue => e
+    raise e.class, "Thread resolution failed for #{parent_url}: #{e.message}", e.backtrace[0]
   end
 
   private
 
-  def process_resolve
+  def process
     light = Stoplight(@host) do
       child_status  = Status.find(@child_status_id)
       parent_status = FetchRemoteStatusService.new.call(@parent_url)

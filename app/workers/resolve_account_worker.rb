@@ -9,12 +9,14 @@ class ResolveAccountWorker
     @username, @domain = uri.split('@')
     @uri = uri
 
-    process_resolve
+    process
+  rescue => e
+    raise e.class, "Resolving account failed for #{uri}: #{e.message}", e.backtrace[0]
   end
 
   private
 
-  def process_resolve
+  def process
     light = Stoplight(@domain) do
       ResolveAccountService.new.call(@uri)
     end

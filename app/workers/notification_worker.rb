@@ -10,15 +10,14 @@ class NotificationWorker
     @source_account = Account.find(source_account_id)
     @target_account = Account.find(target_account_id)
 
-    process_notification
-
+    process
   rescue => e
-    raise e.class, "Notification failed for #{source_account_id} to #{target_account_id}: #{e.message}", e.backtrace[0]
+    raise e.class, "Notification failed for #{@source_account.uri} to #{@target_account.uri}: #{e.message}", e.backtrace[0]
   end
 
   private
 
-  def process_notification
+  def process
     light = Stoplight(@target_account.domain) do
       SendInteractionService.new.call(@xml, @source_account, @target_account)
     end
