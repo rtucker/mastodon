@@ -23,11 +23,15 @@ class Pubsubhubbub::DeliveryWorker
   private
 
   def process_delivery
-    callback_post_payload do |payload_delivery|
-      raise Mastodon::UnexpectedResponseError, payload_delivery unless response_successful? payload_delivery
+    light = Stoplight(@inbox_url) do
+      callback_post_payload do |payload_delivery|
+        raise Mastodon::UnexpectedResponseError, payload_delivery unless response_successful? payload_delivery
+      end
+
+      subscription.touch(:last_successful_delivery_at)
     end
 
-    subscription.touch(:last_successful_delivery_at)
+    light.run
   end
 
   def callback_post_payload(&block)
