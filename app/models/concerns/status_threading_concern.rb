@@ -71,21 +71,10 @@ module StatusThreadingConcern
   end
 
   def find_statuses_from_tree_path(ids, account)
-    statuses    = statuses_with_accounts(ids).to_a
-    account_ids = statuses.map(&:account_id).uniq
-    domains     = statuses.map(&:account_domain).compact.uniq
+    statuses = statuses_with_accounts(ids).to_a
 
-    relations = if account.present?
-                  {
-                    blocking: Account.blocking_map(account_ids, account.id),
-                    blocked_by: Account.blocked_by_map(account_ids, account.id),
-                    muting: Account.muting_map(account_ids, account.id),
-                    following: Account.following_map(account_ids, account.id),
-                    domain_blocking_by_domain: Account.domain_blocking_map_by_domain(domains, account.id),
-                  }
-                end
-
-    statuses.reject! { |status| filter_from_context?(status, account, relations) }
+    # FIXME: n+1 bonanza
+    statuses.reject! { |status| filter_from_context?(status, account) }
 
     # Order ancestors/descendants by tree path
     statuses.sort_by! { |status| ids.index(status.id) }
@@ -95,7 +84,7 @@ module StatusThreadingConcern
     Status.where(id: ids).includes(:account)
   end
 
-  def filter_from_context?(status, account, relations)
-    StatusFilter.new(status, account, relations).filtered?
+  def filter_from_context?(status, account)
+    StatusFilter.new(status, account).filtered?
   end
 end

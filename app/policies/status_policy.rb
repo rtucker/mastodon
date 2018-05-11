@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 class StatusPolicy < ApplicationPolicy
-  def initialize(current_account, record, preloaded_relations = {})
-    super(current_account, record)
-
-    @preloaded_relations = preloaded_relations
-  end
-
   def index?
     staff?
   end
@@ -15,20 +9,20 @@ class StatusPolicy < ApplicationPolicy
     return false if local_only? && current_account.nil?
 
     if direct?
-      owned? || mention_exists?
+      owned? || record.mentions.where(account: current_account).exists?
     elsif private?
-      owned? || following_author? || mention_exists?
+      owned? || current_account&.following?(author) || record.mentions.where(account: current_account).exists?
     else
-      current_account.nil? || !author_blocking?
+      current_account.nil? || !author.blocking?(current_account)
     end
   end
 
   def reblog?
-    !direct? && (!private? || owned?) && show? && !blocking_author?
+    !direct? && (!private? || owned?) && show? && !current_account&.blocking?(author)
   end
 
   def favourite?
-    show? && !blocking_author?
+    show? && !current_account&.blocking?(author)
   end
 
   def destroy?
@@ -53,34 +47,6 @@ class StatusPolicy < ApplicationPolicy
 
   def private?
     record.private_visibility?
-  end
-
-  def mention_exists?
-    return false if current_account.nil?
-
-    if record.mentions.loaded?
-      record.mentions.any? { |mention| mention.account_id == current_account.id }
-    else
-      record.mentions.where(account: current_account).exists?
-    end
-  end
-
-  def blocking_author?
-    return false if current_account.nil?
-
-    @preloaded_relations[:blocking] ? @preloaded_relations[:blocking][author.id] : current_account.blocking?(author)
-  end
-
-  def author_blocking?
-    return false if current_account.nil?
-
-    @preloaded_relations[:blocked_by] ? @preloaded_relations[:blocked_by][author.id] : author.blocking?(current_account)
-  end
-
-  def following_author?
-    return false if current_account.nil?
-
-    @preloaded_relations[:following] ? @preloaded_relations[:following][author.id] : current_account.following?(author)
   end
 
   def author
