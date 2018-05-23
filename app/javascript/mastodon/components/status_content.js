@@ -160,11 +160,11 @@ export default class StatusContent extends React.PureComponent {
       }
 
       return (
-        <div className={classNames} ref={this.setRef} tabIndex='0' onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
+        <div className={classNames} ref={this.setRef} tabIndex='0' style={directionStyle} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
           <p style={{ marginBottom: hidden && status.get('mentions').isEmpty() ? '0px' : null }}>
             <span dangerouslySetInnerHTML={spoilerContent} />
             {' '}
-            <button tabIndex='0' className='status__content__spoiler-link' onClick={this.handleSpoilerClick}>{toggleText}</button>
+            <button tabIndex='0' className={`status__content__spoiler-link ${hidden ? 'status__content__spoiler-link--show-more' : 'status__content__spoiler-link--show-less'}`} onClick={this.handleSpoilerClick}>{toggleText}</button>
           </p>
 
           {mentionsPlaceholder}

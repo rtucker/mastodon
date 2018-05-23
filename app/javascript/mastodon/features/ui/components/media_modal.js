@@ -2,6 +2,7 @@ import React from 'react';
 import ReactSwipeableViews from 'react-swipeable-views';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import PropTypes from 'prop-types';
+import Video from '../../video';
 import ExtendedVideoPlayer from '../../../components/extended_video_player';
 import classNames from 'classnames';
 import { defineMessages, injectIntl } from 'react-intl';
@@ -112,6 +113,22 @@ export default class MediaModal extends ImmutablePureComponent {
             onClick={this.toggleNavigation}
           />
         );
+      } else if (image.get('type') === 'video') {
+        const { time } = this.props;
+
+        return (
+          <Video
+            preview={image.get('preview_url')}
+            src={image.get('url')}
+            width={image.get('width')}
+            height={image.get('height')}
+            startTime={time || 0}
+            onCloseVideo={onClose}
+            detailed
+            description={image.get('description')}
+            key={image.get('url')}
+          />
+        );
       } else if (image.get('type') === 'gifv') {
         return (
           <ExtendedVideoPlayer
@@ -130,6 +147,15 @@ export default class MediaModal extends ImmutablePureComponent {
       return null;
     }).toArray();
 
+    // you can't use 100vh, because the viewport height is taller
+    // than the visible part of the document in some mobile
+    // browsers when it's address bar is visible.
+    // https://developers.google.com/web/updates/2016/12/url-bar-resizing
+    const swipeableViewsStyle = {
+      width: '100%',
+      height: '100%',
+    };
+
     const containerStyle = {
       alignItems: 'center', // center vertically
     };
@@ -145,23 +171,15 @@ export default class MediaModal extends ImmutablePureComponent {
           role='presentation'
           onClick={onClose}
         >
-          <div className='media-modal__content'>
-            <ReactSwipeableViews
-              style={{
-                // you can't use 100vh, because the viewport height is taller
-                // than the visible part of the document in some mobile
-                // browsers when it's address bar is visible.
-                // https://developers.google.com/web/updates/2016/12/url-bar-resizing
-                height: `${document.body.clientHeight}px`,
-              }}
-              containerStyle={containerStyle}
-              onChangeIndex={this.handleSwipe}
-              onSwitching={this.handleSwitching}
-              index={index}
-            >
-              {content}
-            </ReactSwipeableViews>
-          </div>
+          <ReactSwipeableViews
+            style={swipeableViewsStyle}
+            containerStyle={containerStyle}
+            onChangeIndex={this.handleSwipe}
+            onSwitching={this.handleSwitching}
+            index={index}
+          >
+            {content}
+          </ReactSwipeableViews>
         </div>
         <div className={navigationClassName}>
           <IconButton className='media-modal__close' title={intl.formatMessage(messages.close)} icon='times' onClick={onClose} size={40} />

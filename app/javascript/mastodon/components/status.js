@@ -31,21 +31,20 @@ export default class Status extends ImmutablePureComponent {
     onFavourite: PropTypes.func,
     onReblog: PropTypes.func,
     onDelete: PropTypes.func,
+    onDirect: PropTypes.func,
+    onMention: PropTypes.func,
     onPin: PropTypes.func,
     onOpenMedia: PropTypes.func,
     onOpenVideo: PropTypes.func,
     onBlock: PropTypes.func,
     onEmbed: PropTypes.func,
     onHeightChange: PropTypes.func,
+    onToggleHidden: PropTypes.func,
     muted: PropTypes.bool,
     hidden: PropTypes.bool,
     onMoveUp: PropTypes.func,
     onMoveDown: PropTypes.func,
   };
-
-  state = {
-    isExpanded: false,
-  }
 
   // Avoid checking props that are functions (and whose equality will always
   // evaluate to false. See react-immutable-pure-component for usage.
@@ -55,8 +54,6 @@ export default class Status extends ImmutablePureComponent {
     'muted',
     'hidden',
   ]
-
-  updateOnStates = ['isExpanded']
 
   handleClick = () => {
     if (!this.context.router) {
@@ -76,7 +73,7 @@ export default class Status extends ImmutablePureComponent {
   }
 
   handleExpandedToggle = () => {
-    this.setState({ isExpanded: !this.state.isExpanded });
+    this.props.onToggleHidden(this._properStatus());
   };
 
   renderLoadingMediaGallery () {
@@ -87,8 +84,8 @@ export default class Status extends ImmutablePureComponent {
     return <div className='media-spoiler-video' style={{ height: '110px' }} />;
   }
 
-  handleOpenVideo = startTime => {
-    this.props.onOpenVideo(this._properStatus().getIn(['media_attachments', 0]), startTime);
+  handleOpenVideo = (media, startTime) => {
+    this.props.onOpenVideo(media, startTime);
   }
 
   handleHotkeyReply = e => {
@@ -117,12 +114,16 @@ export default class Status extends ImmutablePureComponent {
     this.context.router.history.push(`/accounts/${this._properStatus().getIn(['account', 'id'])}`);
   }
 
-  handleHotkeyMoveUp = () => {
-    this.props.onMoveUp(this.props.status.get('id'));
+  handleHotkeyMoveUp = e => {
+    this.props.onMoveUp(this.props.status.get('id'), e.target.getAttribute('data-featured'));
   }
 
-  handleHotkeyMoveDown = () => {
-    this.props.onMoveDown(this.props.status.get('id'));
+  handleHotkeyMoveDown = e => {
+    this.props.onMoveDown(this.props.status.get('id'), e.target.getAttribute('data-featured'));
+  }
+
+  handleHotkeyToggleHidden = () => {
+    this.props.onToggleHidden(this._properStatus());
   }
 
   _properStatus () {
@@ -140,7 +141,6 @@ export default class Status extends ImmutablePureComponent {
     let statusAvatar, prepend;
 
     const { hidden, featured } = this.props;
-    const { isExpanded } = this.state;
 
     let { status, account, ...other } = this.props;
 
@@ -206,7 +206,7 @@ export default class Status extends ImmutablePureComponent {
         );
       } else {
         media = (
-          <Bundle fetchComponent={MediaGallery} loading={this.renderLoadingMediaGallery} >
+          <Bundle fetchComponent={MediaGallery} loading={this.renderLoadingMediaGallery}>
             {Component => <Component media={status.get('media_attachments')} sensitive={status.get('sensitive')} height={110} onOpenMedia={this.props.onOpenMedia} />}
           </Bundle>
         );
@@ -228,11 +228,12 @@ export default class Status extends ImmutablePureComponent {
       openProfile: this.handleHotkeyOpenProfile,
       moveUp: this.handleHotkeyMoveUp,
       moveDown: this.handleHotkeyMoveDown,
+      toggleHidden: this.handleHotkeyToggleHidden,
     };
 
     return (
       <HotKeys handlers={handlers}>
-        <div className={classNames('status__wrapper', `status__wrapper-${status.get('visibility')}`, { focusable: !this.props.muted })} tabIndex={this.props.muted ? null : 0}>
+        <div className={classNames('status__wrapper', `status__wrapper-${status.get('visibility')}`, { focusable: !this.props.muted })} tabIndex={this.props.muted ? null : 0} data-featured={featured ? 'true' : null}>
           {prepend}
 
           <div className={classNames('status', `status-${status.get('visibility')}`, { muted: this.props.muted })} data-id={status.get('id')}>
@@ -248,7 +249,7 @@ export default class Status extends ImmutablePureComponent {
               </a>
             </div>
 
-            <StatusContent status={status} onClick={this.handleClick} expanded={isExpanded} onExpandedToggle={this.handleExpandedToggle} />
+            <StatusContent status={status} onClick={this.handleClick} expanded={!status.get('hidden')} onExpandedToggle={this.handleExpandedToggle} />
 
             {media}
 
