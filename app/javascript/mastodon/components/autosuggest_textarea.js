@@ -7,6 +7,7 @@ import { isRtl } from '../rtl';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 import Textarea from 'react-textarea-autosize';
 import classNames from 'classnames';
+import try_replace from '../features/compose/util/autolatex.js';
 
 const textAtCursorMatchesToken = (str, caretPosition) => {
   let word;
@@ -73,6 +74,10 @@ export default class AutosuggestTextarea extends ImmutablePureComponent {
     }
 
     this.props.onChange(e);
+  }
+
+  onInput = (e) => {
+    try_replace(e.target);
   }
 
   onKeyDown = (e) => {
@@ -211,6 +216,7 @@ export default class AutosuggestTextarea extends ImmutablePureComponent {
             onKeyUp={this.onKeyUp}
             onBlur={this.onBlur}
             onPaste={this.onPaste}
+            onInput={this.onInput}
             style={style}
             aria-autocomplete='list'
           />
