@@ -40,19 +40,23 @@ export default class AccountTimeline extends ImmutablePureComponent {
     const { params: { accountId }, withReplies } = this.props;
 
     this.props.dispatch(fetchAccount(accountId));
-    this.props.dispatch(refreshAccountFeaturedTimeline(accountId));
+    if (!withReplies) {
+      this.props.dispatch(refreshAccountFeaturedTimeline(accountId));
+    }
     this.props.dispatch(refreshAccountTimeline(accountId, withReplies));
   }
 
   componentWillReceiveProps (nextProps) {
     if ((nextProps.params.accountId !== this.props.params.accountId && nextProps.params.accountId) || nextProps.withReplies !== this.props.withReplies) {
       this.props.dispatch(fetchAccount(nextProps.params.accountId));
-      this.props.dispatch(refreshAccountFeaturedTimeline(nextProps.params.accountId));
+      if (!nextProps.withReplies) {
+        this.props.dispatch(refreshAccountFeaturedTimeline(nextProps.params.accountId));
+      }
       this.props.dispatch(refreshAccountTimeline(nextProps.params.accountId, nextProps.params.withReplies));
     }
   }
 
-  handleScrollToBottom = () => {
+  handleLoadMore = () => {
     if (!this.props.isLoading && this.props.hasMore) {
       this.props.dispatch(expandAccountTimeline(this.props.params.accountId, this.props.withReplies));
     }
@@ -80,7 +84,7 @@ export default class AccountTimeline extends ImmutablePureComponent {
           featuredStatusIds={featuredStatusIds}
           isLoading={isLoading}
           hasMore={hasMore}
-          onScrollToBottom={this.handleScrollToBottom}
+          onLoadMore={this.handleLoadMore}
         />
       </Column>
     );
