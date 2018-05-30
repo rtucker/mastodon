@@ -62,10 +62,6 @@ RUN apk -U upgrade \
  && cd /mastodon \
  && rm -rf /tmp/* /var/cache/apk/*
 
-COPY stack-fix.c /lib
-
-RUN gcc -shared -fPIC /lib/stack-fix.c -o /lib/stack-fix.so && rm /lib/stack-fix.c
-
 RUN addgroup -g ${GID} mastodon \
  && adduser -h /mastodon -s /bin/sh -D -G mastodon -u ${UID} mastodon \
  && chown -R mastodon:mastodon /mastodon
@@ -93,5 +89,4 @@ RUN SECRET_KEY_BASE=_ OTP_SECRET=_ bundle exec rake assets:precompile
 
 VOLUME /mastodon/public/system
 
-ENV LD_PRELOAD=/lib/stack-fix.so
 ENTRYPOINT ["/sbin/tini", "--"]
