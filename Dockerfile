@@ -89,7 +89,7 @@ USER root
 RUN chown -R mastodon:mastodon /mastodon
 USER mastodon
 
-RUN SECRET_KEY_BASE=_ OTP_SECRET=_ rake assets:precompile
+RUN SECRET_KEY_BASE=_ OTP_SECRET=_ bundle exec rake assets:precompile
 
 VOLUME /mastodon/public/system
 
