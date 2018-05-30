@@ -6,7 +6,7 @@
 # This should be a HTTP (not HTTPS) URL because the 'web' container doesn't
 # have enough smartz to verify certificates and idgaf atm
 
-find /srv/mastodon/vulpine.club/pg_dump/ -type f -name hourly.* -mmin +360 -delete
+find /srv/mastodon/vulpine.club/pg_dump/ -type f -name hourly.* -mmin +300 -delete
 
 cd /home/rtucker/dev/mastodon && \
 docker-compose run --rm dbmaint sh -c " \
