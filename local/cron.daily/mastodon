@@ -6,8 +6,6 @@
 # This should be a HTTP (not HTTPS) URL because the 'web' container doesn't
 # have enough smartz to verify certificates and idgaf atm
 
-find /srv/mastodon/vulpine.club/pg_dump/ -type f -name daily.* -mtime +1 -delete
-
 cd /home/rtucker/dev/mastodon && \
 docker-compose run --rm dbmaint sh -c " \
 	umask 0377 &&
