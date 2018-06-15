@@ -2,6 +2,7 @@
 
 module SettingsHelper
   HUMAN_LOCALES = {
+    fox: 'Vulpine',
     en: 'English',
     ar: 'العربية',
     bg: 'Български',
