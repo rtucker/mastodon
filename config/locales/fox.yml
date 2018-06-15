@@ -562,8 +562,8 @@ en:
         other: "%{count} new notifications since your last visit \U0001F418"
       title: In your absence...
     favourite:
-      body: 'Your status was favourited by %{name}:'
-      subject: "%{name} favourited your status"
+      body: 'Your status was licked by %{name}:'
+      subject: "%{name} licked your status"
       title: New favourite
     follow:
       body: "%{name} is now following you!"
@@ -580,8 +580,8 @@ en:
       subject: You were mentioned by %{name}
       title: New mention
     reblog:
-      body: 'Your status was boosted by %{name}:'
-      subject: "%{name} boosted your status"
+      body: 'Your status was awooed by %{name}:'
+      subject: "%{name} awooed your status"
       title: New boost
   number:
     human:
@@ -692,7 +692,7 @@ en:
       limit: You have already pinned the maximum number of toots
       ownership: Someone else's toot cannot be pinned
       private: Non-public toot cannot be pinned
-      reblog: A boost cannot be pinned
+      reblog: An awoo cannot be pinned
     show_more: Show more
     title: '%{name}: "%{quote}"'
     visibilities:
@@ -705,7 +705,7 @@ en:
   stream_entries:
     click_to_show: Click to show
     pinned: Pinned toot
-    reblogged: boosted
+    reblogged: awooed
     sensitive_content: Sensitive content
   terms:
     body_html: |
