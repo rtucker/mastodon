@@ -11,6 +11,7 @@ ja:
         display_name: あと<span class="name-counter">%{count}</span>文字入力できます。
         fields: プロフィールに表として4つまでの項目を表示することができます
         header: 2MBまでのPNG、GIF、JPGが利用可能です。 700x335pxまで縮小されます
+        inbox_url: 使用したいリレーサーバーのトップページからURLをコピーします
         irreversible: フィルターが後で削除されても、除外されたトゥートは元に戻せなくなります
         locale: ユーザーインターフェース、メールやプッシュ通知の言語
         locked: フォロワーを手動で承認する必要があります
@@ -40,7 +41,7 @@ ja:
         chosen_languages: 表示する言語
         confirm_new_password: 新しいパスワード（確認用）
         confirm_password: パスワード（確認用）
-        context: フィルター対象
+        context: 除外対象
         current_password: 現在のパスワード
         data: データ
         display_name: 表示名
@@ -48,6 +49,7 @@ ja:
         expires_in: 有効期限
         fields: プロフィール補足情報
         header: ヘッダー
+        inbox_url: リレーサーバーの inbox URL
         irreversible: 隠すのではなく除外する
         locale: 言語
         locked: 承認制アカウントにする
@@ -56,7 +58,7 @@ ja:
         note: プロフィール
         otp_attempt: 二段階認証コード
         password: パスワード
-        phrase: 単語または語句
+        phrase: キーワードまたはフレーズ
         setting_auto_play_gif: アニメーションGIFを自動再生する
         setting_boost_modal: ブーストする前に確認ダイアログを表示する
         setting_default_language: 投稿する言語
