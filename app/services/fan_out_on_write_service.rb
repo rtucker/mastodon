@@ -82,15 +82,15 @@ class FanOutOnWriteService < BaseService
   def deliver_to_public(status)
     Rails.logger.debug "Delivering status #{status.id} to public timeline"
 
-    Redis.current.publish('timeline:public', @payload)
-    Redis.current.publish('timeline:public:local', @payload) if status.local?
+    Redis.current.publish('timeline:public', @payload) if !status.has_timelinemute_tag?
+    Redis.current.publish('timeline:public:local', @payload) if status.local? and !status.has_timelinemute_tag?
   end
 
   def deliver_to_media(status)
     Rails.logger.debug "Delivering status #{status.id} to media timeline"
 
-    Redis.current.publish('timeline:public:media', @payload)
-    Redis.current.publish('timeline:public:local:media', @payload) if status.local?
+    Redis.current.publish('timeline:public:media', @payload) if !status.has_timelinemute_tag?
+    Redis.current.publish('timeline:public:local:media', @payload) if status.local? and !status.has_timelinemute_tag?
   end
 
   def deliver_to_direct_timelines(status)
