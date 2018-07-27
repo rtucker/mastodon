@@ -211,6 +211,19 @@ RSpec.describe Status, type: :model do
     end
   end
 
+  describe '#has_mutetag' do
+    let(:normal_status) { Fabricate(:status, account: alice, visibility: :public, text: 'blahblah wibble') }
+    let(:muted_status) { Fabricate(:status, account: alice, visibility: :public, text: 'blahblah #TimelineMute') }
+
+    it 'is false if #timelinemute is not among the tags' do
+      expect(normal_status.has_mutetag).to be false
+    end
+
+    it 'is true if #timelinemute is among the tags' do
+      expect(muted_status.has_mutetag).to be true
+    end
+  end
+
   describe 'on create' do
     let(:local_account) { Fabricate(:account, username: 'local', domain: nil) }
     let(:remote_account) { Fabricate(:account, username: 'remote', domain: 'example.com') }

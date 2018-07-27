@@ -180,6 +180,10 @@ class Status < ApplicationRecord
     @marked_for_mass_destruction
   end
 
+  def has_mutetag?
+    tags.where(name: "timelinemute").exists?
+  end
+
   after_create  :increment_counter_caches
   after_destroy :decrement_counter_caches
 
