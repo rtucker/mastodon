@@ -79,6 +79,7 @@ class Status < ApplicationRecord
   scope :without_reblogs, -> { where('statuses.reblog_of_id IS NULL') }
   scope :with_public_visibility, -> { where(visibility: :public) }
   scope :tagged_with, ->(tag) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag }) }
+  scope :not_tagged_with, ->(tag) { joins(:statuses_tags).where.not(statuses_tags: { tag_id: tag }) }
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced: false }) }
   scope :including_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced: true }) }
   scope :not_excluded_by_account, ->(account) { where.not(account_id: account.excluded_from_timeline_account_ids) }
@@ -180,10 +181,6 @@ class Status < ApplicationRecord
     @marked_for_mass_destruction
   end
 
-  def has_timelinemute_tag?
-    content.downcase.include? "#timelinemute"
-  end
-
   after_create  :increment_counter_caches
   after_destroy :decrement_counter_caches
 
@@ -251,7 +248,8 @@ class Status < ApplicationRecord
     end
 
     def as_public_timeline(account = nil, local_only = false)
-      query = timeline_scope(local_only).without_replies
+      mutetag = Tag.where(name: "timelinemute")
+      query = timeline_scope(local_only).without_replies.not_tagged_with(mutetag)
 
       apply_timeline_filters(query, account, local_only)
     end
