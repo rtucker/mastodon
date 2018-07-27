@@ -248,8 +248,10 @@ class Status < ApplicationRecord
     end
 
     def as_public_timeline(account = nil, local_only = false)
+      query = timeline_scope(local_only).without_replies
+
       mutetag = Tag.where(name: "timelinemute")
-      query = timeline_scope(local_only).without_replies.not_tagged_with(mutetag)
+      query = query.not_tagged_with(mutetag) if mutetag.count() > 0
 
       apply_timeline_filters(query, account, local_only)
     end
