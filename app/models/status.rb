@@ -79,7 +79,6 @@ class Status < ApplicationRecord
   scope :without_reblogs, -> { where('statuses.reblog_of_id IS NULL') }
   scope :with_public_visibility, -> { where(visibility: :public) }
   scope :tagged_with, ->(tag) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag }) }
-  scope :not_tagged_with, ->(tag) { joins(:statuses_tags).where.not(statuses_tags: { tag_id: tag }) }
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced: false }) }
   scope :including_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced: true }) }
   scope :not_excluded_by_account, ->(account) { where.not(account_id: account.excluded_from_timeline_account_ids) }
@@ -249,10 +248,7 @@ class Status < ApplicationRecord
 
     def as_public_timeline(account = nil, local_only = false)
       query = timeline_scope(local_only).without_replies
-
-      mutetag = Tag.where(name: "timelinemute")
-      query = query.not_tagged_with(mutetag) if mutetag.count() > 0
-
+      query = filter_timeline_mutetag(query)
       apply_timeline_filters(query, account, local_only)
     end
 
@@ -354,6 +350,15 @@ class Status < ApplicationRecord
 
     def filter_timeline_default(query)
       query.not_local_only.excluding_silenced_accounts
+    end
+
+    def filter_timeline_mutetag(query)
+      mutetag = Tag.where(name: "timelinemute")
+      if mutetag.empty?
+        query
+      else
+        query.joins(:statuses_tags).where.not(statuses_tags: { tag_id: mutetag })
+      end
     end
 
     def account_silencing_filter(account)
