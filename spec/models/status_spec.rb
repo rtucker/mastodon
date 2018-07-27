@@ -512,6 +512,15 @@ RSpec.describe Status, type: :model do
       end
     end
 
+    it 'does not includes statuses with #timelinemute tag' do
+      normal_status = Fabricate(:status, visibility: :public, text: 'blahblah asdfasdf')
+      muted_status = Fabricate(:status, visibility: :public, text: 'blahblah #TimelineMute')
+
+      results = Status.as_public_timeline
+      expect(results).to include(normal_status)
+      expect(results).not_to include(muted_status)
+    end
+
     describe 'with an account passed in' do
       before do
         @account = Fabricate(:account)
