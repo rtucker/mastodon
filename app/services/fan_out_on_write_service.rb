@@ -24,7 +24,7 @@ class FanOutOnWriteService < BaseService
 
     return if status.reply? && status.in_reply_to_account_id != status.account_id
 
-    deliver_to_public(status) unless status.has_mutetag?
+    deliver_to_public(status)
     deliver_to_media(status) if status.media_attachments.any?
   end
 
