@@ -525,25 +525,23 @@ RSpec.describe Status, type: :model do
       end
     end
 
-    context 'with a #timelinemute tag' do
-      before do
-        @normal_status = Fabricate(:status, visibility: :public)
-        @muted_status = Fabricate(:status, visibility: :public, text: 'blahblah #TimelineMute')
-      end
+    describe 'with a #timelinemute tag' do
+      subject { Status.new }
 
-      it 'did the tag thing correctly' do
-        expect(@muted_status.tags.where(name: "timelinemute").exists?).to be true
-        expect(@normal_status.tags.where(name: "timelinemute").exists?).to be false
-      end
+      describe 'on a status with a #timelinemute tag'
+        before do
+          subject.text = "blahblahblah #TimelineMute"
+          subject.save!
+        end
 
-      it 'does not include statuses with #timelinemute tag' do
-        results = Status.as_public_timeline
-        expect(results).not_to include(muted_status)
-      end
+        it 'did the tag thing correctly' do
+          expect(subject.tags.where(name: "timelinemute").exists?).to be true
+        end
 
-      it 'does include statuses without #timelinemute tag' do
-        results = Status.as_public_timeline
-        expect(results).to include(normal_status)
+        it 'does not include statuses with #timelinemute tag' do
+          results = Status.as_public_timeline
+          expect(results).not_to include(subject)
+        end
       end
     end
 
