@@ -215,7 +215,7 @@ RSpec.describe Status, type: :model do
     context 'has a #timelinemute hashtag' do
       let(:account) { Fabricate(:account) }
 
-      subject = Fabricate(:status, account: alice)
+      subject = Fabricate(:status, account: account)
 
       before do
         subject.text = "blahblahblah #TimelineMute"
