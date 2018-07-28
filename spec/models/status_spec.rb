@@ -216,11 +216,11 @@ RSpec.describe Status, type: :model do
     let(:muted_status) { Fabricate(:status, account: alice, visibility: :public, text: 'blahblah #TimelineMute') }
 
     it 'is false if #timelinemute is not among the tags' do
-      expect(normal_status.has_mutetag).to be false
+      expect(normal_status.has_mutetag?).to be false
     end
 
     it 'is true if #timelinemute is among the tags' do
-      expect(muted_status.has_mutetag).to be true
+      expect(muted_status.has_mutetag?).to be true
     end
   end
 
@@ -525,13 +525,26 @@ RSpec.describe Status, type: :model do
       end
     end
 
-    it 'does not includes statuses with #timelinemute tag' do
-      normal_status = Fabricate(:status, visibility: :public, text: 'blahblah asdfasdf')
-      muted_status = Fabricate(:status, visibility: :public, text: 'blahblah #TimelineMute')
+    context 'with a #timelinemute tag' do
+      before do
+        @normal_status = Fabricate(:status, visibility: :public)
+        @muted_status = Fabricate(:status, visibility: :public, text: 'blahblah #TimelineMute')
+      end
 
-      results = Status.as_public_timeline
-      expect(results).to include(normal_status)
-      expect(results).not_to include(muted_status)
+      it 'did the tag thing correctly' do
+        expect(@muted_status.tags.where(name: "timelinemute").exists?).to be true
+        expect(@normal_status.tags.where(name: "timelinemute").exists?).to be false
+      end
+
+      it 'does not include statuses with #timelinemute tag' do
+        results = Status.as_public_timeline
+        expect(results).not_to include(muted_status)
+      end
+
+      it 'does include statuses without #timelinemute tag' do
+        results = Status.as_public_timeline
+        expect(results).to include(normal_status)
+      end
     end
 
     describe 'with an account passed in' do
