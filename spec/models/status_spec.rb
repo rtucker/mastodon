@@ -537,7 +537,7 @@ RSpec.describe Status, type: :model do
     end
 
     context 'with a #timelinemute tag present' do
-      subject Status.as_public_timeline
+      subject { Status.as_public_timeline }
 
       before do
         @status = Fabricate(:status)
