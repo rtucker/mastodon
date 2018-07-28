@@ -252,7 +252,14 @@ class Status < ApplicationRecord
 
     def as_public_timeline(account = nil, local_only = false)
       query = timeline_scope(local_only).without_replies
-      query = filter_timeline_mutetag(query)
+
+      mutetag = Tag.where(name: "timelinemute")
+
+      if mutetag.exists?
+        query = query
+                .joins("LEFT JOIN statuses_tags ON statuses_tags.status_id = statuses.id AND statuses_tags.tag_id = #{mutetag[0].id}")
+                .where("statuses_tags.status_id is NULL")
+
       apply_timeline_filters(query, account, local_only)
     end
 
@@ -354,15 +361,6 @@ class Status < ApplicationRecord
 
     def filter_timeline_default(query)
       query.not_local_only.excluding_silenced_accounts
-    end
-
-    def filter_timeline_mutetag(query)
-      mutetag = Tag.where(name: "timelinemute")
-      if mutetag.empty?
-        query
-      else
-        query.joins(:statuses_tags).where.not(statuses_tags: { tag_id: mutetag })
-      end
     end
 
     def account_silencing_filter(account)
