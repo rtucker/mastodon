@@ -528,7 +528,7 @@ RSpec.describe Status, type: :model do
     describe 'with a #timelinemute tag' do
       subject { Status.new }
 
-      describe 'on a status with a #timelinemute tag'
+      describe 'on a status with a #timelinemute tag' do
         before do
           subject.text = "blahblahblah #TimelineMute"
           subject.save!
