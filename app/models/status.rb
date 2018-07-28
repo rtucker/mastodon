@@ -180,6 +180,10 @@ class Status < ApplicationRecord
     @marked_for_mass_destruction
   end
 
+  def has_mutetag?
+    tags.where(name: "timelinemute").exists?
+  end
+
   after_create  :increment_counter_caches
   after_destroy :decrement_counter_caches
 
@@ -248,7 +252,7 @@ class Status < ApplicationRecord
 
     def as_public_timeline(account = nil, local_only = false)
       query = timeline_scope(local_only).without_replies
-
+      query = filter_timeline_mutetag(query)
       apply_timeline_filters(query, account, local_only)
     end
 
@@ -350,6 +354,15 @@ class Status < ApplicationRecord
 
     def filter_timeline_default(query)
       query.not_local_only.excluding_silenced_accounts
+    end
+
+    def filter_timeline_mutetag(query)
+      mutetag = Tag.where(name: "timelinemute")
+      if mutetag.empty?
+        query
+      else
+        query.joins(:statuses_tags).where.not(statuses_tags: { tag_id: mutetag })
+      end
     end
 
     def account_silencing_filter(account)
