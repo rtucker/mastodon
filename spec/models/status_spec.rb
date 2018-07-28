@@ -539,13 +539,12 @@ RSpec.describe Status, type: :model do
       end
     end
 
-    context 'with a #timelinemute tag present' do
+    context 'with a mutetag present' do
       subject { Status.as_public_timeline }
 
       before do
-        @status = Fabricate(:status)
-        @status.text = "blahblahblah #TimelineMute"
-        @status.save!
+        @tag = Fabricate(:tag, name: 'timelinemute')
+        @status = Fabricate(:status, text: "blahblahblah #TimelineMute", tags: [@tag])
       end
 
       it 'does not include statuses with #timelinemute tag' do
