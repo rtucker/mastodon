@@ -211,6 +211,33 @@ RSpec.describe Status, type: :model do
     end
   end
 
+  describe '#has_mutetag' do
+    describe 'on a status with a #timelinemute tag' do
+      before do
+        tag = Fabricate(:tag, name: 'timelinemute')
+        subject.text = "blahblahblah #TimelineMute"
+        subject.tags = [tag]
+        subject.save!
+      end
+
+      it 'returns true' do
+        expect(subject.has_mutetag?).to be true
+      end
+    end
+
+    describe 'on a status without a #timelinemute tag' do
+      before do
+        Fabricate(:tag, name: 'timelinemute')
+        subject.text = "blahblahblah adfdsfsadf"
+        subject.save!
+      end
+
+      it 'returns false' do
+        expect(subject.has_mutetag?).to be false
+      end
+    end
+  end
+
   describe 'on create' do
     let(:local_account) { Fabricate(:account, username: 'local', domain: nil) }
     let(:remote_account) { Fabricate(:account, username: 'remote', domain: 'example.com') }
@@ -509,6 +536,19 @@ RSpec.describe Status, type: :model do
           expect(subject).to include(local_status)
           expect(subject).not_to include(remote_status)
         end
+      end
+    end
+
+    context 'with a mutetag present' do
+      subject { Status.as_public_timeline }
+
+      before do
+        @tag = Fabricate(:tag, name: 'timelinemute')
+        @status = Fabricate(:status, text: "blahblahblah #TimelineMute", tags: [@tag])
+      end
+
+      it 'does not include statuses with #timelinemute tag' do
+        expect(subject).not_to include(@status)
       end
     end
 
