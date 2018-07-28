@@ -212,15 +212,30 @@ RSpec.describe Status, type: :model do
   end
 
   describe '#has_mutetag' do
-    let(:normal_status) { Fabricate(:status, account: alice, visibility: :public, text: 'blahblah wibble') }
-    let(:muted_status) { Fabricate(:status, account: alice, visibility: :public, text: 'blahblah #TimelineMute') }
+    context 'has a #timelinemute hashtag' do
+      subject { Status.new }
 
-    it 'is false if #timelinemute is not among the tags' do
-      expect(normal_status.has_mutetag?).to be false
+      before do
+        subject.text = "blahblahblah #TimelineMute"
+        subject.save!
+      end
+
+      it 'is true if #timelinemute is among the tags' do
+        expect(subject.has_mutetag?).to be true
+      end
     end
 
-    it 'is true if #timelinemute is among the tags' do
-      expect(muted_status.has_mutetag?).to be true
+    context 'does not have a #timelinemute hashtag' do
+      subject { Status.new }
+
+      before do
+        subject.text = "blahblahblah adfdsfsadf"
+        subject.save!
+      end
+
+      it 'is false if #timelinemute is not among the tags' do
+        expect(subject.has_mutetag?).to be false
+      end
     end
   end
 
@@ -523,23 +538,23 @@ RSpec.describe Status, type: :model do
           expect(subject).not_to include(remote_status)
         end
       end
-    end
 
-    describe 'with a #timelinemute tag' do
-      subject { Status.new }
+      context 'with a #timelinemute tag' do
+        let(:account) { Fabricate(:account) }
 
-      describe 'on a status with a #timelinemute tag' do
+        subject { Status.new }
+
         before do
           subject.text = "blahblahblah #TimelineMute"
           subject.save!
         end
 
-        it 'did the tag thing correctly' do
+        it 'detected the hashtag properly' do
           expect(subject.tags.where(name: "timelinemute").exists?).to be true
         end
 
         it 'does not include statuses with #timelinemute tag' do
-          results = Status.as_public_timeline
+          results = Status.as_public_timeline(:account, false)
           expect(results).not_to include(subject)
         end
       end
