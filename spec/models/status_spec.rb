@@ -213,7 +213,9 @@ RSpec.describe Status, type: :model do
 
   describe '#has_mutetag' do
     context 'has a #timelinemute hashtag' do
-      subject { Status.new }
+      let(:account) { Fabricate(:account) }
+
+      subject = Fabricate(:status, account: alice)
 
       before do
         subject.text = "blahblahblah #TimelineMute"
@@ -538,25 +540,25 @@ RSpec.describe Status, type: :model do
           expect(subject).not_to include(remote_status)
         end
       end
+    end
 
-      context 'with a #timelinemute tag' do
-        let(:account) { Fabricate(:account) }
+    context 'with a #timelinemute tag' do
+      let(:account) { Fabricate(:account) }
 
-        subject { Status.new }
+      subject { Status.new }
 
-        before do
-          subject.text = "blahblahblah #TimelineMute"
-          subject.save!
-        end
+      before do
+        subject.text = "blahblahblah #TimelineMute"
+        subject.save!
+      end
 
-        it 'detected the hashtag properly' do
-          expect(subject.tags.where(name: "timelinemute").exists?).to be true
-        end
+      it 'detected the hashtag properly' do
+        expect(subject.tags.where(name: "timelinemute").exists?).to be true
+      end
 
-        it 'does not include statuses with #timelinemute tag' do
-          results = Status.as_public_timeline(:account, false)
-          expect(results).not_to include(subject)
-        end
+      it 'does not include statuses with #timelinemute tag' do
+        results = Status.as_public_timeline(:account, false)
+        expect(results).not_to include(subject)
       end
     end
 
