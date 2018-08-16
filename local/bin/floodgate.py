@@ -11,6 +11,7 @@
 
 INSTANCE_URL="https://vulpine.club/"
 MAX_PER_HOUR=3
+MAX_PER_DAY=12
 
 LOG_FILENAME="/var/tmp/floodgate.dat"
 RAILS_CMD="/usr/local/bin/docker-compose run --rm web rails"
@@ -71,15 +72,19 @@ def main():
 
     latest_t, latest_v = get_value()
     hour_ago_t, hour_ago_v = get_value(3600)
+    day_ago_t, day_ago_v = get_value(86400)
 
     if user_count != latest_v:
         store_value(runtime, user_count)
 
-    open_reg = user_count <= (hour_ago_v + MAX_PER_HOUR)
+    hour_tripped = user_count >= (hour_ago_v + MAX_PER_HOUR)
+    day_tripped = user_count >= (day_ago_v + MAX_PER_DAY)
+    open_reg = not (hour_tripped or day_tripped)
 
     print("Current:  {} users".format(user_count))
-    print("Historic: {} users as of {} sec ago".format(hour_ago_v, runtime - hour_ago_t))
-    print("Open reg: {} (1-hour delta: {})".format(open_reg, user_count - hour_ago_v))
+    print("1 hour:   {} users as of {} sec ago (delta: {}, max: {})".format(hour_ago_v, runtime - hour_ago_t, user_count - hour_ago_v, MAX_PER_HOUR))
+    print("1 day:    {} users as of {} sec ago (delta: {}, max: {})".format(day_ago_v, runtime - day_ago_t, user_count - day_ago_v, MAX_PER_DAY))
+    print("Open reg: {} (hour tripped: {}, day tripped: {})".format(open_reg, hour_tripped, day_tripped))
 
     set_registration(open_reg)
 
