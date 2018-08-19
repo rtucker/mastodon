@@ -201,6 +201,7 @@ class Status < ApplicationRecord
 
   def has_mutetag?
     tags.where(name: "timelinemute").exists?
+  end
 
   def replies_count
     status_stat&.replies_count || 0
