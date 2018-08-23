@@ -99,10 +99,8 @@ Rails.application.configure do
     'X-Frame-Options'         => 'DENY',
     'X-Content-Type-Options'  => 'nosniff',
     'X-XSS-Protection'        => '1; mode=block',
-    'Content-Security-Policy' => "frame-ancestors 'none'; object-src 'none'; script-src 'self' https://d2pc52zrmidoft.cloudfront.net ; base-uri 'none';" , 
     'Referrer-Policy'         => 'same-origin',
     'Strict-Transport-Security' => 'max-age=63072000; includeSubDomains; preload',
-    #'X-Clacks-Overhead' => 'GNU Natalie Nguyen'
   }
 
   config.x.otp_secret = ENV.fetch('OTP_SECRET')

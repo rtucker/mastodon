@@ -26,8 +26,6 @@
 #
 
 class Status < ApplicationRecord
-  self.cache_versioning = false
-
   include Paginable
   include Streamable
   include Cacheable
@@ -409,7 +407,8 @@ class Status < ApplicationRecord
 
     def account_silencing_filter(account)
       if account.silenced?
-        including_silenced_accounts
+        including_myself = left_outer_joins(:account).where(account_id: account.id).references(:accounts)
+        excluding_silenced_accounts.or(including_myself)
       else
         excluding_silenced_accounts
       end
