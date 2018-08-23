@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2.2'
 services:
 
   db:
@@ -9,12 +9,23 @@ services:
     volumes:
       - /srv/mastodon/vulpine.club/postgres:/var/lib/postgresql/data
 
-  # for things like pg_dump, etc.
   dbmaint:
     restart: "no"
     image: postgres:9.6-alpine
     env_file: .env.production
     command: sh -c "psql -h $${DB_HOST} -p $${DB_PORT} -d $${DB_NAME} -U $${DB_USER}"
+    depends_on:
+      - db
+    networks:
+      - db_network
+
+  # for things like pg_dump, etc.
+  dbbackup:
+    restart: "no"
+    image: postgres:9.6-alpine
+    env_file: .env.production
+    command: sh -c "psql -h $${DB_HOST} -p $${DB_PORT} -d $${DB_NAME} -U $${DB_USER}"
+    cpus: 0.25
     depends_on:
       - db
     networks:
