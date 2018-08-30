@@ -412,6 +412,7 @@ export default class Status extends ImmutablePureComponent {
             {Component => (<Component
               preview={video.get('preview_url')}
               src={video.get('url')}
+              alt={video.get('description')}
               inline
               sensitive={status.get('sensitive')}
               letterbox={settings.getIn(['media', 'letterbox'])}
@@ -474,6 +475,7 @@ export default class Status extends ImmutablePureComponent {
     const computedClass = classNames('status', `status-${status.get('visibility')}`, {
       collapsed: isCollapsed,
       'has-background': isCollapsed && background,
+      'status__wrapper-reply': !!status.get('in_reply_to_id'),
       muted,
     }, 'focusable');
 
