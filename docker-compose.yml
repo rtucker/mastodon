@@ -98,6 +98,7 @@ services:
   sidekiq:
     image: vulpineclub/mastodon:production
     restart: always
+    scale: 3
     env_file: .env.production
     environment:
       - DB_POOL=10
