@@ -1,8 +1,10 @@
 #  Mastodon Glitch Edition (Vulpine Club Remix)  #
 
-[![Build Status](https://travis-ci.org/vulpineclub/mastodon.svg?branch=master)](https://travis-ci.org/vulpineclub/mastodon)
+[![Build Status](https://img.shields.io/circleci/project/github/glitch-soc/mastodon.svg)](https://circleci.com/gh/vulpineclub/mastodon)
 
 ## Glitch Edition README ##
+
+[circleci-glitch-soc]: https://circleci.com/gh/glitch-soc/mastodon
 
 So here's the deal: we all work on this code, and then it runs on dev.glitch.social and anyone who uses that does so absolutely at their own risk. can you dig it?
 
@@ -11,9 +13,11 @@ So here's the deal: we all work on this code, and then it runs on dev.glitch.soc
 
 ## Vulpine Club Remix README ##
 
+[circleci-vulpineclub]: https://circleci.com/gh/vulpineclub/mastodon
+
 This is what's running on https://vulpine.club/, more or less. No warranties, it could destroy everything. 
 
-This is fork of https://github.com/glitch-soc/mastodon (hereafter referred to as "glitchsoc"), which is itself a fork of https://github.com/tootsuite/mastodon ("tootsuite").
+This is a fork of https://github.com/glitch-soc/mastodon (hereafter referred to as "glitchsoc"), which is itself a fork of https://github.com/tootsuite/mastodon ("tootsuite").
 
 ### Local features ###
 
@@ -31,4 +35,4 @@ Highlights:
 - `staging`: pre-production smoke tests, where I make sure it runs and looks okay and has basic functionality in a Vagrant-encrusted VM
 - `production`: this is what is actually deployed on vulpine.club
 
-These branches are automatically built on Docker Hub at [vulpineclub/mastodon](https://hub.docker.com/r/vulpineclub/mastodon/).
+The `production` branch is automatically built on Docker Hub at [vulpineclub/mastodon](https://hub.docker.com/r/vulpineclub/mastodon/).
