@@ -1,6 +1,25 @@
 version: '2.2'
 services:
 
+  nginx:
+    restart: always
+    image: nginx
+    depends_on:
+      - web
+      - streaming
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      external_network:
+        ipv6_address: 2600:3c03:e000:27b::e621:10
+      frontend_network:
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/nginx:/etc/nginx
+      - /srv/mastodon/vulpine.club/public:/srv/mastodon/vulpine.club/public
+      - /var/log/nginx:/var/log/nginx
+
   db:
     restart: always
     image: postgres:9.6-alpine
@@ -66,10 +85,13 @@ services:
       - MAX_THREADS=15
     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
     networks:
-      - external_network
-      - db_network
-      - redis_network
-      - es_network
+      external_network:
+      db_network:
+      es_network:
+      redis_network:
+      frontend_network:
+        aliases:
+          - fe_web
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
@@ -86,9 +108,12 @@ services:
     env_file: .env.production
     command: yarn start
     networks:
-      - external_network
-      - db_network
-      - redis_network
+      external_network:
+      db_network:
+      redis_network:
+      frontend_network:
+        aliases:
+          - fe_streaming
     ports:
       - "127.0.0.1:4000:4000"
     depends_on:
@@ -159,5 +184,7 @@ networks:
   redis_network:
     internal: true
   es_network:
+    internal: true
+  frontend_network:
     internal: true
 
