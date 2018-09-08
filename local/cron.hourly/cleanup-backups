@@ -1,5 +1,5 @@
 #!/bin/bash
 
-find /srv/mastodon/vulpine.club/pg_dump/ -type f -name daily.* -mtime +1 -delete
-find /srv/mastodon/vulpine.club/pg_dump/ -type f -name hourly.* -mmin +300 -delete
+find /srv/mastodon/vulpine.club/pg_dump/ -type f -name daily.* -mtime +2 -delete
+find /srv/mastodon/vulpine.club/pg_dump/ -type f -name hourly.* -mmin +180 -delete
 
