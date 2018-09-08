@@ -34,6 +34,8 @@ const mapStateToProps = state => ({
   searchHidden: state.getIn(['search', 'hidden']),
   searchValue: state.getIn(['search', 'value']),
   submitted: state.getIn(['search', 'submitted']),
+  unreadNotifications: state.getIn(['notifications', 'unread']),
+  showNotificationsBadge: state.getIn(['local_settings', 'notifications', 'tab_badge']),
 });
 
 //  Dispatch mapping.
@@ -87,6 +89,8 @@ class Drawer extends React.Component {
       searchValue,
       submitted,
       isSearchPage,
+      unreadNotifications,
+      showNotificationsBadge,
     } = this.props;
     const computedClass = classNames('drawer', `mbstobon-${elefriend}`);
 
@@ -96,6 +100,8 @@ class Drawer extends React.Component {
         {multiColumn ? (
           <DrawerHeader
             columns={columns}
+            unreadNotifications={unreadNotifications}
+            showNotificationsBadge={showNotificationsBadge}
             intl={intl}
             onSettingsClick={onOpenSettings}
           />
@@ -139,6 +145,8 @@ Drawer.propTypes = {
   searchHidden: PropTypes.bool,
   searchValue: PropTypes.string,
   submitted: PropTypes.bool,
+  unreadNotifications: PropTypes.number,
+  showNotificationsBadge: PropTypes.bool,
 
   //  Dispatch props.
   onChange: PropTypes.func,

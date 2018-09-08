@@ -10,13 +10,14 @@ import { isMobile } from 'flavours/glitch/util/is_mobile';
 import { debounce } from 'lodash';
 import { uploadCompose, resetCompose } from 'flavours/glitch/actions/compose';
 import { expandHomeTimeline } from 'flavours/glitch/actions/timelines';
-import { expandNotifications } from 'flavours/glitch/actions/notifications';
+import { expandNotifications, notificationsSetVisibility } from 'flavours/glitch/actions/notifications';
 import { fetchFilters } from 'flavours/glitch/actions/filters';
 import { clearHeight } from 'flavours/glitch/actions/height_cache';
 import { WrappedSwitch, WrappedRoute } from 'flavours/glitch/util/react_router_helpers';
 import UploadArea from './components/upload_area';
 import ColumnsAreaContainer from './containers/columns_area_container';
 import classNames from 'classnames';
+import Favico from 'favico.js';
 import {
   Drawer,
   Status,
@@ -64,6 +65,8 @@ const mapStateToProps = state => ({
   isWide: state.getIn(['local_settings', 'stretch']),
   navbarUnder: state.getIn(['local_settings', 'navbar_under']),
   dropdownMenuIsOpen: state.getIn(['dropdown_menu', 'openId']) !== null,
+  unreadNotifications: state.getIn(['notifications', 'unread']),
+  showFaviconBadge: state.getIn(['local_settings', 'notifications', 'favicon_badge']),
 });
 
 const keyMap = {
@@ -115,6 +118,8 @@ export default class UI extends React.Component {
     history: PropTypes.object.isRequired,
     intl: PropTypes.object.isRequired,
     dropdownMenuIsOpen: PropTypes.bool,
+    unreadNotifications: PropTypes.number,
+    showFaviconBadge: PropTypes.bool,
   };
 
   state = {
@@ -206,7 +211,27 @@ export default class UI extends React.Component {
     }
   }
 
+  handleVisibilityChange = () => {
+    const visibility = !document[this.visibilityHiddenProp];
+    this.props.dispatch(notificationsSetVisibility(visibility));
+  }
+
   componentWillMount () {
+    if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
+      this.visibilityHiddenProp = 'hidden';
+      this.visibilityChange = 'visibilitychange';
+    } else if (typeof document.msHidden !== 'undefined') {
+      this.visibilityHiddenProp = 'msHidden';
+      this.visibilityChange = 'msvisibilitychange';
+    } else if (typeof document.webkitHidden !== 'undefined') {
+      this.visibilityHiddenProp = 'webkitHidden';
+      this.visibilityChange = 'webkitvisibilitychange';
+    }
+    if (this.visibilityChange !== undefined) {
+      document.addEventListener(this.visibilityChange, this.handleVisibilityChange, false);
+      this.handleVisibilityChange();
+    }
+
     window.addEventListener('beforeunload', this.handleBeforeUnload, false);
     window.addEventListener('resize', this.handleResize, { passive: true });
     document.addEventListener('dragenter', this.handleDragEnter, false);
@@ -218,6 +243,8 @@ export default class UI extends React.Component {
     if ('serviceWorker' in  navigator) {
       navigator.serviceWorker.addEventListener('message', this.handleServiceWorkerPostMessage);
     }
+
+    this.favicon = new Favico({ animation:"none" });
 
     this.props.dispatch(expandHomeTimeline());
     this.props.dispatch(expandNotifications());
@@ -247,9 +274,19 @@ export default class UI extends React.Component {
     if (![this.props.location.pathname, '/'].includes(prevProps.location.pathname)) {
       this.columnsAreaNode.handleChildrenContentChange();
     }
+    if (this.props.unreadNotifications != prevProps.unreadNotifications ||
+        this.props.showFaviconBadge != prevProps.showFaviconBadge) {
+      if (this.favicon) {
+        this.favicon.badge(this.props.showFaviconBadge ? this.props.unreadNotifications : 0);
+      }
+    }
   }
 
   componentWillUnmount () {
+    if (this.visibilityChange !== undefined) {
+      document.removeEventListener(this.visibilityChange, this.handleVisibilityChange);
+    }
+
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
     window.removeEventListener('resize', this.handleResize);
     document.removeEventListener('dragenter', this.handleDragEnter);
