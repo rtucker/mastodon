@@ -7,7 +7,7 @@
 # have enough smartz to verify certificates and idgaf atm
 
 cd /srv/mastodon/vulpine.club/mastodon && \
-docker-compose run --rm dbmaint sh -c " \
+docker-compose run --rm dbbackup sh -c " \
 	umask 0377 &&
 	pg_dump -Fc -h db -d postgres -U postgres -f /dump/daily.$(date -Iseconds).pgdump" && \
 docker-compose run --rm web sh -c " \
