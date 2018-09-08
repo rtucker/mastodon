@@ -415,14 +415,14 @@
 
   &.top {
     bottom: -5px;
-    margin-left: -13px;
+    margin-left: -7px;
     border-width: 5px 7px 0;
     border-top-color: $ui-secondary-color;
   }
 
   &.bottom {
     top: -5px;
-    margin-left: -13px;
+    margin-left: -7px;
     border-width: 0 7px 5px;
     border-bottom-color: $ui-secondary-color;
   }
@@ -571,7 +571,7 @@
     }
   }
 
-  span {
+  span:last-child {
     margin-left: 5px;
     display: none;
   }
@@ -1119,6 +1119,22 @@
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.icon-badge-wrapper {
+  position: relative;
+}
+
+.icon-badge {
+  position: absolute;
+  display: block;
+  right: -.25em;
+  top: -.25em;
+  background-color: $ui-highlight-color;
+  border-radius: 50%;
+  font-size: 75%;
+  width: 1em;
+  height: 1em;
 }
 
 ::-webkit-scrollbar-thumb {
