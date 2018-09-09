@@ -50,7 +50,7 @@ class Item extends React.PureComponent {
   handleClick = (e) => {
     const { index, onClick } = this.props;
 
-    if (e.button === 0) {
+    if (e.button === 0 && !(e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       onClick(index);
     }
@@ -122,7 +122,7 @@ class Item extends React.PureComponent {
       const hasSize = typeof originalWidth === 'number' && typeof previewWidth === 'number';
 
       const srcSet = hasSize ? `${originalUrl} ${originalWidth}w, ${previewUrl} ${previewWidth}w` : null;
-      const sizes  = hasSize ? `${displayWidth * (width / 100)}px` : null;
+      const sizes  = hasSize && (displayWidth > 0) ? `${displayWidth * (width / 100)}px` : null;
 
       const focusX = attachment.getIn(['meta', 'focus', 'x']) || 0;
       const focusY = attachment.getIn(['meta', 'focus', 'y']) || 0;
@@ -154,6 +154,7 @@ class Item extends React.PureComponent {
           <video
             className='media-gallery__item-gifv-thumbnail'
             aria-label={attachment.get('description')}
+            title={attachment.get('description')}
             role='application'
             src={attachment.get('url')}
             onClick={this.handleClick}

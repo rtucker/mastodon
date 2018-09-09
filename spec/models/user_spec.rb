@@ -41,9 +41,9 @@ RSpec.describe User, type: :model do
     end
 
     it 'cleans out empty string from languages' do
-      user = Fabricate.build(:user, filtered_languages: [''])
+      user = Fabricate.build(:user, chosen_languages: [''])
       user.valid?
-      expect(user.filtered_languages).to eq []
+      expect(user.chosen_languages).to eq nil
     end
   end
 
@@ -512,7 +512,7 @@ RSpec.describe User, type: :model do
       context 'when user is confirmed' do
         let(:confirmed_at) { Time.zone.now }
 
-        it { is_expected.to be false }
+        it { is_expected.to be true }
       end
 
       context 'when user is not confirmed' do
