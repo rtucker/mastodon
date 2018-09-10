@@ -47,6 +47,23 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
+  # favicon trickery
+  if ($http_host = 0.vulpine.club) {
+    rewrite /favicon.ico /favicon-0.png;
+  }
+
+  if ($http_host = 1.vulpine.club) {
+    rewrite /favicon.ico /favicon-1.png;
+  }
+
+  if ($http_host = 2.vulpine.club) {
+    rewrite /favicon.ico /favicon-2.png;
+  }
+
+  if ($http_host = 3.vulpine.club) {
+    rewrite /favicon.ico /favicon-3.png;
+  }
+
   # precompiled static assets
   location ~ ^/(emoji|packs) {
     add_header Cache-Control "public, max-age=31536000, immutable";
