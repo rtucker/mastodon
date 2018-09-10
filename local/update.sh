@@ -13,4 +13,4 @@ cp /etc/cron.hourly/mastodon cron.hourly/
 cp /etc/cron.hourly/cleanup-backups cron.hourly/
 
 mkdir -p ../public/assets/
-curl http://127.0.0.1:3000/assets/500.html > ../public/assets/500.html
+curl https://vulpine.club/500 > ../public/assets/500.html
