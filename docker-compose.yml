@@ -79,9 +79,10 @@ services:
     #build: .
     image: vulpineclub/mastodon:production
     restart: always
+    scale: 2
     env_file: .env.production
     environment:
-      - WEB_CONCURRENCY=4
+      - WEB_CONCURRENCY=2
       - MAX_THREADS=15
     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000 -b '0.0.0.0'"
     networks:
@@ -92,8 +93,6 @@ services:
       frontend_network:
         aliases:
           - fe_web
-    ports:
-      - "127.0.0.1:3000:3000"
     depends_on:
       - db
       - redis
@@ -105,6 +104,7 @@ services:
   streaming:
     image: vulpineclub/mastodon:production
     restart: always
+    scale: 2
     env_file: .env.production
     command: yarn start
     networks:
@@ -114,8 +114,6 @@ services:
       frontend_network:
         aliases:
           - fe_streaming
-    ports:
-      - "127.0.0.1:4000:4000"
     depends_on:
       - db
       - redis
