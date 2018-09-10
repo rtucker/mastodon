@@ -123,7 +123,7 @@ services:
   sidekiq:
     image: vulpineclub/mastodon:production
     restart: always
-    scale: 3
+    scale: 4
     env_file: .env.production
     environment:
       - DB_POOL=10
