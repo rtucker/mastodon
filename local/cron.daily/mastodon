@@ -7,7 +7,7 @@
 # have enough smartz to verify certificates and idgaf atm
 
 (
-    flock -n 9 -w 7200 || exit 1
+    flock -w 7200 9 || exit 1
 
     cd /srv/mastodon/vulpine.club/mastodon && \
     docker-compose run --rm dbbackup sh -c " \
