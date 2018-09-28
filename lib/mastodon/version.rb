@@ -29,7 +29,7 @@ module Mastodon
     end
 
     def suffix
-      '+glitch'
+      '+glitch+vulpine'
     end
 
     def to_s
@@ -37,7 +37,7 @@ module Mastodon
     end
 
     def repository
-      'glitch-soc/mastodon'
+      'vulpineclub/mastodon'
     end
 
     def source_base_url
