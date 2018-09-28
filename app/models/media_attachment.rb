@@ -90,7 +90,7 @@ class MediaAttachment < ApplicationRecord
     },
   }.freeze
 
-  IMAGE_LIMIT = 8.megabytes
+  IMAGE_LIMIT = 12.megabytes
   VIDEO_LIMIT = 40.megabytes
 
   belongs_to :account, inverse_of: :media_attachments, optional: true
@@ -102,8 +102,8 @@ class MediaAttachment < ApplicationRecord
                     convert_options: { all: '-quality 90 -strip' }
 
   validates_attachment_content_type :file, content_type: IMAGE_MIME_TYPES + VIDEO_MIME_TYPES + AUDIO_MIME_TYPES
-  validates_attachment_size :file, less_than: IMAGE_LIMIT, unless: :video?
-  validates_attachment_size :file, less_than: VIDEO_LIMIT, if: :video?
+  validates_attachment_size :file, less_than: IMAGE_LIMIT, unless: :video? || :audio?
+  validates_attachment_size :file, less_than: VIDEO_LIMIT, if: :video? || :audio?
   remotable_attachment :file, VIDEO_LIMIT
 
   include Attachmentable
