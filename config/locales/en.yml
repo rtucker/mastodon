@@ -526,7 +526,7 @@ en:
       title: Security verification failed
     '429': Throttled
     '500':
-      content: We're sorry, but something went wrong on our end. Please try again in a few moments, or see <a href="https://vulpineclub.github.io/status">our status page</a> if it won't stop being broken.
+      content: We're sorry, but something went wrong on our end. Please try again in a few moments, or see https://vulpineclub.github.io/status if it just won't stop being broken.
       title: 500 Internal Fox Error
     noscript_html: To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the <a href="%{apps_path}">native apps</a> for Mastodon for your platform.
   exports:
