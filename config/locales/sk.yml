@@ -37,7 +37,7 @@ sk:
     terms: Podmienky užívania
     user_count_after:
       one: užívateľ
-      other: užívatelia
+      other: užívateľov
     user_count_before: Domov pre
     what_is_mastodon: Čo je Mastodon?
   accounts:
@@ -45,8 +45,8 @@ sk:
     follow: Sledovať
     followers:
       one: Následovateľ
-      other: Následovatelia
-    following: Sleduje
+      other: Sledovatelia
+    following: Sledovaní
     joined: Pridal/a sa %{date}
     media: Médiá
     moved_html: "%{name} účet bol presunutý na %{new_profile_link}:"
@@ -93,9 +93,9 @@ sk:
       disabled: Blokovaný
       display_name: Zobraziť meno
       domain: Doména
-      edit: Upraviť
-      email: Email
-      email_status: Stav Email
+      edit: Uprav
+      email: Emailová adresa
+      email_status: Stav emailu
       enable: Povoliť
       enabled: Povolený
       feed_url: URL časovej osi
@@ -520,7 +520,7 @@ sk:
     '500':
       content: Ospravedlňujeme sa. Niečo sa pokazilo na našom konci.
       title: Táto stránka nieje v poriadku
-    noscript_html: Aby bolo možné používať Mastodon web aplikáciu, prosím povoľte JavaScript. Alebo skúste jednu z <a href="https://github.com/tootsuite/documentation/blob/master/Using-Mastodon/Apps.md"> aplikácii </a> dostupných pre vašu platformu.
+    noscript_html: Aby bolo možné používať Mastodon web aplikáciu, prosím povoľte JavaScript. Alebo skúste jednu z <a href="%{apps_path}"> aplikácii </a> dostupných pre vašu platformu.
   exports:
     archive_takeout:
       date: Dátum

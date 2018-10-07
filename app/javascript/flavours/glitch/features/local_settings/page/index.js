@@ -96,7 +96,7 @@ export default class LocalSettingsPage extends React.PureComponent {
       </div>
     ),
     ({ intl, onChange, settings }) => (
-      <div className='glitch local-settings_page compose_box_opts'>
+      <div className='glitch local-settings__page compose_box_opts'>
         <h1><FormattedMessage id='settings.compose_box_opts' defaultMessage='Compose box options' /></h1>
         <LocalSettingsPageItem
           settings={settings}
@@ -105,6 +105,14 @@ export default class LocalSettingsPage extends React.PureComponent {
           onChange={onChange}
         >
           <FormattedMessage id='settings.always_show_spoilers_field' defaultMessage='Always enable the Content Warning field' />
+        </LocalSettingsPageItem>
+        <LocalSettingsPageItem
+          settings={settings}
+          item={['preselect_on_reply']}
+          id='mastodon-settings--preselect_on_reply'
+          onChange={onChange}
+        >
+          <FormattedMessage id='settings.preselect_on_reply' defaultMessage='Pre-select usernames past the first when replying to a toot with multiple participants' />
         </LocalSettingsPageItem>
         <LocalSettingsPageItem
           settings={settings}
@@ -259,6 +267,18 @@ export default class LocalSettingsPage extends React.PureComponent {
             dependsOn={[['collapsed', 'enabled']]}
           >
             <FormattedMessage id='settings.image_backgrounds_media' defaultMessage='Preview collapsed toot media' />
+          </LocalSettingsPageItem>
+        </section>
+        <section>
+          <h2></h2>
+          <LocalSettingsPageItem
+            settings={settings}
+            item={['collapsed', 'show_action_bar']}
+            id='mastodon-settings--collapsed-show-action-bar'
+            onChange={onChange}
+            dependsOn={[['collapsed', 'enabled']]}
+          >
+            <FormattedMessage id='settings.show_action_bar' defaultMessage='Show action buttons in collapsed toots' />
           </LocalSettingsPageItem>
         </section>
       </div>

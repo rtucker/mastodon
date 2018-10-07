@@ -1,10 +1,8 @@
 #  Mastodon Glitch Edition (Vulpine Club Remix)  #
 
-[![Build Status](https://img.shields.io/circleci/project/github/glitch-soc/mastodon.svg)](https://circleci.com/gh/vulpineclub/mastodon)
+[![Build Status](https://img.shields.io/circleci/project/github/vulpineclub/mastodon.svg)][circleci]
 
-## Glitch Edition README ##
-
-[circleci-glitch-soc]: https://circleci.com/gh/glitch-soc/mastodon
+[circleci]: https://circleci.com/gh/vulpineclub/mastodon
 
 So here's the deal: we all work on this code, and then it runs on dev.glitch.social and anyone who uses that does so absolutely at their own risk. can you dig it?
 
