@@ -14,7 +14,7 @@ MAX_PER_HOUR=3
 MAX_PER_DAY=12
 
 LOG_FILENAME="/var/tmp/floodgate.dat"
-RAILS_CMD="/usr/local/bin/docker-compose run --rm web rails"
+RAILS_CMD="/usr/local/bin/docker-compose run --rm web tootctl settings registrations"
 
 import requests
 import subprocess
@@ -60,9 +60,9 @@ def set_registration(v):
     cmd = RAILS_CMD.split(' ')
 
     if v:
-        cmd += ['mastodon:settings:open_registrations']
+        cmd += ['open']
     else:
-        cmd += ['mastodon:settings:close_registrations']
+        cmd += ['close']
 
     subprocess.call(cmd)
 
