@@ -23,7 +23,7 @@ if Rails.env.production?
     p.font_src        :self, assets_host
     p.img_src         :self, :https, :data, :blob
     p.style_src       :self, :unsafe_inline, assets_host
-    p.media_src       :self, :data, *data_hosts
+    p.media_src       :self, :data, *data_hosts, "d2pc52zrmidoft.cloudfront.net", "cdn-assets.vulpine.owogroupllc.com"
     p.frame_src       :self, :https
     p.worker_src      :self, assets_host
     p.connect_src     :self, :blob, Rails.configuration.x.streaming_api_base_url, *data_hosts
