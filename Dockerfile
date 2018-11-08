@@ -87,6 +87,6 @@ USER mastodon
 
 VOLUME /mastodon/public/system
 
-RUN OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder bundle exec rails assets:precompile
+RUN CDN_HOST=cdn-assets.vulpine.owogroupllc.com OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder bundle exec rails assets:precompile
 
 ENTRYPOINT ["/sbin/tini", "--"]
