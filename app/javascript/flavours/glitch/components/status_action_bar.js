@@ -192,6 +192,7 @@ export default class StatusActionBar extends ImmutablePureComponent {
     const mutingConversation = status.get('muted');
     const anonymousAccess    = !me;
     const publicStatus       = ['public', 'unlisted'].includes(status.get('visibility'));
+    const pinnableStatus     = ['public', 'unlisted', 'private'].includes(status.get('visibility'));
     const reblogDisabled     = status.get('visibility') === 'direct' || (status.get('visibility') === 'private' && me !== status.getIn(['account', 'id']));
     const reblogMessage      = status.get('visibility') === 'private' ? messages.reblog_private : messages.reblog;
 
@@ -215,7 +216,7 @@ export default class StatusActionBar extends ImmutablePureComponent {
     }
 
     if (status.getIn(['account', 'id']) === me) {
-      if (publicStatus) {
+      if (pinnableStatus) {
         menu.push({ text: intl.formatMessage(status.get('pinned') ? messages.unpin : messages.pin), action: this.handlePinClick });
       }
 

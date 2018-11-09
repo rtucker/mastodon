@@ -137,6 +137,7 @@ class ActionBar extends React.PureComponent {
     const { status, intl } = this.props;
 
     const publicStatus = ['public', 'unlisted'].includes(status.get('visibility'));
+    const pinnableStatus = ['public', 'unlisted', 'private'].includes(status.get('visibility'));
     const mutingConversation = status.get('muted');
 
     let menu = [];
@@ -148,12 +149,11 @@ class ActionBar extends React.PureComponent {
     }
 
     if (me === status.getIn(['account', 'id'])) {
-      if (publicStatus) {
+      if (pinnableStatus) {
         menu.push({ text: intl.formatMessage(status.get('pinned') ? messages.unpin : messages.pin), action: this.handlePinClick });
-      } else {
-        if (status.get('visibility') === 'private') {
-          menu.push({ text: intl.formatMessage(status.get('reblogged') ? messages.cancel_reblog_private : messages.reblog_private), action: this.handleReblogClick });
-        }
+      }
+      if (status.get('visibility') === 'private') {
+        menu.push({ text: intl.formatMessage(status.get('reblogged') ? messages.cancel_reblog_private : messages.reblog_private), action: this.handleReblogClick });
       }
 
       menu.push(null);

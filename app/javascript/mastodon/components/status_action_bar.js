@@ -183,6 +183,7 @@ class StatusActionBar extends ImmutablePureComponent {
     const mutingConversation = status.get('muted');
     const anonymousAccess    = !me;
     const publicStatus       = ['public', 'unlisted'].includes(status.get('visibility'));
+    const pinnableStatus       = ['public', 'unlisted', 'private'].includes(status.get('visibility'));
 
     let menu = [];
     let reblogIcon = 'retweet';
@@ -204,12 +205,11 @@ class StatusActionBar extends ImmutablePureComponent {
     }
 
     if (status.getIn(['account', 'id']) === me) {
-      if (publicStatus) {
+      if (pinnableStatus) {
         menu.push({ text: intl.formatMessage(status.get('pinned') ? messages.unpin : messages.pin), action: this.handlePinClick });
-      } else {
-        if (status.get('visibility') === 'private') {
-          menu.push({ text: intl.formatMessage(status.get('reblogged') ? messages.cancel_reblog_private : messages.reblog_private), action: this.handleReblogClick });
-        }
+      }
+      if (status.get('visibility') === 'private') {
+        menu.push({ text: intl.formatMessage(status.get('reblogged') ? messages.cancel_reblog_private : messages.reblog_private), action: this.handleReblogClick });
       }
 
       menu.push({ text: intl.formatMessage(messages.delete), action: this.handleDeleteClick });
