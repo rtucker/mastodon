@@ -79,14 +79,17 @@ RUN bundle config build.nokogiri --with-iconv-lib=/usr/local/lib --with-iconv-in
  && yarn cache clean
 
 # Docker Hub doesn't support the --chown flag, wtf
-#COPY --chown=mastodon:mastodon . /mastodon
-COPY . /mastodon
-USER root
-RUN chown -R mastodon:mastodon /mastodon
-USER mastodon
+COPY --chown=mastodon:mastodon . /mastodon
+# COPY . /mastodon
+# USER root
+# RUN chown -R mastodon:mastodon /mastodon
+# USER mastodon
 
 VOLUME /mastodon/public/system
 
-RUN CDN_HOST=https://cdn-assets.vulpine.owogroupllc.com OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder bundle exec rails assets:precompile
+RUN CDN_HOST=https://cdn-assets.vulpine.owogroupllc.com \
+    OTP_SECRET=precompile_placeholder \
+    SECRET_KEY_BASE=precompile_placeholder \
+    bundle exec rails assets:precompile
 
 ENTRYPOINT ["/sbin/tini", "--"]
