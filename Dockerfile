@@ -62,15 +62,6 @@ RUN apk -U upgrade \
  && cd /mastodon \
  && rm -rf /tmp/* /var/cache/apk/*
 
-RUN addgroup -g ${GID} mastodon \
- && adduser -h /mastodon -s /bin/sh -D -G mastodon -u ${UID} mastodon \
- && chown -R mastodon:mastodon /mastodon
-
-USER mastodon
-
-RUN mkdir -p /mastodon/public/system /mastodon/public/assets /mastodon/public/packs
-
-# Do this as its own operation, to improve probability of a cache hit
 COPY Gemfile Gemfile.lock package.json yarn.lock .yarnclean /mastodon/
 
 RUN bundle config build.nokogiri --with-iconv-lib=/usr/local/lib --with-iconv-include=/usr/local/include \
@@ -78,14 +69,17 @@ RUN bundle config build.nokogiri --with-iconv-lib=/usr/local/lib --with-iconv-in
  && yarn install --pure-lockfile --ignore-engines \
  && yarn cache clean
 
-# Docker Hub doesn't support the --chown flag, wtf
-COPY --chown=mastodon:mastodon . /mastodon
-# COPY . /mastodon
-# USER root
-# RUN chown -R mastodon:mastodon /mastodon
-# USER mastodon
+RUN addgroup -g ${GID} mastodon && adduser -h /mastodon -s /bin/sh -D -G mastodon -u ${UID} mastodon \
+ && mkdir -p /mastodon/public/system /mastodon/public/assets /mastodon/public/packs \
+ && chown -R mastodon:mastodon /mastodon/public
+
+COPY . /mastodon
+
+RUN chown -R mastodon:mastodon /mastodon
 
 VOLUME /mastodon/public/system
+
+USER mastodon
 
 RUN CDN_HOST=https://cdn-assets.vulpine.owogroupllc.com \
     OTP_SECRET=precompile_placeholder \
