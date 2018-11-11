@@ -122,6 +122,7 @@ services:
       - external_network
       - db_network
 
+  # easy client access to the db server side of things
   dbbackup:
     restart: "no"
     image: postgres:9.6-alpine
@@ -135,9 +136,11 @@ services:
     volumes:
       - /srv/mastodon/vulpine.club/pg_dump:/dump
 
+  # front end web server
+  # https://hub.docker.com/_/nginx/
   nginx:
     restart: always
-    image: nginx
+    image: nginx:alpine
     depends_on:
       - web
       - streaming
@@ -161,7 +164,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.18.0.0/16
+        - subnet: 172.31.0.0/16
         - subnet: 2600:3c03:e000:027b::/64
   internal_network:
     internal: true
