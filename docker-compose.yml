@@ -1,25 +1,6 @@
 version: '2.2'
 services:
 
-  nginx:
-    restart: always
-    image: nginx
-    depends_on:
-      - web
-      - streaming
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      external_network:
-        ipv6_address: 2600:3c03:e000:27b::e621:10
-      frontend_network:
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /etc/nginx:/etc/nginx
-      - /srv/mastodon/vulpine.club/public:/srv/mastodon/vulpine.club/public
-      - /var/log/nginx:/var/log/nginx
-
   db:
     restart: always
     image: postgres:9.6-alpine
@@ -27,30 +8,6 @@ services:
       - db_network
     volumes:
       - /srv/mastodon/vulpine.club/postgres:/var/lib/postgresql/data
-
-  dbmaint:
-    restart: "no"
-    image: postgres:9.6-alpine
-    env_file: .env.production
-    command: sh -c "psql -h $${DB_HOST} -p $${DB_PORT} -d $${DB_NAME} -U $${DB_USER}"
-    depends_on:
-      - db
-    networks:
-      - db_network
-
-  # for things like pg_dump, etc.
-  dbbackup:
-    restart: "no"
-    image: postgres:9.6-alpine
-    env_file: .env.production
-    command: sh -c "psql -h $${DB_HOST} -p $${DB_PORT} -d $${DB_NAME} -U $${DB_USER}"
-    cpus: 0.25
-    depends_on:
-      - db
-    networks:
-      - db_network
-    volumes:
-      - /srv/mastodon/vulpine.club/pg_dump:/dump
 
   redis:
     restart: always
@@ -76,11 +33,11 @@ services:
       - /srv/mastodon/vulpine.club/elasticsearch:/usr/share/elasticsearch/data
 
   web:
-    #build: .
     image: vulpineclub/mastodon:production
     restart: always
     scale: 2
     env_file: .env.production
+    # are these envs necessary?
     environment:
       - WEB_CONCURRENCY=2
       - MAX_THREADS=15
@@ -90,7 +47,7 @@ services:
       db_network:
       es_network:
       redis_network:
-      frontend_network:
+      internal_network:
         aliases:
           - fe_web
     depends_on:
@@ -111,7 +68,7 @@ services:
       external_network:
       db_network:
       redis_network:
-      frontend_network:
+      internal_network:
         aliases:
           - fe_streaming
     depends_on:
@@ -123,12 +80,9 @@ services:
     restart: always
     scale: 4
     env_file: .env.production
-    environment:
-      - DB_POOL=10
-    command: bundle exec sidekiq -q default -q push -q mailers -q pull
+    command: bundle exec sidekiq
     depends_on:
       - db
-      - es
       - redis
     networks:
       - external_network
@@ -155,10 +109,10 @@ services:
 #    networks:
 #      - external_network
 #      - internal_network
-  
+
+# local additions
   ambassador:
     restart: always
-    #build: ./local/ambassador
     image: vulpineclub/ambassador
     env_file: .env.ambassador
     command: yarn start
@@ -167,6 +121,38 @@ services:
     networks:
       - external_network
       - db_network
+
+  dbbackup:
+    restart: "no"
+    image: postgres:9.6-alpine
+    env_file: .env.production
+    command: sh -c "psql -h $${DB_HOST} -p $${DB_PORT} -d $${DB_NAME} -U $${DB_USER}"
+    cpus: 0.25
+    depends_on:
+      - db
+    networks:
+      - db_network
+    volumes:
+      - /srv/mastodon/vulpine.club/pg_dump:/dump
+
+  nginx:
+    restart: always
+    image: nginx
+    depends_on:
+      - web
+      - streaming
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      external_network:
+        ipv6_address: 2600:3c03:e000:27b::e621:10
+      internal_network:
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/nginx:/etc/nginx
+      - /srv/mastodon/vulpine.club/public:/srv/mastodon/vulpine.club/public
+      - /var/log/nginx:/var/log/nginx
 
 networks:
   external_network:
@@ -177,12 +163,12 @@ networks:
       config:
         - subnet: 172.18.0.0/16
         - subnet: 2600:3c03:e000:027b::/64
+  internal_network:
+    internal: true
   db_network:
     internal: true
   redis_network:
     internal: true
   es_network:
-    internal: true
-  frontend_network:
     internal: true
 
