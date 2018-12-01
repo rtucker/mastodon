@@ -1,3 +1,4 @@
+import Immutable from 'immutable';
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -57,13 +58,49 @@ const messages = defineMessages({
 const makeMapStateToProps = () => {
   const getStatus = makeGetStatus();
 
-  const mapStateToProps = (state, props) => ({
-    status: getStatus(state, { id: props.params.statusId }),
-    settings: state.get('local_settings'),
-    ancestorsIds: state.getIn(['contexts', 'ancestors', props.params.statusId]),
-    descendantsIds: state.getIn(['contexts', 'descendants', props.params.statusId]),
-    askReplyConfirmation: state.getIn(['compose', 'text']).trim().length !== 0,
-  });
+  const mapStateToProps = (state, props) => {
+    const status = getStatus(state, { id: props.params.statusId });
+    let ancestorsIds = Immutable.List();
+    let descendantsIds = Immutable.List();
+
+    if (status) {
+      ancestorsIds = ancestorsIds.withMutations(mutable => {
+        let id = status.get('in_reply_to_id');
+
+        while (id) {
+          mutable.unshift(id);
+          id = state.getIn(['contexts', 'inReplyTos', id]);
+        }
+      });
+
+      descendantsIds = descendantsIds.withMutations(mutable => {
+        const ids = [status.get('id')];
+
+        while (ids.length > 0) {
+          let id        = ids.shift();
+          const replies = state.getIn(['contexts', 'replies', id]);
+
+          if (status.get('id') !== id) {
+            mutable.push(id);
+          }
+
+          if (replies) {
+            replies.reverse().forEach(reply => {
+              ids.unshift(reply);
+            });
+          }
+        }
+      });
+    }
+
+    return {
+      status,
+      ancestorsIds,
+      descendantsIds,
+      settings: state.get('local_settings'),
+      askReplyConfirmation: state.getIn(['compose', 'text']).trim().length !== 0,
+    };
+  };
 
   return mapStateToProps;
 };
@@ -91,26 +128,36 @@ export default class Status extends ImmutablePureComponent {
     fullscreen: false,
     isExpanded: undefined,
     threadExpanded: undefined,
+    statusId: undefined,
   };
-
-  componentWillMount () {
-    this.props.dispatch(fetchStatus(this.props.params.statusId));
-  }
 
   componentDidMount () {
     attachFullscreenListener(this.onFullScreenChange);
+    this.props.dispatch(fetchStatus(this.props.params.statusId));
+
+    const { status, ancestorsIds } = this.props;
+
+    if (status && ancestorsIds && ancestorsIds.size > 0) {
+      const element = this.node.querySelectorAll('.focusable')[ancestorsIds.size - 1];
+
+      window.requestAnimationFrame(() => {
+        element.scrollIntoView(true);
+      });
+    }
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (this.state.isExpanded === undefined) {
-      const isExpanded = autoUnfoldCW(nextProps.settings, nextProps.status);
-      if (isExpanded !== undefined) this.setState({ isExpanded: isExpanded });
+  static getDerivedStateFromProps(props, state) {
+    if (state.statusId === props.params.statusId || !props.params.statusId) {
+      return null;
     }
-    if (nextProps.params.statusId !== this.props.params.statusId && nextProps.params.statusId) {
-      this._scrolledIntoView = false;
-      this.props.dispatch(fetchStatus(nextProps.params.statusId));
-      this.setState({ isExpanded: autoUnfoldCW(nextProps.settings, nextProps.status), threadExpanded: undefined });
-    }
+
+    props.dispatch(fetchStatus(props.params.statusId));
+
+    return {
+      threadExpanded: undefined,
+      isExpanded: autoUnfoldCW(props.settings, props.status),
+      statusId: props.params.statusId,
+    };
   }
 
   handleExpandedToggle = () => {
@@ -338,20 +385,17 @@ export default class Status extends ImmutablePureComponent {
     this.node = c;
   }
 
-  componentDidUpdate () {
-    if (this._scrolledIntoView) {
-      return;
-    }
+  componentDidUpdate (prevProps) {
+    if (this.props.params.statusId && (this.props.params.statusId !== prevProps.params.statusId || prevProps.ancestorsIds.size < this.props.ancestorsIds.size)) {
+      const { status, ancestorsIds } = this.props;
 
-    const { status, ancestorsIds } = this.props;
+      if (status && ancestorsIds && ancestorsIds.size > 0) {
+        const element = this.node.querySelectorAll('.focusable')[ancestorsIds.size - 1];
 
-    if (status && ancestorsIds && ancestorsIds.size > 0) {
-      const element = this.node.querySelectorAll('.focusable')[ancestorsIds.size - 1];
-
-      window.requestAnimationFrame(() => {
-        element.scrollIntoView(true);
-      });
-      this._scrolledIntoView = true;
+        window.requestAnimationFrame(() => {
+          element.scrollIntoView(true);
+        });
+      }
     }
   }
 
