@@ -10,7 +10,6 @@ cp /etc/cron.daily/certbot cron.daily/
 cp /etc/cron.daily/mastodon cron.daily/
 
 cp /etc/cron.hourly/mastodon cron.hourly/
-cp /etc/cron.hourly/cleanup-backups cron.hourly/
 
 mkdir -p ../public/assets/
 curl https://vulpine.club/500 > ../public/assets/500.html
