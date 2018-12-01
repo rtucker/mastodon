@@ -165,6 +165,12 @@ export default class GettingStarted extends ImmutablePureComponent {
 
           <div className='getting-started__footer'>
             <ul>
+              <li><a href='https://vulpineclub.github.io/status' target='_blank'><FormattedMessage id='getting_started.status' defaultMessage='System status' /></a> · </li>
+              <li><a href='https://discord.gg/YXJQ3Xj' target='_blank'><FormattedMessage id='getting_started.discord' defaultMessage='Discord community chat' /></a> · </li>
+              <li><a href='https://www.translifeline.org/' target='_blank'><FormattedMessage id='getting_started.lifeline' defaultMessage='Trans Lifeline +1-877-565-8860' /></a> · </li>
+              <li><a href='https://duckduckgo.com/?q=foxes&ia=images&iax=images' target='_blank'><FormattedMessage id='getting_started.foxes' defaultMessage='Foxes' /></a></li>
+            </ul>
+            <ul>
               <li><a href='https://bridge.joinmastodon.org/' target='_blank'><FormattedMessage id='getting_started.find_friends' defaultMessage='Find friends from Twitter' /></a> · </li>
               {invitesEnabled && <li><a href='/invites' target='_blank'><FormattedMessage id='getting_started.invite' defaultMessage='Invite people' /></a> · </li>}
               <li><a href='/about/more' target='_blank'><FormattedMessage id='navigation_bar.info' defaultMessage='About this instance' /></a> · </li>
