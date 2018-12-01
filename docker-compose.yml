@@ -78,9 +78,9 @@ services:
   sidekiq:
     image: vulpineclub/mastodon:production
     restart: always
-    scale: 4
+    scale: 2
     env_file: .env.production
-    command: bundle exec sidekiq
+    command: bundle exec sidekiq -c 10
     depends_on:
       - db
       - redis
