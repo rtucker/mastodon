@@ -1,0 +1,20 @@
+/var/log/nginx/*.log /srv/mastodon/vulpine.club/nginx_logs/*.log {
+	daily
+	missingok
+	rotate 2
+	compress
+	delaycompress
+	notifempty
+	#create 0640 root root
+    copytruncate
+    shred
+	sharedscripts
+	prerotate
+		if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+			run-parts /etc/logrotate.d/httpd-prerotate; \
+		fi \
+	endscript
+	#postrotate
+	#	invoke-rc.d nginx rotate >/dev/null 2>&1
+	#endscript
+}
