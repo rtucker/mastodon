@@ -141,10 +141,12 @@ class Status < ApplicationRecord
     if preloaded.nil?
       ids += mentions.pluck(:account_id)
       ids += favourites.pluck(:account_id)
+      ids += bookmarks.pluck(:account_id)
       ids += reblogs.pluck(:account_id)
     else
       ids += preloaded.mentions[id] || []
       ids += preloaded.favourites[id] || []
+      ids += preloaded.bookmarks[id] || []
       ids += preloaded.reblogs[id] || []
     end
 
