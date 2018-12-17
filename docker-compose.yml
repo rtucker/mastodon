@@ -1,3 +1,4 @@
+# vim: ts=2 sw=2 et
 version: '2.2'
 services:
 
@@ -158,6 +159,82 @@ services:
       - /srv/mastodon/vulpine.club/nginx_cache:/var/cache/nginx
       - /srv/mastodon/vulpine.club/nginx_logs:/var/log/nginx
 
+  prometheus:
+    restart: always
+    image: prom/prometheus
+    # TODO depends_on
+    networks:
+      - monitoring_network
+    links:  
+      - prometheus_sidekiq_exporter:sidekiq-exporter
+      - prometheus_elasticsearch_exporter:elasticsearch-exporter
+      - prometheus_node_exporter:node-exporter
+      - prometheus_nginx_exporter:nginx-exporter
+    volumes:
+      - /srv/mastodon/vulpine.club/monitoring-and-alerting/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /srv/mastodon/vulpine.club/monitoring-and-alerting/prometheus/data:/prometheus
+
+  prometheus_sidekiq_exporter:
+    restart: always
+    image: alexand/sidekiq-prometheus-exporter
+    networks:
+      - monitoring_network
+      - redis_network
+    links:
+      - redis
+
+  prometheus_elasticsearch_exporter:
+    restart: always
+    image: justwatch/elasticsearch_exporter:1.0.2
+    command:
+     - '-es.uri=http://es:9200'
+    networks:
+      - monitoring_network
+      - es_network
+    links:
+      - es
+
+  prometheus_node_exporter:
+    restart: always
+    image: prom/node-exporter:v0.15.2
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    networks:
+      - monitoring_network
+
+  prometheus_nginx_exporter:
+    restart: always
+    image: nginx/nginx-prometheus-exporter:0.2.0
+    command:
+      - '-nginx.scrape-uri=http://nginx/stub_stats'
+    networks:
+      - monitoring_network
+      - internal_network
+    links:
+      - nginx
+
+  grafana:
+    restart: always
+    image: grafana/grafana:5.3.2
+    volumes:
+      - /srv/mastodon/vulpine.club/monitoring-and-alerting/grafana/lib:/var/lib/grafana
+      - /srv/mastodon/vulpine.club/monitoring-and-alerting/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - /srv/mastodon/vulpine.club/monitoring-and-alerting/grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+    networks:
+      - monitoring_network
+      - internal_network
+      - external_network
+    links:
+      - prometheus
+
+
 networks:
   external_network:
     driver: bridge
@@ -174,5 +251,7 @@ networks:
   redis_network:
     internal: true
   es_network:
+    internal: true
+  monitoring_network:
     internal: true
 
