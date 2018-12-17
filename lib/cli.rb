@@ -7,6 +7,7 @@ require_relative 'mastodon/accounts_cli'
 require_relative 'mastodon/feeds_cli'
 require_relative 'mastodon/settings_cli'
 require_relative 'mastodon/domains_cli'
+require_relative 'mastodon/vulpine_cli'
 
 module Mastodon
   class CLI < Thor
@@ -31,5 +32,8 @@ module Mastodon
 
     desc 'domains SUBCOMMAND ...ARGS', 'Manage account domains'
     subcommand 'domains', Mastodon::DomainsCLI
+
+    desc 'vulpine SUBCOMMAND ...ARGS', 'Local vulpine.club helpers'
+    subcommand 'vulpine', Mastodon::VulpineCLI
   end
 end
