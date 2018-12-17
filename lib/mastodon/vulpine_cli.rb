@@ -45,9 +45,11 @@ module Mastodon
     def sknecro
       ds = Sidekiq::DeadSet.new
 
-      say("Retrying #{ds.size}", :green, false)
+      jobs = ds
 
-      ds.each do |job|
+      say("Retrying #{jobs.size}", :green, false)
+
+      jobs.each do |job|
         sleep 1
         job.retry
         say('.', nil, false)
@@ -66,12 +68,24 @@ module Mastodon
 
         jobs = rs.select {|j| j.value.include? "https://#{domain}"}
 
-        say("Retrying #{jobs.size}", :green, false)
+        # This is incredibly naive guess for inbox URL
+        inbox_url = "https://#{domain}/inbox"
 
-        rs.each do |job|
+        say("Retrying #{jobs.size} from #{domain}", :green, false)
+
+        jobs.each do |job|
           sleep 1
-          job.retry
-          say('.', nil, false)
+
+          light = Stoplight(inbox_url)
+
+          if light.color == "green"
+            job.retry
+            say('.', :green, false)
+          elsif light.color == "yellow"
+            say('!', :yellow, false)
+          else
+            say('x', :red, false)
+          end
         end
 
         say
