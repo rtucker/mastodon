@@ -159,6 +159,16 @@ services:
       - /srv/mastodon/vulpine.club/nginx_cache:/var/cache/nginx
       - /srv/mastodon/vulpine.club/nginx_logs:/var/log/nginx
 
+  prometheus:
+    restart: always
+    image: prom/prometheus
+    # TODO depends_on
+    networks:
+      - monitoring_network
+    volumes:
+      - /srv/mastodon/vulpine.club/monitoring-and-alerting/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /srv/mastodon/vulpine.club/monitoring-and-alerting/prometheus/data:/prometheus
+
 networks:
   external_network:
     driver: bridge
@@ -175,5 +185,7 @@ networks:
   redis_network:
     internal: true
   es_network:
+    internal: true
+  monitoring_network:
     internal: true
 
