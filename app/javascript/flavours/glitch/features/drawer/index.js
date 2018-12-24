@@ -23,7 +23,7 @@ import DrawerResults from './results';
 import DrawerSearch from './search';
 
 //  Utils.
-import { me } from 'flavours/glitch/util/initial_state';
+import { me, mascot } from 'flavours/glitch/util/initial_state';
 import { wrap } from 'flavours/glitch/util/redux_helpers';
 
 //  Messages.
@@ -121,10 +121,17 @@ class Drawer extends React.Component {
             submitted={submitted}
             value={searchValue}
           /> }
-        <div className='contents'>
-          {!isSearchPage && <DrawerAccount account={account} />}
-          {!isSearchPage && <Composer />}
-          {multiColumn && <button className='mastodon' onClick={onClickElefriend} />}
+        <div className='drawer__pager'>
+          {!isSearchPage && <div className='drawer__inner'>
+            <DrawerAccount account={account} />
+            <Composer />
+            {multiColumn && (
+              <div className='drawer__inner__mastodon'>
+                {mascot ? <img alt='' draggable='false' src={mascot} /> : <button className='mastodon' onClick={onClickElefriend} />}
+              </div>
+            )}
+          </div>}
+
           {(multiColumn || isSearchPage) &&
             <DrawerResults
               results={results}
