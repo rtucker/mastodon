@@ -15,7 +15,8 @@ TARGET=/srv/mastodon/vulpine.club/pg_dump
 
     cd ${TARGET} &&
     mv daily.pgdump daily.pgdump.0 &&
-    ln hourly.pgdump daily.pgdump
+    ln hourly.pgdump daily.pgdump &&
+    rm daily.pgdump.0
 
     ls -la ${TARGET}
 
