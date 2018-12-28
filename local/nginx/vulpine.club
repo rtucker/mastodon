@@ -9,6 +9,8 @@ map $http_upgrade $connection_upgrade {
   ''      close;
 }
 
+limit_conn_zone $binary_remote_addr zone=streamaddr:10m;
+
 server {
   listen 80;
   listen [::]:80;
@@ -24,7 +26,7 @@ server {
     allow 127.0.0.1/24;
     allow 172.16.0.0/12;
     deny all;
-    
+
     stub_status;
   }
 
@@ -104,12 +106,12 @@ server {
     proxy_redirect off;
     proxy_http_version 1.1;
   }
-  
+
   # everything else
   location / {
     try_files $uri @proxy;
   }
-  
+
   # proxy requests to mastodon
   location @proxy {
     proxy_set_header Host $host;
@@ -160,6 +162,8 @@ server {
     proxy_set_header Connection $connection_upgrade;
 
     tcp_nodelay on;
+
+    limit_conn streamaddr 32;
   }
 
   # error pages...
