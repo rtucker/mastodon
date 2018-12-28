@@ -55,15 +55,32 @@ class MediaAttachment < ApplicationRecord
 
   AUDIO_STYLES = {
     original: {
-      format: 'mp4',
+      format: 'm4a',
       convert_options: {
         output: {
-          filter_complex: '"[0:a]compand,showwaves=s=640x360:mode=line,format=yuv420p[v]"',
-          map: '"[v]" -map 0:a', 
-          threads: 2,
-          vcodec: 'libx264',
+          vn: '',
           acodec: 'aac',
           movflags: '+faststart',
+        },
+      },
+    },
+
+    small: {
+      format: 'png',
+      time: 0,
+      convert_options: {
+        output: {
+          filter_complex: '"showwavespic=s=400x100:colors=lime|green"',
+        },
+      },
+    },
+
+    thumb: {
+      format: 'png',
+      time: 0,
+      convert_options: {
+        output: {
+          filter_complex: '"showwavespic=s=400x100:colors=lime|green"',
         },
       },
     },
