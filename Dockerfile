@@ -15,6 +15,8 @@ ENV PATH=/mastodon/bin:$PATH \
 ARG LIBICONV_VERSION=1.15
 ARG LIBICONV_DOWNLOAD_SHA256=ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178
 
+ARG BUILD_CDN_HOST=https://cdn-assets.vulpine.owogroupllc.com
+
 EXPOSE 3000 4000
 
 WORKDIR /mastodon
@@ -84,7 +86,7 @@ USER mastodon
 ARG SOURCE_TAG
 ENV SOURCE_TAG ${SOURCE_TAG}
 
-RUN CDN_HOST=https://cdn-assets.vulpine.owogroupllc.com \
+RUN CDN_HOST=${BUILD_CDN_HOST} \
     OTP_SECRET=precompile_placeholder \
     SECRET_KEY_BASE=precompile_placeholder \
     bundle exec rails assets:precompile
