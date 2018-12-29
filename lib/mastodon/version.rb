@@ -33,7 +33,7 @@ module Mastodon
     end
 
     def to_s
-      [to_a.join('.'), flags, suffix].join
+      [to_a.join('.'), flags, suffix, source_tag].join
     end
 
     def repository
@@ -44,9 +44,8 @@ module Mastodon
       "https://github.com/#{repository}"
     end
 
-    # specify git tag or commit hash here
     def source_tag
-      nil
+      ENV["SOURCE_TAG"]        
     end
 
     def source_url
