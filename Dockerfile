@@ -81,6 +81,9 @@ VOLUME /mastodon/public/system
 
 USER mastodon
 
+ARG SOURCE_TAG
+ENV SOURCE_TAG ${SOURCE_TAG}
+
 RUN CDN_HOST=https://cdn-assets.vulpine.owogroupllc.com \
     OTP_SECRET=precompile_placeholder \
     SECRET_KEY_BASE=precompile_placeholder \
