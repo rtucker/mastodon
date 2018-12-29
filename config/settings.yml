@@ -7,7 +7,7 @@
 # For more information, see docs/Running-Mastodon/Administration-guide.md
 #
 defaults: &defaults
-  site_title: 'dev.glitch.social'
+  site_title: 'Mastodon for Foxes 3.11'
   site_short_description: ''
   site_description: ''
   site_extended_description: ''
