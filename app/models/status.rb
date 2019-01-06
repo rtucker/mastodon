@@ -92,6 +92,8 @@ class Status < ApplicationRecord
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced_at: nil }) }
   scope :including_silenced_accounts, -> { left_outer_joins(:account).where.not(accounts: { silenced_at: nil }) }
   scope :not_excluded_by_account, ->(account) { where.not(account_id: account.excluded_from_timeline_account_ids) }
+  scope :reply_not_excluded_by_account, ->(account) { where('statuses.in_reply_to_account_id IS NULL OR statuses.in_reply_to_account_id NOT IN (?)', account.excluded_from_timeline_account_ids) }
+  scope :mention_not_excluded_by_account, ->(account) { left_outer_joins(:mentions).where('mentions.account_id IS NULL OR mentions.account_id NOT IN (?)', account.excluded_from_timeline_account_ids) }
   scope :not_domain_blocked_by_account, ->(account) { account.excluded_from_timeline_domains.blank? ? left_outer_joins(:account) : left_outer_joins(:account).where('accounts.domain IS NULL OR accounts.domain NOT IN (?)', account.excluded_from_timeline_domains) }
   scope :tagged_with_all, ->(tags) {
     Array(tags).map(&:id).map(&:to_i).reduce(self) do |result, id|
@@ -433,6 +435,8 @@ class Status < ApplicationRecord
       query = query.not_excluded_by_account(account)
       query = query.not_domain_blocked_by_account(account) unless local_only
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
+      query = query.reply_not_excluded_by_account(account)
+      query = query.mention_not_excluded_by_account(account)
       query.merge(account_silencing_filter(account))
     end
 

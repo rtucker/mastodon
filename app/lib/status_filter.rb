@@ -21,7 +21,46 @@ class StatusFilter
   end
 
   def filtered_status?
-    blocking_account? || blocking_domain? || muting_account?
+    blocking_account? || blocking_domain? || muting_account? || filtered_reference?
+  end
+
+  def filtered_reference?
+    filtered_reply = reply_to_blocked? || reply_to_muted?
+
+    # I don't think this should happen, but just in case...
+    return filtered_reply if status&.mentions.nil?
+
+    # Grab a list of account IDs mentioned in the status.
+    mentioned_account_ids = status.mentions.pluck(:account_id)
+
+    # Don't filter statuses mentioning you.
+    return false if mentioned_account_ids.include?(account.id)
+
+    # Otherwise, filter replies to someone you've muted or blocked.
+    return true if filtered_reply
+
+    # Otherwise, filter the status if it mentions someone in the preloaded muting relation.
+    return true if @preloaded_relations[:muting] && mentioned_account_ids.any? do |mentioned_account_id|
+      @preloaded_relations[:muting][mentioned_account_id]
+    end
+
+    # Otherwise, filter the status if it mentions someone you've muted.
+    return true if account.muting?(mentioned_account_ids)
+
+    # Same as above, but for blocks:
+    return true if @preloaded_relations[:blocking] && mentioned_account_ids.any? do |mentioned_account_id|
+      @preloaded_relations[:blocking][mentioned_account_id]
+    end
+
+    account.blocking?(mentioned_account_ids)
+  end
+
+  def reply_to_blocked?
+    @preloaded_relations[:blocking] ? @preloaded_relations[:blocking][status.in_reply_to_account_id] : account.blocking?(status.in_reply_to_account_id)
+  end
+
+  def reply_to_muted?
+    @preloaded_relations[:muting] ? @preloaded_relations[:muting][status.in_reply_to_account_id] : account.muting?(status.in_reply_to_account_id)
   end
 
   def blocking_account?
