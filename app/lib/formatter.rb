@@ -186,7 +186,8 @@ class Formatter
       elsif entity[:hashtag]
         link_to_hashtag(entity)
       elsif entity[:screen_name]
-        link_to_mention(entity, accounts)
+        link = link_to_pseudo(entity[:screen_name])
+        link.nil? ? link_to_mention(entity, accounts) : link
       end
     end
   end
@@ -383,5 +384,98 @@ class Formatter
 
   def mention_html(account)
     "<span class=\"h-card\"><a href=\"#{encode(TagManager.instance.url_for(account))}\" class=\"u-url mention\">@<span>#{encode(account.username)}</span></a></span>"
+  end
+
+  def link_to_pseudo(acct)
+    username, domain = acct.split('@')
+
+    case domain
+    when 'twitter.com'
+      return link_to_twitter(username)
+    when 'tumblr.com'
+      return link_to_tumblr(username)
+    when 'weasyl.com'
+      return link_to_weasyl(username)
+    when 'furaffinity.net'
+      return link_to_furaffinity(username)
+    when 'furrynetwork.com', 'beta.furrynetwork.com'
+      return link_to_furrynetwork(username)
+    when 'sofurry.com'
+      return link_to_sofurry(username)
+    when 'inkbunny.net'
+      return link_to_inkbunny(username)
+    when 'e621.net'
+      return link_to_e621(username)
+    when 'e926.net'
+      return link_to_e926(username)
+    when 'f-list.net'
+      return link_to_flist(username)
+    when 'deviantart.com'
+      return link_to_deviantart(username)
+    when 'artstation.com'
+      return link_to_artstation(username)
+    when 'github.com'
+      return link_to_github(username)
+    when 'gitlab.com'
+      return link_to_gitlab(username)
+    else
+      return nil
+    end
+  end
+
+  def link_to_twitter(username)
+    "<span class=\"h-card\"><a href=\"https://twitter.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@twitter.com</span></a></span>"
+  end
+
+  def link_to_tumblr(username)
+    "<span class=\"h-card\"><a href=\"https://#{username}.tumblr.com\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@tumblr.com</span></a></span>"
+  end
+
+  def link_to_weasyl(username)
+    "<span class=\"h-card\"><a href=\"https://weasyl.com/~#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@weasyl.com</span></a></span>"
+  end
+
+  def link_to_furaffinity(username)
+    "<span class=\"h-card\"><a href=\"https://furaffinity.net/user/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@furaffinity.net</span></a></span>"
+  end
+
+  def link_to_furrynetwork(username)
+    "<span class=\"h-card\"><a href=\"https://furrynetwork.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@furrynetwork.com</span></a></span>"
+  end
+
+  def link_to_inkbunny(username)
+    "<span class=\"h-card\"><a href=\"https://inkbunny.net/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@inkbunny.net</span></a></span>"
+  end
+
+  def link_to_sofurry(username)
+    "<span class=\"h-card\"><a href=\"https://#{username}.sofurry.com\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@sofurry.com</span></a></span>"
+  end
+
+  def link_to_e621(username)
+      "<span class=\"h-card\"><a href=\"https://e621.net/user/show/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@e621.net</span></a></span>"
+  end
+
+  def link_to_e926(username)
+      "<span class=\"h-card\"><a href=\"https://e926.net/user/show/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@e926.net</span></a></span>"
+  end
+
+  def link_to_flist(username)
+    "<span class=\"h-card\"><a href=\"https://f-list.net/c/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@f-list.net</span></a></span>"
+  end
+
+  def link_to_deviantart(username)
+    "<span class=\"h-card\"><a href=\"https://#{username}.deviantart.com\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@deviantart.com</span></a></span>"
+  end
+
+  def link_to_artstation(username)
+    "<span class=\"h-card\"><a href=\"https://www.artstation.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@artstation.com</span></a></span>"
+  end
+
+  def link_to_github(username)
+    "<span class=\"h-card\"><a href=\"https://github.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@github.com</span></a></span>"
+  end
+
+  def link_to_gitlab(username)
+    "<span class=\"h-card\"><a href=\"https://gitlab.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@gitlab.com</span></a></span>"
   end
 end
