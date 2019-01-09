@@ -7,6 +7,8 @@ services:
     image: postgres:9.6-alpine
     networks:
       - db_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
     volumes:
       - /srv/mastodon/vulpine.club/postgres:/var/lib/postgresql/data
 
@@ -15,6 +17,8 @@ services:
     image: redis:4.0-alpine
     networks:
       - redis_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
     volumes:
       - /srv/mastodon/vulpine.club/redis:/data
 
@@ -30,6 +34,8 @@ services:
         hard: -1
     networks:
       - es_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
     volumes:
       - /srv/mastodon/vulpine.club/elasticsearch:/usr/share/elasticsearch/data
 
@@ -51,6 +57,8 @@ services:
       internal_network:
         aliases:
           - fe_web
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --proxy off localhost:3000/api/v1/instance || exit 1"]
     depends_on:
       - db
       - redis
@@ -72,6 +80,8 @@ services:
       internal_network:
         aliases:
           - fe_streaming
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --header 'x-forwarded-proto: https' --proxy off localhost:4000/api/v1/streaming/health || exit 1"]
     depends_on:
       - db
       - redis
@@ -217,7 +227,7 @@ services:
         aliases:
           - nginx-exporter
       internal_network:
-  
+
   prometheus_mastodon_exporter:
     restart: always
     image: mastodon-exporter:latest
@@ -225,7 +235,7 @@ services:
      - 'MASTODON_HOST=https://nginx/'
     networks:
       monitoring_network:
-        aliases: 
+        aliases:
           - mastodon-exporter
       internal_network:
 
@@ -236,10 +246,9 @@ services:
      - 'NGINX_STATUS=http://nginx/vts_stats'
     networks:
       monitoring_network:
-        aliases: 
+        aliases:
           - nginx-vts-exporter
       internal_network:
-     
 
   grafana:
     restart: always
@@ -254,7 +263,6 @@ services:
       - external_network
     links:
       - prometheus
-
 
 networks:
   external_network:
