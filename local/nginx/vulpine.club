@@ -29,6 +29,17 @@ server {
 
     stub_status;
   }
+  location /vts_stats {
+    # Disallow anyone external from accessing this.
+    allow 127.0.0.1/24;
+    allow 172.16.0.0/12;
+    deny all;
+
+    vhost_traffic_status_display;
+    vhost_traffic_status_display_format json;
+ 
+  }
+
 
 
   location / { return 301 https://$host$request_uri; }
@@ -37,7 +48,7 @@ server {
 server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
-  server_name vulpine.club 0.vulpine.club 1.vulpine.club 2.vulpine.club 3.vulpine.club;
+  server_name vulpine.club 0.vulpine.club 1.vulpine.club 2.vulpine.club 3.vulpine.club nginx;
 
   include /etc/nginx/ssl-include.conf;
 
