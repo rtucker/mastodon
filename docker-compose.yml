@@ -138,10 +138,11 @@ services:
       - /srv/mastodon/vulpine.club/pg_dump:/dump
 
   # front end web server
-  # https://hub.docker.com/_/nginx/
+  # https://hub.docker.com/r/xcgd/nginx-vts
+  # now using an image with vts so we have more metrics about how nginx is replying to users
   nginx:
     restart: always
-    image: nginx:alpine
+    image: xcgd/nginx-vts:mainline
     depends_on:
       - web
       - streaming
@@ -165,11 +166,6 @@ services:
     # TODO depends_on
     networks:
       - monitoring_network
-    links:  
-      - prometheus_sidekiq_exporter:sidekiq-exporter
-      - prometheus_elasticsearch_exporter:elasticsearch-exporter
-      - prometheus_node_exporter:node-exporter
-      - prometheus_nginx_exporter:nginx-exporter
     volumes:
       - /srv/mastodon/vulpine.club/monitoring-and-alerting/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - /srv/mastodon/vulpine.club/monitoring-and-alerting/prometheus/data:/prometheus
@@ -178,10 +174,10 @@ services:
     restart: always
     image: alexand/sidekiq-prometheus-exporter
     networks:
-      - monitoring_network
-      - redis_network
-    links:
-      - redis
+      monitoring_network:
+        aliases:
+          - sidekiq-exporter
+      redis_network:
 
   prometheus_elasticsearch_exporter:
     restart: always
@@ -189,10 +185,10 @@ services:
     command:
      - '-es.uri=http://es:9200'
     networks:
-      - monitoring_network
-      - es_network
-    links:
-      - es
+      monitoring_network:
+        aliases:
+          - elasticsearch-exporter
+      es_network:
 
   prometheus_node_exporter:
     restart: always
@@ -207,7 +203,9 @@ services:
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     networks:
-      - monitoring_network
+      monitoring_network:
+        aliases:
+          - node-exporter
 
   prometheus_nginx_exporter:
     restart: always
@@ -215,10 +213,33 @@ services:
     command:
       - '-nginx.scrape-uri=http://nginx/stub_stats'
     networks:
-      - monitoring_network
-      - internal_network
-    links:
-      - nginx
+      monitoring_network:
+        aliases:
+          - nginx-exporter
+      internal_network:
+  
+  prometheus_mastodon_exporter:
+    restart: always
+    image: mastodon-exporter:latest
+    environment:
+     - 'MASTODON_HOST=https://nginx/'
+    networks:
+      monitoring_network:
+        aliases: 
+          - mastodon-exporter
+      internal_network:
+
+  prometheus_nginx_vts_exporter:
+    restart: always
+    image: sophos/nginx-vts-exporter:latest
+    environment:
+     - 'NGINX_STATUS=http://nginx/vts_stats'
+    networks:
+      monitoring_network:
+        aliases: 
+          - nginx-vts-exporter
+      internal_network:
+     
 
   grafana:
     restart: always
