@@ -25,7 +25,7 @@ if ENV['S3_ENABLED'] == 'true'
     s3_protocol: s3_protocol,
     s3_host_name: s3_hostname,
     s3_headers: {
-      'Cache-Control' => 'max-age=315576000',
+      'Cache-Control' => 'public, max-age=315576000, immutable',
     },
     s3_permissions: ENV.fetch('S3_PERMISSION') { 'public-read' },
     s3_server_side_encryption: ENV.fetch('S3_SERVER_SIDE_ENCRYPTION') { false },
