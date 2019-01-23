@@ -166,6 +166,7 @@ export default class UI extends React.Component {
   }
 
   handleDragOver = (e) => {
+    if (this.dataTransferIsText(e.dataTransfer)) return false;
     e.preventDefault();
     e.stopPropagation();
 
@@ -179,9 +180,11 @@ export default class UI extends React.Component {
   }
 
   handleDrop = (e) => {
+    if (this.dataTransferIsText(e.dataTransfer)) return;
     e.preventDefault();
 
     this.setState({ draggingOver: false });
+    this.dragTargets = [];
 
     if (e.dataTransfer && e.dataTransfer.files.length === 1) {
       this.props.dispatch(uploadCompose(e.dataTransfer.files));
@@ -199,6 +202,10 @@ export default class UI extends React.Component {
     }
 
     this.setState({ draggingOver: false });
+  }
+
+  dataTransferIsText = (dataTransfer) => {
+    return (dataTransfer && Array.from(dataTransfer.types).includes('text/plain') && dataTransfer.items.length === 1);
   }
 
   closeUploadModal = () => {

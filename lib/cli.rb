@@ -8,6 +8,7 @@ require_relative 'mastodon/feeds_cli'
 require_relative 'mastodon/settings_cli'
 require_relative 'mastodon/domains_cli'
 require_relative 'mastodon/vulpine_cli'
+require_relative 'mastodon/version'
 
 module Mastodon
   class CLI < Thor
@@ -35,5 +36,12 @@ module Mastodon
 
     desc 'vulpine SUBCOMMAND ...ARGS', 'Local vulpine.club helpers'
     subcommand 'vulpine', Mastodon::VulpineCLI
+
+    map %w(--version -v) => :version
+
+    desc 'version', 'Show version'
+    def version
+      say(Mastodon::Version.to_s)
+    end
   end
 end
