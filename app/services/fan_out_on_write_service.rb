@@ -21,15 +21,29 @@ class FanOutOnWriteService < BaseService
       deliver_to_lists(status)
     end
 
-    return if status.account.silenced? || !status.public_visibility?
     return if status.reblog? && !Setting.show_reblogs_in_public_timelines
+    return if status.account.silenced?
 
-    deliver_to_hashtags(status)
+    deliver_to_hashtags(status) if !status.reblog? && status.distributable?
 
+    # we want to let community users decide what goes on the ftl with boosts
+    return unless status.network? || status.relayed?
+    deliver_to_local = true
+
+    if status.reblog? then
+      status = Status.find(status.reblog_of_id)
+      render_anonymous_payload(status)
+      deliver_to_local = status.network?
+    end
+
+    return if status.account.silenced? || !status.public_visibility?
     return if status.reply? && status.in_reply_to_account_id != status.account_id && !Setting.show_replies_in_public_timelines
 
-    deliver_to_public(status)
-    deliver_to_media(status) if status.media_attachments.any?
+    if deliver_to_local then
+      deliver_to_local(status)
+    else
+      deliver_to_public(status)
+    end
   end
 
   private
@@ -85,14 +99,15 @@ class FanOutOnWriteService < BaseService
     Rails.logger.debug "Delivering status #{status.id} to public timeline"
 
     Redis.current.publish('timeline:public', @payload)
-    Redis.current.publish('timeline:public:local', @payload) if status.local?
+    Redis.current.publish('timeline:public:media', @payload) if status.media_attachments.any?
   end
 
-  def deliver_to_media(status)
-    Rails.logger.debug "Delivering status #{status.id} to media timeline"
+  def deliver_to_local(status)
+    Rails.logger.debug "Delivering status #{status.id} to local timeline"
 
-    Redis.current.publish('timeline:public:media', @payload)
-    Redis.current.publish('timeline:public:local:media', @payload) if status.local?
+    return unless status.network?
+    Redis.current.publish('timeline:public:local', @payload)
+    Redis.current.publish('timeline:public:local:media', @payload) if status.media_attachments.any?
   end
 
   def deliver_to_direct_timelines(status)

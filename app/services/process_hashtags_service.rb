@@ -2,7 +2,7 @@
 
 class ProcessHashtagsService < BaseService
   def call(status, tags = [])
-    tags    = Extractor.extract_hashtags(status.text) if status.local?
+    tags    = Extractor.extract_hashtags(status.text) if status.network?
     records = []
 
     tags.map { |str| str.mb_chars.downcase }.uniq(&:to_s).each do |name|
@@ -11,7 +11,7 @@ class ProcessHashtagsService < BaseService
       status.tags << tag
       records << tag
 
-      TrendingTags.record_use!(tag, status.account, status.created_at) if status.public_visibility?
+      TrendingTags.record_use!(tag, status.account, status.created_at) if status.distributable?
     end
 
     return unless status.public_visibility? || status.unlisted_visibility?

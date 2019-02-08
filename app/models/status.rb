@@ -35,6 +35,9 @@ class Status < ApplicationRecord
   include Cacheable
   include StatusThreadingConcern
 
+  LOCAL_DOMAINS = ENV.fetch('LOCAL_DOMAINS', '').chomp.split(/\.?\s+/).freeze
+  LOCAL_URIS = LOCAL_DOMAINS.map { |domain| "https://#{domain}/%" }.freeze
+
   # If `override_timestamps` is set at creation time, Snowflake ID creation
   # will be based on current time instead of `created_at`
   attr_accessor :override_timestamps
@@ -84,9 +87,11 @@ class Status < ApplicationRecord
   scope :recent, -> { reorder(id: :desc) }
   scope :remote, -> { where(local: false).or(where.not(uri: nil)) }
   scope :local,  -> { where(local: true).or(where(uri: nil)) }
+  scope :network, -> { where(local: true).or(where(uri: nil)).or(where('statuses.uri LIKE ANY (array[?])', LOCAL_URIS)) }
 
   scope :without_replies, -> { where('statuses.reply = FALSE OR statuses.in_reply_to_account_id = statuses.account_id') }
   scope :without_reblogs, -> { where('statuses.reblog_of_id IS NULL') }
+  scope :reblogs, -> { where('statuses.reblog_of_id IS NOT NULL') } # all reblogs
   scope :with_public_visibility, -> { where(visibility: :public) }
   scope :tagged_with, ->(tag) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag }) }
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced_at: nil }) }
@@ -161,6 +166,14 @@ class Status < ApplicationRecord
 
   def local?
     attributes['local'] || uri.nil?
+  end
+
+  def network?
+    attributes['local'] || uri.nil? || account.domain.in?(LOCAL_DOMAINS)
+  end
+
+  def relayed?
+    account.username == :relay && account.actor_type.in?(Set[:Application, :Service])
   end
 
   def reblog?
@@ -333,8 +346,26 @@ class Status < ApplicationRecord
     end
 
     def as_public_timeline(account = nil, local_only = false)
-      query = timeline_scope(local_only)
-      query = query.without_replies unless Setting.show_replies_in_public_timelines
+      # instead of our ftl being a noisy irrelevant firehose
+      # only show public stuff boosted by the community
+      query = Status.network
+      if local_only then
+        # we don't want to change the ltl
+        query = query
+          .with_public_visibility
+          .without_replies
+          .without_reblogs
+      else # but on the ftl
+        query = query.without_replies unless Setting.show_replies_in_public_timelines
+        # grab the stuff we boosted
+        subquery = query.reblogs.select(:reblog_of_id)
+          .reorder(nil)
+          .distinct
+        # map those ids to actual statuses
+        # THIS QUERY IS EXPENSIVE AS FUCK!!!!!!!
+        # but it does the job
+        query = Status.where(id: subquery).with_public_visibility
+      end
 
       apply_timeline_filters(query, account, local_only)
     end
