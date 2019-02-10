@@ -93,6 +93,8 @@ class Status < ApplicationRecord
   scope :without_reblogs, -> { where('statuses.reblog_of_id IS NULL') }
   scope :reblogs, -> { where('statuses.reblog_of_id IS NOT NULL') } # all reblogs
   scope :with_public_visibility, -> { where(visibility: :public) }
+  scope :public_browsable, -> { where(visibility: [:public, :unlisted]) }
+  scope :visible_to, ->(account) { where(visibility: [:public, :unlisted]).or(where(account: [account] + account.following).where(visibility: :private)) }
   scope :tagged_with, ->(tag) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag }) }
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced_at: nil }) }
   scope :including_silenced_accounts, -> { left_outer_joins(:account).where.not(accounts: { silenced_at: nil }) }
@@ -371,7 +373,8 @@ class Status < ApplicationRecord
     end
 
     def as_tag_timeline(tag, account = nil, local_only = false)
-      query = timeline_scope(local_only).tagged_with(tag)
+      query = (account.nil?) ? browsable_timeline_scope(local_only) : user_timeline_scope(account, local_only)
+      query = query.tagged_with(tag)
 
       apply_timeline_filters(query, account, local_only)
     end
@@ -452,6 +455,20 @@ class Status < ApplicationRecord
       else
         starting_scope.without_reblogs
       end
+    end
+
+    def browsable_timeline_scope(local_only = false)
+      starting_scope = local_only ? Status.local : Status
+      starting_scope
+        .public_browsable
+        .without_reblogs
+    end
+
+    def user_timeline_scope(account, local_only = false)
+      starting_scope = local_only ? Status.local : Status
+      starting_scope
+        .visible_to(account)
+        .without_reblogs
     end
 
     def apply_timeline_filters(query, account, local_only)
