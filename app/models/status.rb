@@ -511,6 +511,10 @@ class Status < ApplicationRecord
     '👁'
   end
 
+  def marked_no_replies?
+    /(:ms_dont_at_me:|(don't|do not|no) ((at|@|mention) me)|reply|replies)/.match?(spoiler_text)
+  end
+
   private
 
   def update_status_stat!(attrs)

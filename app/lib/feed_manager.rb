@@ -171,6 +171,7 @@ class FeedManager
     if status.reply? && !status.in_reply_to_account_id.nil?                                                                      # Filter out if it's a reply
       should_filter   = !Follow.where(account_id: receiver_id, target_account_id: status.in_reply_to_account_id).exists?         # and I'm not following the person it's a reply to
       should_filter &&= receiver_id != status.in_reply_to_account_id                                                             # and it's not a reply to me
+      should_filter ||= Status.find(status.in_reply_to_id)&.marked_no_replies?                                                   # or the parent has no-replies set
       should_filter &&= status.account_id != status.in_reply_to_account_id                                                       # and it's not a self-reply
       return should_filter
     elsif status.reblog?                                                                                                         # Filter out a reblog
@@ -185,6 +186,7 @@ class FeedManager
 
   def filter_from_mentions?(status, receiver_id)
     return true if receiver_id == status.account_id
+    return true if status.reply? && !status.in_reply_to_id.nil? && Status.find(status.in_reply_to_id)&.marked_no_replies?
     return true if phrase_filtered?(status, receiver_id, :notifications)
 
     # This filter is called from NotifyService, but already after the sender of

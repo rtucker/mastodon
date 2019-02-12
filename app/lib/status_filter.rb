@@ -30,6 +30,9 @@ class StatusFilter
     # I don't think this should happen, but just in case...
     return filtered_reply if status&.mentions.nil?
 
+    # filter non-op posts replying to something marked no replies
+    return true if reply_to_no_replies?
+
     # Grab a list of account IDs mentioned in the status.
     mentioned_account_ids = status.mentions.pluck(:account_id)
 
@@ -61,6 +64,14 @@ class StatusFilter
 
   def reply_to_muted?
     @preloaded_relations[:muting] ? @preloaded_relations[:muting][status.in_reply_to_account_id] : account.muting?(status.in_reply_to_account_id)
+  end
+
+  def reply_to_no_replies?
+    status.reply? &&
+      !status.in_reply_to_account_id.nil? &&
+      !status.in_reply_to_id.nil? &&
+      status.account_id != status.in_reply_to_account_id &&
+      Status.find(status.in_reply_to_id)&.marked_no_replies?
   end
 
   def blocking_account?
