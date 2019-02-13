@@ -23,7 +23,7 @@ gem 'paperclip-av-transcoder', '~> 0.6'
 gem 'streamio-ffmpeg', '~> 3.0'
 
 gem 'active_model_serializers', '~> 0.10'
-gem 'addressable', '~> 2.5'
+gem 'addressable', '~> 2.6'
 gem 'bootsnap', '~> 1.3', require: false
 gem 'browser'
 gem 'charlock_holmes', '~> 0.7.6'
@@ -108,15 +108,15 @@ group :production, :test do
 end
 
 group :test do
-  gem 'capybara', '~> 3.12'
+  gem 'capybara', '~> 3.13'
   gem 'climate_control', '~> 0.2'
   gem 'faker', '~> 1.9'
-  gem 'microformats', '~> 4.0'
+  gem 'microformats', '~> 4.1'
   gem 'rails-controller-testing', '~> 1.0'
   gem 'rspec-sidekiq', '~> 3.0'
   gem 'simplecov', '~> 0.16', require: false
   gem 'webmock', '~> 3.5'
-  gem 'parallel_tests', '~> 2.27'
+  gem 'parallel_tests', '~> 2.28'
 end
 
 group :development do

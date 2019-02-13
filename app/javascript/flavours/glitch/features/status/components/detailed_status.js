@@ -26,7 +26,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
     settings: ImmutablePropTypes.map.isRequired,
     onOpenMedia: PropTypes.func.isRequired,
     onOpenVideo: PropTypes.func.isRequired,
-    onToggleHidden: PropTypes.func.isRequired,
+    onToggleHidden: PropTypes.func,
     expanded: PropTypes.bool,
     measureHeight: PropTypes.bool,
     onHeightChange: PropTypes.func,
@@ -77,6 +77,10 @@ export default class DetailedStatus extends ImmutablePureComponent {
 
   componentDidUpdate (prevProps, prevState) {
     this._measureHeight(prevState.height !== this.state.height);
+  }
+
+  handleChildUpdate = () => {
+    this._measureHeight();
   }
 
   handleModalLink = e => {
@@ -218,6 +222,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
             collapsed={false}
             onExpandedToggle={onToggleHidden}
             parseClick={this.parseClick}
+            onUpdate={this.handleChildUpdate}
           />
 
           <div className='detailed-status__meta'>
