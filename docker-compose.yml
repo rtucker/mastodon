@@ -229,7 +229,8 @@ services:
 
   prometheus_mastodon_exporter:
     restart: always
-    image: mastodon-exporter:latest
+    build: /srv/mastodon/vulpine.club/monitoring-and-alerting/mastodon-prometheus-exporter
+    image: vulpineclub/mastodon-exporter:latest
     environment:
      - 'MASTODON_HOST=https://nginx/'
     networks:
