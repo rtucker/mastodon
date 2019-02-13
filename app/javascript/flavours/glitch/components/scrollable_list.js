@@ -40,6 +40,7 @@ export default class ScrollableList extends PureComponent {
 
   state = {
     fullscreen: null,
+    cachedMediaWidth: 300,
   };
 
   intersectionObserverWrapper = new IntersectionObserverWrapper();
@@ -128,7 +129,7 @@ export default class ScrollableList extends PureComponent {
   }
 
   getScrollPosition = () => {
-    if (this.node && this.node.scrollTop > 0) {
+    if (this.node && (this.node.scrollTop > 0 || this.mouseMovedRecently)) {
       return {height: this.node.scrollHeight, top: this.node.scrollTop};
     } else {
       return null;
@@ -139,6 +140,10 @@ export default class ScrollableList extends PureComponent {
     const newScrollTop = this.node.scrollHeight - snapshot;
 
     this.setScrollTop(newScrollTop);
+  }
+
+  cacheMediaWidth = (width) => {
+    if (width && this.state.cachedMediaWidth != width) this.setState({ cachedMediaWidth: width });
   }
 
   getSnapshotBeforeUpdate (prevProps, prevState) {
@@ -252,7 +257,12 @@ export default class ScrollableList extends PureComponent {
                 intersectionObserverWrapper={this.intersectionObserverWrapper}
                 saveHeightKey={trackScroll ? `${this.context.router.route.location.key}:${scrollKey}` : null}
               >
-                {React.cloneElement(child, {getScrollPosition: this.getScrollPosition, updateScrollBottom: this.updateScrollBottom})}
+                {React.cloneElement(child, {
+                  getScrollPosition: this.getScrollPosition,
+                  updateScrollBottom: this.updateScrollBottom,
+                  cachedMediaWidth: this.state.cachedMediaWidth,
+                  cacheMediaWidth: this.cacheMediaWidth,
+                })}
               </IntersectionObserverArticleContainer>
             ))}
 

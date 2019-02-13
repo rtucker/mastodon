@@ -197,7 +197,7 @@ export default class ComposerOptions extends React.PureComponent {
         text: <FormattedMessage {...messages.public_short} />,
       },
       unlisted: {
-        icon: 'unlock-alt',
+        icon: 'unlock',
         meta: <FormattedMessage {...messages.unlisted_long} />,
         name: 'unlisted',
         text: <FormattedMessage {...messages.unlisted_short} />,
@@ -214,6 +214,7 @@ export default class ComposerOptions extends React.PureComponent {
           onChange={handleChangeFiles}
           ref={handleRefFileElement}
           type='file'
+          multiple
           {...hiddenComponent}
         />
         <Dropdown

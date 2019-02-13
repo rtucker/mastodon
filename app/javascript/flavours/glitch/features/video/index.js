@@ -103,6 +103,7 @@ export default class Video extends React.PureComponent {
     inline: PropTypes.bool,
     preventPlayback: PropTypes.bool,
     intl: PropTypes.object.isRequired,
+    cacheWidth: PropTypes.func,
   };
 
   state = {
@@ -111,7 +112,7 @@ export default class Video extends React.PureComponent {
     volume: 0.5,
     paused: true,
     dragging: false,
-    containerWidth: false,
+    containerWidth: this.props.width,
     fullscreen: false,
     hovered: false,
     muted: false,
@@ -131,6 +132,7 @@ export default class Video extends React.PureComponent {
     this.player = c;
 
     if (c && c.offsetWidth && c.offsetWidth != this.state.containerWidth) {
+      if (this.props.cacheWidth) this.props.cacheWidth(this.player.offsetWidth);
       this.setState({
         containerWidth: c.offsetWidth,
       });
@@ -139,6 +141,9 @@ export default class Video extends React.PureComponent {
 
   setVideoRef = c => {
     this.video = c;
+    if (this.video) {
+      this.setState({ volume: this.video.volume, muted: this.video.muted });
+    }
   }
 
   setSeekRef = c => {
@@ -272,6 +277,7 @@ export default class Video extends React.PureComponent {
 
   componentDidUpdate (prevProps) {
     if (this.player && this.player.offsetWidth && this.player.offsetWidth != this.state.containerWidth && !this.state.fullscreen) {
+      if (this.props.cacheWidth) this.props.cacheWidth(this.player.offsetWidth);
       this.setState({
         containerWidth: this.player.offsetWidth,
       });
@@ -317,6 +323,10 @@ export default class Video extends React.PureComponent {
     if (this.video.buffered.length > 0) {
       this.setState({ buffer: this.video.buffered.end(0) / this.video.duration * 100 });
     }
+  }
+
+  handleVolumeChange = () => {
+    this.setState({ volume: this.video.volume, muted: this.video.muted });
   }
 
   handleOpenVideo = () => {
@@ -407,6 +417,7 @@ export default class Video extends React.PureComponent {
           onTimeUpdate={this.handleTimeUpdate}
           onLoadedData={this.handleLoadedData}
           onProgress={this.handleProgress}
+          onVolumeChange={this.handleVolumeChange}
         />
 
         <button type='button' className={classNames('video-player__spoiler', { active: !revealed })} onClick={this.toggleReveal}>
@@ -429,7 +440,7 @@ export default class Video extends React.PureComponent {
           <div className='video-player__buttons-bar'>
             <div className='video-player__buttons left'>
               <button type='button' aria-label={intl.formatMessage(paused ? messages.play : messages.pause)} onClick={this.togglePlay}><i className={classNames('fa fa-fw', { 'fa-play': paused, 'fa-pause': !paused })} /></button>
-              <button type='button' aria-label={intl.formatMessage(muted ? messages.unmute : messages.mute)} onMouseEnter={this.volumeSlider} onMouseLeave={this.volumeSlider} onClick={this.toggleMute}><i className={classNames('fa fa-fw', { 'fa-volume-off': muted, 'fa-volume-up': !muted })} /></button>
+              <button type='button' aria-label={intl.formatMessage(muted ? messages.unmute : messages.mute)} onClick={this.toggleMute}><i className={classNames('fa fa-fw', { 'fa-volume-off': muted, 'fa-volume-up': !muted })} /></button>
               <div className='video-player__volume' onMouseDown={this.handleVolumeMouseDown} ref={this.setVolumeRef}>
                 <div className='video-player__volume__current' style={{ width: `${volumeWidth}px` }} />
                 <span
