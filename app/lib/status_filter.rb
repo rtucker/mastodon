@@ -11,7 +11,9 @@ class StatusFilter
 
   def filtered?
     return false if !account.nil? && account.id == status.account_id
-    blocked_by_policy? || (account_present? && filtered_status?) || silenced_account?
+    return true if blocked_by_policy? || (account_present? && filtered_status?) || silenced_account?
+    # filter non-op posts replying to something marked no replies
+    non_self_reply? && reply_to_no_replies?
   end
 
   private
@@ -25,13 +27,11 @@ class StatusFilter
   end
 
   def filtered_reference?
-    filtered_reply = reply_to_blocked? || reply_to_muted?
+    # filter muted/blocked
+    return true if reply_to_blocked? || reply_to_muted?
 
-    # I don't think this should happen, but just in case...
-    return filtered_reply if status&.mentions.nil?
-
-    # filter non-op posts replying to something marked no replies
-    return true if reply_to_no_replies?
+    # kajiht has no filters if status has no mentions
+    return false if status&.mentions.nil?
 
     # Grab a list of account IDs mentioned in the status.
     mentioned_account_ids = status.mentions.pluck(:account_id)
@@ -39,22 +39,16 @@ class StatusFilter
     # Don't filter statuses mentioning you.
     return false if mentioned_account_ids.include?(account.id)
 
-    # Otherwise, filter replies to someone you've muted or blocked.
-    return true if filtered_reply
-
-    # Otherwise, filter the status if it mentions someone in the preloaded muting relation.
+    # Otherwise, filter the status if it mentions someone you've muted.
     return true if @preloaded_relations[:muting] && mentioned_account_ids.any? do |mentioned_account_id|
       @preloaded_relations[:muting][mentioned_account_id]
     end
-
-    # Otherwise, filter the status if it mentions someone you've muted.
     return true if account.muting?(mentioned_account_ids)
 
     # Same as above, but for blocks:
     return true if @preloaded_relations[:blocking] && mentioned_account_ids.any? do |mentioned_account_id|
       @preloaded_relations[:blocking][mentioned_account_id]
     end
-
     account.blocking?(mentioned_account_ids)
   end
 
@@ -64,14 +58,6 @@ class StatusFilter
 
   def reply_to_muted?
     @preloaded_relations[:muting] ? @preloaded_relations[:muting][status.in_reply_to_account_id] : account.muting?(status.in_reply_to_account_id)
-  end
-
-  def reply_to_no_replies?
-    status.reply? &&
-      !status.in_reply_to_account_id.nil? &&
-      !status.in_reply_to_id.nil? &&
-      status.account_id != status.in_reply_to_account_id &&
-      Status.find(status.in_reply_to_id)&.marked_no_replies?
   end
 
   def blocking_account?
@@ -86,16 +72,25 @@ class StatusFilter
     @preloaded_relations[:muting] ? @preloaded_relations[:muting][status.account_id] : account.muting?(status.account_id)
   end
 
+  def account_following_status_account?
+    @preloaded_relations[:following] ? @preloaded_relations[:following][status.account_id] : account&.following?(status.account_id)
+  end
+
+  def non_self_reply?
+    status.reply? && status.in_reply_to_account_id != status.account_id
+  end
+
+  def reply_to_no_replies?
+    parent_status = Status.find(status.in_reply_to_id)
+    parent_status&.marked_no_replies? && !parent_status.mentions.pluck(:account_id).include?(status.account_id)
+  end
+
   def silenced_account?
     !account&.silenced? && status_account_silenced? && !account_following_status_account?
   end
 
   def status_account_silenced?
     status.account.silenced?
-  end
-
-  def account_following_status_account?
-    @preloaded_relations[:following] ? @preloaded_relations[:following][status.account_id] : account&.following?(status.account_id)
   end
 
   def blocked_by_policy?

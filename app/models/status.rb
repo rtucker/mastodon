@@ -295,7 +295,7 @@ class Status < ApplicationRecord
 
   after_create :set_poll_id
 
-  after_find :limit_visibility
+  after_find :limit_domain_visibility
 
   class << self
     def selectable_visibilities
@@ -551,11 +551,11 @@ class Status < ApplicationRecord
     self.sensitive  = false if sensitive.nil?
   end
 
-  def limit_visibility
+  def limit_domain_visibility
     return unless has_attribute?(:uri) && !uri.nil?
     domain = Addressable::URI.parse(uri).host
     self.sensitive = true if domain.in?(FORCE_SENSITIVE)
-    self.visibility = :unlisted if domain.in?(FORCE_UNLISTED)
+    self.visibility = :unlisted if public_visibility? && domain.in?(FORCE_UNLISTED)
   end
 
   def set_locality
