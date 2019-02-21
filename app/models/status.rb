@@ -439,13 +439,13 @@ class Status < ApplicationRecord
       else
         # followers can see followers-only stuff, but also things they are mentioned in.
         # non-followers can see everything that isn't private/direct, but can see stuff they are mentioned in.
-        visibility.push(:private) if account.following?(target_account)
-
         scope = left_outer_joins(:reblog)
 
-        scope.where(visibility: visibility)
-             .or(scope.where(id: account.mentions.select(:status_id)))
-             .merge(scope.where(reblog_of_id: nil).or(scope.where.not(reblogs_statuses: { account_id: account.excluded_from_timeline_account_ids })))
+        query = scope.where(visibility: visibility).or(scope.where(id: account.mentions.select(:status_id)))
+        if account.following?(target_account) then
+          query = query.or(scope.where(visibility: :private).without_replies)
+        end
+        query.merge(scope.where(reblog_of_id: nil).or(scope.where.not(reblogs_statuses: { account_id: account.excluded_from_timeline_account_ids })))
       end
     end
 
