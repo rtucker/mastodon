@@ -20,8 +20,17 @@ time docker build --pull \
     --tag vulpineclub/mastodon:${tag} \
     --build-arg SOURCE_TAG="-${tag}" \
     .
-trickle -u ${MAX_KBYTES_PER_SEC} docker push vulpineclub/mastodon:production
-trickle -u ${MAX_KBYTES_PER_SEC} docker push vulpineclub/mastodon:${tag}
+
+if [ -n "$(which trickle)" ]; then
+    echo "--- Will rate limit to ${MAX_KBYTES_PER_SEC} KB/s"
+    TRICKLE="trickle -u ${MAX_KBYTES_PER_SEC}"
+else
+    echo "*** No 'trickle' command. Sorry about your upstream. <3"
+    TRICKLE=""
+fi
+
+${TRICKLE} docker push vulpineclub/mastodon:production
+${TRICKLE} docker push vulpineclub/mastodon:${tag}
 popd
 
 if [ -n "$(which trash)" ]; then
@@ -29,4 +38,3 @@ if [ -n "$(which trash)" ]; then
 else
     echo "Please delete ${builddir}, thanks <3"
 fi
-
