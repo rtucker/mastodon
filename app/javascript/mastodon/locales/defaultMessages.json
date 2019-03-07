@@ -41,11 +41,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Follow",
+        "defaultMessage": "Join pack",
         "id": "account.follow"
       },
       {
-        "defaultMessage": "Unfollow",
+        "defaultMessage": "Leave pack",
         "id": "account.unfollow"
       },
       {
@@ -270,15 +270,15 @@
         "id": "status.delete"
       },
       {
-        "defaultMessage": "Delete & re-draft",
+        "defaultMessage": "Delete & edit",
         "id": "status.redraft"
       },
       {
-        "defaultMessage": "Direct message @{name}",
+        "defaultMessage": "Whisper to @{name}",
         "id": "status.direct"
       },
       {
-        "defaultMessage": "Mention @{name}",
+        "defaultMessage": "Include @{name}",
         "id": "status.mention"
       },
       {
@@ -306,27 +306,27 @@
         "id": "status.replyAll"
       },
       {
-        "defaultMessage": "Boost",
+        "defaultMessage": "Repeat",
         "id": "status.reblog"
       },
       {
-        "defaultMessage": "Boost to original audience",
+        "defaultMessage": "Repeat to original audience",
         "id": "status.reblog_private"
       },
       {
-        "defaultMessage": "Unboost",
+        "defaultMessage": "Unrepeat",
         "id": "status.cancel_reblog_private"
       },
       {
-        "defaultMessage": "This post cannot be boosted",
+        "defaultMessage": "This roar cannot be repeated",
         "id": "status.cannot_reblog"
       },
       {
-        "defaultMessage": "Favourite",
+        "defaultMessage": "Admire",
         "id": "status.favourite"
       },
       {
-        "defaultMessage": "Expand this status",
+        "defaultMessage": "Open roar",
         "id": "status.open"
       },
       {
@@ -354,15 +354,15 @@
         "id": "status.embed"
       },
       {
-        "defaultMessage": "Open moderation interface for @{name}",
+        "defaultMessage": "Moderate @{name}",
         "id": "status.admin_account"
       },
       {
-        "defaultMessage": "Open this status in the moderation interface",
+        "defaultMessage": "Moderate roar",
         "id": "status.admin_status"
       },
       {
-        "defaultMessage": "Copy link to status",
+        "defaultMessage": "Copy link to roar",
         "id": "status.copy"
       }
     ],
@@ -375,11 +375,11 @@
         "id": "status.read_more"
       },
       {
-        "defaultMessage": "Show more",
+        "defaultMessage": "Reveal",
         "id": "status.show_more"
       },
       {
-        "defaultMessage": "Show less",
+        "defaultMessage": "Hide",
         "id": "status.show_less"
       }
     ],
@@ -405,11 +405,11 @@
         "id": "status.filtered"
       },
       {
-        "defaultMessage": "Pinned toot",
+        "defaultMessage": "Pinned roar",
         "id": "status.pinned"
       },
       {
-        "defaultMessage": "{name} boosted",
+        "defaultMessage": "{name} repeated",
         "id": "status.reblogged_by"
       },
       {
@@ -422,11 +422,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Unfollow",
+        "defaultMessage": "Leave pack",
         "id": "confirmations.unfollow.confirm"
       },
       {
-        "defaultMessage": "Are you sure you want to unfollow {name}?",
+        "defaultMessage": "Are you sure you want to leave the pack of {name}?",
         "id": "confirmations.unfollow.message"
       }
     ],
@@ -452,15 +452,15 @@
         "id": "confirmations.delete.confirm"
       },
       {
-        "defaultMessage": "Are you sure you want to delete this status?",
+        "defaultMessage": "Are you sure you want to delete this roar?",
         "id": "confirmations.delete.message"
       },
       {
-        "defaultMessage": "Delete & redraft",
+        "defaultMessage": "Delete & edit",
         "id": "confirmations.redraft.confirm"
       },
       {
-        "defaultMessage": "Are you sure you want to delete this status and re-draft it? Favourites and boosts will be lost, and replies to the original post will be orphaned.",
+        "defaultMessage": "Are you sure you want to delete this roar and edit it? Admirations and repeats will be lost, & growls to the original roar will be orphaned.",
         "id": "confirmations.redraft.message"
       },
       {
@@ -489,11 +489,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Toots",
+        "defaultMessage": "Roars",
         "id": "account.posts"
       },
       {
-        "defaultMessage": "Toots and replies",
+        "defaultMessage": "Roars & growls",
         "id": "account.posts_with_replies"
       },
       {
@@ -515,7 +515,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Unfollow",
+        "defaultMessage": "Leave pack",
         "id": "confirmations.unfollow.confirm"
       },
       {
@@ -531,7 +531,7 @@
         "id": "confirmations.block.block_and_report"
       },
       {
-        "defaultMessage": "Are you sure you want to unfollow {name}?",
+        "defaultMessage": "Are you sure you want to leave the pack of {name}?",
         "id": "confirmations.unfollow.message"
       },
       {
@@ -539,7 +539,7 @@
         "id": "confirmations.block.message"
       },
       {
-        "defaultMessage": "Are you really, really sure you want to block the entire {domain}? In most cases a few targeted blocks or mutes are sufficient and preferable. You will not see content from that domain in any public timelines or your notifications. Your followers from that domain will be removed.",
+        "defaultMessage": "Are you really, really sure you want to block the entire {domain}? Your packmates from that domain will be removed.",
         "id": "confirmations.domain_block.message"
       }
     ],
@@ -552,7 +552,7 @@
         "id": "empty_column.account_unavailable"
       },
       {
-        "defaultMessage": "No toots here!",
+        "defaultMessage": "No roars here!",
         "id": "empty_column.account_timeline"
       }
     ],
@@ -561,15 +561,15 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Unfollow",
+        "defaultMessage": "Leave pack",
         "id": "account.unfollow"
       },
       {
-        "defaultMessage": "Follow",
+        "defaultMessage": "Join pack",
         "id": "account.follow"
       },
       {
-        "defaultMessage": "Awaiting approval. Click to cancel follow request",
+        "defaultMessage": "Awaiting approval. Click to cancel join request",
         "id": "account.requested"
       },
       {
@@ -585,15 +585,15 @@
         "id": "account.link_verified_on"
       },
       {
-        "defaultMessage": "This account privacy status is set to locked. The owner manually reviews who can follow them.",
+        "defaultMessage": "This account is locked. The owner manually reviews who can join their pack.",
         "id": "account.locked_info"
       },
       {
-        "defaultMessage": "Mention @{name}",
+        "defaultMessage": "Include @{name}",
         "id": "account.mention"
       },
       {
-        "defaultMessage": "Direct message @{name}",
+        "defaultMessage": "Whisper to @{name}",
         "id": "account.direct"
       },
       {
@@ -621,7 +621,7 @@
         "id": "account.media"
       },
       {
-        "defaultMessage": "Hide everything from {domain}",
+        "defaultMessage": "Hide {domain}",
         "id": "account.block_domain"
       },
       {
@@ -629,15 +629,15 @@
         "id": "account.unblock_domain"
       },
       {
-        "defaultMessage": "Hide boosts from @{name}",
+        "defaultMessage": "Hide repeats from @{name}",
         "id": "account.hide_reblogs"
       },
       {
-        "defaultMessage": "Show boosts from @{name}",
+        "defaultMessage": "Show repeats from @{name}",
         "id": "account.show_reblogs"
       },
       {
-        "defaultMessage": "Pinned toots",
+        "defaultMessage": "Pins",
         "id": "navigation_bar.pins"
       },
       {
@@ -645,11 +645,11 @@
         "id": "navigation_bar.preferences"
       },
       {
-        "defaultMessage": "Follow requests",
+        "defaultMessage": "New packmates",
         "id": "navigation_bar.follow_requests"
       },
       {
-        "defaultMessage": "Favourites",
+        "defaultMessage": "Admirations",
         "id": "navigation_bar.favourites"
       },
       {
@@ -657,15 +657,15 @@
         "id": "navigation_bar.lists"
       },
       {
-        "defaultMessage": "Blocked users",
+        "defaultMessage": "Blocked creatures",
         "id": "navigation_bar.blocks"
       },
       {
-        "defaultMessage": "Hidden domains",
+        "defaultMessage": "Hidden communities",
         "id": "navigation_bar.domain_blocks"
       },
       {
-        "defaultMessage": "Muted users",
+        "defaultMessage": "Muted creatures",
         "id": "navigation_bar.mutes"
       },
       {
@@ -681,11 +681,11 @@
         "id": "account.add_or_remove_from_list"
       },
       {
-        "defaultMessage": "Open moderation interface for @{name}",
+        "defaultMessage": "Moderate @{name}",
         "id": "status.admin_account"
       },
       {
-        "defaultMessage": "Follows you",
+        "defaultMessage": "In your pack",
         "id": "account.follows_you"
       },
       {
@@ -705,15 +705,15 @@
         "id": "account.badges.bot"
       },
       {
-        "defaultMessage": "Toots",
+        "defaultMessage": "Roars",
         "id": "account.posts"
       },
       {
-        "defaultMessage": "Follows",
+        "defaultMessage": "In packs",
         "id": "account.follows"
       },
       {
-        "defaultMessage": "Followers",
+        "defaultMessage": "Packmates",
         "id": "account.followers"
       }
     ],
@@ -722,11 +722,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Blocked users",
+        "defaultMessage": "Blocked creatures",
         "id": "column.blocks"
       },
       {
-        "defaultMessage": "You haven't blocked any users yet.",
+        "defaultMessage": "You haven't blocked any creatures yet.",
         "id": "empty_column.blocks"
       }
     ],
@@ -744,11 +744,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Local timeline",
+        "defaultMessage": "Monsterpit",
         "id": "column.community"
       },
       {
-        "defaultMessage": "The local timeline is empty. Write something publicly to get the ball rolling!",
+        "defaultMessage": "The Monsterpit timeline is empty. Write something publicly to get the ball rolling!",
         "id": "empty_column.community"
       }
     ],
@@ -761,7 +761,7 @@
         "id": "account.edit_profile"
       },
       {
-        "defaultMessage": "Pinned toots",
+        "defaultMessage": "Pins",
         "id": "navigation_bar.pins"
       },
       {
@@ -769,11 +769,11 @@
         "id": "navigation_bar.preferences"
       },
       {
-        "defaultMessage": "Follow requests",
+        "defaultMessage": "New packmates",
         "id": "navigation_bar.follow_requests"
       },
       {
-        "defaultMessage": "Favourites",
+        "defaultMessage": "Admirations",
         "id": "navigation_bar.favourites"
       },
       {
@@ -781,15 +781,15 @@
         "id": "navigation_bar.lists"
       },
       {
-        "defaultMessage": "Blocked users",
+        "defaultMessage": "Blocked creatures",
         "id": "navigation_bar.blocks"
       },
       {
-        "defaultMessage": "Hidden domains",
+        "defaultMessage": "Hidden communities",
         "id": "navigation_bar.domain_blocks"
       },
       {
-        "defaultMessage": "Muted users",
+        "defaultMessage": "Muted creatures",
         "id": "navigation_bar.mutes"
       },
       {
@@ -802,7 +802,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "What is on your mind?",
+        "defaultMessage": "Roar shamelessly!",
         "id": "compose_form.placeholder"
       },
       {
@@ -810,7 +810,7 @@
         "id": "compose_form.spoiler_placeholder"
       },
       {
-        "defaultMessage": "Toot",
+        "defaultMessage": "Roar",
         "id": "compose_form.publish"
       },
       {
@@ -847,7 +847,7 @@
         "id": "emoji_button.search_results"
       },
       {
-        "defaultMessage": "People",
+        "defaultMessage": "Monsters",
         "id": "emoji_button.people"
       },
       {
@@ -943,7 +943,7 @@
         "id": "privacy.public.short"
       },
       {
-        "defaultMessage": "Post to public timelines",
+        "defaultMessage": "Roar to public timelines",
         "id": "privacy.public.long"
       },
       {
@@ -955,23 +955,23 @@
         "id": "privacy.unlisted.long"
       },
       {
-        "defaultMessage": "Followers-only",
+        "defaultMessage": "Packmates-only",
         "id": "privacy.private.short"
       },
       {
-        "defaultMessage": "Post to followers only",
+        "defaultMessage": "Roar to packmates only",
         "id": "privacy.private.long"
       },
       {
-        "defaultMessage": "Direct",
+        "defaultMessage": "Whisper",
         "id": "privacy.direct.short"
       },
       {
-        "defaultMessage": "Post to mentioned users only",
+        "defaultMessage": "Roar to mentioned creatures only",
         "id": "privacy.direct.long"
       },
       {
-        "defaultMessage": "Adjust status privacy",
+        "defaultMessage": "Adjust roar privacy",
         "id": "privacy.change"
       }
     ],
@@ -997,11 +997,11 @@
         "id": "suggestions.header"
       },
       {
-        "defaultMessage": "People",
+        "defaultMessage": "Monsters",
         "id": "search_results.accounts"
       },
       {
-        "defaultMessage": "Toots",
+        "defaultMessage": "Roars",
         "id": "search_results.statuses"
       },
       {
@@ -1022,11 +1022,11 @@
         "id": "search.placeholder"
       },
       {
-        "defaultMessage": "Simple text returns statuses you have written, favourited, boosted, or have been mentioned in, as well as matching usernames, display names, and hashtags.",
+        "defaultMessage": "Simple text returns roars you have written, admired, repeated, or have been mentioned in, as well as matching creaturenames, display names, and hashtags.",
         "id": "search_popout.tips.full_text"
       },
       {
-        "defaultMessage": "Simple text returns matching display names, usernames and hashtags",
+        "defaultMessage": "Simple text returns matching display names, creaturenames and hashtags",
         "id": "search_popout.tips.text"
       },
       {
@@ -1038,11 +1038,11 @@
         "id": "search_popout.tips.hashtag"
       },
       {
-        "defaultMessage": "user",
+        "defaultMessage": "creature",
         "id": "search_popout.tips.user"
       },
       {
-        "defaultMessage": "status",
+        "defaultMessage": "roar",
         "id": "search_popout.tips.status"
       }
     ],
@@ -1116,7 +1116,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Your account is not {locked}. Anyone can follow you to view your follower-only posts.",
+        "defaultMessage": "Your account is not {locked}. Anyone can join your pack to view your follower-only roars.",
         "id": "compose_form.lock_disclaimer"
       },
       {
@@ -1124,11 +1124,11 @@
         "id": "compose_form.lock_disclaimer.lock"
       },
       {
-        "defaultMessage": "This toot won't be listed under any hashtag as it is unlisted. Only public toots can be searched by hashtag.",
+        "defaultMessage": "This roar won't be listed under any hashtag as it is unlisted. Only public roars can be searched by hashtag.",
         "id": "compose_form.hashtag_warning"
       },
       {
-        "defaultMessage": "This toot will only be sent to all the mentioned users.",
+        "defaultMessage": "This roar will only be sent to all the mentioned creatures.",
         "id": "compose_form.direct_message_warning"
       },
       {
@@ -1141,23 +1141,23 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Getting started",
+        "defaultMessage": "Main Menu",
         "id": "getting_started.heading"
       },
       {
-        "defaultMessage": "Home",
+        "defaultMessage": "Pack",
         "id": "tabs_bar.home"
       },
       {
-        "defaultMessage": "Notifications",
+        "defaultMessage": "Growls",
         "id": "tabs_bar.notifications"
       },
       {
-        "defaultMessage": "Federated timeline",
+        "defaultMessage": "World",
         "id": "navigation_bar.public_timeline"
       },
       {
-        "defaultMessage": "Local timeline",
+        "defaultMessage": "Monsterpit",
         "id": "navigation_bar.community_timeline"
       },
       {
@@ -1165,11 +1165,11 @@
         "id": "navigation_bar.preferences"
       },
       {
-        "defaultMessage": "Logout",
+        "defaultMessage": "Sleep",
         "id": "navigation_bar.logout"
       },
       {
-        "defaultMessage": "Compose new toot",
+        "defaultMessage": "Compose new roar",
         "id": "navigation_bar.compose"
       }
     ],
@@ -1178,11 +1178,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Direct messages",
+        "defaultMessage": "Whispers",
         "id": "column.direct"
       },
       {
-        "defaultMessage": "You don't have any direct messages yet. When you send or receive one, it will show up here.",
+        "defaultMessage": "You don't have any whispers yet. When you send or receive one, it will show up here.",
         "id": "empty_column.direct"
       }
     ],
@@ -1191,7 +1191,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Hidden domains",
+        "defaultMessage": "Hidden communities",
         "id": "column.domain_blocks"
       },
       {
@@ -1208,11 +1208,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Favourites",
+        "defaultMessage": "Admirations",
         "id": "column.favourites"
       },
       {
-        "defaultMessage": "You don't have any favourite toots yet. When you favourite one, it will show up here.",
+        "defaultMessage": "You don't have any admirations yet. When you admire one, it will show up here.",
         "id": "empty_column.favourited_statuses"
       }
     ],
@@ -1221,7 +1221,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "No one has favourited this toot yet. When someone does, they will show up here.",
+        "defaultMessage": "No one has admired this roar yet. When someone does, they will show up here.",
         "id": "empty_column.favourites"
       }
     ],
@@ -1230,7 +1230,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Authorize",
+        "defaultMessage": "Accept",
         "id": "follow_request.authorize"
       },
       {
@@ -1243,11 +1243,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Follow requests",
+        "defaultMessage": "New packmates",
         "id": "column.follow_requests"
       },
       {
-        "defaultMessage": "You don't have any follow requests yet. When you receive one, it will show up here.",
+        "defaultMessage": "You don't have any join requests yet. When you receive one, it will show up here.",
         "id": "empty_column.follow_requests"
       }
     ],
@@ -1260,7 +1260,7 @@
         "id": "empty_column.account_unavailable"
       },
       {
-        "defaultMessage": "No one follows this user yet.",
+        "defaultMessage": "No one follows this creature yet.",
         "id": "account.followers.empty"
       }
     ],
@@ -1273,7 +1273,7 @@
         "id": "empty_column.account_unavailable"
       },
       {
-        "defaultMessage": "This user doesn't follow anyone yet.",
+        "defaultMessage": "This creature doesn't follow anyone yet.",
         "id": "account.follows.empty"
       }
     ],
@@ -1282,15 +1282,15 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Home",
+        "defaultMessage": "Pack",
         "id": "tabs_bar.home"
       },
       {
-        "defaultMessage": "Notifications",
+        "defaultMessage": "Growls",
         "id": "tabs_bar.notifications"
       },
       {
-        "defaultMessage": "Federated timeline",
+        "defaultMessage": "World",
         "id": "navigation_bar.public_timeline"
       },
       {
@@ -1298,11 +1298,11 @@
         "id": "column_subheading.settings"
       },
       {
-        "defaultMessage": "Local timeline",
+        "defaultMessage": "Monsterpit",
         "id": "navigation_bar.community_timeline"
       },
       {
-        "defaultMessage": "Direct messages",
+        "defaultMessage": "Whispers",
         "id": "navigation_bar.direct"
       },
       {
@@ -1310,27 +1310,27 @@
         "id": "navigation_bar.preferences"
       },
       {
-        "defaultMessage": "Follow requests",
+        "defaultMessage": "New packmates",
         "id": "navigation_bar.follow_requests"
       },
       {
-        "defaultMessage": "Favourites",
+        "defaultMessage": "Admirations",
         "id": "navigation_bar.favourites"
       },
       {
-        "defaultMessage": "Blocked users",
+        "defaultMessage": "Blocked creatures",
         "id": "navigation_bar.blocks"
       },
       {
-        "defaultMessage": "Hidden domains",
+        "defaultMessage": "Hidden communities",
         "id": "navigation_bar.domain_blocks"
       },
       {
-        "defaultMessage": "Muted users",
+        "defaultMessage": "Muted creatures",
         "id": "navigation_bar.mutes"
       },
       {
-        "defaultMessage": "Pinned toots",
+        "defaultMessage": "Pins",
         "id": "navigation_bar.pins"
       },
       {
@@ -1350,7 +1350,7 @@
         "id": "navigation_bar.security"
       },
       {
-        "defaultMessage": "Getting started",
+        "defaultMessage": "Main Menu",
         "id": "getting_started.heading"
       },
       {
@@ -1358,7 +1358,7 @@
         "id": "getting_started.directory"
       },
       {
-        "defaultMessage": "Invite people",
+        "defaultMessage": "Invite monsters",
         "id": "getting_started.invite"
       },
       {
@@ -1390,11 +1390,11 @@
         "id": "getting_started.documentation"
       },
       {
-        "defaultMessage": "Logout",
+        "defaultMessage": "Sleep",
         "id": "navigation_bar.logout"
       },
       {
-        "defaultMessage": "Mastodon is open source software. You can contribute or report issues on GitHub at {github}.",
+        "defaultMessage": "Monsterpit is open source software. You can contribute or report issues on GitHub at {github}.",
         "id": "getting_started.open_source_notice"
       }
     ],
@@ -1457,7 +1457,7 @@
         "id": "home.column_settings.basic"
       },
       {
-        "defaultMessage": "Show boosts",
+        "defaultMessage": "Show repeats",
         "id": "home.column_settings.show_reblogs"
       },
       {
@@ -1470,11 +1470,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Home",
+        "defaultMessage": "Pack",
         "id": "column.home"
       },
       {
-        "defaultMessage": "Your home timeline is empty! Visit {public} or use search to get started and meet other users.",
+        "defaultMessage": "Your home timeline is empty! Visit {public} or use search to get started and meet other creatures.",
         "id": "empty_column.home"
       },
       {
@@ -1499,11 +1499,11 @@
         "id": "introduction.welcome.action"
       },
       {
-        "defaultMessage": "Home",
+        "defaultMessage": "Pack",
         "id": "introduction.federation.home.headline"
       },
       {
-        "defaultMessage": "Posts from people you follow will appear in your home feed. You can follow anyone on any server!",
+        "defaultMessage": "Roars from monsters in your pack will appear in your home feed. You can follow anyone on any server!",
         "id": "introduction.federation.home.text"
       },
       {
@@ -1511,15 +1511,15 @@
         "id": "introduction.federation.local.headline"
       },
       {
-        "defaultMessage": "Public posts from people on the same server as you will appear in the local timeline.",
+        "defaultMessage": "Public roars from monsters on the same server as you will appear in the Monsterpit timeline.",
         "id": "introduction.federation.local.text"
       },
       {
-        "defaultMessage": "Federated",
+        "defaultMessage": "World",
         "id": "introduction.federation.federated.headline"
       },
       {
-        "defaultMessage": "Public posts from other servers of the fediverse will appear in the federated timeline.",
+        "defaultMessage": "Public roars from other servers of the fediverse will appear in the world timeline.",
         "id": "introduction.federation.federated.text"
       },
       {
@@ -1531,27 +1531,27 @@
         "id": "introduction.interactions.reply.headline"
       },
       {
-        "defaultMessage": "You can reply to other people's and your own toots, which will chain them together in a conversation.",
+        "defaultMessage": "You can reply to other monsters's and your own roars, which will chain them together in a conversation.",
         "id": "introduction.interactions.reply.text"
       },
       {
-        "defaultMessage": "Boost",
+        "defaultMessage": "Repeat",
         "id": "introduction.interactions.reblog.headline"
       },
       {
-        "defaultMessage": "You can share other people's toots with your followers by boosting them.",
+        "defaultMessage": "You can share other monsters's roars with your packmates by repeating them.",
         "id": "introduction.interactions.reblog.text"
       },
       {
-        "defaultMessage": "Favourite",
+        "defaultMessage": "Admire",
         "id": "introduction.interactions.favourite.headline"
       },
       {
-        "defaultMessage": "You can save a toot for later, and let the author know that you liked it, by favouriting it.",
+        "defaultMessage": "You can save a roar for later, and let the author know that you liked it, by admiring it.",
         "id": "introduction.interactions.favourite.text"
       },
       {
-        "defaultMessage": "Finish toot-orial!",
+        "defaultMessage": "Finish roar-orial!",
         "id": "introduction.interactions.action"
       }
     ],
@@ -1584,15 +1584,15 @@
         "id": "keyboard_shortcuts.profile"
       },
       {
-        "defaultMessage": "to favourite",
+        "defaultMessage": "to admire",
         "id": "keyboard_shortcuts.favourite"
       },
       {
-        "defaultMessage": "to boost",
+        "defaultMessage": "to repeat",
         "id": "keyboard_shortcuts.boost"
       },
       {
-        "defaultMessage": "to open status",
+        "defaultMessage": "to open roar",
         "id": "keyboard_shortcuts.enter"
       },
       {
@@ -1608,7 +1608,7 @@
         "id": "keyboard_shortcuts.down"
       },
       {
-        "defaultMessage": "to focus a status in one of the columns",
+        "defaultMessage": "to focus a roar in one of the columns",
         "id": "keyboard_shortcuts.column"
       },
       {
@@ -1616,7 +1616,7 @@
         "id": "keyboard_shortcuts.compose"
       },
       {
-        "defaultMessage": "to start a brand new toot",
+        "defaultMessage": "to start a brand new roar",
         "id": "keyboard_shortcuts.toot"
       },
       {
@@ -1640,15 +1640,15 @@
         "id": "keyboard_shortcuts.notifications"
       },
       {
-        "defaultMessage": "to open local timeline",
+        "defaultMessage": "to open Monsterpit timeline",
         "id": "keyboard_shortcuts.local"
       },
       {
-        "defaultMessage": "to open federated timeline",
+        "defaultMessage": "to open world timeline",
         "id": "keyboard_shortcuts.federated"
       },
       {
-        "defaultMessage": "to open direct messages column",
+        "defaultMessage": "to open whispers column",
         "id": "keyboard_shortcuts.direct"
       },
       {
@@ -1656,11 +1656,11 @@
         "id": "keyboard_shortcuts.start"
       },
       {
-        "defaultMessage": "to open favourites list",
+        "defaultMessage": "to open admirations list",
         "id": "keyboard_shortcuts.favourites"
       },
       {
-        "defaultMessage": "to open pinned toots list",
+        "defaultMessage": "to open pins list",
         "id": "keyboard_shortcuts.pinned"
       },
       {
@@ -1668,15 +1668,15 @@
         "id": "keyboard_shortcuts.my_profile"
       },
       {
-        "defaultMessage": "to open blocked users list",
+        "defaultMessage": "to open blocked creatures list",
         "id": "keyboard_shortcuts.blocked"
       },
       {
-        "defaultMessage": "to open muted users list",
+        "defaultMessage": "to open muted creatures list",
         "id": "keyboard_shortcuts.muted"
       },
       {
-        "defaultMessage": "to open follow requests list",
+        "defaultMessage": "to open join requests list",
         "id": "keyboard_shortcuts.requests"
       },
       {
@@ -1724,7 +1724,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Search among people you follow",
+        "defaultMessage": "Search among monsters in your pack",
         "id": "lists.search"
       }
     ],
@@ -1749,7 +1749,7 @@
         "id": "lists.delete"
       },
       {
-        "defaultMessage": "There is nothing in this list yet. When members of this list post new statuses, they will appear here.",
+        "defaultMessage": "There is nothing in this list yet. When members of this list roar new roars, they will appear here.",
         "id": "empty_column.list"
       }
     ],
@@ -1788,11 +1788,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Muted users",
+        "defaultMessage": "Muted creatures",
         "id": "column.mutes"
       },
       {
-        "defaultMessage": "You haven't muted any users yet.",
+        "defaultMessage": "You haven't muted any creatures yet.",
         "id": "empty_column.mutes"
       }
     ],
@@ -1801,7 +1801,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Clear notifications",
+        "defaultMessage": "Clear growls",
         "id": "notifications.clear"
       }
     ],
@@ -1838,19 +1838,19 @@
         "id": "notifications.column_settings.filter_bar.category"
       },
       {
-        "defaultMessage": "New followers:",
+        "defaultMessage": "New packmate:",
         "id": "notifications.column_settings.follow"
       },
       {
-        "defaultMessage": "Favourites:",
+        "defaultMessage": "Admirations:",
         "id": "notifications.column_settings.favourite"
       },
       {
-        "defaultMessage": "Mentions:",
+        "defaultMessage": "Includes:",
         "id": "notifications.column_settings.mention"
       },
       {
-        "defaultMessage": "Boosts:",
+        "defaultMessage": "Repeats:",
         "id": "notifications.column_settings.reblog"
       },
       {
@@ -1863,15 +1863,15 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Mentions",
+        "defaultMessage": "Includes",
         "id": "notifications.filter.mentions"
       },
       {
-        "defaultMessage": "Favourites",
+        "defaultMessage": "Admirations",
         "id": "notifications.filter.favourites"
       },
       {
-        "defaultMessage": "Boosts",
+        "defaultMessage": "Repeats",
         "id": "notifications.filter.boosts"
       },
       {
@@ -1879,7 +1879,7 @@
         "id": "notifications.filter.polls"
       },
       {
-        "defaultMessage": "Follows",
+        "defaultMessage": "In packs",
         "id": "notifications.filter.follows"
       },
       {
@@ -1892,15 +1892,15 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "{name} followed you",
+        "defaultMessage": "{name} joined your pack",
         "id": "notification.follow"
       },
       {
-        "defaultMessage": "{name} favourited your status",
+        "defaultMessage": "{name} admired your roar",
         "id": "notification.favourite"
       },
       {
-        "defaultMessage": "{name} boosted your status",
+        "defaultMessage": "{name} repeated your roar",
         "id": "notification.reblog"
       },
       {
@@ -1913,11 +1913,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Are you sure you want to permanently clear all your notifications?",
+        "defaultMessage": "Are you sure you want to permanently clear all your growls?",
         "id": "notifications.clear_confirmation"
       },
       {
-        "defaultMessage": "Clear notifications",
+        "defaultMessage": "Clear growls",
         "id": "notifications.clear"
       }
     ],
@@ -1926,7 +1926,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Notifications",
+        "defaultMessage": "Growls",
         "id": "column.notifications"
       },
       {
@@ -1939,7 +1939,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Pinned toot",
+        "defaultMessage": "Pinned roar",
         "id": "column.pins"
       }
     ],
@@ -1948,11 +1948,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Federated timeline",
+        "defaultMessage": "World",
         "id": "column.public"
       },
       {
-        "defaultMessage": "There is nothing here! Write something publicly, or manually follow users from other servers to fill it up",
+        "defaultMessage": "There is nothing here! Write something publicly, or manually follow creatures from other servers to fill it up",
         "id": "empty_column.public"
       }
     ],
@@ -1961,7 +1961,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "No one has boosted this toot yet. When someone does, they will show up here.",
+        "defaultMessage": "No one has repeated this roar yet. When someone does, they will show up here.",
         "id": "status.reblogs.empty"
       }
     ],
@@ -1974,15 +1974,15 @@
         "id": "status.delete"
       },
       {
-        "defaultMessage": "Delete & re-draft",
+        "defaultMessage": "Delete & edit",
         "id": "status.redraft"
       },
       {
-        "defaultMessage": "Direct message @{name}",
+        "defaultMessage": "Whisper to @{name}",
         "id": "status.direct"
       },
       {
-        "defaultMessage": "Mention @{name}",
+        "defaultMessage": "Include @{name}",
         "id": "status.mention"
       },
       {
@@ -1990,23 +1990,23 @@
         "id": "status.reply"
       },
       {
-        "defaultMessage": "Boost",
+        "defaultMessage": "Repeat",
         "id": "status.reblog"
       },
       {
-        "defaultMessage": "Boost to original audience",
+        "defaultMessage": "Repeat to original audience",
         "id": "status.reblog_private"
       },
       {
-        "defaultMessage": "Unboost",
+        "defaultMessage": "Unrepeat",
         "id": "status.cancel_reblog_private"
       },
       {
-        "defaultMessage": "This post cannot be boosted",
+        "defaultMessage": "This roar cannot be repeated",
         "id": "status.cannot_reblog"
       },
       {
-        "defaultMessage": "Favourite",
+        "defaultMessage": "Admire",
         "id": "status.favourite"
       },
       {
@@ -2046,15 +2046,15 @@
         "id": "status.embed"
       },
       {
-        "defaultMessage": "Open moderation interface for @{name}",
+        "defaultMessage": "Moderate @{name}",
         "id": "status.admin_account"
       },
       {
-        "defaultMessage": "Open this status in the moderation interface",
+        "defaultMessage": "Moderate roar",
         "id": "status.admin_status"
       },
       {
-        "defaultMessage": "Copy link to status",
+        "defaultMessage": "Copy link to roar",
         "id": "status.copy"
       }
     ],
@@ -2067,15 +2067,15 @@
         "id": "confirmations.delete.confirm"
       },
       {
-        "defaultMessage": "Are you sure you want to delete this status?",
+        "defaultMessage": "Are you sure you want to delete this roar?",
         "id": "confirmations.delete.message"
       },
       {
-        "defaultMessage": "Delete & redraft",
+        "defaultMessage": "Delete & edit",
         "id": "confirmations.redraft.confirm"
       },
       {
-        "defaultMessage": "Are you sure you want to delete this status and re-draft it? Favourites and boosts will be lost, and replies to the original post will be orphaned.",
+        "defaultMessage": "Are you sure you want to delete this roar and edit it? Admirations and repeats will be lost, & growls to the original roar will be orphaned.",
         "id": "confirmations.redraft.message"
       },
       {
@@ -2108,15 +2108,15 @@
         "id": "confirmations.delete.confirm"
       },
       {
-        "defaultMessage": "Are you sure you want to delete this status?",
+        "defaultMessage": "Are you sure you want to delete this roar?",
         "id": "confirmations.delete.message"
       },
       {
-        "defaultMessage": "Delete & redraft",
+        "defaultMessage": "Delete & edit",
         "id": "confirmations.redraft.confirm"
       },
       {
-        "defaultMessage": "Are you sure you want to delete this status and re-draft it? Favourites and boosts will be lost, and replies to the original post will be orphaned.",
+        "defaultMessage": "Are you sure you want to delete this roar and edit it? Admirations and repeats will be lost, & growls to the original roar will be orphaned.",
         "id": "confirmations.redraft.message"
       },
       {
@@ -2124,11 +2124,11 @@
         "id": "confirmations.block.confirm"
       },
       {
-        "defaultMessage": "Show more for all",
+        "defaultMessage": "Reveal all",
         "id": "status.show_more_all"
       },
       {
-        "defaultMessage": "Show less for all",
+        "defaultMessage": "Hide all",
         "id": "status.show_less_all"
       },
       {
@@ -2157,7 +2157,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Boost",
+        "defaultMessage": "Repeat",
         "id": "status.reblog"
       },
       {
@@ -2170,7 +2170,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Favourite",
+        "defaultMessage": "Admire",
         "id": "status.favourite"
       },
       {
@@ -2217,7 +2217,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Toot",
+        "defaultMessage": "Roar",
         "id": "compose_form.publish"
       }
     ],
@@ -2239,7 +2239,7 @@
         "id": "status.embed"
       },
       {
-        "defaultMessage": "Embed this status on your website by copying the code below.",
+        "defaultMessage": "Embed this roar on your website by copying the code below.",
         "id": "embed.instructions"
       },
       {
@@ -2277,7 +2277,7 @@
         "id": "confirmations.mute.message"
       },
       {
-        "defaultMessage": "Hide notifications from this user?",
+        "defaultMessage": "Hide notifications from this creature?",
         "id": "mute_modal.hide_notifications"
       },
       {
@@ -2327,11 +2327,11 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Home",
+        "defaultMessage": "Pack",
         "id": "tabs_bar.home"
       },
       {
-        "defaultMessage": "Notifications",
+        "defaultMessage": "Growls",
         "id": "tabs_bar.notifications"
       },
       {
@@ -2339,7 +2339,7 @@
         "id": "tabs_bar.local_timeline"
       },
       {
-        "defaultMessage": "Federated",
+        "defaultMessage": "World",
         "id": "tabs_bar.federated_timeline"
       },
       {
@@ -2370,7 +2370,7 @@
   {
     "descriptors": [
       {
-        "defaultMessage": "Your draft will be lost if you leave Mastodon.",
+        "defaultMessage": "Your draft will be lost if you leave Monsterpit.",
         "id": "ui.beforeunload"
       }
     ],
@@ -2399,7 +2399,7 @@
         "id": "video.hide"
       },
       {
-        "defaultMessage": "Expand video",
+        "defaultMessage": "Open video",
         "id": "video.expand"
       },
       {

@@ -1,7 +1,7 @@
 ---
 en:
   about:
-    about_hashtag_html: These are public toots tagged with <strong>#%{hashtag}</strong>. You can interact with them if you have an account anywhere in the fediverse.
+    about_hashtag_html: These are public roars tagged with <strong>#%{hashtag}</strong>. You can interact with them if you have an account anywhere in the fediverse.
     about_mastodon_html: Mastodon is a social network based on open web protocols and free, open-source software. It is decentralized like e-mail.
     about_this: About
     active_count_after: active
@@ -9,18 +9,18 @@ en:
     administered_by: 'Administered by:'
     api: API
     apps: Mobile apps
-    apps_platforms: Use Mastodon from iOS, Android and other platforms
+    apps_platforms: Use Monsterpit from iOS, Android and other platforms
     browse_directory: Browse a profile directory and filter by interests
-    browse_public_posts: Browse a live stream of public posts on Mastodon
+    browse_public_posts: Browse a live stream of public roars on Monsterpit
     contact: Contact
     contact_missing: Not set
     contact_unavailable: N/A
-    discover_users: Discover users
+    discover_users: Discover creatures
     documentation: Documentation
     extended_description_html: |
       <h3>A good place for rules</h3>
       <p>The extended description has not been set up yet.</p>
-    federation_hint_html: With an account on %{instance} you'll be able to follow people on any Mastodon server and beyond.
+    federation_hint_html: With an account on %{instance} you'll be able to follow monsters on any Monsterpit server and beyond.
     generic_description: "%{domain} is one server in the network"
     get_apps: Try a mobile app
     hosted_on: Mastodon hosted on %{domain}
@@ -39,7 +39,7 @@ en:
       one: user
       other: users
     user_count_before: Home to
-    what_is_mastodon: What is Mastodon?
+    what_is_mastodon: What is Monsterpit?
   accounts:
     choices_html: "%{name}'s choices:"
     follow: Follow
@@ -54,16 +54,16 @@ en:
     moved_html: "%{name} has moved to %{new_profile_link}:"
     network_hidden: This information is not available
     nothing_here: There is nothing here!
-    people_followed_by: People whom %{name} follows
-    people_who_follow: People who follow %{name}
+    monsters_followed_by: People whom %{name} follows
+    monsters_who_follow: People who follow %{name}
     pin_errors:
-      following: You must be already following the person you want to endorse
+      following: You must be already following the monster you want to endorse
     posts:
       one: Toot
       other: Toots
     posts_tab_heading: Toots
-    posts_with_replies: Toots and replies
-    reserved_username: The username is reserved
+    posts_with_replies: Toots & growls
+    reserved_username: The creaturename is reserved
     roles:
       admin: Admin
       bot: Bot
@@ -91,7 +91,7 @@ en:
         label: Change email
         new_email: New email
         submit: Change email
-        title: Change email for %{username}
+        title: Change email for %{creaturename}
       confirm: Confirm
       confirmed: Confirmed
       confirming: Confirming
@@ -104,7 +104,7 @@ en:
       domain: Domain
       edit: Edit
       email: Email
-      email_status: Email status
+      email_status: Email roar
       enable: Enable
       enabled: Enabled
       feed_url: Feed URL
@@ -121,7 +121,7 @@ en:
         local: Local
         remote: Remote
         title: Location
-      login_status: Login status
+      login_status: Login roar
       media_attachments: Media attachments
       memorialize: Turn into memoriam
       moderation:
@@ -151,7 +151,7 @@ en:
       remove_avatar: Remove avatar
       remove_header: Remove header
       resend_confirmation:
-        already_confirmed: This user is already confirmed
+        already_confirmed: This creature is already confirmed
         send: Resend confirmation email
         success: Confirmation email successfully sent!
       reset: Reset
@@ -185,27 +185,27 @@ en:
     action_logs:
       actions:
         assigned_to_self_report: "%{name} assigned report %{target} to themselves"
-        change_email_user: "%{name} changed the e-mail address of user %{target}"
-        confirm_user: "%{name} confirmed e-mail address of user %{target}"
+        change_email_user: "%{name} changed the e-mail address of creature %{target}"
+        confirm_user: "%{name} confirmed e-mail address of creature %{target}"
         create_account_warning: "%{name} sent a warning to %{target}"
         create_custom_emoji: "%{name} uploaded new emoji %{target}"
         create_domain_block: "%{name} blocked domain %{target}"
         create_email_domain_block: "%{name} blacklisted e-mail domain %{target}"
-        demote_user: "%{name} demoted user %{target}"
+        demote_user: "%{name} demoted creature %{target}"
         destroy_custom_emoji: "%{name} destroyed emoji %{target}"
         destroy_domain_block: "%{name} unblocked domain %{target}"
         destroy_email_domain_block: "%{name} whitelisted e-mail domain %{target}"
-        destroy_status: "%{name} removed status by %{target}"
-        disable_2fa_user: "%{name} disabled two factor requirement for user %{target}"
+        destroy_status: "%{name} removed roar by %{target}"
+        disable_2fa_user: "%{name} disabled two factor requirement for creature %{target}"
         disable_custom_emoji: "%{name} disabled emoji %{target}"
-        disable_user: "%{name} disabled login for user %{target}"
+        disable_user: "%{name} disabled login for creature %{target}"
         enable_custom_emoji: "%{name} enabled emoji %{target}"
-        enable_user: "%{name} enabled login for user %{target}"
+        enable_user: "%{name} enabled login for creature %{target}"
         memorialize_account: "%{name} turned %{target}'s account into a memoriam page"
-        promote_user: "%{name} promoted user %{target}"
+        promote_user: "%{name} promoted creature %{target}"
         remove_avatar_user: "%{name} removed %{target}'s avatar"
         reopen_report: "%{name} reopened report %{target}"
-        reset_password_user: "%{name} reset password of user %{target}"
+        reset_password_user: "%{name} reset password of creature %{target}"
         resolve_report: "%{name} resolved report %{target}"
         silence_account: "%{name} silenced %{target}'s account"
         suspend_account: "%{name} suspended %{target}'s account"
@@ -213,8 +213,8 @@ en:
         unsilence_account: "%{name} unsilenced %{target}'s account"
         unsuspend_account: "%{name} unsuspended %{target}'s account"
         update_custom_emoji: "%{name} updated emoji %{target}"
-        update_status: "%{name} updated status by %{target}"
-      deleted_status: "(deleted status)"
+        update_status: "%{name} updated roar by %{target}"
+      deleted_status: "(deleted roar)"
       title: Audit log
     custom_emojis:
       by_domain: Domain
@@ -254,9 +254,9 @@ en:
       hidden_service: Federation with hidden services
       keybase: Keybase integration
       open_reports: open reports
-      recent_users: Recent users
+      recent_users: Recent creatures
       search: Full-text search
-      single_user_mode: Single user mode
+      single_user_mode: Single creature mode
       software: Software
       space: Space usage
       title: Dashboard
@@ -275,7 +275,7 @@ en:
         create: Create block
         hint: The domain block will not prevent creation of account entries in the database, but will retroactively and automatically apply specific moderation methods on those accounts.
         severity:
-          desc_html: "<strong>Silence</strong> will make the account's posts invisible to anyone who isn't following them. <strong>Suspend</strong> will remove all of the account's content, media, and profile data. Use <strong>None</strong> if you just want to reject media files."
+          desc_html: "<strong>Silence</strong> will make the account's roars invisible to anyone who isn't following them. <strong>Suspend</strong> will remove all of the account's content, media, and profile data. Use <strong>None</strong> if you just want to reject media files."
           noop: None
           silence: Silence
           suspend: Suspend
@@ -311,7 +311,7 @@ en:
       title: E-mail blacklist
     followers:
       back_to_account: Back To Account
-      title: "%{acct}'s Followers"
+      title: "%{acct}'s Packmates"
     instances:
       by_domain: Domain
       delivery_available: Delivery is available
@@ -341,11 +341,11 @@ en:
     relays:
       add_new: Add new relay
       delete: Delete
-      description_html: A <strong>federation relay</strong> is an intermediary server that exchanges large volumes of public toots between servers that subscribe and publish to it. <strong>It can help small and medium servers discover content from the fediverse</strong>, which would otherwise require local users manually following other people on remote servers.
+      description_html: A <strong>federation relay</strong> is an intermediary server that exchanges large volumes of public roars between servers that subscribe and publish to it. <strong>It can help small and medium servers discover content from the fediverse</strong>, which would otherwise require local creatures manually following other monsters on remote servers.
       disable: Disable
       disabled: Disabled
       enable: Enable
-      enable_hint: Once enabled, your server will subscribe to all public toots from this relay, and will begin sending this server's public toots to it.
+      enable_hint: Once enabled, your server will subscribe to all public roars from this relay, and will begin sending this server's public roars to it.
       enabled: Enabled
       inbox_url: Relay URL
       pending: Waiting for relay's approval
@@ -388,14 +388,14 @@ en:
       updated_at: Updated
     settings:
       activity_api_enabled:
-        desc_html: Counts of locally posted statuses, active users, and new registrations in weekly buckets
-        title: Publish aggregate statistics about user activity
+        desc_html: Counts of locally roared roars, active creatures, and new registrations in weekly buckets
+        title: Publish aggregate statistics about creature activity
       bootstrap_timeline_accounts:
-        desc_html: Separate multiple usernames by comma. Only local and unlocked accounts will work. Default when empty is all local admins.
-        title: Default follows for new users
+        desc_html: Separate multiple creaturenames by comma. Only local and unlocked accounts will work. Default when empty is all local admins.
+        title: Default follows for new creatures
       contact_information:
         email: Business e-mail
-        username: Contact username
+        username: Contact creaturename
       custom_css:
         desc_html: Modify the look with CSS loaded on every page
         title: Custom CSS
@@ -406,8 +406,8 @@ en:
         desc_html: Displayed on the frontpage. At least 600x100px recommended. When not set, falls back to server thumbnail
         title: Hero image
       hide_followers_count:
-        desc_html: Do not show followers count on user profiles
-        title: Hide followers count
+        desc_html: Do not show packmates count on creature profiles
+        title: Hide packmates count
       mascot:
         desc_html: Displayed on multiple pages. At least 293×205px recommended. When not set, falls back to default mascot
         title: Mascot image
@@ -418,7 +418,7 @@ en:
         desc_html: Link previews on other websites will display a thumbnail even if the media is marked as sensitive
         title: Show sensitive media in OpenGraph previews
       profile_directory:
-        desc_html: Allow users to be discoverable
+        desc_html: Allow creatures to be discoverable
         title: Enable profile directory
       registrations:
         closed_message:
@@ -437,7 +437,7 @@ en:
           open: Anyone can sign up
         title: Registrations mode
       show_known_fediverse_at_about_page:
-        desc_html: When toggled, it will show toots from all the known fediverse on preview. Otherwise it will only show local toots.
+        desc_html: When toggled, it will show roars from all the known fediverse on preview. Otherwise it will only show local roars.
         title: Show known fediverse on timeline preview
       show_reblogs_in_public_timelines:
         desc_html: Show public boosts of public toots in local and public timelines.
@@ -446,16 +446,16 @@ en:
         desc_html: In addition to public self-replies (threads), show public replies in local and public timelines.
         title: Show replies in public timelines
       show_staff_badge:
-        desc_html: Show a staff badge on a user page
+        desc_html: Show a staff badge on a creature page
         title: Show staff badge
       site_description:
-        desc_html: Introductory paragraph on the API. Describe what makes this Mastodon server special and anything else important. You can use HTML tags, in particular <code>&lt;a&gt;</code> and <code>&lt;em&gt;</code>.
+        desc_html: Introductory paragraph on the API. Describe what makes this Monsterpit server special and anything else important. You can use HTML tags, in particular <code>&lt;a&gt;</code> and <code>&lt;em&gt;</code>.
         title: Server description
       site_description_extended:
         desc_html: A good place for your code of conduct, rules, guidelines and other things that set your server apart. You can use HTML tags
         title: Custom extended information
       site_short_description:
-        desc_html: Displayed in sidebar and meta tags. Describe what Mastodon is and what makes this server special in a single paragraph.
+        desc_html: Displayed in sidebar and meta tags. Describe what Monsterpit is and what makes this server special in a single paragraph.
         title: Short server description
       site_terms:
         desc_html: You can write your own privacy policy, terms of service or other legalese. You can use HTML tags
@@ -478,8 +478,8 @@ en:
       media:
         title: Media
       no_media: No media
-      no_status_selected: No statuses were changed as none were selected
-      title: Account statuses
+      no_status_selected: No roars were changed as none were selected
+      title: Account roars
       with_media: With media
     subscriptions:
       callback_url: Callback URL
@@ -506,7 +506,7 @@ en:
   admin_mailer:
     new_pending_account:
       body: The details of the new account are below. You can approve or reject this application.
-      subject: New account up for review on %{instance} (%{username})
+      subject: New account up for review on %{instance} (%{creaturename})
     new_report:
       body: "%{reporter} has reported %{target}"
       body_remote: Someone from %{domain} has reported %{target}
@@ -517,7 +517,7 @@ en:
     settings: 'Change e-mail preferences: %{link}'
     view: 'View:'
     view_profile: View profile
-    view_status: View status
+    view_status: View roar
   applications:
     created: Application successfully created
     destroyed: Application successfully deleted
@@ -555,11 +555,11 @@ en:
     already_following: You are already following this account
     error: Unfortunately, there was an error looking up the remote account
     follow: Follow
-    follow_request: 'You have sent a follow request to:'
+    follow_request: 'You have sent a join request to:'
     following: 'Success! You are now following:'
     post_follow:
       close: Or, you can just close this window.
-      return: Show the user's profile
+      return: Show the creature's profile
       web: Go to web
     title: Follow %{acct}
   datetime:
@@ -579,7 +579,7 @@ en:
   deletes:
     bad_password_msg: Nice try, hackers! Incorrect password
     confirm_password: Enter your current password to verify your identity
-    description_html: This will <strong>permanently, irreversibly</strong> remove content from your account and deactivate it. Your username will remain reserved to prevent future impersonations.
+    description_html: This will <strong>permanently, irreversibly</strong> remove content from your account and deactivate it. Your creaturename will remain reserved to prevent future impersonations.
     proceed: Delete account
     success_msg: Your account was successfully deleted
     warning_html: Only deletion of content from this particular server is guaranteed. Content that has been widely shared is likely to leave traces. Offline servers and servers that have unsubscribed from your updates will not update their databases.
@@ -587,13 +587,13 @@ en:
   directories:
     directory: Profile directory
     enabled: You are currently listed in the directory.
-    enabled_but_waiting: You have opted-in to be listed in the directory, but you do not have the minimum number of followers (%{min_followers}) to be listed yet.
-    explanation: Discover users based on their interests
+    enabled_but_waiting: You have opted-in to be listed in the directory, but you do not have the minimum number of packmates (%{min_followers}) to be listed yet.
+    explanation: Discover creatures based on their interests
     explore_mastodon: Explore %{title}
     how_to_enable: You are not currently opted-in to the directory. You can opt-in below. Use hashtags in your bio text to be listed under specific hashtags!
     people:
-      one: "%{count} person"
-      other: "%{count} people"
+      one: "%{count} monster"
+      other: "%{count} monsters"
   errors:
     '403': You don't have permission to view this page.
     '404': The page you are looking for isn't here.
@@ -605,15 +605,15 @@ en:
     '500':
       content: We're sorry, but something went wrong on our end.
       title: This page is not correct
-    noscript_html: To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the <a href="%{apps_path}">native apps</a> for Mastodon for your platform.
+    noscript_html: To use the Monsterpit web application, please enable JavaScript. Alternatively, try one of the <a href="%{apps_path}">native apps</a> for Monsterpit for your platform.
   existing_username_validator:
-    not_found: could not find a local user with that username
-    not_found_multiple: could not find %{usernames}
+    not_found: could not find a local creature with that creaturename
+    not_found_multiple: could not find %{creaturenames}
   exports:
     archive_takeout:
       date: Date
       download: Download your archive
-      hint_html: You can request an archive of your <strong>toots and uploaded media</strong>. The exported data will be in the ActivityPub format, readable by any compliant software. You can request an archive every 7 days.
+      hint_html: You can request an archive of your <strong>roars and uploaded media</strong>. The exported data will be in the ActivityPub format, readable by any compliant software. You can request an archive every 7 days.
       in_progress: Compiling your archive...
       request: Request your archive
       size: Size
@@ -668,15 +668,15 @@ en:
       failed: The cryptographic connection failed. Please try again from %{provider}.
       keybase:
         invalid_token: Keybase tokens are hashes of signatures and must be 66 hex characters
-        verification_failed: Keybase does not recognize this token as a signature of Keybase user %{kb_username}. Please retry from Keybase.
+        verification_failed: Keybase does not recognize this token as a signature of Keybase creature %{kb_creaturename}. Please retry from Keybase.
       wrong_user: Cannot create a proof for %{proving} while logged in as %{current}. Log in as %{proving} and try again.
-    explanation_html: Here you can cryptographically connect your other identities, such as a Keybase profile. This lets other people send you encrypted messages and trust content you send them.
-    i_am_html: I am %{username} on %{service}.
+    explanation_html: Here you can cryptographically connect your other identities, such as a Keybase profile. This lets other monsters send you encrypted messages and trust content you send them.
+    i_am_html: I am %{creaturename} on %{service}.
     identity: Identity
     inactive: Inactive
-    publicize_checkbox: 'And toot this:'
-    publicize_toot: 'It is proven! I am %{username} on %{service}: %{url}'
-    status: Verification status
+    publicize_checkbox: 'And roar this:'
+    publicize_toot: 'It is proven! I am %{creaturename} on %{service}: %{url}'
+    status: Verification roar
     view_proof: View proof
   imports:
     modes:
@@ -684,7 +684,7 @@ en:
       merge_long: Keep existing records and add new ones
       overwrite: Overwrite
       overwrite_long: Replace current records with the new ones
-    preface: You can import data that you have exported from another server, such as a list of the people you are following or blocking.
+    preface: You can import data that you have exported from another server, such as a list of the monsters you are following or blocking.
     success: Your data was successfully uploaded and will now be processed in due time
     types:
       blocking: Blocking list
@@ -714,13 +714,13 @@ en:
     table:
       expires_at: Expires
       uses: Uses
-    title: Invite people
+    title: Invite monsters
   lists:
     errors:
       limit: You have reached the maximum amount of lists
   media_attachments:
     validations:
-      images_and_video: Cannot attach a video to a status that already contains images
+      images_and_video: Cannot attach a video to a roar that already contains images
       too_many: Cannot attach more than 4 files
   migrations:
     acct: username@domain of the new account
@@ -736,33 +736,33 @@ en:
       mention: "%{name} mentioned you in:"
       new_followers_summary:
         one: Also, you have acquired one new follower while being away! Yay!
-        other: Also, you have acquired %{count} new followers while being away! Amazing!
+        other: Also, you have acquired %{count} new packmates while being away! Amazing!
       subject:
         one: "1 new notification since your last visit \U0001F418"
         other: "%{count} new notifications since your last visit \U0001F418"
       title: In your absence...
     favourite:
-      body: 'Your status was favourited by %{name}:'
-      subject: "%{name} favourited your status"
-      title: New favourite
+      body: 'Your roar was admired by %{name}:'
+      subject: "%{name} admired your roar"
+      title: New admire
     follow:
       body: "%{name} is now following you!"
       subject: "%{name} is now following you"
       title: New follower
     follow_request:
-      action: Manage follow requests
-      body: "%{name} has requested to follow you"
+      action: Manage join requests
+      body: "%{name} has requested to join your pack"
       subject: 'Pending follower: %{name}'
-      title: New follow request
+      title: New join request
     mention:
       action: Reply
       body: 'You were mentioned by %{name} in:'
       subject: You were mentioned by %{name}
       title: New mention
     reblog:
-      body: 'Your status was boosted by %{name}:'
-      subject: "%{name} boosted your status"
-      title: New boost
+      body: 'Your roar was repeated by %{name}:'
+      subject: "%{name} repeated your roar"
+      title: New repeat
   number:
     human:
       decimal_units:
@@ -804,12 +804,12 @@ en:
     mutual: Mutual
     primary: Primary
     relationship: Relationship
-    remove_selected_domains: Remove all followers from the selected domains
-    remove_selected_followers: Remove selected followers
-    remove_selected_follows: Unfollow selected users
-    status: Account status
+    remove_selected_domains: Remove all packmates from the selected domains
+    remove_selected_followers: Remove selected packmates
+    remove_selected_follows: Unfollow selected creatures
+    status: Account roar
   remote_follow:
-    acct: Enter your username@domain you want to act from
+    acct: Enter your creaturename@domain you want to act from
     missing_resource: Could not find the required redirect URL for your account
     no_account_html: Don't have an account? You can <a href='%{sign_up_path}' target='_blank'>sign up here</a>
     proceed: Proceed to follow
@@ -817,21 +817,21 @@ en:
     reason_html: "<strong>Why is this step necessary?</strong> <code>%{instance}</code> might not be the server where you are registered, so we need to redirect you to your home server first."
   remote_interaction:
     favourite:
-      proceed: Proceed to favourite
-      prompt: 'You want to favourite this toot:'
+      proceed: Proceed to admire
+      prompt: 'You want to admire this roar:'
     reblog:
-      proceed: Proceed to boost
-      prompt: 'You want to boost this toot:'
+      proceed: Proceed to repeat
+      prompt: 'You want to repeat this roar:'
     reply:
       proceed: Proceed to reply
-      prompt: 'You want to reply to this toot:'
+      prompt: 'You want to reply to this roar:'
   remote_unfollow:
     error: Error
     title: Title
     unfollowed: Unfollowed
   scheduled_statuses:
-    over_daily_limit: You have exceeded the limit of %{limit} scheduled toots for that day
-    over_total_limit: You have exceeded the limit of %{limit} scheduled toots
+    over_daily_limit: You have exceeded the limit of %{limit} scheduled roars for that day
+    over_total_limit: You have exceeded the limit of %{limit} scheduled roars
     too_soon: The scheduled date must be in the future
   sessions:
     activity: Last activity
@@ -856,7 +856,7 @@ en:
       weibo: Weibo
     current_session: Current session
     description: "%{browser} on %{platform}"
-    explanation: These are the web browsers currently logged in to your Mastodon account.
+    explanation: These are the web browsers currently logged in to your Monsterpit account.
     ip: IP
     platforms:
       adobe_air: Adobe Air
@@ -879,7 +879,7 @@ en:
     account_settings: Account settings
     appearance: Appearance
     authorized_apps: Authorized apps
-    back: Back to Mastodon
+    back: Back to Monsterpit
     delete: Account deletion
     development: Development
     edit_profile: Edit profile
@@ -893,7 +893,7 @@ en:
     notifications: Notifications
     preferences: Preferences
     profile: Profile
-    relationships: Follows and followers
+    relationships: Packmates
     two_factor_authentication: Two-factor Auth
   statuses:
     attached:
@@ -913,10 +913,10 @@ en:
     open_in_web: Open in web
     over_character_limit: character limit of %{max} exceeded
     pin_errors:
-      limit: You have already pinned the maximum number of toots
-      ownership: Someone else's toot cannot be pinned
-      private: Non-public toot cannot be pinned
-      reblog: A boost cannot be pinned
+      limit: You have already pinned the maximum number of roars
+      ownership: Someone else's roar cannot be pinned
+      private: Non-public roar cannot be pinned
+      reblog: A repeat cannot be pinned
     poll:
       total_votes:
         one: "%{count} vote"
@@ -927,13 +927,13 @@ en:
     title: '%{name}: "%{quote}"'
     visibilities:
       private: Followers-only
-      private_long: Only show to followers
+      private_long: Only show to packmates
       public: Public
       public_long: Everyone can see
       unlisted: Unlisted
       unlisted_long: Everyone can see, but not listed on public timelines
   stream_entries:
-    pinned: Pinned toot
+    pinned: Pinned roar
     reblogged: boosted
     sensitive_content: Sensitive content
   terms:
@@ -942,9 +942,9 @@ en:
       <h3 id="collect">What information do we collect?</h3>
 
       <ul>
-        <li><em>Basic account information</em>: If you register on this server, you may be asked to enter a username, an e-mail address and a password. You may also enter additional profile information such as a display name and biography, and upload a profile picture and header image. The username, display name, biography, profile picture and header image are always listed publicly.</li>
-        <li><em>Posts, following and other public information</em>: The list of people you follow is listed publicly, the same is true for your followers. When you submit a message, the date and time is stored as well as the application you submitted the message from. Messages may contain media attachments, such as pictures and videos. Public and unlisted posts are available publicly. When you feature a post on your profile, that is also publicly available information. Your posts are delivered to your followers, in some cases it means they are delivered to different servers and copies are stored there. When you delete posts, this is likewise delivered to your followers. The action of reblogging or favouriting another post is always public.</li>
-        <li><em>Direct and followers-only posts</em>: All posts are stored and processed on the server. Followers-only posts are delivered to your followers and users who are mentioned in them, and direct posts are delivered only to users mentioned in them. In some cases it means they are delivered to different servers and copies are stored there. We make a good faith effort to limit the access to those posts only to authorized persons, but other servers may fail to do so. Therefore it's important to review servers your followers belong to. You may toggle an option to approve and reject new followers manually in the settings. <em>Please keep in mind that the operators of the server and any receiving server may view such messages</em>, and that recipients may screenshot, copy or otherwise re-share them. <em>Do not share any dangerous information over Mastodon.</em></li>
+        <li><em>Basic account information</em>: If you register on this server, you may be asked to enter a creaturename, an e-mail address and a password. You may also enter additional profile information such as a display name and biography, and upload a profile picture and header image. The creaturename, display name, biography, profile picture and header image are always listed publicly.</li>
+        <li><em>Posts, following and other public information</em>: The list of monsters in your pack is listed publicly, the same is true for your packmates. When you submit a message, the date and time is stored as well as the application you submitted the message from. Messages may contain media attachments, such as pictures and videos. Public and unlisted roars are available publicly. When you feature a roar on your profile, that is also publicly available information. Your roars are delivered to your packmates, in some cases it means they are delivered to different servers and copies are stored there. When you delete roars, this is likewise delivered to your packmates. The action of reblogging or admiring another roar is always public.</li>
+        <li><em>Direct and followers-only posts</em>: All roars are stored and processed on the server. Packmates-only roars are delivered to your packmates and creatures who are mentioned in them, and direct roars are delivered only to creatures mentioned in them. In some cases it means they are delivered to different servers and copies are stored there. We make a good faith effort to limit the access to those roars only to authorized monsters, but other servers may fail to do so. Therefore it's important to review servers your packmates belong to. You may toggle an option to approve and reject new packmates manually in the settings. <em>Please keep in mind that the operators of the server and any receiving server may view such messages</em>, and that recipients may screenshot, copy or otherwise re-share them. <em>Do not share any dangerous information over Monsterpit.</em></li>
         <li><em>IPs and other metadata</em>: When you log in, we record the IP address you log in from, as well as the name of your browser application. All the logged in sessions are available for your review and revocation in the settings. The latest IP address used is stored for up to 12 months. We also may retain server logs which include the IP address of every request to our server.</li>
       </ul>
 
@@ -955,16 +955,16 @@ en:
       <p>Any of the information we collect from you may be used in the following ways:</p>
 
       <ul>
-        <li>To provide the core functionality of Mastodon. You can only interact with other people's content and post your own content when you are logged in. For example, you may follow other people to view their combined posts in your own personalized home timeline.</li>
+        <li>To provide the core functionality of Mastodon. You can only interact with other monsters's content and post your own content when you are logged in. For example, you may follow other monsters to view their combined posts in your own monsteralized home timeline.</li>
         <li>To aid moderation of the community, for example comparing your IP address with other known ones to determine ban evasion or other violations.</li>
-        <li>The email address you provide may be used to send you information, notifications about other people interacting with your content or sending you messages, and to respond to inquiries, and/or other requests or questions.</li>
+        <li>The email address you provide may be used to send you information, notifications about other monsters interacting with your content or sending you messages, and to respond to inquiries, and/or other requests or questions.</li>
       </ul>
 
       <hr class="spacer" />
 
       <h3 id="protect">How do we protect your information?</h3>
 
-      <p>We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your personal information. Among other things, your browser session, as well as the traffic between your applications and the API, are secured with SSL, and your password is hashed using a strong one-way algorithm. You may enable two-factor authentication to further secure access to your account.</p>
+      <p>We implement a variety of security measures to maintain the safety of your monsteral information when you enter, submit, or access your monsteral information. Among other things, your browser session, as well as the traffic between your applications and the API, are secured with SSL, and your password is hashed using a strong one-way algorithm. You may enable two-factor authentication to further secure access to your account.</p>
 
       <hr class="spacer" />
 
@@ -993,7 +993,7 @@ en:
 
       <h3 id="disclose">Do we disclose any information to outside parties?</h3>
 
-      <p>We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our site, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety.</p>
+      <p>We do not sell, trade, or otherwise transfer to outside parties your monsterally identifiable information. This does not include trusted third parties who assist us in operating our site, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety.</p>
 
       <p>Your public content may be downloaded by other servers in the network. Your public and followers-only posts are delivered to the servers where your followers reside, and direct messages are delivered to the servers of the recipients, in so far as those followers or recipients reside on a different server than this.</p>
 
@@ -1003,9 +1003,9 @@ en:
 
       <h3 id="children">Site usage by children</h3>
 
-      <p>If this server is in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (<a href="https://en.wikipedia.org/wiki/General_Data_Protection_Regulation">General Data Protection Regulation</a>) do not use this site.</p>
+      <p>If this server is in the EU or the EEA: Our site, products and services are all directed to monsters who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (<a href="https://en.wikipedia.org/wiki/General_Data_Protection_Regulation">General Data Protection Regulation</a>) do not use this site.</p>
 
-      <p>If this server is in the USA: Our site, products and services are all directed to people who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (<a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a>) do not use this site.</p>
+      <p>If this server is in the USA: Our site, products and services are all directed to monsters who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (<a href="https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act">Children's Online Privacy Protection Act</a>) do not use this site.</p>
 
       <p>Law requirements can be different if this server is in another jurisdiction.</p>
 
@@ -1045,14 +1045,14 @@ en:
     wrong_code: The entered code was invalid! Are server time and device time correct?
   user_mailer:
     backup_ready:
-      explanation: You requested a full backup of your Mastodon account. It's now ready for download!
+      explanation: You requested a full backup of your Monsterpit account. It's now ready for download!
       subject: Your archive is ready for download
       title: Archive takeout
     warning:
       explanation:
         disable: While your account is frozen, your account data remains intact, but you cannot perform any actions until it is unlocked.
-        silence: While your account is limited, only people who are already following you will see your toots on this server, and you may be excluded from various public listings. However, others may still manually follow you.
-        suspend: Your account has been suspended, and all of your toots and your uploaded media files have been irreversibly removed from this server, and servers where you had followers.
+        silence: While your account is limited, only monsters who are already following you will see your roars on this server, and you may be excluded from various public listings. However, others may still manually join your pack.
+        suspend: Your account has been suspended, and all of your roars and your uploaded media files have been irreversibly removed from this server, and servers where you had packmates.
       review_server_policies: Review server policies
       subject:
         disable: Your account %{acct} has been frozen
@@ -1066,28 +1066,28 @@ en:
         suspend: Account suspended
     welcome:
       edit_profile_action: Setup profile
-      edit_profile_step: You can customize your profile by uploading an avatar, header, changing your display name and more. If you’d like to review new followers before they’re allowed to follow you, you can lock your account.
+      edit_profile_step: You can customize your profile by uploading an avatar, header, changing your display name and more. If you’d like to review new packmates before they’re allowed to join your pack, you can lock your account.
       explanation: Here are some tips to get you started
-      final_action: Start posting
-      final_step: 'Start posting! Even without followers your public messages may be seen by others, for example on the local timeline and in hashtags. You may want to introduce yourself on the #introductions hashtag.'
+      final_action: Start roaring
+      final_step: 'Start roaring! Even without packmates your public messages may be seen by others, for example on the Monsterpit timeline and in hashtags. You may want to introduce yourself on the #introductions hashtag.'
       full_handle: Your full handle
-      full_handle_hint: This is what you would tell your friends so they can message or follow you from another server.
+      full_handle_hint: This is what you would tell your friends so they can message or join your pack from another server.
       review_preferences_action: Change preferences
-      review_preferences_step: Make sure to set your preferences, such as which emails you'd like to receive, or what privacy level you’d like your posts to default to. If you don’t have motion sickness, you could choose to enable GIF autoplay.
-      subject: Welcome to Mastodon
-      tip_federated_timeline: The federated timeline is a firehose view of the Mastodon network. But it only includes people your neighbours are subscribed to, so it's not complete.
-      tip_following: You follow your server's admin(s) by default. To find more interesting people, check the local and federated timelines.
-      tip_local_timeline: The local timeline is a firehose view of people on %{instance}. These are your immediate neighbours!
-      tip_mobile_webapp: If your mobile browser offers you to add Mastodon to your homescreen, you can receive push notifications. It acts like a native app in many ways!
+      review_preferences_step: Make sure to set your preferences, such as which emails you'd like to receive, or what privacy level you’d like your roars to default to. If you don’t have motion sickness, you could choose to enable GIF autoplay.
+      subject: Welcome to Monsterpit
+      tip_federated_timeline: The world timeline is a firehose view of the Monsterpit network. But it only includes monsters your neighbours are subscribed to, so it's not complete.
+      tip_following: You join your packr server's admin(s) by default. To find more interesting monsters, check the local and world timelines.
+      tip_local_timeline: The Monsterpit timeline is a firehose view of monsters on %{instance}. These are your immediate neighbours!
+      tip_mobile_webapp: If your mobile browser offers you to add Monsterpit to your homescreen, you can receive push notifications. It acts like a native app in many ways!
       tips: Tips
       title: Welcome aboard, %{name}!
   users:
-    follow_limit_reached: You cannot follow more than %{limit} people
+    follow_limit_reached: You cannot follow more than %{limit} monsters
     invalid_email: The e-mail address is invalid
     invalid_otp_token: Invalid two-factor code
     otp_lost_help_html: If you lost access to both, you may get in touch with %{email}
     seamless_external_login: You are logged in via an external service, so password and e-mail settings are not available.
     signed_in_as: 'Signed in as:'
   verification:
-    explanation_html: 'You can <strong>verify yourself as the owner of the links in your profile metadata</strong>. For that, the linked website must contain a link back to your Mastodon profile. The link back <strong>must</strong> have a <code>rel="me"</code> attribute. The text content of the link does not matter. Here is an example:'
+    explanation_html: 'You can <strong>verify yourself as the owner of the links in your profile metadata</strong>. For that, the linked website must contain a link back to your Monsterpit profile. The link back <strong>must</strong> have a <code>rel="me"</code> attribute. The text content of the link does not matter. Here is an example:'
     verification: Verification

@@ -3,53 +3,53 @@ en:
   simple_form:
     hints:
       account_warning_preset:
-        text: You can use toot syntax, such as URLs, hashtags and mentions
+        text: You can use roar syntax, such as URLs, hashtags and mentions
       admin_account_action:
-        send_email_notification: The user will receive an explanation of what happened with their account
-        text_html: Optional. You can use toot syntax. You can <a href="%{path}">add warning presets</a> to save time
+        send_email_notification: The creature will receive an explanation of what happened with their account
+        text_html: Optional. You can use roar syntax. You can <a href="%{path}">add warning presets</a> to save time
         type_html: Choose what to do with <strong>%{acct}</strong>
         warning_preset_id: Optional. You can still add custom text to end of the preset
       defaults:
-        autofollow: People who sign up through the invite will automatically follow you
+        autofollow: People who sign up through the invite will automatically join your pack
         avatar: PNG, GIF or JPG. At most %{size}. Will be downscaled to %{dimensions}px
         bot: This account mainly performs automated actions and might not be monitored
         context: One or multiple contexts where the filter should apply
-        digest: Only sent after a long period of inactivity and only if you have received any personal messages in your absence
-        discoverable_html: The <a href="%{path}" target="_blank">directory</a> lets people find accounts based on interests and activity. Requires at least %{min_followers} followers
+        digest: Only sent after a long period of inactivity and only if you have received any monsteral messages in your absence
+        discoverable_html: The <a href="%{path}" target="_blank">directory</a> lets monsters find accounts based on interests and activity. Requires at least %{min_followers} packmates
         email: You will be sent a confirmation e-mail
         fields: You can have up to 4 items displayed as a table on your profile
         header: PNG, GIF or JPG. At most %{size}. Will be downscaled to %{dimensions}px
         inbox_url: Copy the URL from the frontpage of the relay you want to use
-        irreversible: Filtered toots will disappear irreversibly, even if filter is later removed
-        locale: The language of the user interface, e-mails and push notifications
-        locked: Requires you to manually approve followers
+        irreversible: Filtered roars will disappear irreversibly, even if filter is later removed
+        locale: The language of the creature interface, e-mails and push notifications
+        locked: Requires you to manually approve packmates
         password: Use at least 8 characters
-        phrase: Will be matched regardless of casing in text or content warning of a toot
+        phrase: Will be matched regardless of casing in text or content warning of a roar
         scopes: Which APIs the application will be allowed to access. If you select a top-level scope, you don't need to select individual ones.
-        setting_aggregate_reblogs: Do not show new boosts for toots that have been recently boosted (only affects newly-received boosts)
-        setting_default_content_type_html: When writing toots, assume they are written in raw HTML, unless specified otherwise
-        setting_default_content_type_markdown: When writing toots, assume they are using Markdown for rich text formatting, unless specified otherwise
-        setting_default_content_type_plain: When writing toots, assume they are plain text with no special formatting, unless specified otherwise (default Mastodon behavior)
-        setting_default_language: The language of your toots can be detected automatically, but it's not always accurate
+        setting_aggregate_reblogs: Do not show new repeats for roars that have been recently repeated (only affects newly-received repeats)
+        setting_default_content_type_html: When writing roars, assume they are written in raw HTML, unless specified otherwise
+        setting_default_content_type_markdown: When writing roars, assume they are using Markdown for rich text formatting, unless specified otherwise
+        setting_default_content_type_plain: When writing roars, assume they are plain text with no special formatting, unless specified otherwise (default Mastodon behavior)
+        setting_default_language: The language of your roars can be detected automatically, but it's not always accurate
         setting_display_media_default: Hide media marked as sensitive
         setting_display_media_hide_all: Always hide all media
         setting_display_media_show_all: Always show media marked as sensitive
-        setting_hide_network: Who you follow and who follows you will not be shown on your profile
-        setting_noindex: Affects your public profile and status pages
-        setting_show_application: The application you use to toot will be displayed in the detailed view of your toots
-        setting_skin: Reskins the selected Mastodon flavour
-        username: Your username will be unique on %{domain}
+        setting_hide_network: Who in your pack and who joins your pack will not be shown on your profile
+        setting_noindex: Affects your public profile and roar pages
+        setting_show_application: The application you use to roar will be displayed in the detailed view of your roars
+        setting_skin: Reskins the selected Monsterpit flavour
+        username: Your creaturename will be unique on %{domain}
         whole_word: When the keyword or phrase is alphanumeric only, it will only be applied if it matches the whole word
       featured_tag:
         name: 'You might want to use one of these:'
       imports:
-        data: CSV file exported from another Mastodon server
+        data: CSV file exported from another Monsterpit server
       invite_request:
         text: This will help us review your application
       sessions:
         otp: 'Enter the two-factor code generated by your phone app or use one of your recovery codes:'
       user:
-        chosen_languages: When checked, only toots in selected languages will be displayed in public timelines
+        chosen_languages: When checked, only roars in selected languages will be displayed in public timelines
     labels:
       account:
         fields:
@@ -58,7 +58,7 @@ en:
       account_warning_preset:
         text: Preset text
       admin_account_action:
-        send_email_notification: Notify the user per e-mail
+        send_email_notification: Notify the creature per e-mail
         text: Custom warning
         type: Action
         types:
@@ -68,7 +68,7 @@ en:
           suspend: Suspend and irreversibly delete account data
         warning_preset_id: Use a warning preset
       defaults:
-        autofollow: Invite to follow your account
+        autofollow: Invite to join your pack
         avatar: Avatar
         bot: This is a bot account
         chosen_languages: Filter languages
@@ -93,28 +93,28 @@ en:
         otp_attempt: Two-factor code
         password: Password
         phrase: Keyword or phrase
-        setting_aggregate_reblogs: Group boosts in timelines
+        setting_aggregate_reblogs: Group repeats in timelines
         setting_auto_play_gif: Auto-play animated GIFs
-        setting_boost_modal: Show confirmation dialog before boosting
-        setting_default_content_type: Default format for toots
+        setting_boost_modal: Show confirmation dialog before repeating
+        setting_default_content_type: Default format for roars
         setting_default_content_type_html: HTML
         setting_default_content_type_markdown: Markdown
         setting_default_content_type_plain: Plain text
         setting_default_language: Posting language
         setting_default_privacy: Post privacy
         setting_default_sensitive: Always mark media as sensitive
-        setting_delete_modal: Show confirmation dialog before deleting a toot
+        setting_delete_modal: Show confirmation dialog before deleting a roar
         setting_display_media: Media display
         setting_display_media_default: Default
         setting_display_media_hide_all: Hide all
         setting_display_media_show_all: Show all
-        setting_expand_spoilers: Always expand toots marked with content warnings
-        setting_favourite_modal: Show confirmation dialog before favouriting (applies to Glitch flavour only)
-        setting_hide_followers_count: Hide your followers count
-        setting_hide_network: Hide your network
+        setting_expand_spoilers: Always expand roars marked with content warnings
+        setting_favourite_modal: Show confirmation dialog before admiring (applies to Glitch flavour only)
+        setting_hide_followers_count: Hide your packmates count
+        setting_hide_network: Hide your packmates
         setting_noindex: Opt-out of search engine indexing
         setting_reduce_motion: Reduce motion in animations
-        setting_show_application: Disclose application used to send toots
+        setting_show_application: Disclose application used to send roars
         setting_skin: Skin
         setting_system_font_ui: Use system's default font
         setting_unfollow_modal: Show confirmation dialog before unfollowing someone
@@ -126,19 +126,19 @@ en:
       featured_tag:
         name: Hashtag
       interactions:
-        must_be_follower: Block notifications from non-followers
-        must_be_following: Block notifications from people you don't follow
-        must_be_following_dm: Block direct messages from people you don't follow
+        must_be_follower: Block notifications from non-packmates
+        must_be_following: Block notifications from monsters you aren't in the pack of
+        must_be_following_dm: Block whispers from monsters you aren't in the pack of
       invite_request:
-        text: Why do you want to join?
+        text: Introduce yourself! What brings you to Monsterpit?
       notification_emails:
         digest: Send digest e-mails
-        favourite: Send e-mail when someone favourites your status
-        follow: Send e-mail when someone follows you
-        follow_request: Send e-mail when someone requests to follow you
+        favourite: Send e-mail when someone admires your roar
+        follow: Send e-mail when someone joins your pack
+        follow_request: Send e-mail when someone requests to join your pack
         mention: Send e-mail when someone mentions you
         pending_account: Send e-mail when a new account needs review
-        reblog: Send e-mail when someone boosts your status
+        reblog: Send e-mail when someone repeats your roar
         report: Send e-mail when a new report is submitted
     'no': 'No'
     required:
