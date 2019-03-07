@@ -11,6 +11,7 @@ export const unfollowModal = getMeta('unfollow_modal');
 export const boostModal = getMeta('boost_modal');
 export const deleteModal = getMeta('delete_modal');
 export const me = getMeta('me');
+export const defaultLocal = getMeta('default_local');
 export const searchEnabled = getMeta('search_enabled');
 export const maxChars = (initialState && initialState.max_toot_chars) || 500;
 export const invitesEnabled = getMeta('invites_enabled');

@@ -102,6 +102,7 @@ en:
         setting_default_content_type_plain: Plain text
         setting_default_language: Posting language
         setting_default_privacy: Post privacy
+        setting_default_local: Default to local only
         setting_default_sensitive: Always mark media as sensitive
         setting_delete_modal: Show confirmation dialog before deleting a roar
         setting_display_media: Media display

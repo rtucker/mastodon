@@ -30,6 +30,7 @@ class Settings::PreferencesController < Settings::BaseController
   def user_settings_params
     params.require(:user).permit(
       :setting_default_privacy,
+      :setting_default_local,
       :setting_default_sensitive,
       :setting_default_language,
       :setting_unfollow_modal,

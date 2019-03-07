@@ -45,7 +45,7 @@ import { REDRAFT } from 'flavours/glitch/actions/statuses';
 import { Map as ImmutableMap, List as ImmutableList, OrderedSet as ImmutableOrderedSet, fromJS } from 'immutable';
 import uuid from 'flavours/glitch/util/uuid';
 import { privacyPreference } from 'flavours/glitch/util/privacy_preference';
-import { me, defaultContentType } from 'flavours/glitch/util/initial_state';
+import { me, defaultContentType, defaultLocal } from 'flavours/glitch/util/initial_state';
 import { overwrite } from 'flavours/glitch/util/js_helpers';
 import { unescapeHTML } from 'flavours/glitch/util/html';
 import { recoverHashtags } from 'flavours/glitch/util/hashtag';
@@ -59,7 +59,7 @@ const glitchProbability = 1 - 0.0420215528;
 const initialState = ImmutableMap({
   mounted: false,
   advanced_options: ImmutableMap({
-    do_not_federate: false,
+    do_not_federate: defaultLocal,
     threaded_mode: false,
   }),
   sensitive: false,
