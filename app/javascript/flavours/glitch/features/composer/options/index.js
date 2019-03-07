@@ -19,6 +19,7 @@ import {
   assignHandlers,
   hiddenComponent,
 } from 'flavours/glitch/util/react_helpers';
+import { pollLimits } from 'flavours/glitch/util/initial_state';
 
 //  Messages.
 const messages = defineMessages({
@@ -98,6 +99,14 @@ const messages = defineMessages({
     defaultMessage: 'Upload a file',
     id: 'compose.attach.upload',
   },
+  add_poll: {
+    defaultMessage: 'Add a poll',
+    id: 'poll_button.add_poll',
+  },
+  remove_poll: {
+    defaultMessage: 'Remove poll',
+    id: 'poll_button.remove_poll',
+  },
 });
 
 //  Handlers.
@@ -160,12 +169,15 @@ export default class ComposerOptions extends React.PureComponent {
       acceptContentTypes,
       advancedOptions,
       disabled,
-      full,
+      allowMedia,
       hasMedia,
+      allowPoll,
+      hasPoll,
       intl,
       onChangeAdvancedOption,
       onChangeSensitivity,
       onChangeVisibility,
+      onTogglePoll,
       onModalClose,
       onModalOpen,
       onToggleSpoiler,
@@ -209,7 +221,7 @@ export default class ComposerOptions extends React.PureComponent {
       <div className='composer--options'>
         <input
           accept={acceptContentTypes}
-          disabled={disabled || full}
+          disabled={disabled || !allowMedia}
           key={resetFileKey}
           onChange={handleChangeFiles}
           ref={handleRefFileElement}
@@ -218,7 +230,7 @@ export default class ComposerOptions extends React.PureComponent {
           {...hiddenComponent}
         />
         <Dropdown
-          disabled={disabled || full}
+          disabled={disabled || !allowMedia}
           icon='paperclip'
           items={[
             {
@@ -237,6 +249,21 @@ export default class ComposerOptions extends React.PureComponent {
           onModalOpen={onModalOpen}
           title={intl.formatMessage(messages.attach)}
         />
+        {!!pollLimits && (
+          <IconButton
+            active={hasPoll}
+            disabled={disabled || !allowPoll}
+            icon='tasks'
+            inverted
+            onClick={onTogglePoll}
+            size={18}
+            style={{
+              height: null,
+              lineHeight: null,
+            }}
+            title={intl.formatMessage(hasPoll ? messages.remove_poll : messages.add_poll)}
+          />
+        )}
         <Motion
           defaultStyle={{ scale: 0.87 }}
           style={{
@@ -329,12 +356,15 @@ ComposerOptions.propTypes = {
   acceptContentTypes: PropTypes.string,
   advancedOptions: ImmutablePropTypes.map,
   disabled: PropTypes.bool,
-  full: PropTypes.bool,
+  allowMedia: PropTypes.bool,
   hasMedia: PropTypes.bool,
+  allowPoll: PropTypes.bool,
+  hasPoll: PropTypes.bool,
   intl: PropTypes.object.isRequired,
   onChangeAdvancedOption: PropTypes.func,
   onChangeSensitivity: PropTypes.func,
   onChangeVisibility: PropTypes.func,
+  onTogglePoll: PropTypes.func,
   onDoodleOpen: PropTypes.func,
   onModalClose: PropTypes.func,
   onModalOpen: PropTypes.func,

@@ -1,6 +1,7 @@
 import api from 'flavours/glitch/util/api';
 
 import { deleteFromTimelines } from './timelines';
+import { importFetchedStatus, importFetchedStatuses } from './importer';
 
 export const STATUS_FETCH_REQUEST = 'STATUS_FETCH_REQUEST';
 export const STATUS_FETCH_SUCCESS = 'STATUS_FETCH_SUCCESS';
@@ -45,17 +46,17 @@ export function fetchStatus(id) {
     dispatch(fetchStatusRequest(id, skipLoading));
 
     api(getState).get(`/api/v1/statuses/${id}`).then(response => {
-      dispatch(fetchStatusSuccess(response.data, skipLoading));
+      dispatch(importFetchedStatus(response.data));
+      dispatch(fetchStatusSuccess(skipLoading));
     }).catch(error => {
       dispatch(fetchStatusFail(id, error, skipLoading));
     });
   };
 };
 
-export function fetchStatusSuccess(status, skipLoading) {
+export function fetchStatusSuccess(skipLoading) {
   return {
     type: STATUS_FETCH_SUCCESS,
-    status,
     skipLoading,
   };
 };
@@ -79,7 +80,11 @@ export function redraft(status) {
 
 export function deleteStatus(id, router, withRedraft = false) {
   return (dispatch, getState) => {
-    const status = getState().getIn(['statuses', id]);
+    let status = getState().getIn(['statuses', id]);
+
+    if (status.get('poll')) {
+      status = status.set('poll', getState().getIn(['polls', status.get('poll')]));
+    }
 
     dispatch(deleteStatusRequest(id));
 
@@ -127,6 +132,7 @@ export function fetchContext(id) {
     dispatch(fetchContextRequest(id));
 
     api(getState).get(`/api/v1/statuses/${id}/context`).then(response => {
+      dispatch(importFetchedStatuses(response.data.ancestors.concat(response.data.descendants)));
       dispatch(fetchContextSuccess(id, response.data.ancestors, response.data.descendants));
 
     }).catch(error => {
