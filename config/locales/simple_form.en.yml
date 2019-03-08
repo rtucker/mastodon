@@ -102,7 +102,8 @@ en:
         setting_default_content_type_plain: Plain text
         setting_default_language: Posting language
         setting_default_privacy: Post privacy
-        setting_default_local: Default to local only
+        setting_default_local: Default to Monsterpit-only roars (in Glitch flavour)
+        setting_always_local: Don't send your roars outside Monsterpit
         setting_default_sensitive: Always mark media as sensitive
         setting_delete_modal: Show confirmation dialog before deleting a roar
         setting_display_media: Media display
@@ -110,7 +111,7 @@ en:
         setting_display_media_hide_all: Hide all
         setting_display_media_show_all: Show all
         setting_expand_spoilers: Always expand roars marked with content warnings
-        setting_favourite_modal: Show confirmation dialog before admiring (applies to Glitch flavour only)
+        setting_favourite_modal: Show confirmation dialog before admiring (in Glitch flavour)
         setting_hide_followers_count: Hide your packmates count
         setting_hide_network: Hide your packmates
         setting_noindex: Opt-out of search engine indexing

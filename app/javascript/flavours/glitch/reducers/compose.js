@@ -45,7 +45,7 @@ import { REDRAFT } from 'flavours/glitch/actions/statuses';
 import { Map as ImmutableMap, List as ImmutableList, OrderedSet as ImmutableOrderedSet, fromJS } from 'immutable';
 import uuid from 'flavours/glitch/util/uuid';
 import { privacyPreference } from 'flavours/glitch/util/privacy_preference';
-import { me, defaultContentType, defaultLocal } from 'flavours/glitch/util/initial_state';
+import { me, defaultContentType, defaultLocal, alwaysLoal } from 'flavours/glitch/util/initial_state';
 import { overwrite } from 'flavours/glitch/util/js_helpers';
 import { unescapeHTML } from 'flavours/glitch/util/html';
 import { recoverHashtags } from 'flavours/glitch/util/hashtag';
@@ -59,7 +59,7 @@ const glitchProbability = 1 - 0.0420215528;
 const initialState = ImmutableMap({
   mounted: false,
   advanced_options: ImmutableMap({
-    do_not_federate: defaultLocal,
+    do_not_federate: defaultLocal || alwaysLocal,
     threaded_mode: false,
   }),
   sensitive: false,
@@ -82,7 +82,7 @@ const initialState = ImmutableMap({
   suggestion_token: null,
   suggestions: ImmutableList(),
   default_advanced_options: ImmutableMap({
-    do_not_federate: null,
+    do_not_federate: alwaysLocal || null,
     threaded_mode: null,  //  Do not reset
   }),
   default_privacy: 'public',
@@ -177,7 +177,7 @@ function continueThread (state, status) {
     map.set('in_reply_to', status.id);
     map.update(
       'advanced_options',
-      map => map.merge(new ImmutableMap({ do_not_federate: /👁\ufe0f?\u200b?(?:<\/p>)?$/.test(status.content) }))
+      map => map.merge(new ImmutableMap({ do_not_federate: /#!\u200b?(?:<\/p>)?$/.test(status.content) }))
     );
     map.set('privacy', status.visibility);
     map.set('sensitive', false);
@@ -331,7 +331,7 @@ export default function compose(state = initialState, action) {
       map.set('privacy', privacyPreference(action.status.get('visibility'), state.get('default_privacy')));
       map.update(
         'advanced_options',
-        map => map.merge(new ImmutableMap({ do_not_federate: /👁\ufe0f?\u200b?(?:<\/p>)?$/.test(action.status.get('content')) }))
+        map => map.merge(new ImmutableMap({ do_not_federate: /#!(?:<\/p>)?$/.test(action.status.get('content')) }))
       );
       map.set('focusDate', new Date());
       map.set('caretPosition', null);

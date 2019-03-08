@@ -102,7 +102,7 @@ class User < ApplicationRecord
 
   has_many :session_activations, dependent: :destroy
 
-  delegate :auto_play_gif, :default_local, :default_sensitive, :unfollow_modal, :boost_modal, :favourite_modal, :delete_modal,
+  delegate :auto_play_gif, :default_local, :always_local, :default_sensitive, :unfollow_modal, :boost_modal, :favourite_modal, :delete_modal,
            :reduce_motion, :system_font_ui, :noindex, :flavour, :skin, :display_media, :hide_network, :hide_followers_count,
            :expand_spoilers, :default_language, :aggregate_reblogs, :show_application, :default_content_type, to: :settings, prefix: :setting, allow_nil: false
 
@@ -190,6 +190,10 @@ class User < ApplicationRecord
 
   def setting_default_local
     settings.default_local || false
+  end
+
+  def setting_always_local
+    settings.always_local || false
   end
 
   def allows_digest_emails?

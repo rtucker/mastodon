@@ -19,6 +19,7 @@ class UserSettingsDecorator
     user.settings['interactions']        = merged_interactions if change?('interactions')
     user.settings['default_privacy']     = default_privacy_preference if change?('setting_default_privacy')
     user.settings['default_local']       = default_local_preference if change?('setting_default_local')
+    user.settings['always_local']        = always_local_preference if change?('setting_always_local')
     user.settings['default_sensitive']   = default_sensitive_preference if change?('setting_default_sensitive')
     user.settings['default_language']    = default_language_preference if change?('setting_default_language')
     user.settings['unfollow_modal']      = unfollow_modal_preference if change?('setting_unfollow_modal')
@@ -54,6 +55,10 @@ class UserSettingsDecorator
 
   def default_local_preference
     boolean_cast_setting 'setting_default_local'
+  end
+
+  def always_local_preference
+    boolean_cast_setting 'setting_always_local'
   end
 
   def default_sensitive_preference
