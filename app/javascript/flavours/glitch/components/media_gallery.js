@@ -354,19 +354,33 @@ export default class MediaGallery extends React.PureComponent {
       );
     }
 
+    let descriptions;
+    descriptions = media.take(4).map(
+      (attachment, i) => {
+        if (attachment.get('description'))
+          return <p className='media-spoiler__trigger'>Attachment {1+i}: {attachment.get('description')}</p>
+      }
+    );
+
     return (
-      <div className={computedClass} style={style} ref={this.handleRef}>
-        <div className={classNames('spoiler-button', { 'spoiler-button--minified': visible })}>
-          {spoilerButton}
-          {visible && sensitive && (
-            <span className='sensitive-marker'>
-              <FormattedMessage {...messages.sensitive} />
-            </span>
-          )}
+      <React.Fragment>
+        <div className={computedClass} style={style} ref={this.handleRef}>
+          <div className={classNames('spoiler-button', { 'spoiler-button--minified': visible })}>
+            {spoilerButton}
+            {visible && sensitive && (
+              <span className='sensitive-marker'>
+                <FormattedMessage {...messages.sensitive} />
+              </span>
+            )}
+          </div>
+
+          {children}
         </div>
 
-        {children}
-      </div>
+        <div className='status__content' tabIndex='0'>
+          {descriptions}
+        </div>
+      </React.Fragment>
     );
   }
 
