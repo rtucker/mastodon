@@ -508,7 +508,7 @@ class Status < ApplicationRecord
 
   def marked_local_only?
     # match both with and without U+FE0F (the emoji variation selector)
-    /#!\z/.match?(content)
+    /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/.match?(content)
   end
 
   def marked_no_replies?
