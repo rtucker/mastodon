@@ -5,7 +5,6 @@
   li {
     margin-bottom: 10px;
     position: relative;
-    height: 18px + 12px;
   }
 
   &__chart {
@@ -25,10 +24,9 @@
   &__text {
     position: relative;
     display: inline-block;
-    padding: 6px 0;
+    padding: 4px 0 0 4px;
     line-height: 18px;
     cursor: default;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
@@ -45,7 +43,7 @@
       display: block;
       box-sizing: border-box;
       width: 100%;
-      font-size: 14px;
+      font-size: 12px;
       color: $inverted-text-color;
       display: block;
       outline: 0;
@@ -96,7 +94,6 @@
 
   &__number {
     display: inline-block;
-    width: 36px;
     font-weight: 700;
     padding: 0 10px;
     text-align: right;
