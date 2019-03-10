@@ -58,6 +58,7 @@
   "column.notifications": "Notifications",
   "column.pins": "Pinned posts",
   "column.public": "Federated timeline",
+  "column.toot": "Rawrs and replies",
   "column_back_button.label": "Back",
   "column_header.hide_settings": "Hide settings",
   "column_header.moveLeft_settings": "Move column to the left",
