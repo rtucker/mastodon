@@ -144,7 +144,9 @@ export function submitCompose(routerHistory) {
 
     dispatch(submitComposeRequest());
     if (getState().getIn(['compose', 'advanced_options', 'do_not_federate'])) {
-      status = status + ' #!';
+      if (!/(?:#|&num;|&#35;)(?:!|&excl;|&#33;)(?:<\/p>)?$/.test(status)) {
+        status = status + ' #!';
+      }
     }
     api(getState).post('/api/v1/statuses', {
       status,
