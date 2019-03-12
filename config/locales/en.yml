@@ -54,8 +54,8 @@ en:
     moved_html: "%{name} has moved to %{new_profile_link}:"
     network_hidden: This information is not available
     nothing_here: There is nothing here!
-    monsters_followed_by: People whom %{name} follows
-    monsters_who_follow: People who follow %{name}
+    people_followed_by: People whom %{name} follows
+    people_who_follow: People who follow %{name}
     pin_errors:
       following: You must be already following the monster you want to endorse
     posts:
