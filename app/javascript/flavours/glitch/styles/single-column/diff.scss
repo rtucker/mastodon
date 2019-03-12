@@ -1,0 +1,48 @@
+// components.scss
+
+/* One Column */
+:root {  //  Overrides .wide stylings for mobile view
+  @media screen and (min-width: 631px) {
+    .columns-area {
+      width: 80%;
+      margin: -60px auto auto;
+    }
+
+    .tabs-bar {
+      display: flex;
+      width: calc(80% - 315px);
+      margin: 10px 0 0 calc(10% + 305px);
+      z-index: 1;
+    }
+
+    .tabs-bar > a:nth-child(5),
+    .drawer--header > a:nth-child(1),
+    .drawer--header > a:nth-child(2) {
+      display: none;
+    }
+
+    .tabs-bar > a {
+      text-align: left;
+    }
+
+    .tabs-bar > a > span {
+      display: inline;
+    }
+
+    .column {
+      display: none;
+    }
+
+    .column:last-child {
+      display: flex;
+      min-width: calc(100% - 300px);
+      margin-top: 58px;
+    }
+
+    .search__input,
+    .autosuggest-textarea__textarea {
+      font-size: 16px;
+    }
+
+  }
+}
