@@ -16,6 +16,7 @@ if Rails.env.production?
     attachments_host = nil
   end
 
+  img_proxy_host = "https://#{ENV.fetch('IMG_PROXY_DOMAIN', assets_host)}"
   data_hosts << attachments_host unless attachments_host.nil?
 
   if ENV['PAPERCLIP_ROOT_URL']
@@ -31,7 +32,7 @@ if Rails.env.production?
     p.frame_ancestors :none
     p.script_src      :self, assets_host
     p.font_src        :self, assets_host
-    p.img_src         :self, :data, :blob, *data_hosts
+    p.img_src         :self, :data, :blob, img_proxy_host, *data_hosts
     p.style_src       :self, :unsafe_inline, assets_host
     p.media_src       :self, :data, *data_hosts
     p.frame_src       :self, :https
