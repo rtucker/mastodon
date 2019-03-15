@@ -11,7 +11,7 @@ en:
     apps: Mobile apps
     apps_platforms: Use Mastodon from iOS, Android and other platforms
     browse_directory: Browse a profile directory and filter by interests
-    browse_public_posts: Browse a live stream of public posts on Mastodon
+    browse_public_posts: Browse a live stream of public posts on The Vulpine Club
     contact: Contact
     contact_missing: Not set
     contact_unavailable: N/A
@@ -26,7 +26,7 @@ en:
     hosted_on: Mastodon hosted on %{domain}
     learn_more: Learn more
     privacy_policy: Privacy policy
-    see_whats_happening: See what's happening
+    see_whats_happening: What's going on in this thread...?
     server_stats: 'Server stats:'
     source_code: Source code
     status_count_after:
