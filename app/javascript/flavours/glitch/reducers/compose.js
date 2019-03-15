@@ -82,7 +82,7 @@ const initialState = ImmutableMap({
   suggestion_token: null,
   suggestions: ImmutableList(),
   default_advanced_options: ImmutableMap({
-    do_not_federate: alwaysLocal || null,
+    do_not_federate: defaultLocal || alwaysLocal,
     threaded_mode: null,  //  Do not reset
   }),
   default_privacy: 'public',
