@@ -144,6 +144,7 @@
 
     button,
     select {
+      width: 100%;
       flex: 1 1 50%;
     }
   }
@@ -188,5 +189,17 @@
 
   .icon-button.disabled {
     color: darken($simple-background-color, 14%);
+  }
+}
+
+.muted .poll {
+  color: $dark-text-color;
+
+  &__chart {
+    background: rgba(darken($ui-primary-color, 14%), 0.2);
+
+    &.leading {
+      background: rgba($ui-highlight-color, 0.2);
+    }
   }
 }

@@ -108,6 +108,8 @@ class Account < ApplicationRecord
            :current_sign_in_ip,
            :current_sign_in_at,
            :confirmed?,
+           :approved?,
+           :pending?,
            :admin?,
            :moderator?,
            :staff?,
@@ -474,6 +476,7 @@ class Account < ApplicationRecord
 
   before_create :generate_keys
   before_validation :prepare_contents, if: :local?
+  before_validation :prepare_username, on: :create
   before_destroy :clean_feed_manager
 
   private
@@ -481,6 +484,10 @@ class Account < ApplicationRecord
   def prepare_contents
     display_name&.strip!
     note&.strip!
+  end
+
+  def prepare_username
+    username&.squish!
   end
 
   def generate_keys
