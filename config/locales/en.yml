@@ -545,7 +545,7 @@ en:
       cas: CAS
       saml: SAML
     register: Sign up
-    registration_closed: "%{instance} is not accepting new members"
+    registration_closed: "Monsterpit registrations are currently closed."
     resend_confirmation: Resend confirmation instructions
     reset_password: Reset password
     security: Security
