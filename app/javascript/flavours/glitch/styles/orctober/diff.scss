@@ -1,0 +1,366 @@
+*:root {
+	body, body.app-body {
+		background: #341 !important;
+		background-size: cover !important;
+		font-size: 14px !important;
+	}
+
+	hr { border: 1px dotted #060 }
+
+	.column-back-button, .column-header,
+	a[href], h1, h2, h3, h4 {
+		text-decoration: none !important;
+		font-variant: small-caps !important;
+	}
+
+	.floats, .mascot-container { display: none !important }
+
+	.about-short { background: transparent !important }
+
+	.closed-registrations-message, .simple-form { min-height: inherit !important }
+
+	.landing-page .heading { padding-bottom: 0 !important }
+
+	.landing-page h1 { font-size: 32px !important }
+
+	.features-list__row .text,
+	.landing-page li,
+	.landing-page p { color: #cda !important }
+
+	.landing-page h1,
+	.landing-page h2,
+	.landing-page h3,
+	.landing-page h6 { color: #694 !important }
+
+	.about-body h2 { font-size: 28px !important }
+
+	.name { font-size: 24px !important }
+
+	.activity-stream .pre-header .pre-header__icon {
+		position: inherit !important;
+		float: left;
+		margin-right: .5em !important;
+		left: 0 !important;
+	}
+
+	.activity-stream .pre-header {
+		padding-left: 0 !important;
+		margin-bottom: 4px !important;
+	}
+
+	.account-grid-card { width: 100% !important }
+
+	.account-grid-card,
+	.detailed-status,
+	.detailed-status__action-bar,
+	.status {
+		background: #563 !important;
+		border: 1px solid black !important;
+		box-shadow: 5px 5px 10px #000 !important;
+		margin: 1em 1.5em 2em 1em;
+	}
+
+	.detailed-status__action-bar {
+		background: #674 !important;
+		margin: -2.5em 3.5em 2em 3em;
+		padding: 4px !important;
+	}
+
+	.notification__message,
+	.status__prepend {
+		margin-left: 30px !important;
+		padding: 0 !important;
+	}
+
+	.activity-stream .pre-header,
+	.notification__message span,
+	.status__prepend span { font-size: 12px !important }
+
+	.account-grid-card .username,
+	.account__display-name strong,
+	.activity-stream .pre-header__icon,
+	.detailed-status__display-name strong,
+	.name .username,
+	.notification__message span a,
+	.status__display-name strong,
+	.status__prepend span a {
+		font-size: 16px !important;
+		font-weight: 700 !important;
+	}
+
+	.notification__favourite-icon-wrapper,
+	.status__prepend-icon-wrapper { left: -25px !important }
+
+	.media-spoiler { background: #000 !important }
+
+	#mastodon-timeline,
+	.about-mastodon,
+	.about-short,
+	.account-grid-card__header,
+	.accounts-grid,
+	.activity-stream .entry,
+	.closed-registrations-message,
+	.column-back-button,
+	.column-header,
+	.column-header__button,
+	.column-header__wrapper,
+	.column-link,
+	.container,
+	.content,
+	.drawer,
+	.drawer__header,
+	.drawer__inner,
+	.empty-column-indicator,
+	.header-wrapper,
+	.information-board,
+	.learn-more-cta,
+	.scrollable,
+	.sidebar-wrapper,
+	.sidebar ul ul,
+	.simple_form,
+	.ui {
+		background: none !important;
+		-webkit-box-shadow: none !important;
+		box-shadow: none !important;
+		border: none !important;
+	}
+
+	.drawer {
+		background: #220 !important;
+		box-shadow: 5px 0 10px #000 !important;
+	}
+
+	.autosuggest-textarea__suggestions,
+	.column-back-button,
+	.column-header,
+	.search-results { background: #220 !important }
+
+	.autosuggest-textarea__suggestions,
+	.column-back-button,
+	.column-header,
+	.search-results {
+		border: none !important;
+		margin: 0 5px 1em 5px !important;
+		box-shadow: 0 5px 10px #000 !important;
+	}
+
+	.search { margin-right: 5px }
+
+	.autosuggest-textarea__suggestions,
+	.search-results {
+		background: #331 !important;
+		color: #fff !important;
+	}
+
+	.column-header__back-button {
+		color: #fff !important;
+		background: none !important;
+	}
+
+	.column-back-button {
+		top: calc(-1.5em - 42px) !important;
+		color: #fff !important;
+	}
+
+	.search__input { background: #332 !important }
+
+	.autosuggest-textarea__textarea,
+	.compose-form__buttons,
+	.compose-form__modifiers,
+	.spoiler-input__input {
+		background: #332 !important;
+		color: #fff !important;
+	}
+
+	.reply-indicator {
+		background: #032 !important;
+		border: 1px solid #064 !important;
+		margin-bottom: 1em;
+	}
+
+	.status__relative-time {
+		color: #221 !important;
+		border-bottom: none !important;
+		font-size: 12px !important;
+		position: absolute;
+		right: 4px;
+		bottom: 0;
+	}
+
+	.account__header__username,
+	.accounts-grid .account-grid-card .username,
+	.activity-stream .status.light .display-name span,
+	.detailed-status__display-name,
+	.display-name__account,
+	.name .username,
+	.name small,
+	.status__display-name {
+		color: #593 !important;
+		margin-bottom: 1em;
+		font-size: 12px !important;
+		font-weight: 700 !important;
+	}
+
+	.detailed-status__display-name,
+	.display-name__account { margin-bottom: 0 }
+
+	.account-grid-card .name a,
+	.account__display-name strong,
+	.account__header__display-name,
+	.card__bio .name,
+	.detailed-status__display-name strong,
+	.reply-indicator__display-name,
+	.status__display-name strong {
+		color: #996 !important;
+		display: block;
+		font-weight: 700 !important;
+	}
+
+	.status__display-name strong { display: inherit !important }
+	.status__prepend span { color: #fff }
+
+	.notification__display-name,
+	.status__display-name.muted,
+	.status__display-name.muted strong,
+	.status__prepend .status__display-name {
+		color: #774 !important;
+		font-size: 14px !important;
+	}
+
+	.detailed-status__datetime:before { content: "\1F517" }
+
+	.account-grid-card .note,
+	.reply-indicator__content,
+	.status__content {
+		color: #cda !important;
+		font-size: 14px !important;
+		line-height: inherit !important;
+	}
+
+	.status { padding-left: 10px !important }
+
+	.status__info,
+	.activity-stream .display-name,
+	.boost-modal__status-header {
+		//padding-left: 55px !important;
+		background: #332 !important;
+		box-shadow: 0 0 5px #332 !important;
+		border-radius: 5px !important;
+		margin-top: 4px;
+	}
+
+	.activity-stream .display-name {
+		margin-left: 40px !important;
+		padding-left: 20px!important;
+		width: calc(100% - 30px);
+	}
+
+	.status__content { padding-top: 10px !important }
+
+	.status__avatar {
+		left: 10px !important;
+		top: 10px !important;
+		border-radius: 5px;
+	}
+
+	.account__avatar,
+	.account__avatar-overlay-base,
+	.account__avatar-overlay-overlay {
+		background: black;
+		border-radius: 5px;
+		box-shadow: 2px 2px 5px black !important;
+	}
+
+	.detailed-status { padding: 10px !important }
+
+	.detailed-status__display-name {
+		margin: 0 !important;
+		background: #332 !important;
+		box-shadow: 0 0 5px #442 !important;
+		border-radius: 5px !important;
+		line-height: inherit !important;
+	}
+
+	.display-name__account { 	margin: 0px !important }
+
+	.detailed-status__display-avatar { margin: 0 8px 0 0 !important }
+
+	.muted .status__content p { color: #796 !important }
+
+	.reply-indicator__content a,
+	.status__content a { color: #ac3 !important }
+
+	.account__action-bar,
+	.account__disclaimer { background: #001611 !important }
+
+	.icon-button { color: #664 }
+
+	.account__header__display-name,
+	.account__header__username { font-variant: small-caps !important }
+
+	.account__header__username,
+	.name small {
+		font-size: 12px !important;
+		font-weight: 700 !important;
+		margin-bottom: 1em !important;
+	}
+
+	.account__header__content { color: #fff !important }
+
+	.reply-indicator__content .emojione,
+	.status__content .emojione {
+		width: 32px !important;
+		height: 32px !important;
+		padding: 2px;
+	}
+
+	.emoji-mart-search input { color: black !important; }
+
+	.onboarding-modal__page p { color: white !important; }
+
+	@-webkit-keyframes blink-off {
+		0%  { opacity: .75 }
+		50% { opacity: 0 }
+		to  { opacity: .75 }
+	}
+
+	@keyframes blink-off {
+		0%  { opacity: .75 }
+		50% { opacity: 0 }
+		to  { opacity: .75 }
+	}
+
+	.icon-button.disabled {
+		opacity: .75;
+		transition: all 2s ease-in-out;
+		animation: blink-off normal 4s 5 ease-in-out;
+	}
+
+	@-webkit-keyframes blink-on {
+		0%  { transform: scale(1.5) }
+		50% { transform: scale(2) }
+		to  { transform: scale(1.5) }
+	}
+
+	@keyframes blink-on {
+		0%  { transform: scale(1.5) }
+		50% { transform: scale(2) }
+		to  { transform: scale(1.5) }
+	}
+
+	.column-header.active>.column-header__icon,
+	.icon-button.active {
+		color: #9a3 !important;
+		-webkit-transform: scale(1.5);
+		transform: scale(1.5);
+		-webkit-transition: all 1s ease-in-out;
+		transition: all 1s ease-in-out;
+		-webkit-animation: blink-on normal 2s 5 ease-in-out;
+		animation: blink-on normal 2s 5 ease-in-out;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: #694 !important;
+		border: 1px solid #583 !important;
+	}
+}
