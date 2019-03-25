@@ -104,6 +104,7 @@ en:
         setting_default_privacy: Post privacy
         setting_default_local: Default to Monsterpit-only roars (in Glitch flavour)
         setting_always_local: Don't send your roars outside Monsterpit
+        setting_rawr_federated: Show raw world timeline (may contain offensive content!)
         setting_default_sensitive: Always mark media as sensitive
         setting_delete_modal: Show confirmation dialog before deleting a roar
         setting_display_media: Media display

@@ -351,25 +351,29 @@ class Status < ApplicationRecord
     end
 
     def as_public_timeline(account = nil, local_only = false)
-      # instead of our ftl being a noisy irrelevant firehose
-      # only show public stuff boosted by the community
-      query = Status.network
-      if local_only then
-        # we don't want to change the ltl
-        query = query
-          .with_public_visibility
-          .without_replies
-          .without_reblogs
-      else # but on the ftl
-        query = query.without_replies unless Setting.show_replies_in_public_timelines
-        # grab the stuff we boosted
-        subquery = query.reblogs.select(:reblog_of_id)
-          .reorder(nil)
-          .distinct
-        # map those ids to actual statuses
-        # THIS QUERY IS EXPENSIVE AS FUCK!!!!!!!
-        # but it does the job
-        query = Status.where(id: subquery).with_public_visibility
+      if account.present? && account&.user&.setting_rawr_federated
+        query = timeline_scope(local_only).without_replies
+      else
+        # instead of our ftl being a noisy irrelevant firehose
+        # only show public stuff boosted by the community
+        query = Status.network
+        if local_only then
+          # we don't want to change the ltl
+          query = query
+            .with_public_visibility
+            .without_replies
+            .without_reblogs
+        else # but on the ftl
+          query = query.without_replies unless Setting.show_replies_in_public_timelines
+          # grab the stuff we boosted
+          subquery = query.reblogs.select(:reblog_of_id)
+            .reorder(nil)
+            .distinct
+          # map those ids to actual statuses
+          # THIS QUERY IS EXPENSIVE AS FUCK!!!!!!!
+          # but it does the job
+          query = Status.where(id: subquery).with_public_visibility
+        end
       end
 
       apply_timeline_filters(query, account, local_only)
