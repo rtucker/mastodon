@@ -23,6 +23,7 @@ en:
         irreversible: Filtered roars will disappear irreversibly, even if filter is later removed
         locale: The language of the creature interface, e-mails and push notifications
         locked: Requires you to manually approve packmates
+        hidden: Toggles whether your public profile is browsable
         password: Use at least 8 characters
         phrase: Will be matched regardless of casing in text or content warning of a roar
         scopes: Which APIs the application will be allowed to access. If you select a top-level scope, you don't need to select individual ones.
@@ -87,6 +88,7 @@ en:
         irreversible: Drop instead of hide
         locale: Interface language
         locked: Lock account
+        hidden: Hide public profile
         max_uses: Max number of uses
         new_password: New password
         note: Bio
@@ -105,6 +107,7 @@ en:
         setting_default_local: Default to Monsterpit-only roars (in Glitch flavour)
         setting_always_local: Don't send your roars outside Monsterpit
         setting_rawr_federated: Show raw world timeline (may contain offensive content!)
+        setting_hide_stats: Hide statistics
         setting_default_sensitive: Always mark media as sensitive
         setting_delete_modal: Show confirmation dialog before deleting a roar
         setting_display_media: Media display

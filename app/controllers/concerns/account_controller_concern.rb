@@ -11,6 +11,7 @@ module AccountControllerConcern
     before_action :set_account
     before_action :check_account_approval
     before_action :check_account_suspension
+    before_action :check_account_hidden
     before_action :set_instance_presenter
     before_action :set_link_headers
   end
@@ -74,5 +75,9 @@ module AccountControllerConcern
       expires_in(3.minutes, public: true)
       gone
     end
+  end
+
+  def check_account_hidden
+    not_found if @account.hidden?
   end
 end

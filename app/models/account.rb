@@ -45,6 +45,7 @@
 #  also_known_as           :string           is an Array
 #  silenced_at             :datetime
 #  suspended_at            :datetime
+#  hidden                  :boolean
 #
 
 class Account < ApplicationRecord

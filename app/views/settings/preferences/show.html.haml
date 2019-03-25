@@ -67,5 +67,9 @@
     = f.input :setting_reduce_motion, as: :boolean, wrapper: :with_label
     = f.input :setting_system_font_ui, as: :boolean, wrapper: :with_label
 
+  .fields-group
+    = f.input :setting_hide_stats, as: :boolean, wrapper: :with_label
+
+
   .actions
     = f.button :button, t('generic.save_changes'), type: :submit

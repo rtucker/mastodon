@@ -21,6 +21,7 @@ class UserSettingsDecorator
     user.settings['default_local']       = default_local_preference if change?('setting_default_local')
     user.settings['always_local']        = always_local_preference if change?('setting_always_local')
     user.settings['rawr_federated']      = rawr_federated_preference if change?('setting_rawr_federated')
+    user.settings['hide_stats']          = hide_stats_preference if change?('setting_hide_stats')
     user.settings['default_sensitive']   = default_sensitive_preference if change?('setting_default_sensitive')
     user.settings['default_language']    = default_language_preference if change?('setting_default_language')
     user.settings['unfollow_modal']      = unfollow_modal_preference if change?('setting_unfollow_modal')
@@ -64,6 +65,10 @@ class UserSettingsDecorator
 
   def rawr_federated_preference
     boolean_cast_setting 'setting_rawr_federated'
+  end
+
+  def hide_stats_preference
+    boolean_cast_setting 'setting_hide_stats'
   end
 
   def default_sensitive_preference
