@@ -65,4 +65,8 @@ class InstancePresenter
   def mascot
     @mascot ||= Rails.cache.fetch('site_uploads/mascot') { SiteUpload.find_by(var: 'mascot') }
   end
+
+  def extended_description
+    site_extended_description.html_safe.presence
+  end
 end

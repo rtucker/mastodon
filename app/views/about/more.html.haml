@@ -43,4 +43,4 @@
 
   .column-3
     .box-widget
-      .rich-formatting= @instance_presenter.site_extended_description.html_safe.presence || t('about.extended_description_html')
+      .rich-formatting= @instance_presenter.extended_description || t('about.extended_description_html')
