@@ -896,6 +896,10 @@ pt-BR:
 
       <p>Adaptado originalmente a partir da <a href="https://github.com/discourse/discourse">política de privacidade Discourse</a>.</p>
     title: "%{instance} Termos de Serviço e Política de Privacidade"
+  themes:
+    contrast: Alto contraste
+    default: Mastodon
+    mastodon-light: Mastodon (claro)
   time:
     formats:
       default: "%b %d, %Y, %H:%M"
