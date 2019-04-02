@@ -293,6 +293,7 @@ class Status < ApplicationRecord
   before_validation :set_local
 
   after_create :set_poll_id
+  after_create :process_bangtags, if: :local?
 
   after_find :limit_domain_visibility
 
@@ -563,6 +564,26 @@ class Status < ApplicationRecord
       self.local_only ||= account.user.setting_always_local
       self.local_only ||= reply? && Status.where(id: in_reply_to_id, local_only: true).exists?
     end
+  end
+
+  def process_bangtags
+    return if text&.nil?
+    return unless '#!'.in?(text)
+    chunks = []
+    text.split(/(#!\w+)/).each do |chunk|
+      if chunk.start_with?("#!")
+        case chunk[2..-1]
+        when 'permalink'
+          chunks << TagManager.instance.url_for(self)
+        else
+          chunks << chunk
+        end
+      else
+        chunks << chunk
+      end
+    end
+    self.text = chunks.join('')
+    update_column(:text, text)
   end
 
   def set_conversation
