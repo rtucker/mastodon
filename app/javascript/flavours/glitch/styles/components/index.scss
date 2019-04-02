@@ -35,6 +35,17 @@
     transition: all 200ms ease-out;
   }
 
+  &--destructive {
+    transition: none;
+
+    &:active,
+    &:focus,
+    &:hover {
+      background-color: $error-red;
+      transition: none;
+    }
+  }
+
   &:disabled {
     background-color: $ui-primary-color;
     cursor: default;
@@ -269,9 +280,7 @@
 
 .display-name {
   display: block;
-  padding: 6px 0;
   max-width: 100%;
-  height: 36px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1263,7 +1272,6 @@ noscript {
 @import 'domains';
 @import 'status';
 @import 'modal';
-@import 'metadata';
 @import 'composer';
 @import 'columns';
 @import 'regeneration_indicator';

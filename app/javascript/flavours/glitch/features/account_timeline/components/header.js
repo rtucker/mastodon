@@ -13,6 +13,7 @@ export default class Header extends ImmutablePureComponent {
 
   static propTypes = {
     account: ImmutablePropTypes.map,
+    identity_proofs: ImmutablePropTypes.list,
     onFollow: PropTypes.func.isRequired,
     onBlock: PropTypes.func.isRequired,
     onMention: PropTypes.func.isRequired,
@@ -25,6 +26,7 @@ export default class Header extends ImmutablePureComponent {
     onEndorseToggle: PropTypes.func.isRequired,
     onAddToList: PropTypes.func.isRequired,
     hideTabs: PropTypes.bool,
+    domain: PropTypes.string.isRequired,
   };
 
   static contextTypes = {
@@ -84,7 +86,7 @@ export default class Header extends ImmutablePureComponent {
   }
 
   render () {
-    const { account, hideTabs } = this.props;
+    const { account, hideTabs, identity_proofs } = this.props;
 
     if (account === null) {
       return <MissingIndicator />;
@@ -96,12 +98,8 @@ export default class Header extends ImmutablePureComponent {
 
         <InnerHeader
           account={account}
+          identity_proofs={identity_proofs}
           onFollow={this.handleFollow}
-          onBlock={this.handleBlock}
-        />
-
-        <ActionBar
-          account={account}
           onBlock={this.handleBlock}
           onMention={this.handleMention}
           onDirect={this.handleDirect}
@@ -112,6 +110,11 @@ export default class Header extends ImmutablePureComponent {
           onUnblockDomain={this.handleUnblockDomain}
           onEndorseToggle={this.handleEndorseToggle}
           onAddToList={this.handleAddToList}
+          domain={this.props.domain}
+        />
+
+        <ActionBar
+          account={account}
         />
 
         {!hideTabs && (

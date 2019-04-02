@@ -21,6 +21,7 @@ import { openModal } from 'flavours/glitch/actions/modal';
 import { blockDomain, unblockDomain } from 'flavours/glitch/actions/domain_blocks';
 import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 import { unfollowModal } from 'flavours/glitch/util/initial_state';
+import { List as ImmutableList } from 'immutable';
 
 const messages = defineMessages({
   unfollowConfirm: { id: 'confirmations.unfollow.confirm', defaultMessage: 'Unfollow' },
@@ -34,6 +35,8 @@ const makeMapStateToProps = () => {
 
   const mapStateToProps = (state, { accountId }) => ({
     account: getAccount(state, accountId),
+    domain: state.getIn(['meta', 'domain']),
+    identity_proofs: state.getIn(['identity_proofs', accountId], ImmutableList()),
   });
 
   return mapStateToProps;
