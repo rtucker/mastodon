@@ -570,8 +570,9 @@ class Status < ApplicationRecord
     return if text&.nil?
     return unless '#!'.in?(text)
     chunks = []
-    text.split(/(#![\w:]+)/).each do |chunk|
+    text.split(/(#!(?:[\w:-]+|{[\w:-]+}))/).each do |chunk|
       if chunk.start_with?("#!")
+        chunk.sub!(/{(.*)}$/, '\1')
         case chunk[2..-1].downcase
         when 'permalink'
           chunks << TagManager.instance.url_for(self)
@@ -593,6 +594,15 @@ class Status < ApplicationRecord
           mentions.uniq!
           mentions.sort!
           chunks << mentions.join(' ')
+        when 'thread:reall'
+          if conversation_id.present?
+            mention_ids = Status.where(conversation_id: conversation_id).flat_map { |s| s.mentions.pluck(:account_id) }
+            mention_ids.uniq!
+            mentions = Account.where(id: mention_ids).map { |a| "@#{a.username}" }
+            chunks << mentions.join(' ')
+          end
+        when 'char:zws'
+          chunks << "\u200c"
         else
           chunks << chunk
         end
