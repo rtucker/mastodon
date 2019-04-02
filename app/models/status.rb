@@ -570,7 +570,7 @@ class Status < ApplicationRecord
     return if text&.nil?
     return unless '#!'.in?(text)
     chunks = []
-    text.split(/(#!\w+)/).each do |chunk|
+    text.split(/(#![\w:]+)/).each do |chunk|
       if chunk.start_with?("#!")
         case chunk[2..-1].downcase
         when 'permalink'
@@ -579,6 +579,20 @@ class Status < ApplicationRecord
           chunks << "https://monsterpit.cloud/~/#{account.username}"
         when 'blogroot'
           chunks << "https://monsterpit.blog/~/#{account.username}"
+        when 'ping:admins'
+          mentions = User.admins.map { |u| "@#{u.account.username}" }
+          mentions.sort!
+          chunks << mentions.join(' ')
+        when 'ping:mods'
+          mentions = User.moderators.map { |u| "@#{u.account.username}" }
+          mentions.sort!
+          chunks << mentions.join(' ')
+        when 'ping:staff'
+          mentions = User.admins.map { |u| "@#{u.account.username}" }
+          mentions += User.moderators.map { |u| "@#{u.account.username}" }
+          mentions.uniq!
+          mentions.sort!
+          chunks << mentions.join(' ')
         else
           chunks << chunk
         end
