@@ -572,9 +572,13 @@ class Status < ApplicationRecord
     chunks = []
     text.split(/(#!\w+)/).each do |chunk|
       if chunk.start_with?("#!")
-        case chunk[2..-1]
+        case chunk[2..-1].downcase
         when 'permalink'
           chunks << TagManager.instance.url_for(self)
+        when 'cloudroot'
+          chunks << "https://monsterpit.cloud/~/#{account.username}"
+        when 'blogroot'
+          chunks << "https://monsterpit.blog/~/#{account.username}"
         else
           chunks << chunk
         end
