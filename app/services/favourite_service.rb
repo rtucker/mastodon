@@ -16,6 +16,9 @@ class FavouriteService < BaseService
 
     favourite = Favourite.create!(account: account, status: status)
 
+    # stream it to the world timeline if public
+    FanOutOnWriteService.new.call(status, true, false) if status.public_visibility?
+
     create_notification(favourite)
     bump_potential_friendship(account, status)
 

@@ -356,7 +356,7 @@ class Status < ApplicationRecord
         query = timeline_scope(local_only).without_replies
       else
         # instead of our ftl being a noisy irrelevant firehose
-        # only show public stuff boosted by the community
+        # only show public stuff boosted/faved by the community
         query = Status.network
         if local_only then
           # we don't want to change the ltl
@@ -366,14 +366,21 @@ class Status < ApplicationRecord
             .without_reblogs
         else # but on the ftl
           query = query.without_replies unless Setting.show_replies_in_public_timelines
+          # grab the stuff we faved
+          fav_query = Favourite.select('status_id')
+            .where(account_id: Account.local)
+            .reorder(:status_id)
+            .distinct
           # grab the stuff we boosted
-          subquery = query.reblogs.select(:reblog_of_id)
+          boost_query = query.reblogs.select(:reblog_of_id)
             .reorder(nil)
             .distinct
           # map those ids to actual statuses
           # THIS QUERY IS EXPENSIVE AS FUCK!!!!!!!
           # but it does the job
-          query = Status.where(id: subquery).with_public_visibility
+          query = Status.where(id: boost_query)
+            .or(where(id: fav_query))
+            .with_public_visibility
         end
       end
 

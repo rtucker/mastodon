@@ -3,7 +3,7 @@
 class FanOutOnWriteService < BaseService
   # Push a status into home and mentions feeds
   # @param [Status] status
-  def call(status)
+  def call(status, allow_nonlocal = false, deliver_to_local = true)
     raise Mastodon::RaceConditionError if status.visibility.nil?
 
     deliver_to_self(status) if status.account.local?
@@ -27,8 +27,7 @@ class FanOutOnWriteService < BaseService
     deliver_to_hashtags(status) if !status.reblog? && status.distributable?
 
     # we want to let community users decide what goes on the ftl with boosts
-    return unless status.network? || status.relayed?
-    deliver_to_local = true
+    return unless allow_nonlocal || status.network? || status.relayed?
 
     if status.reblog? then
       status = Status.find(status.reblog_of_id)
