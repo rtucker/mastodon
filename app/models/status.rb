@@ -380,6 +380,7 @@ class Status < ApplicationRecord
           # but it does the job
           query = Status.where(id: boost_query)
             .or(where(id: fav_query))
+            .without_replies
             .with_public_visibility
         end
       end
