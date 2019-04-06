@@ -578,41 +578,89 @@ class Status < ApplicationRecord
     return if text&.nil?
     return unless '#!'.in?(text)
     chunks = []
-    text.split(/(#!(?:[\w:-]+|{[\w:-]+}))/).each do |chunk|
+    tf_command = nil
+
+    text.split(/(#!(?:[\w:-]+|{.*?}))/).each do |chunk|
       if chunk.start_with?("#!")
         chunk.sub!(/{(.*)}$/, '\1')
-        case chunk[2..-1].downcase
+        command = chunk[2..-1].split(':')
+        next if command.blank?
+
+        case command[0]
+        when 'tf'
+          tf_command = command[1..-1]
+        when 'end', 'stop'
+          tf_command = nil
+        when 'char'
+          charmap = {
+            'zws': "\u200c"
+          }
+          command[1..-1].each do |c|
+            next if c.nil?
+            if c.in?(charmap)
+              chunks << charmap[command[1]]
+            elsif (/^\h{1,5}$/ =~ c) && c.to_i(16) > 0
+              begin
+                chunks << [c.to_i(16)].pack('U*')
+              rescue
+                chunks << '?'
+              end
+            end
+          end
         when 'permalink'
           chunks << TagManager.instance.url_for(self)
         when 'cloudroot'
           chunks << "https://monsterpit.cloud/~/#{account.username}"
         when 'blogroot'
           chunks << "https://monsterpit.blog/~/#{account.username}"
-        when 'ping:admins'
-          mentions = User.admins.map { |u| "@#{u.account.username}" }
-          mentions.sort!
-          chunks << mentions.join(' ')
-        when 'ping:mods'
-          mentions = User.moderators.map { |u| "@#{u.account.username}" }
-          mentions.sort!
-          chunks << mentions.join(' ')
-        when 'ping:staff'
-          mentions = User.admins.map { |u| "@#{u.account.username}" }
-          mentions += User.moderators.map { |u| "@#{u.account.username}" }
-          mentions.uniq!
-          mentions.sort!
-          chunks << mentions.join(' ')
-        when 'thread:reall'
-          if conversation_id.present?
-            mention_ids = Status.where(conversation_id: conversation_id).flat_map { |s| s.mentions.pluck(:account_id) }
-            mention_ids.uniq!
-            mentions = Account.where(id: mention_ids).map { |a| "@#{a.username}" }
+        when 'ping'
+          case command[1]
+          when 'admins'
+            mentions = User.admins.map { |u| "@#{u.account.username}" }
+            mentions.sort!
+            chunks << mentions.join(' ')
+          when 'mods'
+            mentions = User.moderators.map { |u| "@#{u.account.username}" }
+            mentions.sort!
+            chunks << mentions.join(' ')
+          when 'staff'
+            mentions = User.admins.map { |u| "@#{u.account.username}" }
+            mentions += User.moderators.map { |u| "@#{u.account.username}" }
+            mentions.uniq!
+            mentions.sort!
             chunks << mentions.join(' ')
           end
-        when 'char:zws'
-          chunks << "\u200c"
+        when 'thread'
+          case command[1]
+          when 'reall'
+            if conversation_id.present?
+              mention_ids = Status.where(conversation_id: conversation_id).flat_map { |s| s.mentions.pluck(:account_id) }
+              mention_ids.uniq!
+              mentions = Account.where(id: mention_ids).map { |a| "@#{a.username}" }
+              chunks << mentions.join(' ')
+            end
+          end
         else
           chunks << chunk
+        end
+      elsif tf_command.present?
+        case tf_command[0]
+        when 'replace', 'sub', 's'
+          tf_command[1..-1].in_groups_of(2) do |args|
+            if args.all?
+              chunks << chunk.sub(*args)
+            else
+              chunks << chunk
+            end
+          end
+        when 'replaceall', 'gsub', 'gs'
+          tf_command[1..-1].in_groups_of(2) do |args|
+            if args.all?
+              chunks << chunk.gsub(*args)
+            else
+              chunks << chunk
+            end
+          end
         end
       else
         chunks << chunk
