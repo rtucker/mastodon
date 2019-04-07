@@ -183,19 +183,13 @@ export default class DetailedStatus extends ImmutablePureComponent {
     } else if (this.context.router) {
       reblogLink = (
         <Link to={`/statuses/${status.get('id')}/reblogs`} className='detailed-status__link'>
-          <i className={`fa fa-${reblogIcon}`} />
-          <span className='detailed-status__reblogs'>
-            <FormattedNumber value={status.get('reblogs_count')} />
-          </span>
+          <i className={`fa fa-${reblogIcon}`} title={status.get('reblogs_count')} />
         </Link>
       );
     } else {
       reblogLink = (
         <a href={`/interact/${status.get('id')}?type=reblog`} className='detailed-status__link' onClick={this.handleModalLink}>
-          <i className={`fa fa-${reblogIcon}`} />
-          <span className='detailed-status__reblogs'>
-            <FormattedNumber value={status.get('reblogs_count')} />
-          </span>
+          <i className={`fa fa-${reblogIcon}`} title={status.get('reblogs_count')} />
         </a>
       );
     }
@@ -203,19 +197,13 @@ export default class DetailedStatus extends ImmutablePureComponent {
     if (this.context.router) {
       favouriteLink = (
         <Link to={`/statuses/${status.get('id')}/favourites`} className='detailed-status__link'>
-          <i className='fa fa-star' />
-          <span className='detailed-status__favorites'>
-            <FormattedNumber value={status.get('favourites_count')} />
-          </span>
+          <i className='fa fa-star' title={status.get('favourites_count')} />
         </Link>
       );
     } else {
       favouriteLink = (
         <a href={`/interact/${status.get('id')}?type=favourite`} className='detailed-status__link' onClick={this.handleModalLink}>
-          <i className='fa fa-star' />
-          <span className='detailed-status__favorites'>
-            <FormattedNumber value={status.get('favourites_count')} />
-          </span>
+          <i className='fa fa-star' title={status.get('favourites_count')} />
         </a>
       );
     }
