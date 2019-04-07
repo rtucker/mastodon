@@ -59,10 +59,10 @@ en:
     pin_errors:
       following: You must be already following the monster you want to endorse
     posts:
-      one: Toot
-      other: Toots
-    posts_tab_heading: Toots
-    posts_with_replies: Toots & growls
+      one: Roar
+      other: Roars
+    posts_tab_heading: Roars
+    posts_with_replies: Roars & growls
     reserved_username: The creaturename is reserved
     roles:
       admin: Admin
