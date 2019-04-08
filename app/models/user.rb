@@ -102,9 +102,34 @@ class User < ApplicationRecord
 
   has_many :session_activations, dependent: :destroy
 
-  delegate :auto_play_gif, :default_local, :always_local, :rawr_federated, :default_sensitive, :unfollow_modal, :boost_modal, :favourite_modal, :delete_modal,
-           :hide_stats, :reduce_motion, :system_font_ui, :noindex, :flavour, :skin, :display_media, :hide_network, :hide_followers_count,
-           :expand_spoilers, :default_language, :aggregate_reblogs, :show_application, :default_content_type, to: :settings, prefix: :setting, allow_nil: false
+  delegate :default_local,
+    :always_local,
+    :rawr_federated,
+    :hide_stats,
+    :disable_color,
+    :hide_captions,
+    :auto_play_gif,
+    :default_sensitive,
+    :unfollow_modal,
+    :boost_modal,
+    :favourite_modal,
+    :delete_modal,
+    :reduce_motion,
+    :system_font_ui,
+    :noindex,
+    :flavour,
+    :skin,
+    :display_media,
+    :hide_network,
+    :hide_followers_count,
+    :expand_spoilers,
+    :default_language,
+    :aggregate_reblogs,
+    :show_application,
+    :default_content_type,
+    to: :settings,
+    prefix: :setting,
+    allow_nil: false
 
   attr_reader :invite_code
   attr_writer :external
@@ -202,6 +227,10 @@ class User < ApplicationRecord
 
   def setting_hide_stats
     settings.hide_stats || false
+  end
+
+  def setting_hide_captions
+    settings.hide_captions || false
   end
 
   def allows_digest_emails?

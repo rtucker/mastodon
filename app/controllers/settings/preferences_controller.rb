@@ -29,11 +29,12 @@ class Settings::PreferencesController < Settings::BaseController
 
   def user_settings_params
     params.require(:user).permit(
-      :setting_default_privacy,
       :setting_default_local,
       :setting_always_local,
       :setting_rawr_federated,
       :setting_hide_stats,
+      :setting_hide_captions,
+      :setting_default_privacy,
       :setting_default_sensitive,
       :setting_default_language,
       :setting_unfollow_modal,

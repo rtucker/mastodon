@@ -37,5 +37,20 @@
     - if Setting.custom_css.present?
       = stylesheet_link_tag custom_css_path, media: 'all'
 
+		- if current_account&.user&.setting_disable_color
+      :css
+        .status__content p > span,
+        .reply-indicator__content p > span,
+        .composer--reply > .content p > span,
+        .account__header__content p > span,
+        .account__header__fields p > span
+        { color: inherit !important }
+
+    - if current_account&.user&.setting_hide_captions
+      :css
+        div .media-caption,
+        span .caption
+        { display: none }
+
   %body{ class: body_classes }
     = content_for?(:content) ? yield(:content) : yield
