@@ -577,28 +577,143 @@ class Status < ApplicationRecord
   def process_bangtags
     return if text&.nil?
     return unless '#!'.in?(text)
+    text.gsub!('#!!', "#\u200c!")
+
+    prefix_ns = {
+      'permalink' => ['link'],
+      'cloudroot' => ['link'],
+      'blogroot' => ['link'],
+    }
+
+    aliases = {
+      ['media', 'end'] => ['var', 'end'],
+      ['media', 'stop'] => ['var', 'end'],
+      ['media', 'endall'] => ['var', 'endall'],
+      ['media', 'stopall'] => ['var', 'endall'],
+    }
+
+    # sections of the final status text
     chunks = []
-    tf_command = nil
+    # list of transformation commands
+    tf_cmds = []
+    # list of post-processing commands
+    post_cmds = []
+    # hash of bangtag variables
+    vars = {}
+    # keep track of what variables we're appending the value of between chunks
+    vore_stack = []
+    # keep track of what type of nested components are active so we can !end them in order
+    component_stack = []
 
-    text.split(/(#!(?:[\w:-]+|{.*?}))/).each do |chunk|
-      if chunk.start_with?("#!")
-        chunk.sub!(/{(.*)}$/, '\1')
-        command = chunk[2..-1].split(':')
-        next if command.blank?
+    text.split(/(#!(?:.*:!#|{.*?}|[^\s#]+))/).each do |chunk|
+      if chunk.starts_with?("#!")
+        chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
+        chunk.sub!(/{(.*)}\Z/, '\1')
 
-        case command[0]
+        if vore_stack.last != '_comment'
+          cmd = chunk[2..-1].strip
+          next if cmd.blank?
+          cmd = cmd.split(':::')
+          cmd = cmd[0].split('::') + cmd[1..-1]
+          cmd = cmd[0].split(':') + cmd[1..-1]
+
+          cmd.map! {|c| c.gsub(/\\:/, ':').gsub(/\\\\:/, '\:')}
+
+          prefix = prefix_ns[cmd[0]]
+          cmd = prefix + cmd unless prefix.nil?
+
+          aliases.each_key do |old_cmd|
+            cmd = aliases[old_cmd] + cmd.drop(old_cmd.length) if cmd.take(old_cmd.length) == old_cmd
+          end
+        elsif chunk.in?(['#!comment:end', '#!comment:stop', '#!comment:endall', '#!comment:stopall'])
+          vore_stack.pop
+          component_stack.pop
+          next
+        else
+          next
+        end
+
+        case cmd[0]
+        when 'var'
+          chunk = nil
+          case cmd[1]
+          when 'end', 'stop'
+            vore_stack.pop
+            component_stack.pop
+          when 'endall', 'stopall'
+            vore_stack = []
+            component_stack.reject! {|c| c == :var}
+          else
+            var = cmd[1]
+            next if var.nil? || var.starts_with?('_')
+            new_value = cmd[2..-1]
+            if new_value.blank?
+              chunk = vars[var]
+            elsif new_value.length == 1 && new_value[0] == '-'
+              vore_stack.push(var)
+              component_stack.push(:var)
+            else
+              vars[var] = new_value.join(':')
+            end
+          end
         when 'tf'
-          tf_command = command[1..-1]
+          chunk = nil
+          case cmd[1]
+          when 'end', 'stop'
+            tf_cmds.pop
+            component_stack.pop
+          when 'endall', 'stopall'
+            tf_cmds = []
+            component_stack.reject! {|c| c == :tf}
+          else
+            tf_cmds.push(cmd[1..-1])
+            component_stack.push(:tf)
+          end
         when 'end', 'stop'
-          tf_command = nil
+          chunk = nil
+          case component_stack.pop
+          when :tf
+            tf_cmds.pop
+          when :var, :hide
+            vore_stack.pop
+          end
+        when 'endall', 'stopall'
+          chunk = nil
+          tf_cmds = []
+          vore_stack = []
+          component_stack = []
+        when 'emoji'
+          next if cmd[1].nil?
+          shortcode = cmd[1]
+          domain = (cmd[2].blank? ? nil : cmd[2].downcase)
+          chunk = ":#{shortcode}:"
+          ours = CustomEmoji.find_or_initialize_by(shortcode: shortcode, domain: nil)
+          if ours.id.nil?
+            if domain.nil?
+              theirs = CustomEmoji.find_by(shortcode: shortcode)
+            else
+              theirs = CustomEmoji.find_by(shortcode: shortcode, domain: domain)
+            end
+            unless theirs.nil?
+              ours.image = theirs.image
+              ours.save
+            end
+          end
         when 'char'
+          chunk = nil
           charmap = {
-            'zws': "\u200c"
+            'zws' => "\u200b",
+            'zwnj' => "\u200c",
+            'zwj' => "\u200d",
+            '\n' => "\n",
+            '\r' => "\r",
+            '\t' => "\t",
+            '\T' => '    '
           }
-          command[1..-1].each do |c|
+          cmd[1..-1].each do |c|
             next if c.nil?
             if c.in?(charmap)
-              chunks << charmap[command[1]]
+              chunks << charmap[cmd[1]]
             elsif (/^\h{1,5}$/ =~ c) && c.to_i(16) > 0
               begin
                 chunks << [c.to_i(16)].pack('U*')
@@ -607,67 +722,180 @@ class Status < ApplicationRecord
               end
             end
           end
-        when 'permalink'
-          chunks << TagManager.instance.url_for(self)
-        when 'cloudroot'
-          chunks << "https://monsterpit.cloud/~/#{account.username}"
-        when 'blogroot'
-          chunks << "https://monsterpit.blog/~/#{account.username}"
+        when 'link'
+          chunk = nil
+          case cmd[1]
+          when 'permalink', 'self'
+            chunk = TagManager.instance.url_for(self)
+          when 'cloudroot'
+            chunk = "https://monsterpit.cloud/~/#{account.username}"
+          when 'blogroot'
+            chunk = "https://monsterpit.blog/~/#{account.username}"
+          end
         when 'ping'
-          case command[1]
+          mentions = []
+          case cmd[1]
           when 'admins'
             mentions = User.admins.map { |u| "@#{u.account.username}" }
             mentions.sort!
-            chunks << mentions.join(' ')
           when 'mods'
             mentions = User.moderators.map { |u| "@#{u.account.username}" }
             mentions.sort!
-            chunks << mentions.join(' ')
           when 'staff'
             mentions = User.admins.map { |u| "@#{u.account.username}" }
             mentions += User.moderators.map { |u| "@#{u.account.username}" }
             mentions.uniq!
             mentions.sort!
-            chunks << mentions.join(' ')
+          end
+          chunk = mentions.join(' ')
+        when 'tag'
+          chunk = nil
+          records = []
+          valid_name = /^[[:word:]_\-]*[[:alpha:]_·\-][[:word:]_\-]*$/
+          cmd[1..-1].select {|t| t.present? && valid_name.match?(t)}.uniq.each do |name|
+            next if self.tags.where(name: name).exists?
+            tag = Tag.where(name: name).first_or_create(name: name)
+            self.tags << tag
+            records << tag
+            TrendingTags.record_use!(tag, account, created_at) if distributable?
+          end
+          if public_visibility? || unlisted_visibility?
+            account.featured_tags.where(tag_id: records.map(&:id)).each do |featured_tag|
+              featured_tag.increment(created_at)
+            end
           end
         when 'thread'
-          case command[1]
+          chunk = nil
+          case cmd[1]
           when 'reall'
             if conversation_id.present?
               mention_ids = Status.where(conversation_id: conversation_id).flat_map { |s| s.mentions.pluck(:account_id) }
               mention_ids.uniq!
               mentions = Account.where(id: mention_ids).map { |a| "@#{a.username}" }
-              chunks << mentions.join(' ')
+              chunk = mentions.join(' ')
             end
           end
+        when 'parent'
+          chunk = nil
+          next unless reply?
+          parent_status = Status.where(id: in_reply_to_id).first
+          next if parent_status.nil?
+          case cmd[1]
+          when 'edit'
+            next unless reply? && in_reply_to_account_id == account_id
+          when 'permalink'
+            chunk = TagManager.instance.url_for(parent_status)
+          end
+        when 'media'
+          chunk = nil
+
+          media_idx = cmd[1]
+          media_cmd = cmd[2]
+          media_args = cmd[3..-1]
+
+          next unless media_cmd.present? && media_idx.present? && media_idx.scan(/\D/).empty?
+          media_idx = media_idx.to_i
+          next if media_attachments[media_idx-1].nil?
+
+          case media_cmd
+          when 'desc'
+            if media_args.present?
+              vars["media_#{media_idx}_desc"] = media_args.join(':')
+            else
+              vore_stack.push("media_#{media_idx}_desc")
+              component_stack.push(:var)
+            end
+          end
+
+          post_cmds.push(['media', media_idx, media_cmd])
+        when 'bangtag'
+          chunk = chunk.sub('bangtag:', '').gsub(':', ":\u200c")
+        when 'join'
+          chunk = nil
+          next if cmd[1].nil?
+          charmap = {
+            'zws' => "\u200b",
+            'zwnj' => "\u200c",
+            'zwj' => "\u200d",
+            '\n' => "\n",
+            '\r' => "\r",
+            '\t' => "\t",
+            '\T' => '    '
+          }
+          sep = charmap[cmd[1]]
+          chunk = cmd[2..-1].join(sep.nil? ? cmd[1] : sep)
+        when 'hide'
+          chunk = nil
+          case cmd[1]
+          when 'end', 'stop', 'endall', 'stopall'
+            vore_stack.reject! {|v| v == '_'}
+            compontent_stack.reject! {|c| c == :hide}
+          else
+            if cmd[1].nil? && !'_'.in?(vore_stack)
+              vore_stack.push('_')
+              component_stack.push(:hide)
+            end
+          end
+        when 'comment'
+          chunk = nil
+          if cmd[1].nil?
+            vore_stack.push('_comment')
+            component_stack.push(:var)
+          end
+        end
+      end
+
+      if chunk.present? && tf_cmds.present?
+        tf_cmds.each do |tf_cmd|
+          next if chunk.nil?
+          case tf_cmd[0]
+          when 'replace', 'sub', 's'
+            tf_cmd[1..-1].in_groups_of(2) do |args|
+              chunk.sub!(*args) if args.all?
+            end
+          when 'replaceall', 'gsub', 'gs'
+            tf_cmd[1..-1].in_groups_of(2) do |args|
+              chunk.gsub!(*args) if args.all?
+            end
+          end
+        end
+      end
+
+      unless chunk.blank? || vore_stack.empty?
+        var = vore_stack.last
+        next if var == '_'
+        if vars[var].nil?
+          vars[var] = chunk.lstrip
         else
-          chunks << chunk
+          vars[var] += chunk.rstrip
         end
-      elsif tf_command.present?
-        case tf_command[0]
-        when 'replace', 'sub', 's'
-          tf_command[1..-1].in_groups_of(2) do |args|
-            if args.all?
-              chunks << chunk.sub(*args)
-            else
-              chunks << chunk
-            end
-          end
-        when 'replaceall', 'gsub', 'gs'
-          tf_command[1..-1].in_groups_of(2) do |args|
-            if args.all?
-              chunks << chunk.gsub(*args)
-            else
-              chunks << chunk
-            end
+        chunk = nil
+      end
+
+      chunks << chunk unless chunk.nil?
+    end
+
+    vars.transform_values! {|v| v.rstrip}
+
+    if post_cmds.present?
+      post_cmds.each do |post_cmd|
+        case post_cmd[0]
+        when 'media'
+          media_idx = post_cmd[1]
+          media_cmd = post_cmd[2]
+          media_args = post_cmd[3..-1]
+
+          case media_cmd
+          when 'desc'
+            media_attachments[media_idx-1].description = vars["media_#{media_idx}_desc"]
+            media_attachments[media_idx-1].save
           end
         end
-      else
-        chunks << chunk
       end
     end
+
     self.text = chunks.join('')
-    update_column(:text, text)
+    save
   end
 
   def set_conversation
