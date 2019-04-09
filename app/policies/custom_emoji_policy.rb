@@ -2,11 +2,11 @@
 
 class CustomEmojiPolicy < ApplicationPolicy
   def index?
-    staff?
+    user_signed_in?
   end
 
   def create?
-    staff?
+    user_signed_in?
   end
 
   def update?
@@ -14,7 +14,7 @@ class CustomEmojiPolicy < ApplicationPolicy
   end
 
   def copy?
-    staff?
+    user_signed_in?
   end
 
   def enable?
