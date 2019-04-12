@@ -54,6 +54,12 @@ class MediaAttachment < ApplicationRecord
     },
   }.freeze
 
+  GIF_THUMB_FORMAT = {
+    format: 'png',
+    pixels: 160_000, # 400x400px
+    file_geometry_parser: FastGeometryParser,
+  }.freeze
+
   AUDIO_STYLES = {
     small: {
       format: 'png',
@@ -121,6 +127,7 @@ class MediaAttachment < ApplicationRecord
 
   IMAGE_LIMIT = 8.megabytes
   VIDEO_LIMIT = 40.megabytes
+  GIF_LIMIT = ENV.fetch('MAX_GIF_SIZE', 200).to_i.kilobytes
 
   belongs_to :account,          inverse_of: :media_attachments, optional: true
   belongs_to :status,           inverse_of: :media_attachments, optional: true
@@ -193,10 +200,17 @@ class MediaAttachment < ApplicationRecord
 
     def file_styles(f)
       if f.instance.file_content_type == 'image/gif'
-        {
-          small: IMAGE_STYLES[:small],
-          original: VIDEO_FORMAT,
-        }
+        if f.instance.file_file_size > GIF_LIMIT
+          {
+            small: IMAGE_STYLES[:small],
+            original: VIDEO_FORMAT,
+          }
+        else
+          {
+            small: GIF_THUMB_FORMAT,
+            original: IMAGE_STYLES[:original],
+          }
+        end
       elsif IMAGE_MIME_TYPES.include? f.instance.file_content_type
         IMAGE_STYLES
       elsif AUDIO_CONVERTIBLE_MIME_TYPES.include?(f.instance.file_content_type)
@@ -218,7 +232,11 @@ class MediaAttachment < ApplicationRecord
 
     def file_processors(f)
       if f.file_content_type == 'image/gif'
-        [:gif_transcoder, :blurhash_transcoder]
+        if f.file_file_size > GIF_LIMIT
+          [:gif_transcoder, :blurhash_transcoder]
+        else
+          [:lazy_thumbnail, :blurhash_transcoder]
+        end
       elsif VIDEO_MIME_TYPES.include? f.file_content_type
         [:video_transcoder, :blurhash_transcoder]
       elsif AUDIO_MIME_TYPES.include? f.file_content_type

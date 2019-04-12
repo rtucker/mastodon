@@ -58,6 +58,9 @@ class Item extends React.PureComponent {
   handleMouseEnter = (e) => {
     if (this.hoverToPlay()) {
       e.target.play();
+    } else if (this.hoverToPlayClassicGif()) {
+      const { attachment } = this.props;
+      e.target.src = attachment.get('url');
     }
   }
 
@@ -65,12 +68,23 @@ class Item extends React.PureComponent {
     if (this.hoverToPlay()) {
       e.target.pause();
       e.target.currentTime = 0;
+    } else if (this.hoverToPlayClassicGif()) {
+      const { attachment } = this.props;
+      e.target.src = attachment.get('preview_url');
     }
   }
 
   hoverToPlay () {
     const { attachment } = this.props;
     return !autoPlayGif && attachment.get('type') === 'gifv';
+  }
+
+  hoverToPlayClassicGif () {
+    const { attachment } = this.props;
+    return !autoPlayGif && (
+      attachment.get('type') === 'image' &&
+      attachment.get('url').split('.').pop().startsWith('gif')
+    );
   }
 
   handleClick = (e) => {
@@ -80,6 +94,9 @@ class Item extends React.PureComponent {
       if (this.hoverToPlay()) {
         e.target.pause();
         e.target.currentTime = 0;
+      } else if (this.hoverToPlayClassicGif()) {
+        const { attachment } = this.props;
+        e.target.src = attachment.get('preview_url');
       }
       e.preventDefault();
       onClick(index);
@@ -199,25 +216,54 @@ class Item extends React.PureComponent {
       const x      = ((focusX /  2) + .5) * 100;
       const y      = ((focusY / -2) + .5) * 100;
 
-      thumbnail = (
-        <a
-          className='media-gallery__item-thumbnail'
-          href={attachment.get('remote_url') || originalUrl}
-          onClick={this.handleClick}
-          target='_blank'
-        >
-          <img
-            className={letterbox ? 'letterbox' : null}
-            src={previewUrl}
-            srcSet={srcSet}
-            sizes={sizes}
-            alt={attachment.get('description')}
-            title={attachment.get('description')}
-            style={{ objectPosition: letterbox ? null : `${x}% ${y}%` }}
-            onLoad={this.handleImageLoad}
-          />
-        </a>
-      );
+      const isGif  = originalUrl.split('.').pop().startsWith('gif');
+      const autoPlay = !isIOS() && autoPlayGif;
+
+      if (isGif && !autoPlay) {
+        thumbnail = (
+          <a
+            className='media-gallery__item-thumbnail'
+            href={attachment.get('remote_url') || originalUrl}
+            onClick={this.handleClick}
+            target='_blank'
+          >
+            <img
+              className={letterbox ? 'letterbox' : null}
+              src={previewUrl}
+              sizes={sizes}
+              alt={attachment.get('description')}
+              title={attachment.get('description')}
+              style={{ objectPosition: letterbox ? null : `${x}% ${y}%` }}
+              onMouseEnter={this.handleMouseEnter}
+              onMouseLeave={this.handleMouseLeave}
+              onMouseDown={this.handleMouseDown}
+              onLoad={this.handleImageLoad}
+            />
+
+            <span className='media-gallery__gifv__label'>GIF</span>
+          </a>
+        );
+      } else {
+        thumbnail = (
+          <a
+            className='media-gallery__item-thumbnail'
+            href={attachment.get('remote_url') || originalUrl}
+            onClick={this.handleClick}
+            target='_blank'
+          >
+            <img
+              className={letterbox ? 'letterbox' : null}
+              src={previewUrl}
+              srcSet={srcSet}
+              sizes={sizes}
+              alt={attachment.get('description')}
+              title={attachment.get('description')}
+              style={{ objectPosition: letterbox ? null : `${x}% ${y}%` }}
+              onLoad={this.handleImageLoad}
+            />
+          </a>
+        );
+      }
     } else if (attachment.get('type') === 'gifv') {
       const autoPlay = !isIOS() && autoPlayGif;
 

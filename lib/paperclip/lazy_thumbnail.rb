@@ -20,7 +20,7 @@ module Paperclip
     private
 
     def needs_convert?
-      needs_different_geometry? || needs_different_format? || needs_metadata_stripping?
+      options[:force_convert] == true || needs_different_geometry? || needs_different_format? || needs_metadata_stripping?
     end
 
     def needs_different_geometry?
