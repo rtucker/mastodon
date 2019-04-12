@@ -28,12 +28,13 @@ class MediaAttachment < ApplicationRecord
 
   IMAGE_FILE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].freeze
   VIDEO_FILE_EXTENSIONS = ['.webm', '.mp4', '.m4v', '.mov'].freeze
-  AUDIO_FILE_EXTENSIONS = ['.mp3', '.m4a', '.wav', '.ogg'].freeze
+  AUDIO_FILE_EXTENSIONS = ['.mp3', '.m4a', '.wav', '.ogg', '.aac'].freeze
 
   IMAGE_MIME_TYPES             = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].freeze
   VIDEO_MIME_TYPES             = ['video/webm', 'video/mp4', 'video/quicktime'].freeze
   VIDEO_CONVERTIBLE_MIME_TYPES = ['video/webm', 'video/quicktime'].freeze
-  AUDIO_MIME_TYPES             = ['audio/mpeg', 'audio/mp4', 'audio/vnd.wav', 'audio/wav', 'audio/x-wav', 'audio/x-wave', 'audio/ogg', 'audio/aac',].freeze
+  AUDIO_MIME_TYPES             = ['audio/mp3', 'audio/x-mp3', 'audio/mpeg', 'audio/x-mpeg', 'audio/mp4', 'audio/vnd.wav', 'audio/wav', 'audio/x-wav', 'audio/x-wave', 'audio/ogg', 'audio/aac', 'audio/flac'].freeze
+  AUDIO_CONVERTIBLE_MIME_TYPES = ['audio/vnd.wav', 'audio/wav', 'audio/x-wav', 'audio/x-wave', 'audio/ogg', 'audio/flac'].freeze
 
   BLURHASH_OPTIONS = {
     x_comp: 4,
@@ -54,17 +55,6 @@ class MediaAttachment < ApplicationRecord
   }.freeze
 
   AUDIO_STYLES = {
-    original: {
-      format: 'm4a',
-      convert_options: {
-        output: {
-          vn: '',
-          acodec: 'aac',
-          movflags: '+faststart',
-        },
-      },
-    },
-
     small: {
       format: 'png',
       time: 0,
@@ -82,6 +72,17 @@ class MediaAttachment < ApplicationRecord
         output: {
           filter_complex: '"showwavespic=s=400x100:colors=lime|green"',
         },
+      },
+    },
+  }.freeze
+
+  AUDIO_FORMAT = {
+    format: 'm4a',
+    convert_options: {
+      output: {
+        vn: '',
+        acodec: 'aac',
+        movflags: '+faststart',
       },
     },
   }.freeze
@@ -131,8 +132,8 @@ class MediaAttachment < ApplicationRecord
                     convert_options: { all: '-quality 90 -strip' }
 
   validates_attachment_content_type :file, content_type: IMAGE_MIME_TYPES + VIDEO_MIME_TYPES + AUDIO_MIME_TYPES
-  validates_attachment_size :file, less_than: IMAGE_LIMIT, unless: :video_or_gifv?
-  validates_attachment_size :file, less_than: VIDEO_LIMIT, if: :video_or_gifv?
+  validates_attachment_size :file, less_than: IMAGE_LIMIT, unless: :video_or_audio?
+  validates_attachment_size :file, less_than: VIDEO_LIMIT, if: :video_or_audio?
   remotable_attachment :file, VIDEO_LIMIT
 
   include Attachmentable
@@ -155,8 +156,8 @@ class MediaAttachment < ApplicationRecord
     file.blank? && remote_url.present?
   end
 
-  def video_or_gifv?
-    video? || gifv?
+  def video_or_audio?
+    video? || gifv? || audio?
   end
 
   def to_param
@@ -198,6 +199,11 @@ class MediaAttachment < ApplicationRecord
         }
       elsif IMAGE_MIME_TYPES.include? f.instance.file_content_type
         IMAGE_STYLES
+      elsif AUDIO_CONVERTIBLE_MIME_TYPES.include?(f.instance.file_content_type)
+        {
+          small: AUDIO_STYLES[:small],
+          original: AUDIO_FORMAT,
+        }
       elsif AUDIO_MIME_TYPES.include? f.instance.file_content_type
         AUDIO_STYLES
       elsif VIDEO_CONVERTIBLE_MIME_TYPES.include?(f.instance.file_content_type)

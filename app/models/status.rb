@@ -682,6 +682,33 @@ class Status < ApplicationRecord
           tf_cmds = []
           vore_stack = []
           component_stack = []
+        when 'emojify'
+          chunk = nil
+          next if cmd[1].nil?
+          src_img = nil
+          shortcode = cmd[2]
+          case cmd[1]
+          when 'avatar'
+            src_img = account.avatar
+          when 'parent'
+            next unless cmd[3].present? && reply?
+            shortcode = cmd[3]
+            parent_status = Status.where(id: in_reply_to_id).first
+            next if parent_status.nil?
+            case cmd[2]
+            when 'avatar'
+              src_img = parent_status.account.avatar
+            end
+          end
+
+          next if src_img.nil? || shortcode.nil? || !shortcode.match?(/\A\w+\Z/)
+
+          chunk = ":#{shortcode}:"
+          emoji = CustomEmoji.find_or_initialize_by(shortcode: shortcode, domain: nil)
+          if emoji.id.nil?
+            emoji.image = src_img
+            emoji.save
+          end
         when 'emoji'
           next if cmd[1].nil?
           shortcode = cmd[1]

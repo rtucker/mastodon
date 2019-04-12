@@ -6,14 +6,11 @@ module Paperclip
       max_aud_len = (ENV['MAX_AUDIO_LENGTH'] || 60.0).to_f
 
       meta = ::Av.cli.identify(@file.path)
-      # {:length=>"0:00:02.14", :duration=>2.14, :audio_encode=>"mp3", :audio_bitrate=>"44100 Hz", :audio_channels=>"mono"}
-
-      attachment.instance.file_file_name    = 'media.m4a'
-      attachment.instance.file_content_type = 'audio/mp4'
+      #attachment.instance.file_file_name    = 'media.m4a'
+      #attachment.instance.file_content_type = 'audio/mp4'
       attachment.instance.type              = MediaAttachment.types[:video]
 
-      final_file = Paperclip::Transcoder.make(file, options, attachment)
-      final_file
+      Paperclip::Transcoder.make(file, options, attachment)
     end
   end
 end
