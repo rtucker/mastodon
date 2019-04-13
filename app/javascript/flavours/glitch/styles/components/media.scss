@@ -61,7 +61,8 @@
   line-height: 18px;
 }
 
-.media-gallery__gifv {
+.media-gallery__gifv,
+.media-gallery__item {
   &.autoplay {
     .media-gallery__gifv__label {
       display: none;
