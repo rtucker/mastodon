@@ -110,6 +110,9 @@ en:
         setting_hide_stats: Hide statistics on public pages
         setting_disable_color: Ignore text color formatting
         setting_hide_captions: Hide media captions
+        setting_larger_menus: Increase size of menu items and spacing
+        setting_gently_kobolds: Gently the kobolds
+        setting_user_is_kobold: I am a kobold
         setting_aggregate_reblogs: Group repeats in timelines
         setting_auto_play_gif: Auto-play animated GIFs
         setting_boost_modal: Show confirmation dialog before repeating

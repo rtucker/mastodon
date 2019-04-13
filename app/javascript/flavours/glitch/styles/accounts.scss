@@ -221,6 +221,18 @@
     background-color: rgba(lighten($error-red, 12%), 0.1);
     border-color: rgba(lighten($error-red, 12%), 0.5);
   }
+
+  &.gentlies {
+    color: lighten(cyan, 25%);
+    background-color: rgba(lighten(cyan, 25%), 0.1);
+    border-color: rgba(lighten(cyan, 25%), 0.1);
+  }
+
+  &.kobold {
+    color: lighten(orange, 22%);
+    background-color: rgba(lighten(orange, 33%), 0.1);
+    border-color: rgba(lighten(orange, 33%), 0.1);
+  }
 }
 
 .account__header__fields {

@@ -108,6 +108,10 @@ class User < ApplicationRecord
     :hide_stats,
     :disable_color,
     :hide_captions,
+    :larger_menus,
+    :gently_kobolds,
+    :user_is_kobold,
+
     :auto_play_gif,
     :default_sensitive,
     :unfollow_modal,
@@ -207,6 +211,18 @@ class User < ApplicationRecord
     self.otp_required_for_login = false
     otp_backup_codes&.clear
     save!
+  end
+
+  def setting_larger_menus
+    settings.larger_menus || false
+  end
+
+  def setting_gently_kobolds
+    settings.gently_kobolds || false
+  end
+
+  def setting_user_is_kobold
+    settings.user_is_kobold || false
   end
 
   def setting_default_privacy

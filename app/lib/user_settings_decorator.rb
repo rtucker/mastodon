@@ -19,6 +19,10 @@ class UserSettingsDecorator
     user.settings['always_local']        = always_local_preference if change?('setting_always_local')
     user.settings['rawr_federated']      = rawr_federated_preference if change?('setting_rawr_federated')
     user.settings['hide_stats']          = hide_stats_preference if change?('setting_hide_stats')
+    user.settings['larger_menus']        = larger_menus_preference if change?('setting_larger_menus')
+    user.settings['gently_kobolds']      = gently_kobolds_preference if change?('setting_gently_kobolds')
+    user.settings['user_is_kobold']      = user_is_kobold_preference if change?('setting_user_is_kobold')
+
     user.settings['hide_captions']       = hide_captions_preference if change?('setting_hide_captions')
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
@@ -42,6 +46,18 @@ class UserSettingsDecorator
     user.settings['aggregate_reblogs']   = aggregate_reblogs_preference if change?('setting_aggregate_reblogs')
     user.settings['show_application']    = show_application_preference if change?('setting_show_application')
     user.settings['default_content_type']= default_content_type_preference if change?('setting_default_content_type')
+  end
+
+  def larger_menus_preference
+    boolean_cast_setting 'setting_larger_menus'
+  end
+
+  def gently_kobolds_preference
+    boolean_cast_setting 'setting_gently_kobolds'
+  end
+
+  def user_is_kobold_preference
+    boolean_cast_setting 'setting_user_is_kobold'
   end
 
   def merged_notification_emails

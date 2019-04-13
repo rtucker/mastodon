@@ -34,6 +34,10 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_rawr_federated,
       :setting_hide_stats,
       :setting_hide_captions,
+      :setting_larger_menus,
+      :setting_gently_kobolds,
+      :setting_user_is_kobold,
+
       :setting_default_privacy,
       :setting_default_sensitive,
       :setting_default_language,

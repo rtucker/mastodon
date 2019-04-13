@@ -46,6 +46,10 @@
     .fields-group
       = f.input :setting_hide_followers_count, as: :boolean, wrapper: :with_label
 
+  .fields-group
+    = f.input :setting_gently_kobolds, as: :boolean, wrapper: :with_label
+    = f.input :setting_user_is_kobold, as: :boolean, wrapper: :with_label
+
   %hr#settings_web/
 
   .fields-group
@@ -54,6 +58,7 @@
     = f.input :setting_disable_color, as: :boolean, wrapper: :with_label
     = f.input :setting_system_font_ui, as: :boolean, wrapper: :with_label
     = f.input :setting_hide_captions, as: :boolean, wrapper: :with_label
+    = f.input :setting_larger_menus, as: :boolean, wrapper: :with_label
 
   .fields-group
     = f.input :setting_unfollow_modal, as: :boolean, wrapper: :with_label

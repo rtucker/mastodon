@@ -68,6 +68,8 @@ en:
       admin: Admin
       bot: Bot
       moderator: Mod
+      kobold: Gently the kobold
+      gentlies_kobolds: Gentlies kobolds
     unavailable: Profile unavailable
     unfollow: Unfollow
   admin:
