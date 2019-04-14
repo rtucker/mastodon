@@ -29,6 +29,7 @@ class ReblogService < BaseService
       ActivityPub::DistributionWorker.perform_async(reblog.id)
     end
 
+    curate_status(reblogged_status)
     create_notification(reblog)
     bump_potential_friendship(account, reblog)
 
@@ -61,5 +62,12 @@ class ReblogService < BaseService
       serializer: ActivityPub::ActivitySerializer,
       adapter: ActivityPub::Adapter
     ).as_json).sign!(reblog.account))
+  end
+
+  def curate_status(status)
+    return if status.curated
+    status.curated = true
+    status.save
+    FanOutOnWriteService.new.call(status)
   end
 end

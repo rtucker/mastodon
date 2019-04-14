@@ -16,9 +16,7 @@ class FavouriteService < BaseService
 
     favourite = Favourite.create!(account: account, status: status)
 
-    # stream it to the world timeline if public
-    FanOutOnWriteService.new.call(status, true, false) if status.public_visibility?
-
+    curate_status(status)
     create_notification(favourite)
     bump_potential_friendship(account, status)
 
@@ -55,5 +53,12 @@ class FavouriteService < BaseService
 
   def build_xml(favourite)
     OStatus::AtomSerializer.render(OStatus::AtomSerializer.new.favourite_salmon(favourite))
+  end
+
+  def curate_status(status)
+    return if status.curated
+    status.curated = true
+    status.save
+    FanOutOnWriteService.new.call(status)
   end
 end

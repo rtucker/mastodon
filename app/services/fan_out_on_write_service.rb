@@ -3,7 +3,7 @@
 class FanOutOnWriteService < BaseService
   # Push a status into home and mentions feeds
   # @param [Status] status
-  def call(status, allow_nonlocal = false, deliver_to_local = true)
+  def call(status)
     raise Mastodon::RaceConditionError if status.visibility.nil?
 
     deliver_to_self(status) if status.account.local?
@@ -24,25 +24,21 @@ class FanOutOnWriteService < BaseService
     return if status.reblog? && !Setting.show_reblogs_in_public_timelines
     return if status.account.silenced?
 
-    deliver_to_hashtags(status) if !status.reblog? && status.distributable?
-
-    # we want to let community users decide what goes on the ftl with boosts
-    return unless allow_nonlocal || status.network? || status.relayed?
-
-    if status.reblog? then
-      status = Status.find(status.reblog_of_id)
-      render_anonymous_payload(status)
-      deliver_to_local = status.network?
+    if !status.reblog? && status.distributable?
+      deliver_to_hashtags(status)
+      deliver_to_public(status) if status.curated
     end
 
-    return if status.account.silenced? || !status.public_visibility?
+    if status.relayed?
+      status = Status.find(status.reblog_of_id)
+      return if status.account.silenced?
+      render_anonymous_payload(status)
+    end
+
+    return unless status.network? && status.public_visibility? && !status.reblog
     return if status.reply? && status.in_reply_to_account_id != status.account_id && !Setting.show_replies_in_public_timelines
 
-    if deliver_to_local then
-      deliver_to_local(status)
-    else
-      deliver_to_public(status)
-    end
+    deliver_to_local(status)
   end
 
   private
@@ -104,7 +100,6 @@ class FanOutOnWriteService < BaseService
   def deliver_to_local(status)
     Rails.logger.debug "Delivering status #{status.id} to local timeline"
 
-    return unless status.network?
     Redis.current.publish('timeline:public:local', @payload)
     Redis.current.publish('timeline:public:local:media', @payload) if status.media_attachments.any?
   end

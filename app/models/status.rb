@@ -24,6 +24,8 @@
 #  local_only             :boolean
 #  poll_id                :bigint(8)
 #  content_type           :string
+#  tsv                    :tsvector
+#  curated                :boolean
 #
 
 class Status < ApplicationRecord
@@ -89,13 +91,13 @@ class Status < ApplicationRecord
   scope :remote, -> { where(local: false).or(where.not(uri: nil)) }
   scope :local,  -> { where(local: true).or(where(uri: nil)) }
   scope :network, -> { where(local: true).or(where(uri: nil)).or(where('statuses.uri LIKE ANY (array[?])', LOCAL_URIS)) }
+  scope :curated, -> { where(curated: true) }
 
   scope :without_replies, -> { where('statuses.reply = FALSE OR statuses.in_reply_to_account_id = statuses.account_id') }
   scope :without_reblogs, -> { where('statuses.reblog_of_id IS NULL') }
   scope :reblogs, -> { where('statuses.reblog_of_id IS NOT NULL') } # all reblogs
   scope :with_public_visibility, -> { where(visibility: :public) }
   scope :public_browsable, -> { where(visibility: [:public, :unlisted]) }
-  scope :visible_to, ->(account) { where(visibility: [:public, :unlisted]).or(where(account: [account] + account.following).where(visibility: :private)) }
   scope :tagged_with, ->(tag) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag }) }
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced_at: nil }) }
   scope :including_silenced_accounts, -> { left_outer_joins(:account).where.not(accounts: { silenced_at: nil }) }
@@ -306,7 +308,7 @@ class Status < ApplicationRecord
       if account.present?
         query = query
           .or(scope.where(account: account))
-          .or(scope.where(account: account.following, visibility: [:unlisted, :private]))
+          .or(scope.where(account: account.following, visibility: [:private, :unlisted]))
           .or(scope.where(id: account.mentions.select(:status_id)))
       end
       query = query.where(reblog_of_id: nil).limit(limit)
@@ -367,47 +369,26 @@ class Status < ApplicationRecord
     end
 
     def as_public_timeline(account = nil, local_only = false)
-      if account.present? && account&.user&.setting_rawr_federated
-        query = timeline_scope(local_only).without_replies
-      else
-        # instead of our ftl being a noisy irrelevant firehose
-        # only show public stuff boosted/faved by the community
+      if local_only
         query = Status.network
-        if local_only then
-          # we don't want to change the ltl
-          query = query
-            .with_public_visibility
-            .without_replies
-            .without_reblogs
-        else # but on the ftl
-          query = query.without_replies unless Setting.show_replies_in_public_timelines
-          # grab the stuff we faved
-          fav_query = Favourite.select('status_id')
-            .where(account_id: Account.local)
-            .reorder(:status_id)
-            .distinct
-
-          # We need to find a new way to do this because it's much too slow.
-
-          # grab the stuff we boosted
-          #boost_query = query.reblogs.select(:reblog_of_id)
-          #  .reorder(nil)
-          #  .distinct
-          # map those ids to actual statuses
-
-          query = Status.where(id: fav_query)
-            .without_replies
-            .with_public_visibility
-        end
+          .with_public_visibility
+          .without_replies
+          .without_reblogs
+      elsif account.nil? || account&.user&.setting_rawr_federated
+        query = timeline_scope(local_only)
+        query = query.without_replies unless Setting.show_replies_in_public_timelines
+      else
+        scope = Status.curated
+        scope = scope.without_replies unless Setting.show_replies_in_public_timelines
+        query = scope.public_browsable
+          .or(scope.where(account: account.following, visibility: :private))
       end
 
       apply_timeline_filters(query, account, local_only)
     end
 
     def as_tag_timeline(tag, account = nil, local_only = false)
-      query = (account.nil?) ? browsable_timeline_scope(local_only) : user_timeline_scope(account, local_only)
-      query = query.tagged_with(tag)
-
+      query = browsable_timeline_scope(local_only).tagged_with(tag)
       apply_timeline_filters(query, account, local_only)
     end
 
@@ -493,13 +474,6 @@ class Status < ApplicationRecord
       starting_scope = local_only ? Status.local : Status
       starting_scope
         .public_browsable
-        .without_reblogs
-    end
-
-    def user_timeline_scope(account, local_only = false)
-      starting_scope = local_only ? Status.local : Status
-      starting_scope
-        .visible_to(account)
         .without_reblogs
     end
 

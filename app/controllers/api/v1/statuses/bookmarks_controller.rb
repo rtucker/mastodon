@@ -30,10 +30,19 @@ class Api::V1::Statuses::BookmarksController < Api::BaseController
 
     bookmark = Bookmark.find_or_create_by!(account: current_user.account, status: requested_status)
 
+    curate_status(requested_status)
+
     bookmark.status.reload
   end
 
   def requested_status
     Status.find(params[:status_id])
+  end
+
+  def curate_status(status)
+    return if status.curated
+    status.curated = true
+    status.save
+    FanOutOnWriteService.new.call(status)
   end
 end
