@@ -386,15 +386,16 @@ class Status < ApplicationRecord
             .where(account_id: Account.local)
             .reorder(:status_id)
             .distinct
+
+          # We need to find a new way to do this because it's much too slow.
+
           # grab the stuff we boosted
-          boost_query = query.reblogs.select(:reblog_of_id)
-            .reorder(nil)
-            .distinct
+          #boost_query = query.reblogs.select(:reblog_of_id)
+          #  .reorder(nil)
+          #  .distinct
           # map those ids to actual statuses
-          # THIS QUERY IS EXPENSIVE AS FUCK!!!!!!!
-          # but it does the job
-          query = Status.where(id: boost_query)
-            .or(where(id: fav_query))
+
+          query = Status.where(id: fav_query)
             .without_replies
             .with_public_visibility
         end
