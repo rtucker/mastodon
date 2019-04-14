@@ -298,6 +298,23 @@ class Status < ApplicationRecord
   after_find :limit_domain_visibility
 
   class << self
+    def search_for(term, limit = 33, account = nil)
+      pattern = sanitize_sql_like(term)
+      pattern = "#{pattern}"
+      Status.unscoped {
+        scope = Status.where("tsv @@ plainto_tsquery('english', ?)", pattern)
+        query = scope.where(visibility: :public)
+        if account.present?
+          query = query
+            .or(scope.where(account: account))
+            .or(scope.where(account: account.following, visibility: [:unlisted, :private]))
+            .or(scope.where(id: account.mentions.select(:status_id)))
+        end
+        query = query.where(reblog_of_id: nil).order(id: :desc).limit(limit)
+        apply_timeline_filters(query, account, true)
+      }
+    end
+
     def selectable_visibilities
       visibilities.keys - %w(direct limited)
     end
