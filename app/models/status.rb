@@ -298,7 +298,7 @@ class Status < ApplicationRecord
   after_find :limit_domain_visibility
 
   class << self
-    def search_for(term, limit = 33, account = nil)
+    def search_for(term, limit = 66, account = nil)
       pattern = sanitize_sql_like(term)
       pattern = "#{pattern}"
       scope = Status.where("tsv @@ plainto_tsquery('english', ?)", pattern)
