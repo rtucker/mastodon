@@ -96,9 +96,9 @@ class SearchResults extends ImmutablePureComponent {
           <FormattedMessage id='search_results.total' defaultMessage='{count, number} {count, plural, one {result} other {results}}' values={{ count }} />
         </div>
 
-        {accounts}
         {statuses}
         {hashtags}
+        {accounts}
       </div>
     );
   }
