@@ -22,7 +22,7 @@ class FanOutOnWriteService < BaseService
     end
 
     return if status.reblog? && !Setting.show_reblogs_in_public_timelines
-    return if status.account.silenced?
+    return if filtered?(status)
 
     if !status.reblog? && status.distributable?
       deliver_to_hashtags(status)
@@ -31,17 +31,20 @@ class FanOutOnWriteService < BaseService
 
     if status.relayed?
       status = Status.find(status.reblog_of_id)
-      return if status.account.silenced?
+      return if filtered?(status)
       render_anonymous_payload(status)
     end
 
     return unless status.network? && status.public_visibility? && !status.reblog
-    return if status.reply? && status.in_reply_to_account_id != status.account_id && !Setting.show_replies_in_public_timelines
 
     deliver_to_local(status)
   end
 
   private
+
+  def filtered?(status)
+    status.account.silenced? || !Setting.show_replies_in_public_timelines && status.reply? && status.in_reply_to_account_id != status.account_id
+  end
 
   def deliver_to_self(status)
     Rails.logger.debug "Delivering status #{status.id} to author"
