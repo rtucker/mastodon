@@ -26,6 +26,7 @@
 #  content_type           :string
 #  tsv                    :tsvector
 #  curated                :boolean
+#  sharekey               :string
 #
 
 class Status < ApplicationRecord
