@@ -56,7 +56,7 @@ class FavouriteService < BaseService
   end
 
   def curate_status(status)
-    return if status.curated
+    return if status.curated || status.direct_visibility? || (status.reply? && status.in_reply_to_account_id != status.account_id)
     status.curated = true
     status.save
     FanOutOnWriteService.new.call(status)
