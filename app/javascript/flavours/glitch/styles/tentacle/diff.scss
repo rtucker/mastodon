@@ -1,84 +1,112 @@
 *:root {
-	.account__action-bar__tab > span { color: $profile_header_text }
+	.account__action-bar__tab > span
+  { color: $profile_header_text }
 
-	body, body.app-body {
+	body,
+  body.app-body
+  {
 		background: $body_bg;
-		background-size: cover;
 		font-size: 14px;
 	}
 
-	hr { border: 1px dotted $horiz_rule }
+	hr
+  { border: 1px dotted $horiz_rule }
 
-	.column-back-button, .column-header,
-	a[href], h1, h2, h3, h4 {
+	.column-back-button,
+  .column-header,
+	a[href],
+  h1,
+  h2,
+  h3,
+  h4
+  {
 		text-decoration: none;
 		font-variant: small-caps;
 	}
 
-	.floats, .mascot-container { display: none }
+	.floats,
+  .mascot-container
+  { display: none }
 
-	.about-short { background: transparent }
+	.about-short
+  { background: transparent }
 
-	.closed-registrations-message, .simple-form { min-height: inherit }
+	.closed-registrations-message,
+  .simple-form
+  { min-height: inherit }
 
-	.landing-page .heading { padding-bottom: 0 }
+	.landing-page .heading
+  { padding-bottom: 0 }
 
-	.landing-page h1 { font-size: 32px }
+	.landing-page h1
+  { font-size: 32px }
 
 	.features-list__row .text,
 	.landing-page li,
-	.landing-page p { color: $instance_info_text }
+	.landing-page p
+  { color: $instance_info_text }
 
 	.landing-page h1,
 	.landing-page h2,
 	.landing-page h3,
-	.landing-page h6 { color: $instance_info_header_text }
+	.landing-page h6
+  { color: $instance_info_header_text }
 
-	.about-body h2 { font-size: 28px }
+	.about-body h2
+  { font-size: 28px }
 
-	.name { font-size: 24px }
+	.name
+  { font-size: 24px }
 
-	.activity-stream .pre-header .pre-header__icon {
+	.activity-stream .pre-header .pre-header__icon
+  {
 		position: inherit;
 		float: left;
 		margin-right: .5em;
 		left: 0;
 	}
 
-	.activity-stream .pre-header {
+	.activity-stream .pre-header
+  {
 		padding-left: 0;
 		margin-bottom: 4px;
 	}
 
-	.account-grid-card { width: 100% }
+	.account-grid-card
+  { width: 100% }
 
 	.account-grid-card,
 	.detailed-status,
 	.detailed-status__action-bar,
-	.status {
+	.status
+  {
 		background: $status_bg;
 		border: 1px solid black;
 		box-shadow: 5px 5px 10px black;
 		margin: 1em 1.5em 2em 1em;
 	}
 
-	.account__header > div { background: rgba(0,0,0,.9) }
+	.account__header > div
+  { background: rgba(0,0,0,.9) }
 
-	.detailed-status__action-bar {
+	.detailed-status__action-bar
+  {
 		background: $status_actions_bg;
 		margin: -2.5em 3.5em 2em 3em;
 		padding: 4px;
 	}
 
 	.notification__message,
-	.status__prepend {
+	.status__prepend
+  {
 		margin-left: 30px;
 		padding: 0;
 	}
 
 	.activity-stream .pre-header,
 	.notification__message span,
-	.status__prepend span { font-size: 12px }
+	.status__prepend span
+  { font-size: 12px }
 
 	.account-grid-card .username,
 	.account__display-name strong,
@@ -87,13 +115,15 @@
 	.name .username,
 	.notification__message span a,
 	.status__display-name strong,
-	.status__prepend span a {
+	.status__prepend span a
+  {
 		font-size: 16px;
 		font-weight: 700;
 	}
 
 	.notification__favourite-icon-wrapper,
-	.status__prepend-icon-wrapper { left: -25px }
+	.status__prepend-icon-wrapper
+  { left: -25px }
 
 	#mastodon-timeline,
 	.about-mastodon,
@@ -120,14 +150,16 @@
 	.sidebar-wrapper,
 	.sidebar ul ul,
 	.simple_form,
-	.ui {
+	.ui
+  {
 		background: none;
 		-webkit-box-shadow: none;
 		box-shadow: none;
 		border: none;
 	}
 
-	.drawer {
+	.drawer
+  {
 		background: $sidebar_bg;
 		box-shadow: 5px 0 10px black;
 	}
@@ -139,21 +171,25 @@
 	.autosuggest-textarea__suggestions,
 	.column-back-button,
 	.column-header,
-	.search-results {
+	.search-results
+  {
 		border: none;
 		margin: 0 5px 1em 5px;
 		box-shadow: 0 5px 10px black;
 	}
 
-	.search { margin-right: 5px }
+	.search
+  { margin-right: 5px }
 
 	.autosuggest-textarea__suggestions,
-	.search-results {
+	.search-results
+  {
 		background: $sidebar_popup_bg;
 		color: $sidebar_popup_text;
 	}
 
-	.search__input {
+	.search__input
+  {
 		background: $search_bg;
 		color: $search_text;
 	}
@@ -164,12 +200,14 @@
 		color: $cw_text;
 	}
 
-	.column-header__back-button {
+	.column-header__back-button
+  {
 		color: white;
 		background: none;
 	}
 
-	.column-back-button {
+	.column-back-button
+  {
 		top: calc(-1.5em - 42px);
 		color: white;
 	}
@@ -178,24 +216,29 @@
 	.autosuggest-textarea__textarea,
 	.compose-form__buttons,
 	.compose-form__modifiers,
-	.spoiler-input__input {
+	.spoiler-input__input
+  {
 		background: #412;
 		color: white;
 	}
 
-	.status__prepend {
+	.status__prepend
+  {
 		margin-top: 0;
 		margin-bottom: 0;
 	}
-	.status__prepend span {
+	.status__prepend span
+  {
 		font-size: 0 !important;
 		color: transparent !important;
 	}
-	.status__prepend span a * {
+	.status__prepend span a *
+  {
 		color:#fff
 	}
 
-	.status__relative-time {
+	.status__relative-time
+  {
 		color: #412;
 		border-bottom: none;
 		font-size: 12px;
@@ -211,142 +254,173 @@
 	.display-name__account,
 	.name .username,
 	.name small,
-	.status__display-name {
+	.status__display-name
+  {
 		color: #c69;
 		font-size: 12px;
 		font-weight: 700;
 	}
 
 	.detailed-status__display-name,
-	.display-name__account { margin-bottom: 0 }
+	.display-name__account
+  { margin-bottom: 0 }
 
 	.account-grid-card .name a,
 	.account__display-name strong,
 	.account__header__display-name,
 	.card__bio .name,
 	.detailed-status__display-name strong,
-	.status__display-name strong {
+	.status__display-name strong
+  {
 		color: white;
 		display: block;
 		font-weight: 700;
 	}
 
-	.status__display-name strong { display: inherit }
-	.status__prepend span { color: white }
+	.status__display-name strong
+  { display: inherit }
+	.status__prepend span
+  { color: white }
 
 	.notification__display-name,
 	.status__display-name.muted,
 	.status__display-name.muted strong,
-	.status__prepend .status__display-name {
+	.status__prepend .status__display-name
+  {
 		color: #c6a;
 		font-size: 14px;
 	}
 
-	.detailed-status__datetime:before { content: "\1F517" }
+	.detailed-status__datetime:before
+  { content: "\1F517" }
 
 	.account-grid-card .note,
-	.status__content {
+	.status__content
+  {
 		color: white;
 		font-size: 14px;
 		line-height: inherit;
 	}
 
-	.status { padding-left: 10px }
+	.status
+  { padding-left: 10px }
 
 	.status__info,
 	.activity-stream .display-name,
-	.boost-modal__status-header {
+	.boost-modal__status-header
+  {
 		background: #323;
 		box-shadow: 0 0 5px #323;
 		border-radius: 5px;
 	}
 
-	.activity-stream .display-name {
+	.activity-stream .display-name
+  {
 		margin-left: 40px;
 		padding-left: 20px!important;
 		width: calc(100% - 30px);
 	}
 
-	.status__content { padding-top: 10px }
+	.status__content
+  { padding-top: 10px }
 
-	.detailed-status { padding: 10px }
+	.detailed-status
+  { padding: 10px }
 
-	.detailed-status__display-name {
+	.detailed-status__display-name
+  {
 		background: #423;
 		box-shadow: 0 0 5px #423;
 		border-radius: 5px;
 	}
 
-	.muted .status__content p { color: #c9a }
+	.muted .status__content p
+  { color: #c9a }
 
-	.status__content a { color: #fac }
+	.status__content a
+  { color: #fac }
 
 	.account__action-bar,
-	.account__disclaimer { background: #160011 }
+	.account__disclaimer
+  { background: #160011 }
 
-	.icon-button { color: #946 }
+	.icon-button
+  { color: #946 }
 
 	.account__header__display-name,
-	.account__header__username { font-variant: small-caps }
+	.account__header__username
+  { font-variant: small-caps }
 
 	.account__header__username,
-	.name small {
+	.name small
+  {
 		font-size: 12px;
 		font-weight: 700;
 		margin-bottom: 1em;
 	}
 
-	.account__header__content { color: white }
+	.account__header__content
+  { color: white }
 
-	.status__content .emojione {
+	.status__content .emojione
+  {
 		width: 32px;
 		height: 32px;
 		padding: 2px;
 	}
 
-	.emoji-mart-search input { color: black; }
+	.emoji-mart-search input
+  { color: black; }
 
-	.onboarding-modal__page p { color: white; }
+	.onboarding-modal__page p
+  { color: white; }
 
-	@-webkit-keyframes blink-off {
+	@-webkit-keyframes blink-off
+  {
 		0%  { opacity: .75 }
 		50% { opacity: 0 }
 		to  { opacity: .75 }
 	}
 
-	@keyframes blink-off {
+	@keyframes blink-off
+  {
 		0%  { opacity: .75 }
 		50% { opacity: 0 }
 		to  { opacity: .75 }
 	}
 
-	.icon-button.disabled {
+	.icon-button.disabled
+  {
 		opacity: .75;
 		transition: all 2s ease-in-out;
 		animation: blink-off normal 4s 5 ease-in-out;
 	}
 
-	@-webkit-keyframes blink-on {
+	@-webkit-keyframes blink-on
+  {
 		0%  { transform: scale(1.5) }
 		50% { transform: scale(2) }
 		to  { transform: scale(1.5) }
 	}
 
-	@keyframes blink-on {
+	@keyframes blink-on
+  {
 		0%  { transform: scale(1.5) }
 		50% { transform: scale(2) }
 		to  { transform: scale(1.5) }
 	}
 
 	.column-header.active>.column-header__icon,
-	.icon-button.active {
+	.icon-button.active
+  {
 		color: #946;
 		transform: scale(1.5);
 		transition: all 1s ease-in-out;
 		animation: blink-on normal 2s 5 ease-in-out;
 	}
 
-	::-webkit-scrollbar-thumb {
+	::-webkit-scrollbar-thumb
+  {
 		background: #623;
 		border: 1px solid #946;
 	}
