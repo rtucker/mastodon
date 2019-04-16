@@ -197,7 +197,7 @@ export default class StatusActionBar extends ImmutablePureComponent {
     const reblogMessage      = status.get('visibility') === 'private' ? messages.reblog_private : messages.reblog;
 
     let menu = [];
-    let reblogIcon = 'retweet';
+    let reblogIcon = 'repeat';
     let replyIcon;
     let replyTitle;
 

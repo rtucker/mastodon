@@ -869,10 +869,6 @@
   transition-duration: 0s;
   vertical-align: middle;
   width: 22px;
-
-  &::before {
-    display: none !important;
-  }
 }
 
 .no-reduce-motion button.icon-button.active i.fa-retweet {
@@ -1304,7 +1300,6 @@ noscript {
   100% { opacity: 1; }
 }
 
-@import 'boost';
 @import 'accounts';
 @import 'domains';
 @import 'status';

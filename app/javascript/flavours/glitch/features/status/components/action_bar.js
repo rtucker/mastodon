@@ -192,7 +192,7 @@ export default class ActionBar extends React.PureComponent {
       <div className='detailed-status__button'><IconButton title={intl.formatMessage(messages.share)} icon='share-alt' onClick={this.handleShare} /></div>
     );
 
-    let reblogIcon = 'retweet';
+    let reblogIcon = 'repeat';
     //if (status.get('visibility') === 'direct') reblogIcon = 'envelope';
     // else if (status.get('visibility') === 'private') reblogIcon = 'lock';
 

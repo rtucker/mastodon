@@ -23,7 +23,7 @@
         %time.formatted{ datetime: status.created_at.iso8601, title: l(status.created_at) }= l(status.created_at)
       ·
       - if status.reblog?
-        = fa_icon('retweet fw')
+        = fa_icon('repeat fw')
         = t('statuses.boosted_from_html', acct_link: admin_account_inline_link_to(status.proper.account))
       - else
         = fa_visibility_icon(status)
