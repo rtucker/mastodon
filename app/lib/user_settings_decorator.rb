@@ -22,6 +22,7 @@ class UserSettingsDecorator
     user.settings['larger_menus']        = larger_menus_preference if change?('setting_larger_menus')
     user.settings['larger_buttons']      = larger_buttons_preference if change?('setting_larger_buttons')
     user.settings['larger_drawer']       = larger_drawer_preference if change?('setting_larger_drawer')
+    user.settings['remove_filtered']     = remove_filtered_preference if change?('setting_remove_filtered')
     user.settings['gently_kobolds']      = gently_kobolds_preference if change?('setting_gently_kobolds')
     user.settings['user_is_kobold']      = user_is_kobold_preference if change?('setting_user_is_kobold')
 
@@ -60,6 +61,10 @@ class UserSettingsDecorator
 
   def larger_drawer_preference
     boolean_cast_setting 'setting_larger_drawer'
+  end
+
+  def remove_filtered_preference
+    boolean_cast_setting 'setting_remove_filtered'
   end
 
   def gently_kobolds_preference

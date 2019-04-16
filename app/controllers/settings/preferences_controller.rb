@@ -37,6 +37,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_larger_menus,
       :setting_larger_buttons,
       :setting_larger_drawer,
+      :setting_remove_filtered,
       :setting_gently_kobolds,
       :setting_user_is_kobold,
 

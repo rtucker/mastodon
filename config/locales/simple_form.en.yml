@@ -113,6 +113,7 @@ en:
         setting_larger_menus: Increase size and spacing of menu items
         setting_larger_buttons: Increase size and spacing of action buttons
         setting_larger_drawer: Increase width of compose drawer column
+        setting_remove_filtered: Don't show placeholder gap for filtered roars
         setting_gently_kobolds: Gently the kobolds
         setting_user_is_kobold: I am a kobold
         setting_aggregate_reblogs: Group repeats in timelines

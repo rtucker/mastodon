@@ -111,6 +111,7 @@ class User < ApplicationRecord
     :larger_menus,
     :larger_buttons,
     :larger_drawer,
+    :remove_filtered,
     :gently_kobolds,
     :user_is_kobold,
 
@@ -225,6 +226,10 @@ class User < ApplicationRecord
 
   def setting_larger_drawer
     settings.larger_drawer || false
+  end
+
+  def setting_remove_filtered
+    settings.remove_filtered || false
   end
 
   def setting_gently_kobolds
