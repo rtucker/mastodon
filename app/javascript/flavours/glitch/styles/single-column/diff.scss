@@ -2,16 +2,18 @@
 
 /* One Column */
 :root {  //  Overrides .wide stylings for mobile view
-  @media screen and (min-width: 631px) {
+  @media screen and (min-width: 1000px) {
     .columns-area {
-      width: 80%;
+      width: 100%;
       margin: -60px auto auto;
     }
 
+    .drawer { min-width: 400px }
+
     .tabs-bar {
       display: flex;
-      width: calc(80% - 315px);
-      margin: 10px 0 0 calc(10% + 305px);
+      width: 585px;
+      margin: 10px 0 0 calc(50% - 95px);
       z-index: 1;
     }
 
@@ -35,7 +37,9 @@
 
     .column:last-child {
       display: flex;
-      min-width: calc(100% - 300px);
+      min-width: 600px;
+      max-width: 600px;
+      margin-left: calc(50% - 500px);
       margin-top: 58px;
     }
 
