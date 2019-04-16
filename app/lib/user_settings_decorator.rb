@@ -20,6 +20,8 @@ class UserSettingsDecorator
     user.settings['rawr_federated']      = rawr_federated_preference if change?('setting_rawr_federated')
     user.settings['hide_stats']          = hide_stats_preference if change?('setting_hide_stats')
     user.settings['larger_menus']        = larger_menus_preference if change?('setting_larger_menus')
+    user.settings['larger_buttons']      = larger_buttons_preference if change?('setting_larger_buttons')
+    user.settings['larger_drawer']       = larger_drawer_preference if change?('setting_larger_drawer')
     user.settings['gently_kobolds']      = gently_kobolds_preference if change?('setting_gently_kobolds')
     user.settings['user_is_kobold']      = user_is_kobold_preference if change?('setting_user_is_kobold')
 
@@ -50,6 +52,14 @@ class UserSettingsDecorator
 
   def larger_menus_preference
     boolean_cast_setting 'setting_larger_menus'
+  end
+
+  def larger_buttons_preference
+    boolean_cast_setting 'setting_larger_buttons'
+  end
+
+  def larger_drawer_preference
+    boolean_cast_setting 'setting_larger_drawer'
   end
 
   def gently_kobolds_preference

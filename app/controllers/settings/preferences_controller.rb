@@ -35,6 +35,8 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_hide_stats,
       :setting_hide_captions,
       :setting_larger_menus,
+      :setting_larger_buttons,
+      :setting_larger_drawer,
       :setting_gently_kobolds,
       :setting_user_is_kobold,
 

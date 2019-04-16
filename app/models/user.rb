@@ -109,6 +109,8 @@ class User < ApplicationRecord
     :disable_color,
     :hide_captions,
     :larger_menus,
+    :larger_buttons,
+    :larger_drawer,
     :gently_kobolds,
     :user_is_kobold,
 
@@ -215,6 +217,14 @@ class User < ApplicationRecord
 
   def setting_larger_menus
     settings.larger_menus || false
+  end
+
+  def setting_larger_buttons
+    settings.larger_buttons || false
+  end
+
+  def setting_larger_drawer
+    settings.larger_drawer || false
   end
 
   def setting_gently_kobolds

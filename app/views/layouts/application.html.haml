@@ -59,5 +59,23 @@
         .dropdown--active .dropdown__content > ul > li > a
         { padding: 14px 0 !important; font-size: 14px !important }
 
+    - if current_account&.user&.setting_larger_buttons
+      :css
+        .drawer { min-width: 350px !important }
+        .status__action-bar .icon-button,
+        .detailed-status__action-bar .icon-button,
+        .composer--options .icon-button
+        {
+          font-size: 24px !important;
+          height: 24px !important;
+          width: 24px !important;
+          line-height: 24px !important;
+          margin-right: 24px;
+        }
+
+    - if current_account&.user&.setting_larger_drawer
+      :css
+        .drawer { min-width: 400px !important }
+
   %body{ class: body_classes }
     = content_for?(:content) ? yield(:content) : yield

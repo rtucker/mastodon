@@ -110,7 +110,9 @@ en:
         setting_hide_stats: Hide statistics on public pages
         setting_disable_color: Ignore text color formatting
         setting_hide_captions: Hide media captions
-        setting_larger_menus: Increase size of menu items and spacing
+        setting_larger_menus: Increase size and spacing of menu items
+        setting_larger_buttons: Increase size and spacing of action buttons
+        setting_larger_drawer: Increase width of compose drawer column
         setting_gently_kobolds: Gently the kobolds
         setting_user_is_kobold: I am a kobold
         setting_aggregate_reblogs: Group repeats in timelines
