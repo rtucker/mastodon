@@ -2,7 +2,6 @@
 	.account__action-bar__tab > span
   { color: $profile_header_text }
 
-	body,
   body.app-body
   {
 		background: $body_bg;
@@ -23,17 +22,6 @@
 		text-decoration: none;
 		font-variant: small-caps;
 	}
-
-	.floats,
-  .mascot-container
-  { display: none }
-
-	.about-short
-  { background: transparent }
-
-	.closed-registrations-message,
-  .simple-form
-  { min-height: inherit }
 
 	.landing-page .heading
   { padding-bottom: 0 }
