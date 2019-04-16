@@ -84,7 +84,9 @@ class SearchResults extends ImmutablePureComponent {
         <section>
           <h5><Icon icon='hashtag' fixedWidth /><FormattedMessage id='search_results.hashtags' defaultMessage='Hashtags' /></h5>
 
-          {results.get('hashtags').map(hashtag => <Hashtag key={hashtag.get('name')} hashtag={hashtag} />)}
+          <div className='hashtags'>
+            {results.get('hashtags').map(hashtag => <Hashtag key={hashtag.get('name')} hashtag={hashtag} />)}
+          </div>
         </section>
       );
     }

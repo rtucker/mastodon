@@ -228,7 +228,11 @@
       border-bottom: 0;
     }
 
-    & > .hashtag {
+    & > .hashtags {
+      text-align: center;
+    }
+
+    & > div > .hashtag {
       display: inline-block;
       padding: 10px;
       color: $secondary-text-color;
