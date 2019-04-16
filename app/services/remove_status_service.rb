@@ -4,6 +4,8 @@ class RemoveStatusService < BaseService
   include StreamEntryRenderer
   include Redisable
 
+  MIN_SCHEDULE_OFFSET = 60.seconds.freeze
+
   def call(status, **options)
     @payload      = Oj.dump(event: :delete, payload: status.id.to_s)
     @status       = status
