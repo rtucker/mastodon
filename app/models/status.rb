@@ -179,7 +179,7 @@ class Status < ApplicationRecord
   end
 
   def relayed?
-    account.username == :relay && account.actor_type.in?(Set[:Application, :Service])
+    account.username == 'relay' && account.actor_type.in?(Set[:Application, :Service])
   end
 
   def reblog?
