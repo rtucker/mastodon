@@ -67,6 +67,8 @@ class Account < ApplicationRecord
   MAX_NOTE_LENGTH = (ENV['MAX_BIO_CHARS'] || 500).to_i
   MAX_FIELDS = (ENV['MAX_PROFILE_FIELDS'] || 4).to_i
 
+  LOCAL_DOMAINS = ENV.fetch('LOCAL_DOMAINS', '').chomp.split(/\.?\s+/).freeze
+
   enum protocol: [:ostatus, :activitypub]
 
   validates :username, presence: true
@@ -125,6 +127,10 @@ class Account < ApplicationRecord
 
   def local?
     domain.nil?
+  end
+
+  def network?
+    local? || domain.in?(LOCAL_DOMAINS)
   end
 
   def moved?

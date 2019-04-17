@@ -27,6 +27,7 @@
 #  tsv                    :tsvector
 #  curated                :boolean
 #  sharekey               :string
+#  network                :boolean
 #
 
 class Status < ApplicationRecord
@@ -38,7 +39,6 @@ class Status < ApplicationRecord
   include StatusThreadingConcern
 
   LOCAL_DOMAINS = ENV.fetch('LOCAL_DOMAINS', '').chomp.split(/\.?\s+/).freeze
-  LOCAL_URIS = LOCAL_DOMAINS.map { |domain| "https://#{domain}/%" }.freeze
   FORCE_SENSITIVE = ENV.fetch('FORCE_SENSITIVE', '').chomp.split(/\.?\s+/).freeze
   FORCE_UNLISTED = ENV.fetch('FORCE_UNLISTED', '').chomp.split(/\.?\s+/).freeze
 
@@ -91,7 +91,7 @@ class Status < ApplicationRecord
   scope :recent, -> { reorder(id: :desc) }
   scope :remote, -> { where(local: false).or(where.not(uri: nil)) }
   scope :local,  -> { where(local: true).or(where(uri: nil)) }
-  scope :network, -> { where(local: true).or(where(uri: nil)).or(where('statuses.uri LIKE ANY (array[?])', LOCAL_URIS)) }
+  scope :network, -> { where(network: true) }
   scope :curated, -> { where(curated: true) }
 
   scope :without_replies, -> { where('statuses.reply = FALSE OR statuses.in_reply_to_account_id = statuses.account_id') }
@@ -175,7 +175,7 @@ class Status < ApplicationRecord
   end
 
   def network?
-    attributes['local'] || uri.nil? || account.domain.in?(LOCAL_DOMAINS)
+    attributes['network'] || local? || account.domain.in?(LOCAL_DOMAINS)
   end
 
   def relayed?
@@ -297,8 +297,6 @@ class Status < ApplicationRecord
 
   after_create :set_poll_id
   after_create :process_bangtags, if: :local?
-
-  after_find :limit_domain_visibility
 
   class << self
     def search_for(term, limit = 66, account = nil)
@@ -462,7 +460,7 @@ class Status < ApplicationRecord
     private
 
     def timeline_scope(local_only = false)
-      starting_scope = local_only ? Status.local : Status
+      starting_scope = local_only ? Status.network : Status
       starting_scope = starting_scope.with_public_visibility
       if Setting.show_reblogs_in_public_timelines
         starting_scope
@@ -472,7 +470,7 @@ class Status < ApplicationRecord
     end
 
     def browsable_timeline_scope(local_only = false)
-      starting_scope = local_only ? Status.local : Status
+      starting_scope = local_only ? Status.network : Status
       starting_scope
         .public_browsable
         .without_reblogs
@@ -547,14 +545,9 @@ class Status < ApplicationRecord
   def set_visibility
     self.visibility = reblog.visibility if reblog? && visibility.nil?
     self.visibility = (account.locked? ? :private : :public) if visibility.nil?
+    self.visibility = :unlisted if visibility == :public && account.domain.in?(FORCE_UNLISTED)
+    self.sensitive  = true if account.domain.in?(FORCE_SENSITIVE)
     self.sensitive  = false if sensitive.nil?
-  end
-
-  def limit_domain_visibility
-    return unless has_attribute?(:uri) && !uri.nil?
-    domain = Addressable::URI.parse(uri).host
-    self.sensitive = true if domain.in?(FORCE_SENSITIVE)
-    self.visibility = :unlisted if public_visibility? && domain.in?(FORCE_UNLISTED)
   end
 
   def set_locality
@@ -939,6 +932,7 @@ class Status < ApplicationRecord
 
   def set_local
     self.local = account.local?
+    self.network = account.network?
   end
 
   def update_statistics
