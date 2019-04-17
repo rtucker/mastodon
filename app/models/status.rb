@@ -377,10 +377,8 @@ class Status < ApplicationRecord
         query = timeline_scope(local_only)
         query = query.without_replies unless Setting.show_replies_in_public_timelines
       else
-        scope = Status.curated
-        scope = scope.without_replies unless Setting.show_replies_in_public_timelines
-        query = scope.public_browsable
-          .or(scope.where(account: account.following, visibility: :private))
+        query = Status.curated.public_browsable
+        query = query.without_replies unless Setting.show_replies_in_public_timelines
       end
 
       apply_timeline_filters(query, account, local_only)
