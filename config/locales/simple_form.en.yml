@@ -149,7 +149,7 @@ en:
         must_be_following: Block notifications from monsters you aren't in the pack of
         must_be_following_dm: Block whispers from monsters you aren't in the pack of
       invite_request:
-        text: Introduce yourself! What brings you to Monsterpit?
+        text: Introduce yourself! What brings you to Monsterpit? The last word in this field must be '#kobold' without vowels.
       notification_emails:
         digest: Send digest e-mails
         favourite: Send e-mail when someone admires your roar
