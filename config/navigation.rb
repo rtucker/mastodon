@@ -39,7 +39,8 @@ SimpleNavigation::Configuration.run do |navigation|
     n.item :moderation, safe_join([fa_icon('gavel fw'), t('moderation.title')]), admin_action_logs_url, if: proc { !current_user.nil? } do |s|
       s.item :action_logs, safe_join([fa_icon('bars fw'), t('admin.action_logs.title')]), admin_action_logs_url
       s.item :reports, safe_join([fa_icon('flag fw'), t('admin.reports.title')]), admin_reports_url, highlights_on: %r{/admin/reports}, if: -> { current_user.staff? }
-      s.item :accounts, safe_join([fa_icon('users fw'), t('admin.accounts.title')]), admin_accounts_url, highlights_on: %r{/admin/accounts|/admin/pending_accounts}, if: -> { current_user.staff? }
+      s.item :accounts, safe_join([fa_icon('users fw'), t('admin.accounts.title')]), admin_accounts_url, highlights_on: %r{/admin/accounts}, if: -> { current_user.staff? }
+      s.item :pending, safe_join([fa_icon('clock-o fw'), t('admin.pending_accounts.title', count: User.pending.count)]), admin_pending_accounts_url, highlights_on: %r{/admin/pending_accounts}, if: -> { current_user.staff? }
       s.item :invites, safe_join([fa_icon('user-plus fw'), t('admin.invites.title')]), admin_invites_path, if: -> { current_user.staff? }
       s.item :tags, safe_join([fa_icon('tag fw'), t('admin.tags.title')]), admin_tags_path, if: -> { current_user.staff? }
       s.item :instances, safe_join([fa_icon('cloud fw'), t('admin.instances.title')]), admin_instances_url(limited: '1'), highlights_on: %r{/admin/instances|/admin/domain_blocks}, if: -> { current_user.staff? }
