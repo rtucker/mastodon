@@ -144,6 +144,7 @@ class PollForm extends ImmutablePureComponent {
           </select>
 
           <select value={expiresIn} onChange={this.handleSelectDuration}>
+            <option value={60}>{intl.formatMessage(messages.minutes, { number: 1 })}</option>
             <option value={300}>{intl.formatMessage(messages.minutes, { number: 5 })}</option>
             <option value={1800}>{intl.formatMessage(messages.minutes, { number: 30 })}</option>
             <option value={3600}>{intl.formatMessage(messages.hours, { number: 1 })}</option>
@@ -151,6 +152,10 @@ class PollForm extends ImmutablePureComponent {
             <option value={86400}>{intl.formatMessage(messages.days, { number: 1 })}</option>
             <option value={259200}>{intl.formatMessage(messages.days, { number: 3 })}</option>
             <option value={604800}>{intl.formatMessage(messages.days, { number: 7 })}</option>
+            <option value={1209600}>{intl.formatMessage(messages.days, { number: 14 })}</option>
+            <option value={2592000}>{intl.formatMessage(messages.days, { number: 30 })}</option>
+            <option value={5184000}>{intl.formatMessage(messages.days, { number: 60 })}</option>
+            <option value={7776000}>{intl.formatMessage(messages.days, { number: 90 })}</option>
           </select>
         </div>
       </div>
