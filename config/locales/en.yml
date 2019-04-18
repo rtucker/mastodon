@@ -508,7 +508,7 @@ en:
   admin_mailer:
     new_pending_account:
       body: The details of the new account are below. You can approve or reject this application.
-      subject: New account up for review on %{instance} (%{creaturename})
+      subject: New account up for review on %{instance} (%{username})
     new_report:
       body: "%{reporter} has reported %{target}"
       body_remote: Someone from %{domain} has reported %{target}
@@ -809,7 +809,7 @@ en:
     remove_selected_domains: Remove all packmates from the selected domains
     remove_selected_followers: Remove selected packmates
     remove_selected_follows: Unfollow selected creatures
-    status: Account roar
+    status: Account status
   remote_follow:
     acct: Enter your creaturename@domain you want to act from
     missing_resource: Could not find the required redirect URL for your account
