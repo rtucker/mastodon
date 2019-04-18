@@ -27,7 +27,7 @@ class Report < ApplicationRecord
   scope :unresolved, -> { where(action_taken: false) }
   scope :resolved,   -> { where(action_taken: true) }
 
-  validates :comment, length: { maximum: 1000 }
+  validates :comment, length: { maximum: 6666 }
 
   def local?
     false # Force uri_for to use uri attribute
