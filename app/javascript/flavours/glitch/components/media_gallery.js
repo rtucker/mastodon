@@ -143,7 +143,7 @@ class Item extends React.PureComponent {
     let width  = 50;
     let height = 100 / Math.ceil(size/2);
 
-    if (size === 1) {
+    if (size === 1 || size % 2 == 1 && index == 0) {
       width = 100;
     }
 
