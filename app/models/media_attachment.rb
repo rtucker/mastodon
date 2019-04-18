@@ -125,8 +125,7 @@ class MediaAttachment < ApplicationRecord
     },
   }.freeze
 
-  IMAGE_LIMIT = 8.megabytes
-  VIDEO_LIMIT = 40.megabytes
+  SIZE_LIMIT = 40.megabytes
   GIF_LIMIT = ENV.fetch('MAX_GIF_SIZE', 200).to_i.kilobytes
 
   belongs_to :account,          inverse_of: :media_attachments, optional: true
@@ -138,10 +137,9 @@ class MediaAttachment < ApplicationRecord
                     processors: ->(f) { file_processors f },
                     convert_options: { all: '-quality 90 -strip' }
 
-  validates_attachment_content_type :file, content_type: IMAGE_MIME_TYPES + VIDEO_MIME_TYPES + AUDIO_MIME_TYPES
-  validates_attachment_size :file, less_than: IMAGE_LIMIT, unless: :video_or_audio?
-  validates_attachment_size :file, less_than: VIDEO_LIMIT, if: :video_or_audio?
-  remotable_attachment :file, VIDEO_LIMIT
+  do_not_validate_attachment_file_type :file
+  validates_attachment_size :file, less_than: SIZE_LIMIT
+  remotable_attachment :file, SIZE_LIMIT
 
   include Attachmentable
 
@@ -165,6 +163,10 @@ class MediaAttachment < ApplicationRecord
 
   def video_or_audio?
     video? || gifv? || audio?
+  end
+
+  def is_media?
+    file_content_type.in?(IMAGE_MIME_TYPES + VIDEO_MIME_TYPES + AUDIO_MIME_TYPES)
   end
 
   def to_param
@@ -192,7 +194,9 @@ class MediaAttachment < ApplicationRecord
   after_commit :reset_parent_cache, on: :update
   before_create :prepare_description, unless: :local?
   before_create :set_shortcode
+  before_create :set_file_name, unless: :is_media?
   before_post_process :set_type_and_extension
+  before_post_process :is_media?
   before_save :set_meta
 
   class << self
@@ -225,8 +229,10 @@ class MediaAttachment < ApplicationRecord
           small: VIDEO_STYLES[:small],
           original: VIDEO_FORMAT,
         }
-      else
+      elsif VIDEO_MIME_TYPES.include? f.instance.file_content_type
         VIDEO_STYLES
+      else
+        {original: {}}
       end
     end
 
@@ -241,7 +247,7 @@ class MediaAttachment < ApplicationRecord
         [:video_transcoder, :blurhash_transcoder]
       elsif AUDIO_MIME_TYPES.include? f.file_content_type
         [:audio_transcoder]
-      else
+      elsif IMAGE_MIME_TYPES.include? f.file_content_type
         [:lazy_thumbnail, :blurhash_transcoder]
       end
     end
@@ -264,8 +270,21 @@ class MediaAttachment < ApplicationRecord
     self.description = description.strip[0...666] unless description.nil?
   end
 
+  def set_file_name
+    temp = file.queued_for_write[:original]
+    unless temp.nil?
+      orig = temp.original_filename
+      ext = File.extname(orig).downcase
+      name = File.basename(orig, '.*')
+      self.file.instance_write(:file_name, "#{name}#{ext}")
+    end
+  end
+
   def set_type_and_extension
-    self.type = VIDEO_MIME_TYPES.include?(file_content_type) ? :video : AUDIO_MIME_TYPES.include?(file_content_type) ? :audio : :image
+    self.type = VIDEO_MIME_TYPES.include?(file_content_type) ? :video :
+      AUDIO_MIME_TYPES.include?(file_content_type) ? :audio :
+      IMAGE_MIME_TYPES.include?(file_content_type) ? :image :
+      :unknown
   end
 
   def set_meta
