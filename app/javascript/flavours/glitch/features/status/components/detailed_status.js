@@ -116,7 +116,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
     let mediaIcon       = null;
     let applicationLink = '';
     let reblogLink = '';
-    let reblogIcon = 'retweet';
+    let reblogIcon = 'repeat';
     let favouriteLink = '';
 
     if (this.props.measureHeight) {
