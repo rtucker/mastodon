@@ -141,52 +141,10 @@ class Item extends React.PureComponent {
     const { attachment, index, size, standalone, letterbox, displayWidth, visible } = this.props;
 
     let width  = 50;
-    let height = 100;
-    let top    = 'auto';
-    let left   = 'auto';
-    let bottom = 'auto';
-    let right  = 'auto';
+    let height = 100 / Math.ceil(size/2);
 
     if (size === 1) {
       width = 100;
-    }
-
-    if (size === 4 || (size === 3 && index > 0)) {
-      height = 50;
-    }
-
-    if (size === 2) {
-      if (index === 0) {
-        right = '2px';
-      } else {
-        left = '2px';
-      }
-    } else if (size === 3) {
-      if (index === 0) {
-        right = '2px';
-      } else if (index > 0) {
-        left = '2px';
-      }
-
-      if (index === 1) {
-        bottom = '2px';
-      } else if (index > 1) {
-        top = '2px';
-      }
-    } else if (size === 4) {
-      if (index === 0 || index === 2) {
-        right = '2px';
-      }
-
-      if (index === 1 || index === 3) {
-        left = '2px';
-      }
-
-      if (index < 2) {
-        bottom = '2px';
-      } else {
-        top = '2px';
-      }
     }
 
     let thumbnail = '';
@@ -289,7 +247,7 @@ class Item extends React.PureComponent {
     }
 
     return (
-      <div className={classNames('media-gallery__item', { standalone, letterbox })} key={attachment.get('id')} style={{ left: left, top: top, right: right, bottom: bottom, width: `${width}%`, height: `${height}%` }}>
+      <div className={classNames('media-gallery__item', { standalone, letterbox })} key={attachment.get('id')} style={{ width: `${width}%`, height: `${height}%` }}>
         <canvas width={32} height={32} ref={this.setCanvasRef} className={classNames('media-gallery__preview', { 'media-gallery__preview--hidden': visible && this.state.loaded })} />
         {visible && thumbnail}
       </div>
@@ -366,7 +324,7 @@ export default class MediaGallery extends React.PureComponent {
   render () {
     const { media, intl, sensitive, letterbox, fullwidth, defaultWidth } = this.props;
     const { visible } = this.state;
-    const size = media.take(4).size;
+    const size = media.take(6).size;
 
     const width = this.state.width || defaultWidth;
 
@@ -387,7 +345,7 @@ export default class MediaGallery extends React.PureComponent {
     if (this.isStandaloneEligible()) {
       children = <Item standalone onClick={this.handleClick} attachment={media.get(0)} displayWidth={width} visible={visible} />;
     } else {
-      children = media.take(4).map((attachment, i) => <Item key={attachment.get('id')} onClick={this.handleClick} attachment={attachment} index={i} size={size} letterbox={letterbox} displayWidth={width} visible={visible} />);
+      children = media.take(6).map((attachment, i) => <Item key={attachment.get('id')} onClick={this.handleClick} attachment={attachment} index={i} size={size} letterbox={letterbox} displayWidth={width} visible={visible} />);
     }
 
     if (visible) {
@@ -401,7 +359,7 @@ export default class MediaGallery extends React.PureComponent {
     }
 
     let descriptions;
-    descriptions = media.take(4).map(
+    descriptions = media.take(6).map(
       (attachment, i) => {
         if (attachment.get('description'))
           return <p className='media-spoiler__trigger'>Attachment {1+i}: {attachment.get('description')}</p>

@@ -229,7 +229,7 @@ export function doodleSet(options) {
 
 export function uploadCompose(files) {
   return function (dispatch, getState) {
-    const uploadLimit = 4;
+    const uploadLimit = 6;
     const media  = getState().getIn(['compose', 'media_attachments']);
     const progress = new Array(files.length).fill(0);
     let total = Array.from(files).reduce((a, v) => a + v.size, 0);
@@ -247,7 +247,7 @@ export function uploadCompose(files) {
     dispatch(uploadComposeRequest());
 
     for (const [i, f] of Array.from(files).entries()) {
-      if (media.size + i > 3) break;
+      if (media.size + i > 5) break;
 
       resizeImage(f).then(file => {
         const data = new FormData();
