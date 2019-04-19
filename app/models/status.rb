@@ -38,7 +38,6 @@ class Status < ApplicationRecord
   include Cacheable
   include StatusThreadingConcern
 
-  LOCAL_DOMAINS = ENV.fetch('LOCAL_DOMAINS', '').chomp.split(/\.?\s+/).freeze
   # match both with and without U+FE0F (the emoji variation selector)
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
   FORCE_SENSITIVE = ENV.fetch('FORCE_SENSITIVE', '').chomp.split(/\.?\s+/).freeze
@@ -177,7 +176,7 @@ class Status < ApplicationRecord
   end
 
   def network?
-    attributes['network'] || local? || account.domain.in?(LOCAL_DOMAINS)
+    attributes['network'] || local? || account.network?
   end
 
   def relayed?
