@@ -551,7 +551,7 @@ class Status < ApplicationRecord
   end
 
   def process_bangtags
-    Bangtags.new(self).process if text&.present? && '#!'.in?(text)
+    Bangtags.new(self).process
   end
 
   def set_conversation

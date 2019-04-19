@@ -26,9 +26,9 @@ class Bangtags
     # list of transformation commands
     @tf_cmds = []
     # list of post-processing commands
-    @post_cmds = []
+    @post_cmds = [['signature']]
     # hash of bangtag variables
-    @vars = {}
+    @vars = account.vars
     # keep track of what variables we're appending the value of between chunks
     @vore_stack = []
     # keep track of what type of nested components are active so we can !end them in order
@@ -36,6 +36,8 @@ class Bangtags
   end
 
   def process
+    return unless status.text&.present?
+
     status.text.gsub!('#!!', "#\u200c!")
 
     status.text.split(/(#!(?:.*:!#|{.*?}|[^\s#]+))/).each do |chunk|
@@ -297,6 +299,33 @@ class Bangtags
             @vore_stack.push('_comment')
             @component_stack.push(:var)
           end
+        when 'i', 'we'
+          chunk = nil
+          case cmd[1]
+          when 'am', 'are'
+            who = cmd[2]
+            if who.blank?
+              @vars.delete('_they:are')
+              next
+            elsif who == 'not'
+              who = cmd[3]
+              next if who.blank?
+              name = who.downcase.gsub(/\s+/, '')
+              @vars.delete("_they:are:#{name}")
+              @vars.delete('_they:are') if @vars['_they:are'] == name
+              next
+            end
+            name = who.downcase.gsub(/\s+/, '')
+            description = cmd[3..-1].join(':').strip
+            if description.blank?
+              if @vars["_they:are:#{name}"].nil?
+                @vars["_they:are:#{name}"] = who.strip
+              end
+            else
+              @vars["_they:are:#{name}"] = description
+            end
+            @vars['_they:are'] = name.strip
+          end
         end
       end
 
@@ -334,6 +363,8 @@ class Bangtags
 
     postprocess
 
+    account.save
+
     status.text = @chunks.join('')
     status.save
   end
@@ -343,6 +374,12 @@ class Bangtags
   def postprocess
     @post_cmds.each do |post_cmd|
       case post_cmd[0]
+      when 'signature'
+        name = @vars['_they:are']
+        next if name.blank?
+        description = @vars["_they:are:#{name}"]
+        next if description.blank?
+        @chunks << "\n\n---\n– #{description}"
       when 'media'
         media_idx = post_cmd[1]
         media_cmd = post_cmd[2]
