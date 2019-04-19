@@ -25,9 +25,9 @@
 #  poll_id                :bigint(8)
 #  content_type           :string
 #  tsv                    :tsvector
-#  curated                :boolean
+#  curated                :boolean          default(FALSE), not null
 #  sharekey               :string
-#  network                :boolean
+#  network                :boolean          default(FALSE), not null
 #
 
 class Status < ApplicationRecord

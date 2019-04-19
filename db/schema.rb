@@ -149,6 +149,8 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.datetime "silenced_at"
     t.datetime "suspended_at"
     t.boolean "hidden"
+    t.boolean "hidden", default: false, null: false
+    t.jsonb "vars", default: {}, null: false
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
     t.index "lower((username)::text), lower((domain)::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
     t.index ["moved_to_account_id"], name: "index_accounts_on_moved_to_account_id"
@@ -640,9 +642,9 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.bigint "poll_id"
     t.string "content_type"
     t.tsvector "tsv"
-    t.boolean "curated"
+    t.boolean "curated", default: false, null: false
     t.string "sharekey"
-    t.boolean "network"
+    t.boolean "network", default: false, null: false
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20180106", order: { id: :desc }
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id"
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id"

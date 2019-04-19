@@ -46,6 +46,8 @@
 #  silenced_at             :datetime
 #  suspended_at            :datetime
 #  hidden                  :boolean
+#  hidden                  :boolean          default(FALSE), not null
+#  vars                    :jsonb            not null
 #
 
 class Account < ApplicationRecord
@@ -294,6 +296,10 @@ class Account < ApplicationRecord
     end
 
     self.fields = tmp
+  end
+
+  def vars
+    self[:vars]
   end
 
   def magic_key
