@@ -42,6 +42,10 @@
     = react_component :card, 'maxDescription': 160, card: ActiveModelSerializers::SerializableResource.new(status.preview_card, serializer: REST::PreviewCardSerializer).as_json
 
   .status__action-bar
+    - if status.sharekey.present? && user_signed_in? && @account.id == status.account_id
+      = link_to "#{TagManager.instance.url_for(status)}?key=#{status.sharekey}", class: 'status__action-bar-button icon-button', style: 'font-size: 18px; width: 23.1429px; height: 23.1429px; line-height: 23.15px', title: 'Right click or long-press to copy share link with key', target: stream_link_target, rel: 'noopener' do
+        = fa_icon('key')
+
     .status__action-bar__counter
       = link_to remote_interaction_path(status, type: :reply), class: 'status__action-bar-button icon-button modal-button', style: 'font-size: 18px; width: 23.1429px; height: 23.1429px; line-height: 23.15px;' do
         - if status.in_reply_to_id.nil?

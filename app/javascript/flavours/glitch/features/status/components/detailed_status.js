@@ -15,6 +15,7 @@ import VisibilityIcon from 'flavours/glitch/components/status_visibility_icon';
 import scheduleIdleTask from 'flavours/glitch/util/schedule_idle_task';
 import classNames from 'classnames';
 import PollContainer from 'flavours/glitch/containers/poll_container';
+import { me } from 'flavours/glitch/util/initial_state';
 
 export default class DetailedStatus extends ImmutablePureComponent {
 
@@ -114,10 +115,10 @@ export default class DetailedStatus extends ImmutablePureComponent {
 
     let media           = null;
     let mediaIcon       = null;
-    let applicationLink = '';
     let reblogLink = '';
     let reblogIcon = 'repeat';
     let favouriteLink = '';
+    let sharekeyLinks = '';
 
     if (this.props.measureHeight) {
       outerStyle.height = `${this.state.height}px`;
@@ -168,10 +169,6 @@ export default class DetailedStatus extends ImmutablePureComponent {
       mediaIcon = 'link';
     }
 
-    if (status.get('application')) {
-      applicationLink = <span> · <a className='detailed-status__application' href={status.getIn(['application', 'website'])} target='_blank' rel='noopener'>{status.getIn(['application', 'name'])}</a></span>;
-    }
-
     if (status.get('visibility') === 'direct') {
       reblogIcon = 'envelope';
     } else if (status.get('visibility') === 'private') {
@@ -191,6 +188,34 @@ export default class DetailedStatus extends ImmutablePureComponent {
         <a href={`/interact/${status.get('id')}?type=reblog`} className='detailed-status__link' onClick={this.handleModalLink}>
           <i className={`fa fa-${reblogIcon}`} title={status.get('reblogs_count')} />
         </a>
+      );
+    }
+
+    if (status.get('sharekey')) {
+      sharekeyLinks = (
+        <span>
+          <a href={`${status.get('url')}?key=${status.get('sharekey')}`} target='_blank' className='detailed-status__link'>
+            <i className='fa fa-key' title='Right-click or long press to copy share link with key' />
+          </a>
+          &nbsp;·&nbsp;
+          <a href={`${status.get('url')}?rekey=1&toweb=1`} className='detailed-status__link'>
+            <i className='fa fa-user-plus' title='Generate a new share key' />
+          </a>
+          &nbsp;·&nbsp;
+          <a href={`${status.get('url')}?rekey=0&toweb=1`} className='detailed-status__link'>
+            <i className='fa fa-user-times' title='Revoke share key' />
+          </a>
+          &nbsp;·
+        </span>
+      );
+    } else if (status.getIn(['account', 'id']) == me) {
+      sharekeyLinks = (
+        <span>
+          <a href={`${status.get('url')}?rekey=1&toweb=1`} className='detailed-status__link'>
+            <i className='fa fa-user-plus' title='Generate a new share key' />
+          </a>
+          &nbsp;·
+        </span>
       );
     }
 
@@ -229,9 +254,10 @@ export default class DetailedStatus extends ImmutablePureComponent {
           />
 
           <div className='detailed-status__meta'>
+            {sharekeyLinks} {reblogLink} · {favouriteLink} · <VisibilityIcon visibility={status.get('visibility')} />
             <a className='detailed-status__datetime' href={status.get('url')} target='_blank' rel='noopener'>
               <FormattedDate value={new Date(status.get('created_at'))} hour12={false} year='numeric' month='short' day='2-digit' hour='2-digit' minute='2-digit' />
-            </a>{applicationLink} · {reblogLink} · {favouriteLink} · <VisibilityIcon visibility={status.get('visibility')} />
+            </a>
           </div>
         </div>
       </div>

@@ -37,17 +37,19 @@
     = react_component :card, 'maxDescription': 160, card: ActiveModelSerializers::SerializableResource.new(status.preview_card, serializer: REST::PreviewCardSerializer).as_json
 
   .detailed-status__meta
-    %data.dt-published{ value: status.created_at.to_time.iso8601 }
 
-    = link_to TagManager.instance.url_for(status), class: 'detailed-status__datetime u-url u-uid', target: stream_link_target, rel: 'noopener' do
-      %time.formatted{ datetime: status.created_at.iso8601, title: l(status.created_at) }= l(status.created_at)
-    ·
-    - if status.application && @account.user&.setting_show_application
-      - if status.application.website.blank?
-        %strong.detailed-status__application= status.application.name
-      - else
-        = link_to status.application.name, status.application.website, class: 'detailed-status__application', target: '_blank', rel: 'noopener'
+    - if user_signed_in? && @account.id == status.account_id
+      - if status.sharekey.present?
+        = link_to "#{TagManager.instance.url_for(status)}?key=#{status.sharekey}", class: 'detailed-status__link', title: 'Right-click or long-press to copy share link with key', target: stream_link_target, rel: 'noopener' do
+          = fa_icon('key')
+        ·
+      = link_to "#{TagManager.instance.url_for(status)}?rekey=1", class: 'detailed-status__link', title: 'Generate a new share key', target: stream_link_target, rel: 'noopener' do
+        = fa_icon('user-plus')
       ·
+      - if status.sharekey.present?
+        = link_to "#{TagManager.instance.url_for(status)}?rekey=0", class: 'detailed-status__link', title: 'Revoke share key', target: stream_link_target, rel: 'noopener' do
+          = fa_icon('user-times')
+        ·
     = link_to remote_interaction_path(status, type: :reply), class: 'modal-button detailed-status__link' do
       - if status.in_reply_to_id.nil?
         = fa_icon('reply')
@@ -75,6 +77,11 @@
         = fa_icon('star')
         = " "
 
-    - if user_signed_in?
+    %span.detailed-status__datetime
+      %data.dt-published{ value: status.created_at.to_time.iso8601 }
+      = link_to TagManager.instance.url_for(status), class: 'detailed-status__datetime u-url u-uid', target: stream_link_target, rel: 'noopener' do
+        %time.formatted{ datetime: status.created_at.iso8601, title: l(status.created_at) }= l(status.created_at)
       ·
-      = link_to t('statuses.open_in_web'), web_url("statuses/#{status.id}"), class: 'detailed-status__application', target: '_blank'
+      - if user_signed_in?
+        = link_to t('statuses.open_in_web'), web_url("statuses/#{status.id}"), class: 'detailed-status__application', target: '_blank'
+

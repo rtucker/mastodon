@@ -12,6 +12,8 @@ class StatusesController < ApplicationController
 
   before_action :set_account
   before_action :set_status
+  before_action :handle_sharekey_change, only: [:show], if: :user_signed_in?
+  before_action :handle_webapp_redirect, only: [:show], if: :user_signed_in?
   before_action :set_instance_presenter
   before_action :set_link_headers
   before_action :check_account_suspension
@@ -190,10 +192,30 @@ class StatusesController < ApplicationController
     @stream_entry = @status.stream_entry
     @type         = @stream_entry.activity_type.downcase
 
-    authorize @status, :show?
+    if @status.sharekey.present? && params[:key] == @status.sharekey
+      skip_authorization
+    else
+      authorize @status, :show?
+    end
   rescue Mastodon::NotPermittedError
     # Reraise in order to get a 404
     raise ActiveRecord::RecordNotFound
+  end
+
+  def handle_sharekey_change
+    raise Mastodon::NotPermittedError unless current_account.id == @status.account_id
+    case params[:rekey]
+    when '1'
+      @status.sharekey = SecureRandom.urlsafe_base64(32)
+      @status.save
+    when '0'
+      @status.sharekey = nil
+      @status.save
+    end
+  end
+
+  def handle_webapp_redirect
+    redirect_to "/web/statuses/#{@status.id}" if params[:toweb] == '1'
   end
 
   def set_instance_presenter

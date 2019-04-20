@@ -684,6 +684,12 @@
   }
 }
 
+div > span.detailed-status__datetime,
+div > a.detailed-status__datetime {
+  position: relative;
+  float: right;
+}
+
 .status-card {
   display: flex;
   font-size: 14px;
