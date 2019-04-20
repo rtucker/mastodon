@@ -203,6 +203,7 @@ class StatusesController < ApplicationController
   end
 
   def handle_sharekey_change
+    return if params[:rekey].nil?
     raise Mastodon::NotPermittedError unless current_account.id == @status.account_id
     case params[:rekey]
     when '1'
