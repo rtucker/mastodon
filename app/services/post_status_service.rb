@@ -12,6 +12,7 @@ class PostStatusService < BaseService
   # @option [Status] :thread Optional status to reply to
   # @option [Boolean] :sensitive
   # @option [String] :visibility
+  # @option [String] :sharekey
   # @option [String] :spoiler_text
   # @option [String] :language
   # @option [String] :scheduled_at
@@ -166,6 +167,7 @@ class PostStatusService < BaseService
       sensitive: (@options[:sensitive].nil? ? @account.user&.setting_default_sensitive : @options[:sensitive]) || @options[:spoiler_text].present?,
       spoiler_text: @options[:spoiler_text] || '',
       visibility: @visibility,
+      sharekey: @sharekey,
       language: language_from_option(@options[:language]) || @account.user&.setting_default_language&.presence || LanguageDetector.instance.detect(@text, @account),
       application: @options[:application],
       content_type: @options[:content_type] || @account.user&.setting_default_content_type,
