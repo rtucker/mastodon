@@ -38,6 +38,12 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_larger_buttons,
       :setting_larger_drawer,
       :setting_remove_filtered,
+      :setting_hide_replies_muted,
+      :setting_hide_replies_blocked,
+      :setting_hide_replies_blocker,
+      :setting_hide_mntions_muted,
+      :setting_hide_mntions_blocked,
+      :setting_hide_mntions_blocker,
       :setting_gently_kobolds,
       :setting_user_is_kobold,
 

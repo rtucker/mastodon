@@ -112,6 +112,12 @@ class User < ApplicationRecord
     :larger_buttons,
     :larger_drawer,
     :remove_filtered,
+    :hide_replies_muted,
+    :hide_replies_blocked,
+    :hide_replies_blocker,
+    :hide_mntions_muted,
+    :hide_mntions_blocked,
+    :hide_mntions_blocker,
     :gently_kobolds,
     :user_is_kobold,
 
@@ -230,6 +236,30 @@ class User < ApplicationRecord
 
   def setting_remove_filtered
     settings.remove_filtered || false
+  end
+
+  def setting_hide_replies_muted
+    settings.hide_replies_muted || true
+  end
+
+  def setting_hide_replies_blocked
+    settings.hide_replies_blocked || true
+  end
+
+  def setting_hide_replies_blocker
+    settings.hide_replies_blocker || true
+  end
+
+  def setting_hide_mntions_muted
+    settings.hide_mntions_muted || true
+  end
+
+  def setting_hide_mntions_blocked
+    settings.hide_mntions_blocked || true
+  end
+
+  def setting_hide_mntions_blocker
+    settings.hide_mntions_blocker || true
   end
 
   def setting_gently_kobolds

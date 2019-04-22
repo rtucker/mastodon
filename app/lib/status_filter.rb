@@ -28,7 +28,9 @@ class StatusFilter
 
   def filtered_reference?
     # filter muted/blocked
-    return true if reply_to_blocked? || reply_to_muted?
+    return true if account&.user&.setting_hide_replies_blocked? && reply_to_blocked?
+    return true if account&.user&.setting_hide_replies_muted? && reply_to_muted?
+    return true if account&.user&.setting_hide_replies_blocker? && reply_to_blocker?
 
     # kajiht has no filters if status has no mentions
     return false if status&.mentions.nil?
@@ -40,16 +42,21 @@ class StatusFilter
     return false if mentioned_account_ids.include?(account.id)
 
     # Otherwise, filter the status if it mentions someone you've muted.
-    return true if @preloaded_relations[:muting] && mentioned_account_ids.any? do |mentioned_account_id|
+    return true if account&.user&.setting_hide_mntions_muted && @preloaded_relations[:muting] && mentioned_account_ids.any? do |mentioned_account_id|
       @preloaded_relations[:muting][mentioned_account_id]
     end
     return true if account.muting?(mentioned_account_ids)
 
     # Same as above, but for blocks:
-    return true if @preloaded_relations[:blocking] && mentioned_account_ids.any? do |mentioned_account_id|
+    return true if account&.user&.setting_hide_mntions_blocked && @preloaded_relations[:blocking] && mentioned_account_ids.any? do |mentioned_account_id|
       @preloaded_relations[:blocking][mentioned_account_id]
     end
-    account.blocking?(mentioned_account_ids)
+    return true if account.blocking?(mentioned_account_ids)
+
+    # Filter statuses that mention someone who's blocking you.
+    return true if account&.user&.setting_hide_mntions_blocker && status.reply && mentioned_account_ids.any? do |mentioned_account_id|
+      Account.find(mentioned_account_id)&.blocking?(status.account_id)
+    end
   end
 
   def reply_to_blocked?
@@ -74,6 +81,10 @@ class StatusFilter
 
   def account_following_status_account?
     @preloaded_relations[:following] ? @preloaded_relations[:following][status.account_id] : account&.following?(status.account_id)
+  end
+
+  def reply_to_blocker?
+    status.reply? && status.in_reply_to_account.blocking?(status.account_id)
   end
 
   def non_self_reply?

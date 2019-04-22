@@ -23,6 +23,12 @@ class UserSettingsDecorator
     user.settings['larger_buttons']      = larger_buttons_preference if change?('setting_larger_buttons')
     user.settings['larger_drawer']       = larger_drawer_preference if change?('setting_larger_drawer')
     user.settings['remove_filtered']     = remove_filtered_preference if change?('setting_remove_filtered')
+    user.settings['hide_replies_muted']  = hide_replies_muted_preference if change?('setting_hide_replies_muted')
+    user.settings['hide_replies_blocked']= hide_replies_blocked_preference if change?('setting_hide_replies_blocked')
+    user.settings['hide_replies_blocker']= hide_replies_blocker_preference if change?('setting_hide_replies_blocker')
+    user.settings['hide_mntions_muted']  = hide_mntions_muted_preference if change?('setting_hide_mntions_muted')
+    user.settings['hide_mntions_blocked']= hide_mntions_blocked_preference if change?('setting_hide_mntions_blocked')
+    user.settings['hide_mntions_blocker']= hide_mntions_blocker_preference if change?('setting_hide_mntions_blocker')
     user.settings['gently_kobolds']      = gently_kobolds_preference if change?('setting_gently_kobolds')
     user.settings['user_is_kobold']      = user_is_kobold_preference if change?('setting_user_is_kobold')
 
@@ -65,6 +71,30 @@ class UserSettingsDecorator
 
   def remove_filtered_preference
     boolean_cast_setting 'setting_remove_filtered'
+  end
+
+  def hide_replies_muted_preference
+    boolean_cast_setting 'setting_hide_replies_muted'
+  end
+
+  def hide_replies_blocked_preference
+    boolean_cast_setting 'setting_hide_replies_blocked'
+  end
+
+  def hide_replies_blocker_preference
+    boolean_cast_setting 'setting_hide_replies_blocker'
+  end
+
+  def hide_mntions_muted_preference
+    boolean_cast_setting 'setting_hide_mntions_muted'
+  end
+
+  def hide_mntions_blocked_preference
+    boolean_cast_setting 'setting_hide_mntions_blocked'
+  end
+
+  def hide_mntions_blocker_preference
+    boolean_cast_setting 'setting_hide_mntions_blocker'
   end
 
   def gently_kobolds_preference

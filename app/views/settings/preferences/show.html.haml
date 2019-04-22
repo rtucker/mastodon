@@ -64,6 +64,12 @@
 
   .fields-group
     = f.input :setting_remove_filtered, as: :boolean, wrapper: :with_label
+    = f.input :setting_hide_replies_muted, as: :boolean, wrapper: :with_label
+    = f.input :setting_hide_replies_blocked, as: :boolean, wrapper: :with_label
+    = f.input :setting_hide_replies_blocker, as: :boolean, wrapper: :with_label
+    = f.input :setting_hide_mntions_muted, as: :boolean, wrapper: :with_label
+    = f.input :setting_hide_mntions_blocked, as: :boolean, wrapper: :with_label
+    = f.input :setting_hide_mntions_blocker, as: :boolean, wrapper: :with_label
 
   .fields-group
     = f.input :setting_unfollow_modal, as: :boolean, wrapper: :with_label
