@@ -419,7 +419,7 @@ class Bangtags
         name = @vars['_they:are']
         next if name.blank?
         description = @vars["_they:are:#{name}"]
-        next if description.blank?
+        next if description.blank? || @chunks.last.starts_with?('–')
         status.local_only = true if Status::LOCAL_ONLY_TOKENS.match?(@chunks.last)
         @chunks << "\n\n---\n– #{description}"
       when 'media'
