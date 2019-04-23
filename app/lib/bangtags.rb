@@ -421,7 +421,7 @@ class Bangtags
         description = @vars["_they:are:#{name}"]
         next if description.blank? || @chunks.last.starts_with?('—')
         status.local_only = true if Status::LOCAL_ONLY_TOKENS.match?(@chunks.last)
-        @chunks << "\n\n---\n— #{description}"
+        @chunks << "\n\n\u200c\n— #{description}"
       when 'media'
         media_idx = post_cmd[1]
         media_cmd = post_cmd[2]
