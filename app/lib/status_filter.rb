@@ -28,9 +28,9 @@ class StatusFilter
 
   def filtered_reference?
     # filter muted/blocked
-    return true if account&.user&.setting_hide_replies_blocked? && reply_to_blocked?
-    return true if account&.user&.setting_hide_replies_muted? && reply_to_muted?
-    return true if account&.user&.setting_hide_replies_blocker? && reply_to_blocker?
+    return true if account&.user&.setting_hide_replies_blocked && reply_to_blocked?
+    return true if account&.user&.setting_hide_replies_muted && reply_to_muted?
+    return true if account&.user&.setting_hide_replies_blocker && reply_to_blocker?
 
     # kajiht has no filters if status has no mentions
     return false if status&.mentions.nil?
