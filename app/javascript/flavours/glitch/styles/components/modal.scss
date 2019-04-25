@@ -415,14 +415,21 @@
   position: relative;
   flex-direction: column;
 
+  .status__relative-time {
+    color: $dark-text-color;
+    float: right;
+    font-size: 14px;
+    width: auto;
+    margin: initial;
+    padding: initial;
+  }
+
   .status__display-name {
     display: flex;
   }
 
   .status__avatar {
-    height: 28px;
-    left: 10px;
-    top: 10px;
+    height: 48px;
     width: 48px;
   }
 
@@ -486,14 +493,6 @@
 .favourite-modal__status-time {
   float: right;
   font-size: 14px;
-}
-
-.confirmation-modal {
-  max-width: 85vw;
-
-  @media screen and (min-width: 480px) {
-    max-width: 380px;
-  }
 }
 
 .mute-modal {
@@ -629,6 +628,11 @@
   ul {
     overflow-y: auto;
     flex-shrink: 0;
+    max-height: 80vh;
+
+    &.with-status {
+      max-height: calc(80vh - 75px);
+    }
 
     li:empty {
       margin: 0;
@@ -684,6 +688,10 @@
     &:active {
       color: darken($lighter-text-color, 4%);
     }
+  }
+
+  .confirmation-modal__secondary-button {
+    flex-shrink: 1;
   }
 }
 

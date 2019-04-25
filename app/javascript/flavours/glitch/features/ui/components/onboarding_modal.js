@@ -6,11 +6,13 @@ import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 import ReactSwipeableViews from 'react-swipeable-views';
 import classNames from 'classnames';
 import Permalink from 'flavours/glitch/components/permalink';
-import { WrappedComponent as RawComposer } from 'flavours/glitch/features/composer';
-import DrawerAccount from 'flavours/glitch/features/drawer/account';
-import DrawerSearch from 'flavours/glitch/features/drawer/search';
+import { ComposeForm } from 'flavours/glitch/features/compose/components/compose_form';
+import DrawerAccount from 'flavours/glitch/features/compose/components/navigation_bar';
+import Search from 'flavours/glitch/features/compose/components/search';
 import ColumnHeader from './column_header';
 import { me } from 'flavours/glitch/util/initial_state';
+
+const noop = () => { };
 
 const messages = defineMessages({
   home_title: { id: 'column.home', defaultMessage: 'Home' },
@@ -43,8 +45,7 @@ const PageTwo = ({ intl, myAccount }) => (
     <div className='figure non-interactive'>
       <div className='pseudo-drawer'>
         <DrawerAccount account={myAccount} />
-        <RawComposer
-          intl={intl}
+        <ComposeForm
           privacy='public'
           text='Awoo! #introductions'
         />
@@ -63,7 +64,13 @@ PageTwo.propTypes = {
 const PageThree = ({ intl, myAccount }) => (
   <div className='onboarding-modal__page onboarding-modal__page-three'>
     <div className='figure non-interactive'>
-      <DrawerSearch intl={intl} />
+      <Search
+        value=''
+        onChange={noop}
+        onSubmit={noop}
+        onClear={noop}
+        onShow={noop}
+      />
 
       <div className='pseudo-drawer'>
         <DrawerAccount account={myAccount} />
