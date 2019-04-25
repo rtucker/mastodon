@@ -66,7 +66,7 @@ class AccountsController < ApplicationController
     default_statuses.tap do |statuses|
       statuses.merge!(hashtag_scope)    if tag_requested?
       statuses.merge!(only_media_scope) if media_requested?
-      statuses.merge!(no_replies_scope) unless replies_requested?
+      statuses.merge!(no_replies_scope) unless @account.replies && replies_requested?
     end
   end
 

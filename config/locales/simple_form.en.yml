@@ -69,7 +69,8 @@ en:
           suspend: Suspend and irreversibly delete account data
         warning_preset_id: Use a warning preset
       defaults:
-        hidden: Hide public profile
+        hidden: Hide your public profile
+        replies: Show your public replies
         autofollow: Invite to join your pack
         avatar: Avatar
         bot: This is a bot account

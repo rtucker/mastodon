@@ -48,6 +48,7 @@
 #  hidden                  :boolean
 #  hidden                  :boolean          default(FALSE), not null
 #  vars                    :jsonb            not null
+#  replies                 :boolean          default(TRUE), not null
 #
 
 class Account < ApplicationRecord

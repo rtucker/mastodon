@@ -23,6 +23,7 @@
   .fields-group
     = f.input :locked, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.locked')
     = f.input :hidden, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.hidden')
+    = f.input :replies, as: :boolean, wrapper: :with_label
 
   .fields-group
     = f.input :bot, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.bot')

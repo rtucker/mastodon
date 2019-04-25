@@ -432,7 +432,8 @@ class Status < ApplicationRecord
       visibility = [:public, :unlisted]
 
       if account.nil?
-        where(visibility: visibility).not_local_only
+        query = where(visibility: visibility).not_local_only
+        target_account.replies ? query : query.without_replies
       elsif target_account.blocking?(account) # get rid of blocked peeps
         none
       elsif account.id == target_account.id # author can see own stuff
