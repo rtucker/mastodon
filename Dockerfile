@@ -119,6 +119,7 @@ ENV RAILS_SERVE_STATIC_FILES="true"
 # Set the run user
 USER mastodon
 
+ENV GITHUB_REPOSITORY=vulpineclub/mastodon
 ARG BUILD_CDN_HOST=https://cdn-assets.vulpine.owogroupllc.com
 
 ARG SOURCE_TAG
@@ -127,7 +128,6 @@ ENV SOURCE_TAG ${SOURCE_TAG}
 # Precompile assets
 RUN cd ~ && \
 	CDN_HOST=${BUILD_CDN_HOST} \
-	GITHUB_REPOSITORY=vulpineclub/mastodon \
 	OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder rails assets:precompile && \
 	yarn cache clean
 
