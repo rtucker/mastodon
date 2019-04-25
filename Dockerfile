@@ -127,6 +127,7 @@ ENV SOURCE_TAG ${SOURCE_TAG}
 # Precompile assets
 RUN cd ~ && \
 	CDN_HOST=${BUILD_CDN_HOST} \
+	GITHUB_REPOSITORY=vulpineclub/mastodon \
 	OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder rails assets:precompile && \
 	yarn cache clean
 
