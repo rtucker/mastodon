@@ -84,7 +84,7 @@ class StatusFilter
   end
 
   def reply_to_blocker?
-    status.reply? && status.in_reply_to_account.blocking?(status.account_id)
+    status.in_reply_to_account.present? && status.in_reply_to_account.blocking?(status.account_id)
   end
 
   def non_self_reply?
