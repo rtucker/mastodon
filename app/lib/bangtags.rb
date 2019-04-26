@@ -68,10 +68,12 @@ class Bangtags
           next
         end
 
-        case cmd[0]
+        next if cmd[0].nil?
+        case cmd[0].downcase
         when 'var'
           chunk = nil
-          case cmd[1]
+          next if cmd[1].nil?
+          case cmd[1].downcase
           when 'end', 'stop'
             @vore_stack.pop
             @component_stack.pop
@@ -93,7 +95,8 @@ class Bangtags
           end
         when 'tf'
           chunk = nil
-          case cmd[1]
+          next if cmd[1].nil?
+          case cmd[1].downcase
           when 'end', 'stop'
             @tf_cmds.pop
             @component_stack.pop
@@ -122,14 +125,14 @@ class Bangtags
           next if cmd[1].nil?
           src_img = nil
           shortcode = cmd[2]
-          case cmd[1]
+          case cmd[1].downcase
           when 'avatar'
             src_img = status.account.avatar
           when 'parent'
             next unless cmd[3].present? && reply?
             shortcode = cmd[3]
-            next if @parent_status.nil?
-            case cmd[2]
+            next if cmd[2].nil? || @parent_status.nil?
+            case cmd[2].downcase
             when 'avatar'
               src_img = @parent_status.account.avatar
             end
@@ -185,7 +188,8 @@ class Bangtags
           end
         when 'link'
           chunk = nil
-          case cmd[1]
+          next if cmd[1].nil?
+          case cmd[1].downcase
           when 'permalink', 'self'
             chunk = TagManager.instance.url_for(status)
           when 'cloudroot'
@@ -195,7 +199,8 @@ class Bangtags
           end
         when 'ping'
           mentions = []
-          case cmd[1]
+          next if cmd[1].nil?
+          case cmd[1].downcase
           when 'admins'
             mentions = User.admins.map { |u| "@#{u.account.username}" }
             mentions.sort!
@@ -227,7 +232,8 @@ class Bangtags
           end
         when 'thread'
           chunk = nil
-          case cmd[1]
+          next if cmd[1].nil?
+          case cmd[1].downcase
           when 'reall'
             if status.conversation_id.present?
               mention_ids = Status.where(conversation_id: status.conversation_id).flat_map { |s| s.mentions.pluck(:account_id) }
@@ -236,7 +242,8 @@ class Bangtags
               chunk = mentions.join(' ')
             end
           when 'sharekey'
-            case cmd[2]
+            next if cmd[2].nil?
+            case cmd[2].downcase
             when 'revoke'
               if status.conversation_id.present?
                 roars = Status.where(conversation_id: status.conversation_id, account_id: @account.id)
@@ -272,8 +279,8 @@ class Bangtags
           end
         when 'parent'
           chunk = nil
-          next if @parent_status.nil?
-          case cmd[1]
+          next if cmd[1].nil? || @parent_status.nil?
+          case cmd[1].downcase
           when 'permalink'
             chunk = TagManager.instance.url_for(@parent_status)
           end
@@ -288,7 +295,7 @@ class Bangtags
           media_idx = media_idx.to_i
           next if status.media_attachments[media_idx-1].nil?
 
-          case media_cmd
+          case media_cmd.downcase
           when 'desc'
             if media_args.present?
               @vars["media_#{media_idx}_desc"] = media_args.join(':')
@@ -317,7 +324,8 @@ class Bangtags
           chunk = cmd[2..-1].join(sep.nil? ? cmd[1] : sep)
         when 'hide'
           chunk = nil
-          case cmd[1]
+          next if cmd[1].nil?
+          case cmd[1].downcase
           when 'end', 'stop', 'endall', 'stopall'
             @vore_stack.reject! {|v| v == '_'}
             @compontent_stack.reject! {|c| c == :hide}
@@ -335,7 +343,8 @@ class Bangtags
           end
         when 'i', 'we'
           chunk = nil
-          case cmd[1]
+          next if cmd[1].nil?
+          case cmd[1].downcase
           when 'am', 'are'
             who = cmd[2]
             if who.blank?
@@ -361,7 +370,8 @@ class Bangtags
             @vars['_they:are'] = name.strip
           end
         when 'sharekey'
-          case cmd[1]
+          next if cmd[1].nil?
+          case cmd[1].downcase
           when 'new'
             chunk = nil
             status.sharekey = SecureRandom.urlsafe_base64(32)
@@ -372,8 +382,8 @@ class Bangtags
 
       if chunk.present? && @tf_cmds.present?
         @tf_cmds.each do |tf_cmd|
-          next if chunk.nil?
-          case tf_cmd[0]
+          next if chunk.nil? || tf_cmd[0].nil?
+          case tf_cmd[0].downcase
           when 'replace', 'sub', 's'
             tf_cmd[1..-1].in_groups_of(2) do |args|
               chunk.sub!(*args) if args.all?
