@@ -62,7 +62,7 @@ class RelationshipsController < ApplicationController
   end
 
   def dormant_account_scope
-    AccountStat.where(last_status_at: nil).or(AccountStat.where(AccountStat.arel_table[:last_status_at].lt(1.month.ago)))
+    AccountStat.where(last_status_at: nil).or(AccountStat.where(AccountStat.arel_table[:last_status_at].lt(3.months.ago)))
   end
 
   def by_domain_scope
