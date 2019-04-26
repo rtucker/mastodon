@@ -358,11 +358,53 @@ export default class MediaGallery extends React.PureComponent {
       );
     }
 
-    let descriptions;
-    descriptions = media.take(6).map(
+    let parts = {};
+
+    media.map(
       (attachment, i) => {
-        if (attachment.get('description'))
-          return <p className='media-spoiler__trigger'>Attachment {1+i}: {attachment.get('description')}</p>
+        if (attachment.get('description')) {
+          if (attachment.get('description') in parts) {
+            parts[attachment.get('description')].push([i, attachment.get('url'), attachment.get('id')]);
+          } else {
+            parts[attachment.get('description')] = [[i, attachment.get('url'), attachment.get('id')]];
+          }
+        }
+      }
+    );
+
+    let descriptions = Object.entries(parts).map(
+      part => {
+        let [desc, idx] = part;
+        if (idx.length == 1) {
+          let url = idx[0][1];
+          return (
+            <p key={idx[0][2]}>
+              <strong>
+                <a href={url} title={url} target='_blank' rel='nofollow noopener'>
+                  Attachment #{1+idx[0][0]}
+                </a>
+              </strong>
+              {': '} {desc}
+            </p>
+          );
+        } else if (idx.length != 0) {
+          let c=0;
+          return (
+            <p key={idx[0][2]}>
+              <strong>
+                Attachments
+                {
+                  idx.map(i => {
+                    let url = i[1];
+                    c++;
+                    return (<span key={i[2]}>{c == 1 ? ' ' : ', '}<a href={url} title={url} target='_blank' rel='nofollow noopener'>#{1+i[0]}</a></span>);
+                  })
+                }
+              </strong>
+            {': '} {desc}
+            </p>
+          );
+        }
       }
     );
 
