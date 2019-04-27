@@ -6,10 +6,10 @@ class FeedManager
   include Singleton
   include Redisable
 
-  MAX_ITEMS = 1000
+  MAX_ITEMS = 3333
 
   # Must be <= MAX_ITEMS or the tracking sets will grow forever
-  REBLOG_FALLOFF = 40
+  REBLOG_FALLOFF = 333
 
   def key(type, id, subtype = nil)
     return "feed:#{type}:#{id}" unless subtype
