@@ -25,6 +25,6 @@ namespace       = ENV.fetch('REDIS_NAMESPACE') { nil }
 cache_namespace = namespace ? namespace + '_cache' : 'cache'
 
 REDIS_CACHE_PARAMS = {
-  expires_in: 10.minutes,
+  expires_in: 30.minutes,
   namespace: cache_namespace,
 }.freeze
