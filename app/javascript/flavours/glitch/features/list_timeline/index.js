@@ -193,7 +193,7 @@ export default class ListTimeline extends React.PureComponent {
                 <fieldset>
                   <legend><FormattedMessage id='lists.replies_policy.title' defaultMessage='Show replies to:' /></legend>
                   { ['no_replies', 'list_replies', 'all_replies'].map(policy => (
-                    <div className='setting-radio'>
+                    <div key={['setting', 'radio', id, policy].join('-')} className='setting-radio'>
                       <input className='setting-radio__input' id={['setting', 'radio', id, policy].join('-')} type='radio' value={policy} checked={replies_policy === policy} onChange={this.handleRepliesPolicyChange} />
                       <label className='setting-radio__label' htmlFor={['setting', 'radio', id, policy].join('-')}>
                         <FormattedMessage {...messages[policy]} />
