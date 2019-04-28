@@ -206,6 +206,12 @@ class FeedManager
 
     active_filters.select! { |filter| filter.context.include?(context.to_s) && !filter.expired? }
 
+    if status.media_attachments.any?
+      active_filters.delete_if { |filter| filter.exclude_media }
+    else
+      active_filters.delete_if { |filter| filter.media_only }
+    end
+
     active_filters.map! do |filter|
       if filter.whole_word
         sb = filter.phrase =~ /\A[[:word:]]/ ? '\b' : ''

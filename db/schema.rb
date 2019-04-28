@@ -247,6 +247,8 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "whole_word", default: true, null: false
+    t.boolean "exclude_media", default: false, null: false
+    t.boolean "media_only", default: false, null: false
     t.index ["account_id"], name: "index_custom_filters_on_account_id"
   end
 

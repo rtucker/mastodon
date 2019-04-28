@@ -2,7 +2,7 @@
 
 class REST::FilterSerializer < ActiveModel::Serializer
   attributes :id, :phrase, :context, :whole_word, :expires_at,
-             :irreversible
+             :irreversible, :exclude_media, :media_only
 
   def id
     object.id.to_s

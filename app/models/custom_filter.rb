@@ -3,15 +3,17 @@
 #
 # Table name: custom_filters
 #
-#  id           :bigint(8)        not null, primary key
-#  account_id   :bigint(8)
-#  expires_at   :datetime
-#  phrase       :text             default(""), not null
-#  context      :string           default([]), not null, is an Array
-#  whole_word   :boolean          default(TRUE), not null
-#  irreversible :boolean          default(FALSE), not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id            :bigint(8)        not null, primary key
+#  account_id    :bigint(8)
+#  expires_at    :datetime
+#  phrase        :text             default(""), not null
+#  context       :string           default([]), not null, is an Array
+#  irreversible  :boolean          default(FALSE), not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  whole_word    :boolean          default(TRUE), not null
+#  exclude_media :boolean          default(FALSE), not null
+#  media_only    :boolean          default(FALSE), not null
 #
 
 class CustomFilter < ApplicationRecord
