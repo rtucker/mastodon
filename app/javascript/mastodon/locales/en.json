@@ -24,6 +24,7 @@
   "account.mute_notifications": "Mute notifications from @{name}",
   "account.muted": "Muted",
   "account.posts": "Roars",
+  "account.reblogs": "Repeats",
   "account.posts_with_replies": "Roars & growls",
   "account.report": "Report @{name}",
   "account.requested": "Awaiting approval. Click to cancel join request",

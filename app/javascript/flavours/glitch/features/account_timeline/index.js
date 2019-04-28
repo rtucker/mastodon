@@ -15,13 +15,13 @@ import { FormattedMessage } from 'react-intl';
 import { fetchAccountIdentityProofs } from '../../actions/identity_proofs';
 import MissingIndicator from 'flavours/glitch/components/missing_indicator';
 
-const mapStateToProps = (state, { params: { accountId }, withReplies = false }) => {
-  const path = withReplies ? `${accountId}:with_replies` : accountId;
+const mapStateToProps = (state, { params: { accountId }, withReplies = false, reblogs = false }) => {
+  const path = reblogs ? `${accountId}:reblogs` : withReplies ? `${accountId}:with_replies` : accountId;
 
   return {
     isAccount: !!state.getIn(['accounts', accountId]),
     statusIds: state.getIn(['timelines', `account:${path}`, 'items'], ImmutableList()),
-    featuredStatusIds: withReplies ? ImmutableList() : state.getIn(['timelines', `account:${accountId}:pinned`, 'items'], ImmutableList()),
+    featuredStatusIds: (withReplies || reblogs) ? ImmutableList() : state.getIn(['timelines', `account:${accountId}:pinned`, 'items'], ImmutableList()),
     isLoading: state.getIn(['timelines', `account:${path}`, 'isLoading']),
     hasMore:   state.getIn(['timelines', `account:${path}`, 'hasMore']),
   };
@@ -38,28 +38,29 @@ export default class AccountTimeline extends ImmutablePureComponent {
     isLoading: PropTypes.bool,
     hasMore: PropTypes.bool,
     withReplies: PropTypes.bool,
+    reblogs: PropTypes.bool,
     isAccount: PropTypes.bool,
   };
 
   componentWillMount () {
-    const { params: { accountId }, withReplies } = this.props;
+    const { params: { accountId }, withReplies, reblogs } = this.props;
 
     this.props.dispatch(fetchAccount(accountId));
     this.props.dispatch(fetchAccountIdentityProofs(accountId));
-    if (!withReplies) {
+    if (!withReplies && !reblogs) {
       this.props.dispatch(expandAccountFeaturedTimeline(accountId));
     }
-    this.props.dispatch(expandAccountTimeline(accountId, { withReplies }));
+    this.props.dispatch(expandAccountTimeline(accountId, { withReplies: withReplies, reblogs: reblogs }));
   }
 
   componentWillReceiveProps (nextProps) {
-    if ((nextProps.params.accountId !== this.props.params.accountId && nextProps.params.accountId) || nextProps.withReplies !== this.props.withReplies) {
+    if ((nextProps.params.accountId !== this.props.params.accountId && nextProps.params.accountId) || nextProps.withReplies !== this.props.withReplies || nextProps.reblogs !== this.props.reblogs) {
       this.props.dispatch(fetchAccount(nextProps.params.accountId));
       this.props.dispatch(fetchAccountIdentityProofs(nextProps.params.accountId));
-      if (!nextProps.withReplies) {
+      if (!nextProps.withReplies && !nextProps.reblogs) {
         this.props.dispatch(expandAccountFeaturedTimeline(nextProps.params.accountId));
       }
-      this.props.dispatch(expandAccountTimeline(nextProps.params.accountId, { withReplies: nextProps.params.withReplies }));
+      this.props.dispatch(expandAccountTimeline(nextProps.params.accountId, { withReplies: nextProps.params.withReplies, reblogs: nextProps.params.reblogs }));
     }
   }
 
@@ -68,7 +69,7 @@ export default class AccountTimeline extends ImmutablePureComponent {
   }
 
   handleLoadMore = maxId => {
-    this.props.dispatch(expandAccountTimeline(this.props.params.accountId, { maxId, withReplies: this.props.withReplies }));
+    this.props.dispatch(expandAccountTimeline(this.props.params.accountId, { maxId, withReplies: this.props.withReplies, reblogs: this.props.reblogs }));
   }
 
   setRef = c => {

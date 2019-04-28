@@ -59,31 +59,25 @@ class AccountsController < ApplicationController
   private
 
   def show_pinned_statuses?
-    [replies_requested?, media_requested?, tag_requested?, params[:max_id].present?, params[:min_id].present?].none?
+    [reblogs_requested?, replies_requested?, media_requested?, tag_requested?, params[:max_id].present?, params[:min_id].present?].none?
   end
 
   def filtered_statuses
-    default_statuses.tap do |statuses|
-      statuses.merge!(hashtag_scope)    if tag_requested?
-      statuses.merge!(only_media_scope) if media_requested?
-      statuses.merge!(no_replies_scope) unless @account.replies && replies_requested?
+    if reblogs_requested?
+      default_statuses.reblogs
+    elsif replies_requested?
+      @account.replies ? default_statuses : default_statuses.without_replies
+    elsif media_requested?
+      default_statuses.where(id: account_media_status_ids)
+    elsif tag_requested?
+      default_statuses.hashtag_scope
+    else
+      default_statuses.without_replies.without_reblogs
     end
   end
 
   def default_statuses
     @account.statuses.not_local_only.where(visibility: [:public, :unlisted])
-  end
-
-  def only_media_scope
-    Status.where(id: account_media_status_ids)
-  end
-
-  def account_media_status_ids
-    @account.media_attachments.attached.reorder(nil).select(:status_id).distinct
-  end
-
-  def no_replies_scope
-    Status.without_replies
   end
 
   def hashtag_scope
@@ -115,6 +109,8 @@ class AccountsController < ApplicationController
       short_account_media_url(@account, max_id: max_id, min_id: min_id)
     elsif replies_requested?
       short_account_with_replies_url(@account, max_id: max_id, min_id: min_id)
+    elsif reblogs_requested?
+      short_account_reblogs_url(@account, max_id: max_id, min_id: min_id)
     else
       short_account_url(@account, max_id: max_id, min_id: min_id)
     end
@@ -126,6 +122,10 @@ class AccountsController < ApplicationController
 
   def replies_requested?
     request.path.ends_with?('/with_replies')
+  end
+
+  def reblogs_requested?
+    request.path.ends_with?('/reblogs')
   end
 
   def tag_requested?

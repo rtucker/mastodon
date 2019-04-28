@@ -61,7 +61,11 @@ en:
     posts:
       one: Roar
       other: Roars
+    reblogs:
+      one: Repeat
+      other: Repeats
     posts_tab_heading: Roars
+    reblogs_tab_heading: Repeats
     posts_with_replies: Roars & growls
     reserved_username: The creaturename is reserved
     roles:

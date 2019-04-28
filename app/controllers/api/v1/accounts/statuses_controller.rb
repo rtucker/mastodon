@@ -28,14 +28,14 @@ class Api::V1::Accounts::StatusesController < Api::BaseController
 
   def account_statuses
     statuses = truthy_param?(:pinned) ? pinned_scope : permitted_account_statuses
-    statuses = statuses.paginate_by_id(limit_param(DEFAULT_STATUSES_LIMIT), params_slice(:max_id, :since_id, :min_id))
 
-    statuses.merge!(only_media_scope) if truthy_param?(:only_media)
-    statuses.merge!(no_replies_scope) if truthy_param?(:exclude_replies)
-    statuses.merge!(no_reblogs_scope) if truthy_param?(:exclude_reblogs)
-    statuses.merge!(hashtag_scope)    if params[:tagged].present?
+    statuses = statuses.without_replies if !@account.replies || truthy_param?(:exclude_replies)
+    statuses = statuses.without_reblogs if truthy_param?(:exclude_reblogs)
+    statuses = statuses.reblogs if truthy_param?(:reblogs) && !truthy_param?(:exclude_reblogs)
+    statuses = statuses.where(id: account_media_status_ids) if truthy_param?(:only_media)
+    statuses = statuses.hashtag_scope if params[:tagged].present?
 
-    statuses
+    statuses.paginate_by_id(limit_param(DEFAULT_STATUSES_LIMIT), params_slice(:max_id, :since_id, :min_id))
   end
 
   def permitted_account_statuses

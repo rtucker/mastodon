@@ -32,6 +32,7 @@
         = active_link_to t('accounts.posts_tab_heading'), short_account_url(@account)
         - if @account.replies
           = active_link_to t('accounts.posts_with_replies'), short_account_with_replies_url(@account)
+        = active_link_to t('accounts.reblogs_tab_heading'), short_account_reblogs_url(@account)
         = active_link_to t('accounts.media'), short_account_media_url(@account)
 
       - if user_signed_in? && @account.blocking?(current_account)
