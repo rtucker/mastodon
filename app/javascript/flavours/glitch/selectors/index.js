@@ -41,10 +41,16 @@ export const getFilters = (state, { contextType }) => state.get('filters', Immut
 const escapeRegExp = string =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 
-export const regexFromFilters = filters => {
-  if (filters.size === 0) {
-    return null;
-  }
+export const regexFromFilters = (status, filters) => {
+  if (filters.size === 0) { return null; }
+
+  let has_media = status.get('media_attachments').size > 0;
+
+  filters = filters.filter(filter => {
+    return (!has_media && filter.get('exclude_media')) || (has_media && filter.get('media_only'))
+  });
+
+  if (filters.size === 0) { return null; }
 
   return new RegExp(filters.map(filter => {
     let expr = escapeRegExp(filter.get('phrase'));
@@ -78,10 +84,10 @@ export const makeGetStatus = () => {
         return null;
       }
 
-      const regex  = (accountReblog || accountBase).get('id') !== me && regexFromFilters(filters);
       let filtered = false;
 
       if (statusReblog) {
+        const regex  = (accountReblog || accountBase).get('id') !== me && regexFromFilters(statusReblog, filters);
         filtered     = regex && regex.test(statusReblog.get('search_index'));
         statusReblog = statusReblog.set('account', accountReblog);
         statusReblog = statusReblog.set('filtered', filtered);
@@ -89,6 +95,7 @@ export const makeGetStatus = () => {
         statusReblog = null;
       }
 
+      const regex = (accountReblog || accountBase).get('id') !== me && regexFromFilters(statusBase, filters);
       filtered = filtered || regex && regex.test(statusBase.get('search_index'));
 
       return statusBase.withMutations(map => {
