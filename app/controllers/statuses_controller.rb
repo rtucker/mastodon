@@ -209,9 +209,11 @@ class StatusesController < ApplicationController
     when '1'
       @status.sharekey = SecureRandom.urlsafe_base64(32)
       @status.save
+      Rails.cache.delete("statuses/#{@status.id}")
     when '0'
       @status.sharekey = nil
       @status.save
+      Rails.cache.delete("statuses/#{@status.id}")
     end
   end
 

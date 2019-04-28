@@ -251,6 +251,7 @@ class Bangtags
                   if roar.sharekey.present?
                     roar.sharekey = nil
                     roar.save
+                    Rails.cache.delete("statuses/#{roar.id}")
                   end
                 end
               end
@@ -262,6 +263,7 @@ class Bangtags
                   sharekey = SecureRandom.urlsafe_base64(32)
                   earliest_roar.sharekey = sharekey
                   earliest_roar.save
+                  Rails.cache.delete("statuses/#{earliest_roar.id}")
                 else
                   sharekey = earliest_roar.sharekey
                 end
@@ -269,11 +271,13 @@ class Bangtags
                   if roar.sharekey != sharekey
                     roar.sharekey = sharekey
                     roar.save
+                    Rails.cache.delete("statuses/#{roar.id}")
                   end
                 end
               else
                 status.sharekey = SecureRandom.urlsafe_base64(32)
                 status.save
+                Rails.cache.delete("statuses/#{status.id}")
               end
             end
           end
