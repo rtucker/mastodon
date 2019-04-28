@@ -339,6 +339,11 @@ const startWorker = (workerId) => {
         return;
       }
 
+      if (payload === undefined) {
+        log.silly(req.requestId, `Skipped undefined ${event} payload`);
+        return;
+      }
+
       // Only send local-only statuses to logged-in users
       if (payload.local_only && !req.accountId) {
         log.silly(req.requestId, `Message ${payload.id} filtered because it was local-only`);
