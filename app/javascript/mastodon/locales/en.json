@@ -226,6 +226,7 @@
   "lists.new.title_placeholder": "New list title",
   "lists.search": "Search among monsters in your pack",
   "lists.subheading": "Your lists",
+  "lists.show_self": "Include your own roars",
   "loading_indicator.label": "Loading...",
   "media_gallery.toggle_visible": "Toggle visibility",
   "missing_indicator.label": "Not found",

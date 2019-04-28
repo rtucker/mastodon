@@ -13,10 +13,12 @@ import { fetchList, deleteList, updateList } from 'flavours/glitch/actions/lists
 import { openModal } from 'flavours/glitch/actions/modal';
 import MissingIndicator from 'flavours/glitch/components/missing_indicator';
 import LoadingIndicator from 'flavours/glitch/components/loading_indicator';
+import Toggle from 'react-toggle';
 
 const messages = defineMessages({
   deleteMessage: { id: 'confirmations.delete_list.message', defaultMessage: 'Are you sure you want to permanently delete this list?' },
   deleteConfirm: { id: 'confirmations.delete_list.confirm', defaultMessage: 'Delete' },
+  show_self:     { id: 'lists.show_self', defaultMessage: 'Include your own toots' },
   all_replies:   { id: 'lists.replies_policy.all_replies', defaultMessage: 'any followed user' },
   no_replies:    { id: 'lists.replies_policy.no_replies', defaultMessage: 'no one' },
   list_replies:  { id: 'lists.replies_policy.list_replies', defaultMessage: 'members of the list' },
@@ -114,6 +116,14 @@ export default class ListTimeline extends React.PureComponent {
     }));
   }
 
+  handleShowSelfChange = ({ target }) => {
+    const { dispatch, list } = this.props;
+    const { id } = this.props.params;
+    const replies_policy = list ? list.get('replies_policy') : undefined;
+    const show_self = list ? list.get('show_self') : false;
+    this.props.dispatch(updateList(id, undefined, false, replies_policy, !show_self));
+  }
+
   handleRepliesPolicyChange = ({ target }) => {
     const { dispatch, list } = this.props;
     const { id } = this.props.params;
@@ -126,6 +136,7 @@ export default class ListTimeline extends React.PureComponent {
     const pinned = !!columnId;
     const title  = list ? list.get('title') : id;
     const replies_policy = list ? list.get('replies_policy') : undefined;
+    const show_self = list ? list.get('show_self') : false;
 
     if (typeof list === 'undefined') {
       return (
@@ -165,6 +176,15 @@ export default class ListTimeline extends React.PureComponent {
             <button className='text-btn column-header__setting-btn' tabIndex='0' onClick={this.handleDeleteClick}>
               <i className='fa fa-trash' /> <FormattedMessage id='lists.delete' defaultMessage='Delete list' />
             </button>
+          </div>
+
+          <div className='column-settings__row'>
+            <div className='setting-toggle'>
+              <Toggle id={['setting', 'toggle', id, 'show_self'].join('-')} checked={show_self === true} onChange={this.handleShowSelfChange} />
+              <label htmlFor={['setting', 'toggle', id, 'show_self'].join('-')} className='setting-toggle__label'>
+                <FormattedMessage id='lists.show_self' defaultMessage='Include your own toots' />
+              </label>
+            </div>
           </div>
 
           { replies_policy !== undefined && (
