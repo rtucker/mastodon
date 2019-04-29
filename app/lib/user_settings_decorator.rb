@@ -29,6 +29,7 @@ class UserSettingsDecorator
     user.settings['hide_mntions_muted']  = hide_mntions_muted_preference if change?('setting_hide_mntions_muted')
     user.settings['hide_mntions_blocked']= hide_mntions_blocked_preference if change?('setting_hide_mntions_blocked')
     user.settings['hide_mntions_blocker']= hide_mntions_blocker_preference if change?('setting_hide_mntions_blocker')
+    user.settings['hide_mntions_packm8'] = hide_mntions_packm8_preference if change?('setting_hide_mntions_packm8')
     user.settings['gently_kobolds']      = gently_kobolds_preference if change?('setting_gently_kobolds')
     user.settings['user_is_kobold']      = user_is_kobold_preference if change?('setting_user_is_kobold')
 
@@ -95,6 +96,10 @@ class UserSettingsDecorator
 
   def hide_mntions_blocker_preference
     boolean_cast_setting 'setting_hide_mntions_blocker'
+  end
+
+  def hide_mntions_packm8_preference
+    boolean_cast_setting 'setting_hide_mntions_packm8'
   end
 
   def gently_kobolds_preference

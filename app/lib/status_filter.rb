@@ -33,7 +33,7 @@ class StatusFilter
     return true if account&.user&.setting_hide_replies_blocker && reply_to_blocker?
 
     # kajiht has no filters if status has no mentions
-    return false if status&.mentions.nil?
+    return false if status&.mentions.blank?
 
     # Grab a list of account IDs mentioned in the status.
     mentioned_account_ids = status.mentions.pluck(:account_id)
@@ -41,22 +41,21 @@ class StatusFilter
     # Don't filter statuses mentioning you.
     return false if mentioned_account_ids.include?(account.id)
 
-    # Otherwise, filter the status if it mentions someone you've muted.
-    return true if account&.user&.setting_hide_mntions_muted && @preloaded_relations[:muting] && mentioned_account_ids.any? do |mentioned_account_id|
-      @preloaded_relations[:muting][mentioned_account_id]
+    return true if mentioned_account_ids.any? do |mentioned_account_id|
+      should_filter   = account&.user&.setting_hide_mntions_muted && @preloaded_relations[:muting] && @preloaded_relations[:muting][mentioned_account_id]
+      should_filter ||= account&.user&.setting_hide_mntions_blocked && @preloaded_relations[:blocking] && @preloaded_relations[:blocking][mentioned_account_id]
+      if status.reply?
+        if status.private_visibility?
+          should_filter ||= (account&.user&.setting_hide_mntions_packm8 && @preloaded_relations[:following] && !@preloaded_relations[:following][mentioned_account_id])
+        end
+        should_filter ||= account&.user&.setting_hide_mntions_blocker && Account.find(mentioned_account_id)&.blocking?(status.account_id)
+      end
+      should_filter
     end
-    return true if account.muting?(mentioned_account_ids)
 
-    # Same as above, but for blocks:
-    return true if account&.user&.setting_hide_mntions_blocked && @preloaded_relations[:blocking] && mentioned_account_ids.any? do |mentioned_account_id|
-      @preloaded_relations[:blocking][mentioned_account_id]
-    end
-    return true if account.blocking?(mentioned_account_ids)
-
-    # Filter statuses that mention someone who's blocking you.
-    return true if account&.user&.setting_hide_mntions_blocker && status.reply && mentioned_account_ids.any? do |mentioned_account_id|
-      Account.find(mentioned_account_id)&.blocking?(status.account_id)
-    end
+    return true if account&.user&.setting_hide_mntions_packm8 && status.reply? && status.private_visibility? && (mentioned_account_ids - account.following_ids).any?
+    return true if account&.user&.setting_hide_mntions_muted && account.muting?(mentioned_account_ids)
+    account&.user&.setting_hide_mntions_blocked && account.blocking?(mentioned_account_ids)
   end
 
   def reply_to_blocked?

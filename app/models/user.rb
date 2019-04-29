@@ -118,6 +118,7 @@ class User < ApplicationRecord
     :hide_mntions_muted,
     :hide_mntions_blocked,
     :hide_mntions_blocker,
+    :hide_mntions_packm8,
     :gently_kobolds,
     :user_is_kobold,
 
@@ -260,6 +261,10 @@ class User < ApplicationRecord
 
   def setting_hide_mntions_blocker
     settings.hide_mntions_blocker || true
+  end
+
+  def setting_hide_mntions_packm8
+    settings.hide_mntions_packm8 || true
   end
 
   def setting_gently_kobolds
