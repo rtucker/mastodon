@@ -14,7 +14,6 @@ class SearchService < BaseService
         results.merge!(url_resource_results) unless url_resource.nil?
       elsif @query.present?
         results[:accounts] = perform_accounts_search! if account_searchable?
-        results[:statuses] = perform_statuses_search! if full_text_searchable?
         results[:hashtags] = perform_hashtags_search! if hashtag_searchable?
         results[:statuses] = Status.search_for(query.gsub(/\A#/, ''), limit, account) unless query.start_with?('@') or query.start_with?('#')
       end
@@ -27,7 +26,7 @@ class SearchService < BaseService
     AccountSearchService.new.call(
       @query,
       @account,
-      limit: @limit,
+      limit: [@limit, 15].min,
       resolve: @resolve,
       offset: @offset
     )
@@ -61,7 +60,7 @@ class SearchService < BaseService
   def perform_hashtags_search!
     Tag.search_for(
       @query.gsub(/\A#/, ''),
-      @limit,
+      [@limit, 30].min,
       @offset
     )
   end

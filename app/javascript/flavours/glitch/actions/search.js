@@ -37,7 +37,7 @@ export function submitSearch() {
       params: {
         q: value,
         resolve: true,
-        limit: 33,
+        limit: 100,
       },
     }).then(response => {
       if (response.data.accounts) {
