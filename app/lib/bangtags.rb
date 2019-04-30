@@ -280,6 +280,18 @@ class Bangtags
                 Rails.cache.delete("statuses/#{status.id}")
               end
             end
+          when 'emoji'
+            next if status.conversation_id.nil?
+            roars = Status.where(conversation_id: status.conversation_id, account_id: @account.id)
+            roars.each do |roar|
+              roar.emojis.each do |theirs|
+                ours = CustomEmoji.find_or_initialize_by(shortcode: theirs.shortcode, domain: nil)
+                if ours.id.nil?
+                  ours.image = theirs.image
+                  ours.save
+                end
+              end
+            end
           end
         when 'parent'
           chunk = nil
@@ -287,6 +299,14 @@ class Bangtags
           case cmd[1].downcase
           when 'permalink'
             chunk = TagManager.instance.url_for(@parent_status)
+          when 'emoji'
+            @parent_status.emojis.each do |theirs|
+              ours = CustomEmoji.find_or_initialize_by(shortcode: theirs.shortcode, domain: nil)
+              if ours.id.nil?
+                ours.image = theirs.image
+                ours.save
+              end
+            end
           end
         when 'media'
           chunk = nil
