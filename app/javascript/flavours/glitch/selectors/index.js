@@ -42,7 +42,7 @@ const escapeRegExp = string =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 
 export const regexFromFilters = (status, filters) => {
-  if (filters.size === 0) { return null; }
+  if (filters === undefined || filters.size === 0) { return null; }
 
   let has_media = status.get('media_attachments').size > 0;
 
