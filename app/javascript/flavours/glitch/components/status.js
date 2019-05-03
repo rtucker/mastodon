@@ -53,6 +53,7 @@ export default class Status extends ImmutablePureComponent {
     onReply: PropTypes.func,
     onFavourite: PropTypes.func,
     onReblog: PropTypes.func,
+    onBookmark: PropTypes.func,
     onDelete: PropTypes.func,
     onDirect: PropTypes.func,
     onMention: PropTypes.func,
@@ -337,6 +338,10 @@ export default class Status extends ImmutablePureComponent {
     this.props.onReblog(this.props.status, e);
   }
 
+  handleHotkeyBookmark = e => {
+    this.props.onBookmark(this.props.status, e);
+  }
+
   handleHotkeyMention = e => {
     e.preventDefault();
     this.props.onMention(this.props.status.get('account'), this.context.router.history);
@@ -361,6 +366,14 @@ export default class Status extends ImmutablePureComponent {
   handleHotkeyMoveDown = e => {
     this.props.onMoveDown(this.props.containerId || this.props.id, e.target.getAttribute('data-featured'));
   }
+
+  handleHotkeyCollapse = e => {
+    if (!this.props.settings.getIn(['collapsed', 'enabled']))
+      return;
+
+    this.setCollapsed(!this.state.isCollapsed);
+  }
+
 
   handleRef = c => {
     this.node = c;
@@ -550,6 +563,8 @@ export default class Status extends ImmutablePureComponent {
       moveUp: this.handleHotkeyMoveUp,
       moveDown: this.handleHotkeyMoveDown,
       toggleSpoiler: this.handleExpandedToggle,
+      bookmark: this.handleHotkeyBookmark,
+      toggleCollapse: this.handleHotkeyCollapse,
     };
 
     const computedClass = classNames('status', `status-${status.get('visibility')}`, {
