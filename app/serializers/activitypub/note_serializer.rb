@@ -8,7 +8,7 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
              :in_reply_to, :published, :url,
              :attributed_to, :to, :cc, :sensitive,
              :atom_uri, :in_reply_to_atom_uri,
-             :conversation
+             :conversation, :source
 
   attribute :content
   attribute :content_map, if: :language?
@@ -38,6 +38,10 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
 
   def content
     Formatter.instance.format(object)
+  end
+
+  def source
+    { 'source' => object.proper.text, 'mediaType' => 'text/plain' }
   end
 
   def content_map
