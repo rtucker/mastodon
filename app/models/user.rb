@@ -121,6 +121,7 @@ class User < ApplicationRecord
     :hide_mntions_packm8,
     :gently_kobolds,
     :user_is_kobold,
+    :hide_mascot,
 
     :auto_play_gif,
     :default_sensitive,
@@ -273,6 +274,10 @@ class User < ApplicationRecord
 
   def setting_user_is_kobold
     settings.user_is_kobold || false
+  end
+
+  def setting_hide_mascot
+    settings.hide_mascot || false
   end
 
   def setting_default_privacy

@@ -32,8 +32,9 @@ class UserSettingsDecorator
     user.settings['hide_mntions_packm8'] = hide_mntions_packm8_preference if change?('setting_hide_mntions_packm8')
     user.settings['gently_kobolds']      = gently_kobolds_preference if change?('setting_gently_kobolds')
     user.settings['user_is_kobold']      = user_is_kobold_preference if change?('setting_user_is_kobold')
-
     user.settings['hide_captions']       = hide_captions_preference if change?('setting_hide_captions')
+    user.settings['hide_mascot']         = hide_mascot_preference if change?('setting_hide_mascot')
+
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
     user.settings['default_privacy']     = default_privacy_preference if change?('setting_default_privacy')
@@ -108,6 +109,10 @@ class UserSettingsDecorator
 
   def user_is_kobold_preference
     boolean_cast_setting 'setting_user_is_kobold'
+  end
+
+  def hide_mascot_preference
+    boolean_cast_setting 'setting_hide_mascot'
   end
 
   def merged_notification_emails

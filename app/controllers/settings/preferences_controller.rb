@@ -47,6 +47,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_hide_mntions_packm8,
       :setting_gently_kobolds,
       :setting_user_is_kobold,
+      :setting_hide_mascot,
 
       :setting_default_privacy,
       :setting_default_sensitive,

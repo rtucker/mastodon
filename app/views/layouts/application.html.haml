@@ -81,5 +81,9 @@
       :css
         .status__wrapper--filtered { display: none !important; }
 
+    - if current_account&.user&.setting_hide_mascot
+      :css
+        .drawer__inner__mastodon>img { display: none !important }
+
   %body{ class: body_classes }
     = content_for?(:content) ? yield(:content) : yield
