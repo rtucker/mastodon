@@ -10,6 +10,8 @@ en:
         type_html: Choose what to do with <strong>%{acct}</strong>
         warning_preset_id: Optional. You can still add custom text to end of the preset
       defaults:
+        hidden: Toggles whether your public profile is publicaly accessible
+        unlisted: Excludes you from public repeated/admired by lists of *local* monsters
         autofollow: People who sign up through the invite will automatically join your pack
         avatar: PNG, GIF or JPG. At most %{size}. Will be downscaled to %{dimensions}px
         bot: This account mainly performs automated actions and might not be monitored
@@ -23,7 +25,6 @@ en:
         irreversible: Filtered roars will disappear irreversibly, even if filter is later removed
         locale: The language of the creature interface, e-mails and push notifications
         locked: Requires you to manually approve packmates
-        hidden: Toggles whether your public profile is browsable
         password: Use at least 8 characters
         phrase: Will be matched regardless of casing in text or content warning of a roar
         scopes: Which APIs the application will be allowed to access. If you select a top-level scope, you don't need to select individual ones.
@@ -69,7 +70,8 @@ en:
           suspend: Suspend and irreversibly delete account data
         warning_preset_id: Use a warning preset
       defaults:
-        hidden: Hide your public profile
+        hidden: Disable your public profile
+        unlisted: Exclude from public interaction lists
         replies: Show your public replies
         autofollow: Invite to join your pack
         avatar: Avatar
@@ -127,6 +129,7 @@ en:
         setting_gently_kobolds: Gently the kobolds
         setting_user_is_kobold: I am a kobold
         setting_hide_mascot: Don't show the mascot image
+        setting_hide_interactions: Make your roar interaction lists private
         setting_aggregate_reblogs: Group repeats in timelines
         setting_auto_play_gif: Auto-play animated GIFs
         setting_boost_modal: Show confirmation dialog before repeating
@@ -141,7 +144,7 @@ en:
         setting_expand_spoilers: Always expand roars marked with content warnings
         setting_favourite_modal: Show confirmation dialog before admiring (in Glitch flavour)
         setting_hide_followers_count: Hide your packmates count
-        setting_hide_network: Hide your packmates
+        setting_hide_network: Make your packmate lists private
         setting_noindex: Opt-out of search engine indexing
         setting_reduce_motion: Reduce motion in animations
         setting_show_application: Disclose application used to send roars
@@ -160,7 +163,7 @@ en:
         must_be_following: Block notifications from monsters you aren't in the pack of
         must_be_following_dm: Block whispers from monsters you aren't in the pack of
       invite_request:
-        text: Introduce yourself! What brings you to Monsterpit? The last word in this field must be '#kobold' without vowels.
+        text: "Introduce yourself! End with the tag '#k\u200co\u200cbo\u200cl\u200cd'."
       notification_emails:
         digest: Send digest e-mails
         favourite: Send e-mail when someone admires your roar
