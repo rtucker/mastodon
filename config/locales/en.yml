@@ -941,7 +941,7 @@ en:
   stream_entries:
     pinned: Pinned roar
     reblogged: boosted
-    sensitive_content: Sensitive content
+    sensitive_content: Reveal
   terms:
     body_html: |
       <h2>Privacy Policy</h2>
