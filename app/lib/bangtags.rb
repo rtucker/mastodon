@@ -390,7 +390,8 @@ class Bangtags
             status.sharekey = SecureRandom.urlsafe_base64(32)
           end
         when 'draft'
-          @chunks << chunk
+          chunk = nil
+          @chunks.insert(0, "[center]`#!draft!#`[/center]\n") unless @chunks.first.include?('#!draft')
           status.visibility = :direct
           @vore_stack.push('_draft')
           @component_stack.push(:var)
