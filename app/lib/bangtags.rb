@@ -41,7 +41,9 @@ class Bangtags
     status.text.gsub!('#!!', "#\u200c!")
 
     status.text.split(/(#!(?:.*:!#|{.*?}|[^\s#]+))/).each do |chunk|
-      if chunk.starts_with?("#!")
+      if @vore_stack.last == '_draft'
+        @chunks << chunk
+      elsif chunk.starts_with?("#!")
         chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
         chunk.sub!(/{(.*)}\Z/, '\1')
 
@@ -216,20 +218,8 @@ class Bangtags
           chunk = mentions.join(' ')
         when 'tag'
           chunk = nil
-          records = []
-          valid_name = /^[[:word:]_\-]*[[:alpha:]_·\-][[:word:]_\-]*$/
-          cmd[1..-1].select {|t| t.present? && valid_name.match?(t)}.uniq.each do |name|
-            next if status.tags.where(name: name).exists?
-            tag = Tag.where(name: name).first_or_create(name: name)
-            status.tags << tag
-            records << tag
-            TrendingTags.record_use!(tag, account, status.created_at) if status.distributable?
-          end
-          if status.distributable?
-            account.featured_tags.where(tag_id: records.map(&:id)).each do |featured_tag|
-              featured_tag.increment(status.created_at)
-            end
-          end
+          tags = cmd[1..-1].map {|t| t.gsub('.', ':')}
+          add_tags(*tags)
         when 'thread'
           chunk = nil
           next if cmd[1].nil?
@@ -276,7 +266,6 @@ class Bangtags
                 end
               else
                 status.sharekey = SecureRandom.urlsafe_base64(32)
-                status.save
                 Rails.cache.delete("statuses/#{status.id}")
               end
             end
@@ -399,8 +388,34 @@ class Bangtags
           when 'new'
             chunk = nil
             status.sharekey = SecureRandom.urlsafe_base64(32)
-            status.save
           end
+        when 'draft'
+          @chunks << chunk
+          status.visibility = :direct
+          @vore_stack.push('_draft')
+          @component_stack.push(:var)
+          add_tags('self:draft')
+        when 'visibility'
+          chunk = nil
+          next if cmd[1].nil?
+          visibilities = {
+            'direct'      => :direct,
+            'dm'          => :direct,
+            'whisper'     => :direct,
+
+            'private'     => :private,
+            'packmate'    => :private,
+            'group'       => :private,
+
+            'unlisted'    => :unlisted,
+            'local'       => :unlisted,
+            'monsterpit'  => :unlisted,
+
+            'public'      => :public,
+            'world'       => :public,
+          }
+          v = cmd[1].downcase
+          status.visibility = visibilities[v] if visibilities[v].nil?
         end
       end
 
@@ -436,17 +451,19 @@ class Bangtags
 
     @vars.transform_values! {|v| v.rstrip}
 
-    postprocess
+    postprocess_before_save
 
     account.save
 
     status.text = @chunks.join('')
     status.save
+
+    postprocess_after_save
   end
 
   private
 
-  def postprocess
+  def postprocess_before_save
     @post_cmds.each do |post_cmd|
       case post_cmd[0]
       when 'signature'
@@ -470,4 +487,20 @@ class Bangtags
     end
   end
 
+  def postprocess_after_save
+    @post_cmds.each do |post_cmd|
+      case post_cmd[0]
+      when 'mention'
+        mention = @account.mentions.where(status: status).first_or_create(status: status)
+        LocalNotificationWorker.perform_async(@account.id, mention.id, mention.class.name)
+      end
+    end
+  end
+
+  def add_tags(*tags)
+    records = []
+    valid_name = /^[[:word:]:_\-]*[[:alpha:]:_·\-][[:word:]:_\-]*$/
+    tags = tags.select {|t| t.present? && valid_name.match?(t)}.uniq
+    ProcessHashtagsService.new.call(status, tags)
+  end
 end
