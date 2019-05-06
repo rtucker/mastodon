@@ -479,7 +479,7 @@ class Status < ApplicationRecord
         starting_scope = account.statuses
       else
         starting_scope = local_only ? Status.network : Status
-        starting_scope = scope.public_browsable
+        starting_scope = starting_scope.public_browsable
       end
 
       if Setting.show_reblogs_in_public_timelines
