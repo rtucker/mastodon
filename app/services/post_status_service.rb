@@ -52,8 +52,15 @@ class PostStatusService < BaseService
      @text = '.'
      @text = @media.find(&:video?) ? '📹' : '🖼' if @media.size > 0
     end
+
     @visibility   = @options[:visibility] || @account.user&.setting_default_privacy
     @visibility   = :unlisted if @visibility == :public && @account.silenced?
+
+    if @in_reply_to.present?
+      v = %w(public unlisted private direct limited)
+      @visibility = @in_reply_to.visibility if v.index(@visibility) < v.index(@in_reply_to.visibility)
+    end
+
     @scheduled_at = @options[:scheduled_at]&.to_datetime
     @scheduled_at = nil if scheduled_in_the_past?
   rescue ArgumentError
