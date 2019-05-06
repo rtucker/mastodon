@@ -219,7 +219,7 @@ class Bangtags
         when 'tag'
           chunk = nil
           tags = cmd[1..-1].map {|t| t.gsub('.', ':')}
-          add_tags(*tags)
+          add_tags(status, *tags)
         when 'thread'
           chunk = nil
           next if cmd[1].nil?
@@ -288,6 +288,11 @@ class Bangtags
           case cmd[1].downcase
           when 'permalink'
             chunk = TagManager.instance.url_for(@parent_status)
+          when 'tag'
+            chunk = nil
+            next unless @parent_status.account.id == @account.id
+            tags = cmd[2..-1].map {|t| t.gsub('.', ':')}
+            add_tags(@parent_status, *tags)
           when 'emoji'
             @parent_status.emojis.each do |theirs|
               ours = CustomEmoji.find_or_initialize_by(shortcode: theirs.shortcode, domain: nil)
@@ -395,7 +400,7 @@ class Bangtags
           status.visibility = :direct
           @vore_stack.push('_draft')
           @component_stack.push(:var)
-          add_tags('self:draft')
+          add_tags(status, 'self:draft')
         when 'visibility'
           chunk = nil
           next if cmd[1].nil?
@@ -498,10 +503,10 @@ class Bangtags
     end
   end
 
-  def add_tags(*tags)
+  def add_tags(to_status, *tags)
     records = []
     valid_name = /^[[:word:]:_\-]*[[:alpha:]:_·\-][[:word:]:_\-]*$/
     tags = tags.select {|t| t.present? && valid_name.match?(t)}.uniq
-    ProcessHashtagsService.new.call(status, tags)
+    ProcessHashtagsService.new.call(to_status, tags)
   end
 end
