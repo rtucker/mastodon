@@ -10,6 +10,7 @@ class PostStatusService < BaseService
   # @param [Hash] options
   # @option [String] :text Message
   # @option [Status] :thread Optional status to reply to
+  # @option [Tag] :tags Optional tags to include
   # @option [Boolean] :sensitive
   # @option [String] :visibility
   # @option [String] :sharekey
@@ -26,6 +27,7 @@ class PostStatusService < BaseService
     @options     = options
     @text        = @options[:text] || ''
     @in_reply_to = @options[:thread]
+    @tags        = @options[:tags]
 
     return idempotency_duplicate if idempotency_given? && idempotency_duplicate?
 
@@ -75,7 +77,7 @@ class PostStatusService < BaseService
       @status = @account.statuses.create!(status_attributes)
     end
 
-    process_hashtags_service.call(@status)
+    process_hashtags_service.call(@status, @tags)
     process_mentions_service.call(@status)
   end
 
