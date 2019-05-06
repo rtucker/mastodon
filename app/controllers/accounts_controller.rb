@@ -84,7 +84,9 @@ class AccountsController < ApplicationController
     tag = Tag.find_normalized(params[:tag])
 
     if tag
-      Status.tagged_with(tag.id)
+      return Status.none if !user_signed_in && (tag.local || tag.private) || tag.private && current_account.id != @account.id
+      scope = tag.private ? current_account.statuses : tag.local ? Status.local : Status
+      scope.tagged_with(tag.id)
     else
       Status.none
     end

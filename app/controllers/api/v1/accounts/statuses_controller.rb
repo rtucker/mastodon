@@ -72,7 +72,9 @@ class Api::V1::Accounts::StatusesController < Api::BaseController
     tag = Tag.find_normalized(params[:tagged])
 
     if tag
-      Status.tagged_with(tag.id)
+      return Status.none if !user_signed_in && (tag.local || tag.private) || tag.private && current_account.id != @account.id
+      scope = tag.private ? current_account.statuses : tag.local ? Status.local : Status
+      scope.tagged_with(tag.id)
     else
       Status.none
     end

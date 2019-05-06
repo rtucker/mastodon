@@ -379,8 +379,8 @@ class Status < ApplicationRecord
       apply_timeline_filters(query, account, local_only)
     end
 
-    def as_tag_timeline(tag, account = nil, local_only = false)
-      query = browsable_timeline_scope(local_only).tagged_with(tag)
+    def as_tag_timeline(tag, account = nil, local_only = false, priv = false)
+      query = tag_timeline_scope(account, local_only, priv).tagged_with(tag)
       apply_timeline_filters(query, account, local_only)
     end
 
@@ -465,9 +465,28 @@ class Status < ApplicationRecord
 
     def browsable_timeline_scope(local_only = false)
       starting_scope = local_only ? Status.network : Status
-      starting_scope
-        .public_browsable
-        .without_reblogs
+      starting_scope = starting_scope.public_browsable
+      if Setting.show_reblogs_in_public_timelines
+        starting_scope
+      else
+        starting_scope.without_reblogs
+      end
+    end
+
+    def tag_timeline_scope(account = nil, local_only = false, priv = false)
+      if priv
+        return Status.none if account.nil?
+        starting_scope = account.statuses
+      else
+        starting_scope = local_only ? Status.network : Status
+        starting_scope = scope.public_browsable
+      end
+
+      if Setting.show_reblogs_in_public_timelines
+        starting_scope
+      else
+        starting_scope.without_reblogs
+      end
     end
 
     def apply_timeline_filters(query, account, local_only)

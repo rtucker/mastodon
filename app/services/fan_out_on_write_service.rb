@@ -93,7 +93,7 @@ class FanOutOnWriteService < BaseService
   def deliver_to_hashtags(status)
     Rails.logger.debug "Delivering status #{status.id} to hashtags"
 
-    status.tags.pluck(:name).each do |hashtag|
+    status.tags.reject { |t| t.private }.pluck(:name).each do |hashtag|
       Redis.current.publish("timeline:hashtag:#{hashtag}", @payload)
       Redis.current.publish("timeline:hashtag:#{hashtag}:local", @payload) if status.local?
     end

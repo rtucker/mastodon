@@ -7,6 +7,8 @@
 #  name       :string           default(""), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  local      :boolean          default(FALSE), not null
+#  private    :boolean          default(FALSE), not null
 #
 
 class Tag < ApplicationRecord
@@ -17,7 +19,7 @@ class Tag < ApplicationRecord
   has_many :featured_tags, dependent: :destroy, inverse_of: :tag
   has_one :account_tag_stat, dependent: :destroy
 
-  HASHTAG_NAME_RE = '[[:word:]_\-]*[[:alpha:]_·\-][[:word:]_\-]*'
+  HASHTAG_NAME_RE = '[[:word:]:_\-]*[[:alpha:]:_·\-][[:word:]:_\-]*'
   HASHTAG_RE = /(?:^|[^\/\)\w])#(#{HASHTAG_NAME_RE})/i
 
   validates :name, presence: true, uniqueness: true, format: { with: /\A#{HASHTAG_NAME_RE}\z/i }
@@ -26,6 +28,11 @@ class Tag < ApplicationRecord
   scope :hidden, -> { where(account_tag_stats: { hidden: true }) }
   scope :most_used, ->(account) { joins(:statuses).where(statuses: { account: account }).group(:id).order(Arel.sql('count(*) desc')) }
 
+  scope :only_local, -> { where(local: true) }
+  scope :only_global, -> { where(local: false) }
+  scope :only_private, -> { where(private: true) }
+  scope :only_public, -> { where(private: false) }
+
   delegate :accounts_count,
            :accounts_count=,
            :increment_count!,
@@ -33,6 +40,7 @@ class Tag < ApplicationRecord
            :hidden?,
            to: :account_tag_stat
 
+  before_create :set_scope
   after_save :save_account_tag_stat
 
   def account_tag_stat
@@ -87,5 +95,10 @@ class Tag < ApplicationRecord
   def save_account_tag_stat
     return unless account_tag_stat&.changed?
     account_tag_stat.save
+  end
+
+  def set_scope
+    self.private = true if name.starts_with?('self', '_self')
+    self.local = true if self.private || name.starts_with?('local', '_local')
   end
 end

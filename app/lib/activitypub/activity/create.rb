@@ -121,7 +121,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   def attach_tags(status)
     @tags.each do |tag|
       status.tags << tag
-      TrendingTags.record_use!(tag, status.account, status.created_at) if status.public_visibility?
+      TrendingTags.record_use!(tag, status.account, status.created_at) if status.distributable?
     end
 
     @mentions.each do |mention|
@@ -148,6 +148,9 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     return if tag['name'].blank?
 
     hashtag = tag['name'].gsub(/\A#/, '').mb_chars.downcase
+
+    return if hashtag.starts_with?('self:', '_self:', 'local:', '_local:')
+
     hashtag = Tag.where(name: hashtag).first_or_create!(name: hashtag)
 
     return if @tags.include?(hashtag)
