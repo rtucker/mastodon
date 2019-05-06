@@ -34,6 +34,7 @@ class UserSettingsDecorator
     user.settings['user_is_kobold']      = user_is_kobold_preference if change?('setting_user_is_kobold')
     user.settings['hide_captions']       = hide_captions_preference if change?('setting_hide_captions')
     user.settings['hide_mascot']         = hide_mascot_preference if change?('setting_hide_mascot')
+    user.settings['hide_interactions']   = hide_interactions_preference if change?('setting_hide_interactions')
 
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
@@ -113,6 +114,10 @@ class UserSettingsDecorator
 
   def hide_mascot_preference
     boolean_cast_setting 'setting_hide_mascot'
+  end
+
+  def hide_interactions_preference
+    boolean_cast_setting 'setting_hide_interactions'
   end
 
   def merged_notification_emails

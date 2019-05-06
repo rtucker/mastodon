@@ -17,11 +17,12 @@ class Api::V1::Statuses::RebloggedByAccountsController < Api::BaseController
   private
 
   def load_accounts
+    return [] if @status.local? && @status.account.user.setting_hide_interactions
     default_accounts.merge(paginated_statuses).to_a
   end
 
   def default_accounts
-    Account.includes(:statuses, :account_stat).references(:statuses)
+    Account.without_unlisted.includes(:statuses, :account_stat).references(:statuses)
   end
 
   def paginated_statuses

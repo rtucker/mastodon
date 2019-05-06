@@ -17,11 +17,12 @@ class Api::V1::Statuses::FavouritedByAccountsController < Api::BaseController
   private
 
   def load_accounts
+    return [] if @status.local? && @status.account.user.setting_hide_interactions
     default_accounts.merge(paginated_favourites).to_a
   end
 
   def default_accounts
-    Account
+    Account.without_unlisted
       .includes(:favourites, :account_stat)
       .references(:favourites)
       .where(favourites: { status_id: @status.id })

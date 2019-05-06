@@ -122,6 +122,7 @@ class User < ApplicationRecord
     :gently_kobolds,
     :user_is_kobold,
     :hide_mascot,
+    :hide_interactions,
 
     :auto_play_gif,
     :default_sensitive,
@@ -278,6 +279,10 @@ class User < ApplicationRecord
 
   def setting_hide_mascot
     settings.hide_mascot || false
+  end
+
+  def setting_hide_interactions
+    settings.hide_interactions || false
   end
 
   def setting_default_privacy

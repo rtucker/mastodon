@@ -49,6 +49,7 @@
 #  hidden                  :boolean          default(FALSE), not null
 #  vars                    :jsonb            not null
 #  replies                 :boolean          default(TRUE), not null
+#  unlisted                :boolean          default(FALSE), not null
 #
 
 class Account < ApplicationRecord
@@ -108,6 +109,8 @@ class Account < ApplicationRecord
   scope :tagged_with, ->(tag) { joins(:accounts_tags).where(accounts_tags: { tag_id: tag }) }
   scope :by_recent_status, -> { order(Arel.sql('(case when account_stats.last_status_at is null then 1 else 0 end) asc, account_stats.last_status_at desc')) }
   scope :popular, -> { order('account_stats.followers_count desc') }
+  scope :without_hidden, -> { where(hidden: false) }
+  scope :without_unlisted, -> { where(unlisted: false) }
 
   delegate :email,
            :unconfirmed_email,
