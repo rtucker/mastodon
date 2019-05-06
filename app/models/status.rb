@@ -211,6 +211,10 @@ class Status < ApplicationRecord
     proper.text
   end
 
+  def draft?
+    local? && text.present? && text.include?('#!draft')
+  end
+
   def target
     reblog
   end

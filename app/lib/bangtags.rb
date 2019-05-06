@@ -41,7 +41,7 @@ class Bangtags
     status.text.gsub!('#!!', "#\u200c!")
 
     status.text.split(/(#!(?:.*:!#|{.*?}|[^\s#]+))/).each do |chunk|
-      if @vore_stack.last == '_draft'
+      if @vore_stack.last == '_draft' || (@chunks.present? && @chunks.first.include?('#!draft'))
         @chunks << chunk
       elsif chunk.starts_with?("#!")
         chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
@@ -396,7 +396,7 @@ class Bangtags
           end
         when 'draft'
           chunk = nil
-          @chunks.insert(0, "[center]`#!draft!#`[/center]\n") unless @chunks.first.include?('#!draft')
+          @chunks.insert(0, "[center]`#!draft!#`[/center]\n") unless @chunks.present? && @chunks.first.include?('#!draft')
           status.visibility = :direct
           @vore_stack.push('_draft')
           @component_stack.push(:var)

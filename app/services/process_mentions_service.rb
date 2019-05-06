@@ -8,7 +8,7 @@ class ProcessMentionsService < BaseService
   # remote users
   # @param [Status] status
   def call(status)
-    return unless status.local?
+    return unless status.local? && !status.draft?
 
     @status  = status
     mentions = []
