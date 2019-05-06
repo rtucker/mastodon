@@ -13,10 +13,8 @@ class ProcessHashtagsService < BaseService
         frag = (nest != 5) ? name[0..i] : name
         tag = Tag.where(name: frag).first_or_create(name: frag)
 
-        p frag
-
+        next if status.tags.include?(tag)
         status.tags << tag
-
         next if tag.local || tag.private
 
         records << tag
