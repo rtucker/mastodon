@@ -42,20 +42,22 @@ class StatusFilter
     return false if mentioned_account_ids.include?(account.id)
 
     return true if mentioned_account_ids.any? do |mentioned_account_id|
-      should_filter   = account&.user&.setting_hide_mntions_muted && @preloaded_relations[:muting] && @preloaded_relations[:muting][mentioned_account_id]
-      should_filter ||= account&.user&.setting_hide_mntions_blocked && @preloaded_relations[:blocking] && @preloaded_relations[:blocking][mentioned_account_id]
-      if status.reply?
-        if status.private_visibility?
-          should_filter ||= (account&.user&.setting_hide_mntions_packm8 && @preloaded_relations[:following] && !@preloaded_relations[:following][mentioned_account_id])
-        end
-        should_filter ||= account&.user&.setting_hide_mntions_blocker && Account.find(mentioned_account_id)&.blocking?(status.account_id)
+      return true if @preloaded_relations[:muting] && account&.user&.setting_hide_mntions_muted && @preloaded_relations[:muting][mentioned_account_id]
+      return true if @preloaded_relations[:blocking] && account&.user&.setting_hide_mntions_blocked && @preloaded_relations[:blocking][mentioned_account_id]
+
+      if @preloaded_relations[:blocked_by]
+        return true if account&.user&.setting_hide_mntions_blocker && @preloaded_relations[:blocked_by][mentioned_account_id]
+      else
+        return true if account&.user&.setting_hide_mntions_blocker && Account.find(mentioned_account_id)&.blocking?(account.id)
       end
-      should_filter
+
+      return false unless status.private_visibility? && status.reply?
+      @preloaded_relations[:following] && account&.user&.setting_hide_mntions_packm8 && !@preloaded_relations[:following][mentioned_account_id]
     end
 
-    return true if account&.user&.setting_hide_mntions_packm8 && status.reply? && status.private_visibility? && (mentioned_account_ids - account.following_ids).any?
-    return true if account&.user&.setting_hide_mntions_muted && account.muting?(mentioned_account_ids)
-    account&.user&.setting_hide_mntions_blocked && account.blocking?(mentioned_account_ids)
+    return true if !@preloaded_relations[:following] && account&.user&.setting_hide_mntions_packm8 && status.private_visibility? && status.reply? && (mentioned_account_ids - account.following_ids).any?
+    return true if !@preloaded_relations[:muting] && account&.user&.setting_hide_mntions_muted && account.muting?(mentioned_account_ids)
+    return true if !@preloaded_relations[:blocking] && account&.user&.setting_hide_mntions_blocked && account.blocking?(mentioned_account_ids)
   end
 
   def reply_to_blocked?
