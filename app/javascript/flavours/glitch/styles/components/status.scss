@@ -33,7 +33,7 @@
 
   .status__content__text,
   .e-content {
-    h1, h2, h3, h4, h5 {
+    h1, h2, h3, h4, h5, h6 {
       margin-top: 20px;
       margin-bottom: 20px;
     }
@@ -47,7 +47,7 @@
       font-size: 16px;
     }
 
-    h3, h4, h5 {
+    h3, h4, h5, h6 {
       font-weight: 500;
     }
 
@@ -58,7 +58,7 @@
       white-space: normal;
 
       p:last-child {
-        margin-bottom: 0;
+        margin-bottom: 20px;
       }
     }
 
@@ -80,6 +80,10 @@
 
       p {
         margin: 0;
+      }
+
+      li:last-child {
+        margin-bottom: 20px;
       }
     }
 
