@@ -29,8 +29,6 @@ class AfterBlockDomainFromAccountService < BaseService
   def reject_follow!(follow)
     follow.destroy
 
-    return unless follow.account.activitypub?
-
     json = ActiveModelSerializers::SerializableResource.new(
       follow,
       serializer: ActivityPub::RejectFollowSerializer,

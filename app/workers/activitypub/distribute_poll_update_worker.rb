@@ -31,7 +31,7 @@ class ActivityPub::DistributePollUpdateWorker
 
     @inboxes = [@status.mentions, @status.reblogs, @status.preloadable_poll.votes].flat_map do |relation|
       relation.includes(:account).map do |record|
-        record.account.preferred_inbox_url if !record.account.local? && record.account.activitypub?
+        record.account.preferred_inbox_url if !record.account.local?
       end
     end
 

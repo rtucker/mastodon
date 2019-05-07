@@ -25,7 +25,6 @@ RSpec.describe ActivityPub::Activity::Undo do
           type: 'Announce',
           actor: ActivityPub::TagManager.instance.uri_for(sender),
           object: ActivityPub::TagManager.instance.uri_for(status),
-          atomUri: 'barbar',
         }
       end
 
@@ -35,17 +34,6 @@ RSpec.describe ActivityPub::Activity::Undo do
         end
 
         it 'deletes the reblog' do
-          subject.perform
-          expect(sender.reblogged?(status)).to be false
-        end
-      end
-
-      context 'with atomUri' do
-        before do
-          Fabricate(:status, reblog: status, account: sender, uri: 'barbar')
-        end
-
-        it 'deletes the reblog by atomUri' do
           subject.perform
           expect(sender.reblogged?(status)).to be false
         end

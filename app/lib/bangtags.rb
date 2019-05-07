@@ -498,7 +498,6 @@ class Bangtags
       case post_cmd[0]
       when 'mention'
         mention = @account.mentions.where(status: status).first_or_create(status: status)
-        LocalNotificationWorker.perform_async(@account.id, mention.id, mention.class.name)
       end
     end
   end

@@ -321,10 +321,6 @@ class Account < ApplicationRecord
     (['RSA'] + [modulus, exponent].map { |n| Base64.urlsafe_encode64(n) }).join('.')
   end
 
-  def subscription(webhook_url)
-    @subscription ||= OStatus2::Subscription.new(remote_url, secret: secret, webhook: webhook_url, hub: hub_url)
-  end
-
   def save_with_optional_media!
     save!
   rescue ActiveRecord::RecordInvalid

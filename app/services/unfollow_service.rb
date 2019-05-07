@@ -36,16 +36,11 @@ class UnfollowService < BaseService
   end
 
   def create_notification(follow)
-    if follow.target_account.ostatus?
-      NotificationWorker.perform_async(build_xml(follow), follow.account_id, follow.target_account_id)
-    elsif follow.target_account.activitypub?
-      ActivityPub::DeliveryWorker.perform_async(build_json(follow), follow.account_id, follow.target_account.inbox_url)
-    end
+    ActivityPub::DeliveryWorker.perform_async(build_json(follow), follow.account_id, follow.target_account.inbox_url)
   end
 
   def create_reject_notification(follow)
     # Rejecting an already-existing follow request
-    return unless follow.account.activitypub?
     ActivityPub::DeliveryWorker.perform_async(build_reject_json(follow), follow.target_account_id, follow.account.inbox_url)
   end
 
@@ -63,9 +58,5 @@ class UnfollowService < BaseService
       serializer: ActivityPub::RejectFollowSerializer,
       adapter: ActivityPub::Adapter
     ).to_json
-  end
-
-  def build_xml(follow)
-    OStatus::AtomSerializer.render(OStatus::AtomSerializer.new.unfollow_salmon(follow))
   end
 end

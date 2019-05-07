@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class ActivityPub::NoteSerializer < ActivityPub::Serializer
-  context_extensions :atom_uri, :conversation, :sensitive,
+  context_extensions :conversation, :sensitive,
                      :hashtag, :emoji, :focal_point, :blurhash
 
   attributes :id, :type, :summary,
              :in_reply_to, :published, :url,
              :attributed_to, :to, :cc, :sensitive,
-             :atom_uri, :in_reply_to_atom_uri,
              :conversation, :source
 
   attribute :content
@@ -100,18 +99,6 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
 
   def virtual_tags
     object.active_mentions.to_a.sort_by(&:id) + object.tags.reject { |t| t.local || t.private } + object.emojis
-  end
-
-  def atom_uri
-    return unless object.local?
-
-    OStatus::TagManager.instance.uri_for(object)
-  end
-
-  def in_reply_to_atom_uri
-    return unless object.reply? && !object.thread.nil?
-
-    OStatus::TagManager.instance.uri_for(object.thread)
   end
 
   def conversation

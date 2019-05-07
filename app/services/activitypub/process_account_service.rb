@@ -19,7 +19,6 @@ class ActivityPub::ProcessAccountService < BaseService
       if lock.acquired?
         @account        = Account.find_remote(@username, @domain)
         @old_public_key = @account&.public_key
-        @old_protocol   = @account&.protocol
 
         create_account if @account.nil?
         update_account
@@ -32,7 +31,6 @@ class ActivityPub::ProcessAccountService < BaseService
 
     return if @account.nil?
 
-    after_protocol_change! if protocol_changed?
     after_key_change! if key_changed? && !@options[:signed_with_known_key]
     clear_tombstones! if key_changed?
 
@@ -50,7 +48,6 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def create_account
     @account = Account.new
-    @account.protocol     = :activitypub
     @account.username     = @username
     @account.domain       = @domain
     @account.private_key  = nil
@@ -60,7 +57,6 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def update_account
     @account.last_webfingered_at = Time.now.utc unless @options[:only_key]
-    @account.protocol            = :activitypub
 
     set_immediate_attributes!
     set_fetchable_attributes! unless @options[:only_keys]
@@ -92,10 +88,6 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.following_count   = following_total_items if following_total_items.present?
     @account.followers_count   = followers_total_items if followers_total_items.present?
     @account.moved_to_account  = @json['movedTo'].present? ? moved_account : nil
-  end
-
-  def after_protocol_change!
-    ActivityPub::PostUpgradeWorker.perform_async(@account.domain)
   end
 
   def after_key_change!
@@ -214,10 +206,6 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def clear_tombstones!
     Tombstone.where(account_id: @account.id).delete_all
-  end
-
-  def protocol_changed?
-    !@old_protocol.nil? && @old_protocol != @account.protocol
   end
 
   def lock_options

@@ -7,11 +7,6 @@ class FetchAtomService < BaseService
     return if url.blank?
 
     result = process(url)
-
-    # retry without ActivityPub
-    result ||= process(url) if @unsupported_activity
-
-    result
   rescue OpenSSL::SSL::SSLError => e
     Rails.logger.debug "SSL error: #{e}"
     nil
@@ -28,8 +23,7 @@ class FetchAtomService < BaseService
   end
 
   def perform_request(&block)
-    accept = 'text/html'
-    accept = 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams", application/atom+xml, ' + accept unless @unsupported_activity
+    accept = 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams", text/html'
 
     Request.new(:get, @url).add_headers('Accept' => accept).perform(&block)
   end
@@ -37,17 +31,14 @@ class FetchAtomService < BaseService
   def process_response(response, terminal = false)
     return nil if response.code != 200
 
-    if response.mime_type == 'application/atom+xml'
-      [@url, { prefetched_body: response.body_with_limit }, :ostatus]
-    elsif ['application/activity+json', 'application/ld+json'].include?(response.mime_type)
+    if ['application/activity+json', 'application/ld+json'].include?(response.mime_type)
       body = response.body_with_limit
       json = body_to_json(body)
       if supported_context?(json) && equals_or_includes_any?(json['type'], ActivityPub::FetchRemoteAccountService::SUPPORTED_TYPES) && json['inbox'].present?
-        [json['id'], { prefetched_body: body, id: true }, :activitypub]
+        [json['id'], { prefetched_body: body, id: true }]
       elsif supported_context?(json) && expected_type?(json)
-        [json['id'], { prefetched_body: body, id: true }, :activitypub]
+        [json['id'], { prefetched_body: body, id: true }]
       else
-        @unsupported_activity = true
         nil
       end
     elsif !terminal
@@ -69,21 +60,17 @@ class FetchAtomService < BaseService
     page = Nokogiri::HTML(response.body_with_limit)
 
     json_link = page.xpath('//link[@rel="alternate"]').find { |link| ['application/activity+json', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'].include?(link['type']) }
-    atom_link = page.xpath('//link[@rel="alternate"]').find { |link| link['type'] == 'application/atom+xml' }
 
-    result ||= process(json_link['href'], terminal: true) unless json_link.nil? || @unsupported_activity
-    result ||= process(atom_link['href'], terminal: true) unless atom_link.nil?
-
+    result = process(json_link['href'], terminal: true) unless json_link.nil?
+    result ||= nil
     result
   end
 
   def process_link_headers(link_header)
     json_link = link_header.find_link(%w(rel alternate), %w(type application/activity+json)) || link_header.find_link(%w(rel alternate), ['type', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'])
-    atom_link = link_header.find_link(%w(rel alternate), %w(type application/atom+xml))
 
-    result ||= process(json_link.href, terminal: true) unless json_link.nil? || @unsupported_activity
-    result ||= process(atom_link.href, terminal: true) unless atom_link.nil?
-
+    result = process(json_link.href, terminal: true) unless json_link.nil?
+    result ||= nil
     result
   end
 

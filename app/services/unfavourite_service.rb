@@ -12,12 +12,7 @@ class UnfavouriteService < BaseService
 
   def create_notification(favourite)
     status = favourite.status
-
-    if status.account.ostatus?
-      NotificationWorker.perform_async(build_xml(favourite), favourite.account_id, status.account_id)
-    elsif status.account.activitypub?
-      ActivityPub::DeliveryWorker.perform_async(build_json(favourite), favourite.account_id, status.account.inbox_url)
-    end
+    ActivityPub::DeliveryWorker.perform_async(build_json(favourite), favourite.account_id, status.account.inbox_url)
   end
 
   def build_json(favourite)
@@ -26,9 +21,5 @@ class UnfavouriteService < BaseService
       serializer: ActivityPub::UndoLikeSerializer,
       adapter: ActivityPub::Adapter
     ).as_json).sign!(favourite.account))
-  end
-
-  def build_xml(favourite)
-    OStatus::AtomSerializer.render(OStatus::AtomSerializer.new.unfavourite_salmon(favourite))
   end
 end

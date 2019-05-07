@@ -5,7 +5,6 @@
   - if @account.user&.setting_noindex
     %meta{ name: 'robots', content: 'noindex' }/
 
-  %link{ rel: 'alternate', type: 'application/atom+xml', href: account_stream_entry_url(@account, @stream_entry, format: 'atom') }/
   %link{ rel: 'alternate', type: 'application/json+oembed', href: api_oembed_url(url: account_stream_entry_url(@account, @stream_entry), format: 'json') }/
   %link{ rel: 'alternate', type: 'application/activity+json', href: ActivityPub::TagManager.instance.uri_for(@stream_entry.activity) }/
 

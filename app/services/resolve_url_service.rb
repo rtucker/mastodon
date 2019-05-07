@@ -19,9 +19,9 @@ class ResolveURLService < BaseService
 
   def process_url
     if equals_or_includes_any?(type, %w(Application Group Organization Person Service))
-      FetchRemoteAccountService.new.call(atom_url, body, protocol)
+      FetchRemoteAccountService.new.call(atom_url, body)
     elsif equals_or_includes_any?(type, %w(Note Article Image Video Page Question))
-      FetchRemoteStatusService.new.call(atom_url, body, protocol)
+      FetchRemoteStatusService.new.call(atom_url, body)
     end
   end
 
@@ -37,31 +37,12 @@ class ResolveURLService < BaseService
     fetched_atom_feed.second[:prefetched_body]
   end
 
-  def protocol
-    fetched_atom_feed.third
-  end
-
   def type
-    return json_data['type'] if protocol == :activitypub
-
-    case xml_root
-    when 'feed'
-      'Person'
-    when 'entry'
-      'Note'
-    end
+    return json_data['type'] unless json_data.nil?
   end
 
   def json_data
     @_json_data ||= body_to_json(body)
-  end
-
-  def xml_root
-    xml_data.root.name
-  end
-
-  def xml_data
-    @_xml_data ||= Nokogiri::XML(body, nil, 'utf-8')
   end
 
   def local_url?

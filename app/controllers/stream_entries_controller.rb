@@ -12,6 +12,7 @@ class StreamEntriesController < ApplicationController
   before_action :check_account_suspension
   before_action :set_cache_headers
 
+
   def show
     respond_to do |format|
       format.html do
@@ -23,15 +24,6 @@ class StreamEntriesController < ApplicationController
         end
 
         redirect_to short_account_status_url(params[:account_username], @stream_entry.activity) if @type == 'status'
-      end
-
-      format.atom do
-        unless @stream_entry.hidden?
-          skip_session!
-          expires_in 3.minutes, public: true
-        end
-
-        render xml: OStatus::AtomSerializer.render(OStatus::AtomSerializer.new.entry(@stream_entry, true))
       end
     end
   end
@@ -49,7 +41,6 @@ class StreamEntriesController < ApplicationController
   def set_link_headers
     response.headers['Link'] = LinkHeader.new(
       [
-        [account_stream_entry_url(@account, @stream_entry, format: 'atom'), [%w(rel alternate), %w(type application/atom+xml)]],
         [ActivityPub::TagManager.instance.uri_for(@stream_entry.activity), [%w(rel alternate), %w(type application/activity+json)]],
       ]
     )

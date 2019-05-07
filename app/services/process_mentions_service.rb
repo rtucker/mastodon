@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
 class ProcessMentionsService < BaseService
-  include StreamEntryRenderer
-
   # Scan status for mentions and fetch remote mentioned users, create
-  # local mention pointers, send Salmon notifications to mentioned
-  # remote users
+  # local mention pointers
   # @param [Status] status
   def call(status)
     return unless status.local? && !status.draft?
@@ -40,7 +37,7 @@ class ProcessMentionsService < BaseService
   private
 
   def mention_undeliverable?(mentioned_account)
-    mentioned_account.nil? || (!mentioned_account.local? && mentioned_account.ostatus? && @status.stream_entry.hidden?)
+    mentioned_account.nil?
   end
 
   def create_notification(mention)
@@ -48,15 +45,9 @@ class ProcessMentionsService < BaseService
 
     if mentioned_account.local?
       LocalNotificationWorker.perform_async(mentioned_account.id, mention.id, mention.class.name)
-    elsif mentioned_account.ostatus? && !@status.stream_entry.hidden? && !@status.local_only?
-      NotificationWorker.perform_async(ostatus_xml, @status.account_id, mentioned_account.id)
-    elsif mentioned_account.activitypub? && !@status.local_only?
+    elsif !@status.local_only?
       ActivityPub::DeliveryWorker.perform_async(activitypub_json, mention.status.account_id, mentioned_account.inbox_url)
     end
-  end
-
-  def ostatus_xml
-    @ostatus_xml ||= stream_entry_to_xml(@status.stream_entry)
   end
 
   def activitypub_json

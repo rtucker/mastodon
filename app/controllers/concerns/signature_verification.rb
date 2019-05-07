@@ -145,7 +145,7 @@ module SignatureVerification
   end
 
   def account_refresh_key(account)
-    return if account.local? || !account.activitypub?
+    return if account.local?
     ActivityPub::FetchRemoteAccountService.new.call(account.uri, only_key: true)
   end
 end

@@ -251,16 +251,6 @@ Rails.application.routes.draw do
   get '/admin', to: redirect('/admin/dashboard', status: 302)
 
   namespace :api do
-    # PubSubHubbub outgoing subscriptions
-    resources :subscriptions, only: [:show]
-    post '/subscriptions/:id', to: 'subscriptions#update'
-
-    # PubSubHubbub incoming subscriptions
-    post '/push', to: 'push#update', as: :push
-
-    # Salmon
-    post '/salmon/:id', to: 'salmon#update', as: :salmon
-
     # OEmbed
     get '/oembed', to: 'oembed#show', as: :oembed
 

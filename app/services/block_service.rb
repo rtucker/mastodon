@@ -18,11 +18,7 @@ class BlockService < BaseService
   private
 
   def create_notification(block)
-    if block.target_account.ostatus?
-      NotificationWorker.perform_async(build_xml(block), block.account_id, block.target_account_id)
-    elsif block.target_account.activitypub?
-      ActivityPub::DeliveryWorker.perform_async(build_json(block), block.account_id, block.target_account.inbox_url)
-    end
+    ActivityPub::DeliveryWorker.perform_async(build_json(block), block.account_id, block.target_account.inbox_url)
   end
 
   def build_json(block)
@@ -31,9 +27,5 @@ class BlockService < BaseService
       serializer: ActivityPub::BlockSerializer,
       adapter: ActivityPub::Adapter
     ).to_json
-  end
-
-  def build_xml(block)
-    OStatus::AtomSerializer.render(OStatus::AtomSerializer.new.block_salmon(block))
   end
 end

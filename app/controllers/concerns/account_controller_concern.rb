@@ -30,7 +30,6 @@ module AccountControllerConcern
     response.headers['Link'] = LinkHeader.new(
       [
         webfinger_account_link,
-        atom_account_url_link,
         actor_url_link,
       ]
     )
@@ -44,13 +43,6 @@ module AccountControllerConcern
     [
       webfinger_account_url,
       [%w(rel lrdd), %w(type application/xrd+xml)],
-    ]
-  end
-
-  def atom_account_url_link
-    [
-      account_url(@account, format: 'atom'),
-      [%w(rel alternate), %w(type application/atom+xml)],
     ]
   end
 

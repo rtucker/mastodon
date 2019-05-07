@@ -47,8 +47,6 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
 
   def find_existing_status
     status   = status_from_uri(object_uri)
-    status ||= Status.find_by(uri: @object['atomUri']) if @object['atomUri'].present?
-    status
   end
 
   def process_status_params

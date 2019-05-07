@@ -5,7 +5,6 @@ class ActivityPub::ActivitySerializer < ActivityPub::Serializer
 
   has_one :proper, key: :object, serializer: ActivityPub::NoteSerializer, if: :serialize_object?
   attribute :proper_uri, key: :object, unless: :serialize_object?
-  attribute :atom_uri, if: :announce?
 
   def id
     ActivityPub::TagManager.instance.activity_uri_for(object)
@@ -33,10 +32,6 @@ class ActivityPub::ActivitySerializer < ActivityPub::Serializer
 
   def proper_uri
     ActivityPub::TagManager.instance.uri_for(object.proper)
-  end
-
-  def atom_uri
-    OStatus::TagManager.instance.uri_for(object)
   end
 
   def announce?

@@ -38,63 +38,12 @@ RSpec.describe ResolveAccountService, type: :service do
     expect(subject.call('hacker2@redirected.com')).to be_nil
   end
 
-  context 'with an OStatus account' do
-    it 'returns an already existing remote account' do
-      old_account      = Fabricate(:account, username: 'gargron', domain: 'quitter.no')
-      returned_account = subject.call('gargron@quitter.no')
-
-      expect(old_account.id).to eq returned_account.id
-    end
-
-    it 'returns a new remote account' do
-      account = subject.call('gargron@quitter.no')
-
-      expect(account.username).to eq 'gargron'
-      expect(account.domain).to eq 'quitter.no'
-      expect(account.remote_url).to eq 'https://quitter.no/api/statuses/user_timeline/7477.atom'
-    end
-
-    it 'follows a legitimate account redirection' do
-      account = subject.call('gargron@redirected.com')
-
-      expect(account.username).to eq 'gargron'
-      expect(account.domain).to eq 'quitter.no'
-      expect(account.remote_url).to eq 'https://quitter.no/api/statuses/user_timeline/7477.atom'
-    end
-
-    it 'returns a new remote account' do
-      account = subject.call('foo@localdomain.com')
-
-      expect(account.username).to eq 'foo'
-      expect(account.domain).to eq 'localdomain.com'
-      expect(account.remote_url).to eq 'https://webdomain.com/users/foo.atom'
-    end
-  end
-
   context 'with an ActivityPub account' do
     before do
       stub_request(:get, "https://ap.example.com/.well-known/webfinger?resource=acct:foo@ap.example.com").to_return(request_fixture('activitypub-webfinger.txt'))
       stub_request(:get, "https://ap.example.com/users/foo").to_return(request_fixture('activitypub-actor.txt'))
       stub_request(:get, "https://ap.example.com/users/foo.atom").to_return(request_fixture('activitypub-feed.txt'))
       stub_request(:get, %r{https://ap.example.com/users/foo/\w+}).to_return(status: 404)
-    end
-
-    it 'fallback to OStatus if actor json could not be fetched' do
-      stub_request(:get, "https://ap.example.com/users/foo").to_return(status: 404)
-
-      account = subject.call('foo@ap.example.com')
-
-      expect(account.ostatus?).to eq true
-      expect(account.remote_url).to eq 'https://ap.example.com/users/foo.atom'
-    end
-
-    it 'fallback to OStatus if actor json did not have inbox_url' do
-      stub_request(:get, "https://ap.example.com/users/foo").to_return(request_fixture('activitypub-actor-noinbox.txt'))
-
-      account = subject.call('foo@ap.example.com')
-
-      expect(account.ostatus?).to eq true
-      expect(account.remote_url).to eq 'https://ap.example.com/users/foo.atom'
     end
 
     it 'returns new remote account' do

@@ -2,11 +2,14 @@
 
 class ProcessHashtagsService < BaseService
   def call(status, tags = [])
-    tags    = Extractor.extract_hashtags(status.text) if tags.blank? && status.local?
+    if status.local?
+      tags = Extractor.extract_hashtags(status.text) | (tags.nil? ? [] : tags)
+    end
     records = []
 
     tags.map { |str| str.mb_chars.downcase }.uniq(&:to_s).each do |name|
       name = name.gsub(/::+/, ':')
+      next if name.blank?
       component_indices = name.size.times.select {|i| name[i] == ':'}
       component_indices << name.size - 1
       component_indices.take(6).each_with_index do |i, nest|

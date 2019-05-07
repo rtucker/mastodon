@@ -138,7 +138,6 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.string "outbox_url", default: "", null: false
     t.string "shared_inbox_url", default: "", null: false
     t.string "followers_url", default: "", null: false
-    t.integer "protocol", default: 0, null: false
     t.boolean "memorial", default: false, null: false
     t.bigint "moved_to_account_id"
     t.string "featured_collection_url"

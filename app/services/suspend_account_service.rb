@@ -50,7 +50,7 @@ class SuspendAccountService < BaseService
   private
 
   def reject_follows!
-    return if @account.local? || !@account.activitypub?
+    return if @account.local?
 
     ActivityPub::DeliveryWorker.push_bulk(Follow.where(account: @account)) do |follow|
       [build_reject_json(follow), follow.target_account_id, follow.account.inbox_url]

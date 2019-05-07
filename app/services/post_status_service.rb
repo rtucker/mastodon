@@ -103,7 +103,6 @@ class PostStatusService < BaseService
     DistributionWorker.perform_async(@status.id)
 
     unless @status.local_only?
-      Pubsubhubbub::DistributionWorker.perform_async(@status.stream_entry.id)
       ActivityPub::DistributionWorker.perform_async(@status.id)
     end
 

@@ -54,24 +54,18 @@ RSpec.describe FetchAtomService, type: :service do
         WebMock.stub_request(:get, url).to_return(status: 200, body: body, headers: headers)
       end
 
-      context 'content type is application/atom+xml' do
-        let(:content_type) { 'application/atom+xml' }
-
-        it { is_expected.to eq [url, { :prefetched_body => "" }, :ostatus] }
-      end
-
       context 'content_type is activity+json' do
         let(:content_type) { 'application/activity+json; charset=utf-8' }
         let(:body) { json }
 
-        it { is_expected.to eq [1, { prefetched_body: body, id: true }, :activitypub] }
+        it { is_expected.to eq [1, { prefetched_body: body, id: true }] }
       end
 
       context 'content_type is ld+json with profile' do
         let(:content_type) { 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' }
         let(:body) { json }
 
-        it { is_expected.to eq [1, { prefetched_body: body, id: true }, :activitypub] }
+        it { is_expected.to eq [1, { prefetched_body: body, id: true }] }
       end
 
       before do
@@ -82,14 +76,14 @@ RSpec.describe FetchAtomService, type: :service do
       context 'has link header' do
         let(:headers) { { 'Link' => '<http://example.com/foo>; rel="alternate"; type="application/activity+json"', } }
 
-        it { is_expected.to eq [1, { prefetched_body: json, id: true }, :activitypub] }
+        it { is_expected.to eq [1, { prefetched_body: json, id: true }] }
       end
 
       context 'content type is text/html' do
         let(:content_type) { 'text/html' }
         let(:body) { '<html><head><link rel="alternate" href="http://example.com/foo" type="application/activity+json"/></head></html>' }
 
-        it { is_expected.to eq [1, { prefetched_body: json, id: true }, :activitypub] }
+        it { is_expected.to eq [1, { prefetched_body: json, id: true }] }
       end
     end
   end

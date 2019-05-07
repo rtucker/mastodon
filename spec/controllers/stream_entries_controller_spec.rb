@@ -21,7 +21,7 @@ RSpec.describe StreamEntriesController, type: :controller do
 
         get route, params: { account_username: alice.username, id: status.stream_entry.id }
 
-        expect(response.headers['Link'].to_s).to eq "<http://test.host/users/alice/updates/#{status.stream_entry.id}.atom>; rel=\"alternate\"; type=\"application/atom+xml\", <https://cb6e6126.ngrok.io/users/alice/statuses/#{status.id}>; rel=\"alternate\"; type=\"application/activity+json\""
+        expect(response.headers['Link'].to_s).to eq "<https://cb6e6126.ngrok.io/users/alice/statuses/#{status.id}>; rel=\"alternate\"; type=\"application/activity+json\""
       end
     end
 
@@ -72,12 +72,6 @@ RSpec.describe StreamEntriesController, type: :controller do
       get :show, params: { account_username: status.account.username, id: status.stream_entry.id }
 
       expect(response).to redirect_to(short_account_status_url(status.account, status))
-    end
-
-    it 'returns http success with Atom' do
-      status = Fabricate(:status)
-      get :show, params: { account_username: status.account.username, id: status.stream_entry.id }, format: 'atom'
-      expect(response).to have_http_status(200)
     end
   end
 
