@@ -176,7 +176,7 @@ class PostStatusService < BaseService
       spoiler_text: @options[:spoiler_text] || '',
       visibility: @visibility,
       sharekey: @sharekey,
-      language: language_from_option(@options[:language]) || @account.user&.setting_default_language&.presence || LanguageDetector.instance.detect(@text, @account),
+      language: language_from_option(@options[:language]) || @account.user&.setting_default_language&.presence || nil,
       application: @options[:application],
       content_type: @options[:content_type] || @account.user&.setting_default_content_type,
     }.compact

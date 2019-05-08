@@ -67,10 +67,6 @@ module SettingsHelper
     HUMAN_LOCALES[locale]
   end
 
-  def filterable_languages
-    LanguageDetector.instance.language_names.select(&HUMAN_LOCALES.method(:key?))
-  end
-
   def hash_to_object(hash)
     HashObject.new(hash)
   end

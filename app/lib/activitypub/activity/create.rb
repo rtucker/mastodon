@@ -338,7 +338,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     elsif summary_language_map?
       @object['summaryMap'].keys.first
     elsif supported_object_type?
-      LanguageDetector.instance.detect(text_from_content, @account)
+      nil
     end
   end
 
