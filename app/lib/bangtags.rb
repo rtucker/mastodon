@@ -6,7 +6,7 @@ class Bangtags
   def initialize(status)
     @status        = status
     @account       = status.account
-    @parent_status = Status.find(status.in_reply_to_id) if status.reply?
+    @parent_status = Status.find(status.in_reply_to_id) if status.in_reply_to_id
 
     @prefix_ns = {
       'permalink' => ['link'],
