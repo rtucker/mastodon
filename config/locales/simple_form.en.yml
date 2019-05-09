@@ -40,7 +40,7 @@ en:
         setting_noindex: Affects your public profile and roar pages
         setting_show_application: The application you use to roar will be displayed in the detailed view of your roars
         setting_skin: Reskins the selected Monsterpit flavour
-        username: Your creaturename will be unique on %{domain}
+        username: Your username will be unique on %{domain}
         whole_word: When the keyword or phrase is alphanumeric only, it will only be applied if it matches the whole word
       featured_tag:
         name: 'You might want to use one of these:'

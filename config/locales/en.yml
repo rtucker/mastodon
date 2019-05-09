@@ -67,7 +67,7 @@ en:
     posts_tab_heading: Roars
     reblogs_tab_heading: Repeats
     posts_with_replies: Roars & growls
-    reserved_username: The creaturename is reserved
+    reserved_username: The username is reserved
     roles:
       admin: Admin
       bot: Bot
@@ -97,7 +97,7 @@ en:
         label: Change email
         new_email: New email
         submit: Change email
-        title: Change email for %{creaturename}
+        title: Change email for %{username}
       confirm: Confirm
       confirmed: Confirmed
       confirming: Confirming
@@ -397,11 +397,11 @@ en:
         desc_html: Counts of locally roared roars, active creatures, and new registrations in weekly buckets
         title: Publish aggregate statistics about creature activity
       bootstrap_timeline_accounts:
-        desc_html: Separate multiple creaturenames by comma. Only local and unlocked accounts will work. Default when empty is all local admins.
+        desc_html: Separate multiple usernames by comma. Only local and unlocked accounts will work. Default when empty is all local admins.
         title: Default follows for new creatures
       contact_information:
         email: Business e-mail
-        username: Contact creaturename
+        username: Contact username
       custom_css:
         desc_html: Modify the look with CSS loaded on every page
         title: Custom CSS
@@ -585,7 +585,7 @@ en:
   deletes:
     bad_password_msg: Nice try, hackers! Incorrect password
     confirm_password: Enter your current password to verify your identity
-    description_html: This will <strong>permanently, irreversibly</strong> remove content from your account and deactivate it. Your creaturename will remain reserved to prevent future impersonations.
+    description_html: This will <strong>permanently, irreversibly</strong> remove content from your account and deactivate it. Your username will remain reserved to prevent future impersonations.
     proceed: Delete account
     success_msg: Your account was successfully deleted
     warning_html: Only deletion of content from this particular server is guaranteed. Content that has been widely shared is likely to leave traces. Offline servers and servers that have unsubscribed from your updates will not update their databases.
@@ -613,8 +613,8 @@ en:
       title: This page is not correct
     noscript_html: To use the Monsterpit web application, please enable JavaScript. Alternatively, try one of the <a href="%{apps_path}">native apps</a> for Monsterpit for your platform.
   existing_username_validator:
-    not_found: could not find a local creature with that creaturename
-    not_found_multiple: could not find %{creaturenames}
+    not_found: could not find a local creature with that username
+    not_found_multiple: could not find %{usernames}
   exports:
     archive_takeout:
       date: Date
@@ -674,14 +674,14 @@ en:
       failed: The cryptographic connection failed. Please try again from %{provider}.
       keybase:
         invalid_token: Keybase tokens are hashes of signatures and must be 66 hex characters
-        verification_failed: Keybase does not recognize this token as a signature of Keybase creature %{kb_creaturename}. Please retry from Keybase.
+        verification_failed: Keybase does not recognize this token as a signature of Keybase creature %{kb_username}. Please retry from Keybase.
       wrong_user: Cannot create a proof for %{proving} while logged in as %{current}. Log in as %{proving} and try again.
     explanation_html: Here you can cryptographically connect your other identities, such as a Keybase profile. This lets other monsters send you encrypted messages and trust content you send them.
-    i_am_html: I am %{creaturename} on %{service}.
+    i_am_html: I am %{username} on %{service}.
     identity: Identity
     inactive: Inactive
     publicize_checkbox: 'And roar this:'
-    publicize_toot: 'It is proven! I am %{creaturename} on %{service}: %{url}'
+    publicize_toot: 'It is proven! I am %{username} on %{service}: %{url}'
     status: Verification roar
     view_proof: View proof
   imports:
@@ -815,7 +815,7 @@ en:
     remove_selected_follows: Unfollow selected creatures
     status: Account status
   remote_follow:
-    acct: Enter your creaturename@domain you want to act from
+    acct: Enter your username@domain you want to act from
     missing_resource: Could not find the required redirect URL for your account
     no_account_html: Don't have an account? You can <a href='%{sign_up_path}' target='_blank'>sign up here</a>
     proceed: Proceed to follow
@@ -948,7 +948,7 @@ en:
       <h3 id="collect">What information do we collect?</h3>
 
       <ul>
-        <li><em>Basic account information</em>: If you register on this server, you may be asked to enter a creaturename, an e-mail address and a password. You may also enter additional profile information such as a display name and biography, and upload a profile picture and header image. The creaturename, display name, biography, profile picture and header image are always listed publicly.</li>
+        <li><em>Basic account information</em>: If you register on this server, you may be asked to enter a username, an e-mail address and a password. You may also enter additional profile information such as a display name and biography, and upload a profile picture and header image. The username, display name, biography, profile picture and header image are always listed publicly.</li>
         <li><em>Posts, following and other public information</em>: The list of monsters in your pack is listed publicly, the same is true for your packmates. When you submit a message, the date and time is stored as well as the application you submitted the message from. Messages may contain media attachments, such as pictures and videos. Public and unlisted roars are available publicly. When you feature a roar on your profile, that is also publicly available information. Your roars are delivered to your packmates, in some cases it means they are delivered to different servers and copies are stored there. When you delete roars, this is likewise delivered to your packmates. The action of reblogging or admiring another roar is always public.</li>
         <li><em>Direct and followers-only posts</em>: All roars are stored and processed on the server. Packmates-only roars are delivered to your packmates and creatures who are mentioned in them, and direct roars are delivered only to creatures mentioned in them. In some cases it means they are delivered to different servers and copies are stored there. We make a good faith effort to limit the access to those roars only to authorized monsters, but other servers may fail to do so. Therefore it's important to review servers your packmates belong to. You may toggle an option to approve and reject new packmates manually in the settings. <em>Please keep in mind that the operators of the server and any receiving server may view such messages</em>, and that recipients may screenshot, copy or otherwise re-share them. <em>Do not share any dangerous information over Monsterpit.</em></li>
         <li><em>IPs and other metadata</em>: When you log in, we record the IP address you log in from, as well as the name of your browser application. All the logged in sessions are available for your review and revocation in the settings. The latest IP address used is stored for up to 12 months. We also may retain server logs which include the IP address of every request to our server.</li>
