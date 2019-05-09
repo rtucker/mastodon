@@ -125,6 +125,13 @@ class Account < ApplicationRecord
            :always_local?,
            :default_local?,
            :no_blabber_blocks?,
+           :hide_replies_of_muted?,
+           :hide_replies_of_blocked?,
+           :hide_replies_of_blocker?,
+           :hide_mntions_of_muted?,
+           :hide_mntions_of_blocked?,
+           :hide_mntions_of_blocker?,
+           :hide_mntions_of_outside_scope?,
            to: :user,
            prefix: true,
            allow_nil: true
