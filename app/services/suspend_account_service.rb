@@ -23,7 +23,6 @@ class SuspendAccountService < BaseService
     scheduled_statuses
     status_pins
     stream_entries
-    subscriptions
   ).freeze
 
   ASSOCIATIONS_ON_DESTROY = %w(

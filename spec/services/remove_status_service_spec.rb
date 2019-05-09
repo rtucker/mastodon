@@ -4,7 +4,6 @@ RSpec.describe RemoveStatusService, type: :service do
   subject { RemoveStatusService.new }
 
   let!(:alice)  { Fabricate(:account) }
-  let!(:bob)    { Fabricate(:account, username: 'bob', domain: 'example.com', salmon_url: 'http://example.com/salmon') }
   let!(:jeff)   { Fabricate(:account) }
   let!(:hank)   { Fabricate(:account, username: 'hank', domain: 'example.com', inbox_url: 'http://example.com/inbox') }
   let!(:bill)   { Fabricate(:account, username: 'bill', domain: 'example2.com', inbox_url: 'http://example2.com/inbox') }
@@ -16,7 +15,7 @@ RSpec.describe RemoveStatusService, type: :service do
     jeff.follow!(alice)
     hank.follow!(alice)
 
-    @status = PostStatusService.new.call(alice, text: 'Hello @bob@example.com')
+    @status = PostStatusService.new.call(alice, text: 'Hello!')
     Fabricate(:status, account: bill, reblog: @status, uri: 'hoge')
     subject.call(@status)
   end

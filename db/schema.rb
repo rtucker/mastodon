@@ -113,8 +113,6 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.text "private_key"
     t.text "public_key", default: "", null: false
     t.string "remote_url", default: "", null: false
-    t.string "salmon_url", default: "", null: false
-    t.string "hub_url", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "note", default: "", null: false
@@ -130,7 +128,8 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.integer "header_file_size"
     t.datetime "header_updated_at"
     t.string "avatar_remote_url"
-    t.datetime "subscription_expires_at"
+    t.boolean "silenced", default: false, null: false
+    t.boolean "suspended", default: false, null: false
     t.boolean "locked", default: false, null: false
     t.string "header_remote_url", default: "", null: false
     t.datetime "last_webfingered_at"
@@ -675,19 +674,6 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.index ["activity_id", "activity_type"], name: "index_stream_entries_on_activity_id_and_activity_type"
   end
 
-  create_table "subscriptions", force: :cascade do |t|
-    t.string "callback_url", default: "", null: false
-    t.string "secret"
-    t.datetime "expires_at"
-    t.boolean "confirmed", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "last_successful_delivery_at"
-    t.string "domain"
-    t.bigint "account_id", null: false
-    t.index ["account_id", "callback_url"], name: "index_subscriptions_on_account_id_and_callback_url", unique: true
-  end
-
   create_table "tags", force: :cascade do |t|
     t.string "name", default: "", null: false
     t.datetime "created_at", null: false
@@ -853,7 +839,6 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
   add_foreign_key "statuses_tags", "statuses", on_delete: :cascade
   add_foreign_key "statuses_tags", "tags", name: "fk_3081861e21", on_delete: :cascade
   add_foreign_key "stream_entries", "accounts", name: "fk_5659b17554", on_delete: :cascade
-  add_foreign_key "subscriptions", "accounts", name: "fk_9847d1cbb5", on_delete: :cascade
   add_foreign_key "tombstones", "accounts", on_delete: :cascade
   add_foreign_key "user_invite_requests", "users", on_delete: :cascade
   add_foreign_key "users", "accounts", name: "fk_50500f500d", on_delete: :cascade
