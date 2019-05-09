@@ -6,7 +6,7 @@ RSpec.describe ProcessMentionsService, type: :service do
   let(:status)     { Fabricate(:status, account: account, text: "Hello @#{remote_user.acct}", visibility: visibility) }
 
   context 'ActivityPub' do
-    let(:remote_user) { Fabricate(:account, username: 'remote_user', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox') }
+    let(:remote_user) { Fabricate(:account, username: 'remote_user', domain: 'example.com', inbox_url: 'http://example.com/inbox') }
 
     subject { ProcessMentionsService.new }
 
@@ -25,7 +25,7 @@ RSpec.describe ProcessMentionsService, type: :service do
   end
 
   context 'Temporarily-unreachable ActivityPub user' do
-    let(:remote_user) { Fabricate(:account, username: 'remote_user', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox', last_webfingered_at: nil) }
+    let(:remote_user) { Fabricate(:account, username: 'remote_user', domain: 'example.com', inbox_url: 'http://example.com/inbox', last_webfingered_at: nil) }
 
     subject { ProcessMentionsService.new }
 

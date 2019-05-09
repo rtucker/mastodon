@@ -97,7 +97,7 @@ RSpec.describe FollowService, type: :service do
   end
 
   context 'remote ActivityPub account' do
-    let(:bob) { Fabricate(:user, account: Fabricate(:account, username: 'bob', domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox')).account }
+    let(:bob) { Fabricate(:user, account: Fabricate(:account, username: 'bob', domain: 'example.com', inbox_url: 'http://example.com/inbox')).account }
 
     before do
       stub_request(:post, "http://example.com/inbox").to_return(:status => 200, :body => "", :headers => {})

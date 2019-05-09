@@ -10,7 +10,7 @@ describe RemoteUnfollowsController do
 
     let(:current_user) { Fabricate(:user, account: current_account) }
     let(:current_account) { Fabricate(:account) }
-    let(:remote_account) { Fabricate(:user, email: 'bob@example.com', account: Fabricate(:account, username: 'bob', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox')).account }
+    let(:remote_account) { Fabricate(:user, email: 'bob@example.com', account: Fabricate(:account, username: 'bob', domain: 'example.com', inbox_url: 'http://example.com/inbox')).account }
     before do
       sign_in current_user
       current_account.follow!(remote_account)

@@ -19,8 +19,8 @@ RSpec.describe SuspendAccountService, type: :service do
     let!(:active_relationship) { Fabricate(:follow, account: account) }
     let!(:passive_relationship) { Fabricate(:follow, target_account: account) }
     let!(:subscription) { Fabricate(:subscription, account: account) }
-    let!(:remote_alice) { Fabricate(:account, inbox_url: 'https://alice.com/inbox', protocol: :activitypub) }
-    let!(:remote_bob) { Fabricate(:account, inbox_url: 'https://bob.com/inbox', protocol: :activitypub) }
+    let!(:remote_alice) { Fabricate(:account, inbox_url: 'https://alice.com/inbox') }
+    let!(:remote_bob) { Fabricate(:account, inbox_url: 'https://bob.com/inbox') }
 
     it 'deletes associated records' do
       is_expected.to change {
@@ -55,8 +55,8 @@ RSpec.describe SuspendAccountService, type: :service do
     end
 
     let!(:account) { Fabricate(:account) }
-    let!(:remote_alice) { Fabricate(:account, inbox_url: 'https://alice.com/inbox', protocol: :activitypub) }
-    let!(:remote_bob) { Fabricate(:account, inbox_url: 'https://bob.com/inbox', protocol: :activitypub) }
+    let!(:remote_alice) { Fabricate(:account, inbox_url: 'https://alice.com/inbox') }
+    let!(:remote_bob) { Fabricate(:account, inbox_url: 'https://bob.com/inbox') }
     let!(:status) { Fabricate(:status, account: remote_bob) }
     let!(:media_attachment) { Fabricate(:media_attachment, account: remote_bob) }
     let!(:notification) { Fabricate(:notification, account: remote_bob) }
@@ -77,7 +77,7 @@ RSpec.describe SuspendAccountService, type: :service do
           remote_bob.passive_relationships,
           remote_bob.subscriptions
         ].map(&:count)
-      }.from([1, 1, 1, 1, 1, 1, 1, 1]).to([0, 0, 0, 0, 0, 0, 0, 0])
+      }.from([1, 1, 0, 1, 1, 1, 1, 1]).to([0, 0, 0, 0, 0, 0, 0, 0])
     end
 
     it 'sends a reject follow to follwer inboxes' do

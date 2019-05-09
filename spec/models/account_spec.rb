@@ -379,10 +379,10 @@ RSpec.describe Account, type: :model do
       expect(results).to eq [match]
     end
 
-    it 'limits by 10 by default' do
-      11.times.each { Fabricate(:account, display_name: "Display Name") }
+    it 'limits by 15 by default' do
+      16.times.each { Fabricate(:account, display_name: "Display Name") }
       results = Account.search_for("display")
-      expect(results.size).to eq 10
+      expect(results.size).to eq 15
     end
 
     it 'accepts arbitrary limits' do
@@ -582,20 +582,20 @@ RSpec.describe Account, type: :model do
         expect(account).to model_have_error_on_field(:username)
       end
 
-      it 'is invalid if the username is longer then 30 characters' do
-        account = Fabricate.build(:account, username: Faker::Lorem.characters(31))
+      it 'is invalid if the username is longer then 66 characters' do
+        account = Fabricate.build(:account, username: Faker::Lorem.characters(67))
         account.valid?
         expect(account).to model_have_error_on_field(:username)
       end
 
-      it 'is invalid if the display name is longer than 30 characters' do
-        account = Fabricate.build(:account, display_name: Faker::Lorem.characters(31))
+      it 'is invalid if the display name is longer than 66 characters' do
+        account = Fabricate.build(:account, display_name: Faker::Lorem.characters(67))
         account.valid?
         expect(account).to model_have_error_on_field(:display_name)
       end
 
-      it 'is invalid if the note is longer than 500 characters' do
-        account = Fabricate.build(:account, note: Faker::Lorem.characters(501))
+      it 'is invalid if the note is longer than 6666 characters' do
+        account = Fabricate.build(:account, note: Faker::Lorem.characters(6667))
         account.valid?
         expect(account).to model_have_error_on_field(:note)
       end

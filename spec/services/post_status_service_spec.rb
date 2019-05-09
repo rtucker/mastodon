@@ -139,12 +139,11 @@ RSpec.describe PostStatusService, type: :service do
     status = subject.call(account, text: "test status update")
 
     expect(ProcessHashtagsService).to have_received(:new)
-    expect(hashtags_service).to have_received(:call).with(status)
+    expect(hashtags_service).to have_received(:call).with(status, nil)
   end
 
   it 'gets distributed' do
     allow(DistributionWorker).to receive(:perform_async)
-    allow(Pubsubhubbub::DistributionWorker).to receive(:perform_async)
     allow(ActivityPub::DistributionWorker).to receive(:perform_async)
 
     account = Fabricate(:account)
@@ -152,7 +151,6 @@ RSpec.describe PostStatusService, type: :service do
     status = subject.call(account, text: "test status update")
 
     expect(DistributionWorker).to have_received(:perform_async).with(status.id)
-    expect(Pubsubhubbub::DistributionWorker).to have_received(:perform_async).with(status.stream_entry.id)
     expect(ActivityPub::DistributionWorker).to have_received(:perform_async).with(status.id)
   end
 
@@ -191,7 +189,7 @@ RSpec.describe PostStatusService, type: :service do
     expect(media.reload.status).to eq nil
   end
 
-  it 'does not allow attaching more than 4 files' do
+  it 'does not allow attaching more than 6 files' do
     account = Fabricate(:account)
 
     expect do
@@ -199,6 +197,8 @@ RSpec.describe PostStatusService, type: :service do
         account,
         text: "test status update",
         media_ids: [
+          Fabricate(:media_attachment, account: account),
+          Fabricate(:media_attachment, account: account),
           Fabricate(:media_attachment, account: account),
           Fabricate(:media_attachment, account: account),
           Fabricate(:media_attachment, account: account),

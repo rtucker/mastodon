@@ -17,13 +17,6 @@ describe 'Link headers' do
       expect(link_header.attr_pairs.first).to eq %w(rel lrdd)
     end
 
-    it 'contains atom url in link header' do
-      link_header = link_header_with_type('application/atom+xml')
-
-      expect(link_header.href).to eq 'http://www.example.com/users/test.atom'
-      expect(link_header.attr_pairs.first).to eq %w(rel alternate)
-    end
-
     def link_header_with_type(type)
       response.headers['Link'].links.find do |link|
         link.attr_pairs.any? { |pair| pair == ['type', type] }

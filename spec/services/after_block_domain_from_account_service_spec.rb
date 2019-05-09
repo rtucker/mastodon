@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe AfterBlockDomainFromAccountService, type: :service do
-  let!(:wolf) { Fabricate(:account, username: 'wolf', domain: 'evil.org', inbox_url: 'https://evil.org/inbox', protocol: :activitypub) }
+  let!(:wolf) { Fabricate(:account, username: 'wolf', domain: 'evil.org', inbox_url: 'https://evil.org/inbox') }
   let!(:alice) { Fabricate(:account, username: 'alice') }
 
   subject { AfterBlockDomainFromAccountService.new }

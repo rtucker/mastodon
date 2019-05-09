@@ -33,7 +33,7 @@ RSpec.describe ReblogService, type: :service do
   end
 
   context 'ActivityPub' do
-    let(:bob)    { Fabricate(:account, username: 'bob', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox') }
+    let(:bob)    { Fabricate(:account, username: 'bob', domain: 'example.com', inbox_url: 'http://example.com/inbox') }
     let(:status) { Fabricate(:status, account: bob) }
 
     subject { ReblogService.new }

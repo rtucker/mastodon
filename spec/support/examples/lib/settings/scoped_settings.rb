@@ -3,12 +3,12 @@
 shared_examples 'ScopedSettings' do
   describe '[]' do
     it 'inherits default settings' do
-      expect(Setting.boost_modal).to eq false
+      expect(Setting.boost_modal).to eq true
       expect(Setting.interactions['must_be_follower']).to eq false
 
       settings = create!
 
-      expect(settings['boost_modal']).to eq false
+      expect(settings['boost_modal']).to eq true
       expect(settings['interactions']['must_be_follower']).to eq false
     end
   end
@@ -17,15 +17,15 @@ shared_examples 'ScopedSettings' do
     # expecting [] and []= works
 
     it 'returns records merged with default values except hashes' do
-      expect(Setting.boost_modal).to eq false
+      expect(Setting.boost_modal).to eq true
       expect(Setting.delete_modal).to eq true
 
       settings = create!
-      settings['boost_modal'] = true
+      settings['boost_modal'] = false
 
       records = settings.all_as_records
 
-      expect(records['boost_modal'].value).to eq true
+      expect(records['boost_modal'].value).to eq false
       expect(records['delete_modal'].value).to eq true
     end
   end
@@ -34,32 +34,32 @@ shared_examples 'ScopedSettings' do
     # expecting [] and []= works.
 
     it 'reads settings' do
-      expect(Setting.boost_modal).to eq false
+      expect(Setting.boost_modal).to eq true
       settings = create!
-      expect(settings.boost_modal).to eq false
+      expect(settings.boost_modal).to eq true
     end
 
     it 'updates settings' do
       settings = fabricate
-      settings.boost_modal = true
-      expect(settings['boost_modal']).to eq true
+      settings.boost_modal = false
+      expect(settings['boost_modal']).to eq false
     end
   end
 
   it 'can update settings with [] and can read with []=' do
     settings = fabricate
 
-    settings['boost_modal'] = true
+    settings['boost_modal'] = false
     settings['interactions'] = settings['interactions'].merge('must_be_follower' => true)
 
     Setting.save!
 
-    expect(settings['boost_modal']).to eq true
+    expect(settings['boost_modal']).to eq false
     expect(settings['interactions']['must_be_follower']).to eq true
 
     Rails.cache.clear
 
-    expect(settings['boost_modal']).to eq true
+    expect(settings['boost_modal']).to eq false
     expect(settings['interactions']['must_be_follower']).to eq true
   end
 

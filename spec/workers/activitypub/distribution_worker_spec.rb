@@ -4,7 +4,7 @@ describe ActivityPub::DistributionWorker do
   subject { described_class.new }
 
   let(:status)   { Fabricate(:status) }
-  let(:follower) { Fabricate(:account, protocol: :activitypub, inbox_url: 'http://example.com') }
+  let(:follower) { Fabricate(:account, inbox_url: 'http://example.com') }
 
   describe '#perform' do
     before do

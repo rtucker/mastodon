@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Create do
-  let(:sender) { Fabricate(:account, followers_url: 'http://example.com/followers', domain: 'example.com', uri: 'https://example.com/actor') }
+  let(:sender) { Fabricate(:account, followers_url: 'http://example.com/followers', domain: 'example.com', uri: 'https://example.com/actor', inbox_url: 'https://example.com/inbox') }
 
   let(:json) do
     {
@@ -18,6 +18,7 @@ RSpec.describe ActivityPub::Activity::Create do
 
     stub_request(:get, 'http://example.com/attachment.png').to_return(request_fixture('avatar.txt'))
     stub_request(:get, 'http://example.com/emoji.png').to_return(body: attachment_fixture('emojo.png'))
+    stub_request(:post, 'https://example.com/inbox')
   end
 
   describe '#perform' do

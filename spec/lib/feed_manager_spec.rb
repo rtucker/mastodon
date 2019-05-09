@@ -22,8 +22,12 @@ RSpec.describe FeedManager do
 
   describe '#filter?' do
     let(:alice) { Fabricate(:account, username: 'alice') }
-    let(:bob)   { Fabricate(:account, username: 'bob', domain: 'example.com') }
+    let(:bob)   { Fabricate(:account, username: 'bob', domain: 'example.com', inbox_url: 'https://example.com/inbox') }
     let(:jeff)  { Fabricate(:account, username: 'jeff') }
+
+    before do
+      stub_request(:post, bob.inbox_url)
+    end
 
     context 'for home feed' do
       it 'returns false for followee\'s status' do

@@ -31,7 +31,7 @@ RSpec.describe ActivityPub::Activity::Delete do
     describe '#perform' do
       subject { described_class.new(json, sender) }
       let!(:reblogger) { Fabricate(:account) }
-      let!(:follower)  { Fabricate(:account, username: 'follower', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox') }
+      let!(:follower)  { Fabricate(:account, username: 'follower', domain: 'example.com', inbox_url: 'http://example.com/inbox') }
       let!(:reblog)    { Fabricate(:status, account: reblogger, reblog: status) }
 
       before do

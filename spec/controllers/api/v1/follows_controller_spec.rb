@@ -35,14 +35,6 @@ RSpec.describe Api::V1::FollowsController, type: :controller do
       expect(user.account.following?(Account.find_by(username: 'gargron', domain: 'quitter.no'))).to be true
     end
 
-    it 'sends a salmon slap to the remote user' do
-      expect(a_request(:post, "https://quitter.no/main/salmon/user/7477")).to have_been_made
-    end
-
-    it 'subscribes to remote hub' do
-      expect(a_request(:post, "https://quitter.no/main/push/hub")).to have_been_made
-    end
-
     it 'returns http success if already following, too' do
       post :create, params: { uri: 'gargron@quitter.no' }
       expect(response).to have_http_status(200)

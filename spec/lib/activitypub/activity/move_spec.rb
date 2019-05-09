@@ -8,8 +8,8 @@ RSpec.describe ActivityPub::Activity::Move do
   before do
     follower.follow!(old_account)
 
-    old_account.update!(uri: 'https://example.org/alice', domain: 'example.org', protocol: :activitypub, inbox_url: 'https://example.org/inbox')
-    new_account.update!(uri: 'https://example.com/alice', domain: 'example.com', protocol: :activitypub, inbox_url: 'https://example.com/inbox', also_known_as: [old_account.uri])
+    old_account.update!(uri: 'https://example.org/alice', domain: 'example.org', inbox_url: 'https://example.org/inbox')
+    new_account.update!(uri: 'https://example.com/alice', domain: 'example.com', inbox_url: 'https://example.com/inbox', also_known_as: [old_account.uri])
 
     stub_request(:post, 'https://example.org/inbox').to_return(status: 200)
     stub_request(:post, 'https://example.com/inbox').to_return(status: 200)

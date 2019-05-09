@@ -1,4 +1,4 @@
 Account address,Show boosts
 bob,true
-eve@example.com,false
+foo@ap.example.com,false
 

@@ -19,7 +19,7 @@ RSpec.describe UnblockService, type: :service do
   end
 
   describe 'remote ActivityPub' do
-    let(:bob) { Fabricate(:user, email: 'bob@example.com', account: Fabricate(:account, username: 'bob', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox')).account }
+    let(:bob) { Fabricate(:user, email: 'bob@example.com', account: Fabricate(:account, username: 'bob', domain: 'example.com', inbox_url: 'http://example.com/inbox')).account }
 
     before do
       sender.block!(bob)

@@ -4,9 +4,10 @@ RSpec.describe RemoveStatusService, type: :service do
   subject { RemoveStatusService.new }
 
   let!(:alice)  { Fabricate(:account) }
+  let!(:bob)    { Fabricate(:account, username: 'bob', domain: 'example.com', salmon_url: 'http://example.com/salmon') }
   let!(:jeff)   { Fabricate(:account) }
-  let!(:hank)   { Fabricate(:account, username: 'hank', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox') }
-  let!(:bill)   { Fabricate(:account, username: 'bill', protocol: :activitypub, domain: 'example2.com', inbox_url: 'http://example2.com/inbox') }
+  let!(:hank)   { Fabricate(:account, username: 'hank', domain: 'example.com', inbox_url: 'http://example.com/inbox') }
+  let!(:bill)   { Fabricate(:account, username: 'bill', domain: 'example2.com', inbox_url: 'http://example2.com/inbox') }
 
   before do
     stub_request(:post, 'http://example.com/inbox').to_return(status: 200)
