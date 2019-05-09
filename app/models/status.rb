@@ -569,8 +569,6 @@ class Status < ApplicationRecord
   def set_locality
     if account.domain.nil? && !attribute_changed?(:local_only)
       self.local_only = marked_local_only?
-      self.local_only ||= account.user.setting_always_local
-      self.local_only ||= reply? && Status.where(id: in_reply_to_id, local_only: true).exists?
     end
   end
 

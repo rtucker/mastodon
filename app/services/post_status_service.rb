@@ -13,6 +13,7 @@ class PostStatusService < BaseService
   # @option [Tag] :tags Optional tags to include
   # @option [Boolean] :sensitive
   # @option [String] :visibility
+  # @option [Boolean] :local_only
   # @option [String] :sharekey
   # @option [String] :spoiler_text
   # @option [String] :language
@@ -28,6 +29,7 @@ class PostStatusService < BaseService
     @text        = @options[:text] || ''
     @in_reply_to = @options[:thread]
     @tags        = @options[:tags]
+    @local_only  = @options[:local_only]
 
     return idempotency_duplicate if idempotency_given? && idempotency_duplicate?
 
@@ -58,10 +60,12 @@ class PostStatusService < BaseService
     @visibility   = @options[:visibility] || @account.user&.setting_default_privacy
     @visibility   = :unlisted if @visibility == :public && @account.silenced?
 
-    if @in_reply_to.present?
+    if @in_reply_to.present? && @in_reply_to.visibility.present?
       v = %w(public unlisted private direct limited)
-      @visibility = @in_reply_to.visibility if v.index(@visibility) < v.index(@in_reply_to.visibility)
+      @visibility = @in_reply_to.visibility if @visibility.nil? || v.index(@visibility) < v.index(@in_reply_to.visibility)
     end
+
+    @local_only = true if @account.user_always_local? || @in_reply_to&.local_only
 
     @scheduled_at = @options[:scheduled_at]&.to_datetime
     @scheduled_at = nil if scheduled_in_the_past?
@@ -175,8 +179,9 @@ class PostStatusService < BaseService
       sensitive: (@options[:sensitive].nil? ? @account.user&.setting_default_sensitive : @options[:sensitive]) || @options[:spoiler_text].present?,
       spoiler_text: @options[:spoiler_text] || '',
       visibility: @visibility,
+      local_only: @local_only,
       sharekey: @sharekey,
-      language: language_from_option(@options[:language]) || @account.user&.setting_default_language&.presence || nil,
+      language: language_from_option(@options[:language]) || @account.user&.setting_default_language&.presence || 'en',
       application: @options[:application],
       content_type: @options[:content_type] || @account.user&.setting_default_content_type,
     }.compact
