@@ -13,7 +13,7 @@ module Mastodon
     end
 
     def patch
-      0
+      1
     end
 
     def pre
@@ -45,7 +45,7 @@ module Mastodon
     end
 
     def source_tag
-      ENV["SOURCE_TAG"]        
+      ENV.fetch('SOURCE_TAG') { nil }
     end
 
     def source_url
