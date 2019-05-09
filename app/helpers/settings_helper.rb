@@ -67,6 +67,10 @@ module SettingsHelper
     HUMAN_LOCALES[locale]
   end
 
+  def filterable_languages
+    HUMAN_LOCALES.keys
+  end
+
   def hash_to_object(hash)
     HashObject.new(hash)
   end
