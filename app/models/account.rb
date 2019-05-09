@@ -35,7 +35,6 @@
 #  outbox_url              :string           default(""), not null
 #  shared_inbox_url        :string           default(""), not null
 #  followers_url           :string           default(""), not null
-#  protocol                :integer          default("ostatus"), not null
 #  memorial                :boolean          default(FALSE), not null
 #  moved_to_account_id     :bigint(8)
 #  featured_collection_url :string
@@ -125,6 +124,9 @@ class Account < ApplicationRecord
            :locale,
            :hides_network?,
            :shows_application?,
+           :always_local?,
+           :default_local?,
+           :no_blabber_blocks?,
            to: :user,
            prefix: true,
            allow_nil: true
@@ -411,7 +413,7 @@ class Account < ApplicationRecord
     end
 
     def inboxes
-      urls = reorder(nil).where(protocol: :activitypub).pluck(Arel.sql("distinct coalesce(nullif(accounts.shared_inbox_url, ''), accounts.inbox_url)"))
+      urls = reorder(nil).remote.pluck(Arel.sql("distinct coalesce(nullif(accounts.shared_inbox_url, ''), accounts.inbox_url)"))
       DeliveryFailureTracker.filter(urls)
     end
 
@@ -498,6 +500,7 @@ class Account < ApplicationRecord
   end
 
   before_create :generate_keys
+  before_create :set_domain_from_inbox_url
   before_validation :prepare_contents, if: :local?
   before_validation :prepare_username, on: :create
   before_destroy :clean_feed_manager
@@ -511,6 +514,13 @@ class Account < ApplicationRecord
 
   def prepare_username
     username&.squish!
+  end
+
+  def set_domain_from_inbox_url
+    return if domain.present? || inbox_url.blank?
+    self.domain = Addressable::URI.parse(inbox_url).domain
+  rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
+    nil
   end
 
   def generate_keys
