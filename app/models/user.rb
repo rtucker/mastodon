@@ -225,88 +225,92 @@ class User < ApplicationRecord
     save!
   end
 
-  def setting_larger_menus
-    settings.larger_menus || false
+  def larger_menus?
+    @larger_menus ||= (settings.larger_menus || false)
   end
 
-  def setting_larger_buttons
-    settings.larger_buttons || false
+  def larger_buttons?
+    @larger_buttons ||= (settings.larger_buttons || false)
   end
 
-  def setting_larger_drawer
-    settings.larger_drawer || false
+  def larger_drawer?
+    @larger_drawer ||= (settings.larger_drawer || false)
   end
 
-  def setting_remove_filtered
-    settings.remove_filtered || false
+  def remove_filtered?
+    @remove_filtered ||= (settings.remove_filtered || false)
   end
 
-  def setting_hide_replies_muted
-    settings.hide_replies_muted || true
+  def hide_replies_muted?
+    @hide_replies ||= (settings.hide_replies_muted || true)
   end
 
-  def setting_hide_replies_blocked
-    settings.hide_replies_blocked || true
+  def hide_replies_of_blocked?
+    @hide_replies_of_blocked ||= (settings.hide_replies_blocked || true)
   end
 
-  def setting_hide_replies_blocker
-    settings.hide_replies_blocker || true
+  def hide_replies_of_blocker?
+    @hide_replies_of_blocker ||= (settings.hide_replies_blocker || true)
   end
 
-  def setting_hide_mntions_muted
-    settings.hide_mntions_muted || true
+  def hide_mentions_of_muted?
+    @hide_mentions_of_muted ||= (settings.hide_mntions_muted || true)
   end
 
-  def setting_hide_mntions_blocked
-    settings.hide_mntions_blocked || true
+  def hide_mentions_of_blocked?
+    @hide_mentions_of_blocked ||= (settings.hide_mntions_blocked || true)
   end
 
-  def setting_hide_mntions_blocker
-    settings.hide_mntions_blocker || true
+  def hide_mentions_of_blocker?
+    @hide_mentions_of_blocker ||= (settings.hide_mntions_blocker || true)
   end
 
-  def setting_hide_mntions_packm8
-    settings.hide_mntions_packm8 || true
+  def hide_mentions_outside_scope?
+    @hide_mentions_outside_scope ||= (settings.hide_mntions_packm8 || true)
   end
 
-  def setting_gently_kobolds
-    settings.gently_kobolds || false
+  def gently_kobolds?
+    @gently_kobolds ||= (settings.gently_kobolds || false)
   end
 
-  def setting_user_is_kobold
-    settings.user_is_kobold || false
+  def user_is_kobold?
+    @user_is_kobold ||= (settings.user_is_kobold || false)
   end
 
-  def setting_hide_mascot
-    settings.hide_mascot || false
+  def hide_mascot?
+    @hide_mascop ||= (settings.hide_mascot || false)
   end
 
-  def setting_hide_interactions
-    settings.hide_interactions || false
+  def hide_interactions?
+    @hide_interactions ||= (settings.hide_interactions || false)
+  end
+
+  def default_local?
+    @default_local ||= (settings.default_local || false)
+  end
+
+  def always_local?
+    @always_local ||= (settings.always_local || false)
+  end
+
+  def rawr_federated?
+    @rawr_federated ||= (settings.rawr_federated || false)
+  end
+
+  def disable_color?
+    @disable_color ||= (settings.disable_color || false)
+  end
+
+  def hide_stats?
+    @hide_stats ||= (settings.hide_stats || false)
+  end
+
+  def hide_captions?
+    @hide_captions ||= (settings.hide_captions || false)
   end
 
   def setting_default_privacy
     settings.default_privacy || 'public'
-  end
-
-  def setting_default_local
-    settings.default_local || false
-  end
-
-  def setting_always_local
-    settings.always_local || false
-  end
-
-  def setting_rawr_federated
-    settings.rawr_federated || false
-  end
-
-  def setting_hide_stats
-    settings.hide_stats || false
-  end
-
-  def setting_hide_captions
-    settings.hide_captions || false
   end
 
   def allows_digest_emails?
