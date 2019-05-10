@@ -53,8 +53,8 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.private_key      = nil
     @account.suspended_at     = domain_block.created_at if auto_suspend?
     @account.silenced_at      = domain_block.created_at if auto_silence?
-    @account.force_unlisted   = true if force_unlisted?
-    @account.force_sensitive  = true if force_sensitive?
+    @account.force_unlisted   = true if auto_force_unlisted?
+    @account.force_sensitive  = true if auto_force_sensitive?
   end
 
   def update_account
