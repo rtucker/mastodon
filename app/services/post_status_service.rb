@@ -58,7 +58,7 @@ class PostStatusService < BaseService
      @text = @media.find(&:video?) ? '📹' : '🖼' if @media.size > 0
     end
 
-    @visibility   = @options[:visibility] || @account.user&.setting_default_privacy
+    @visibility   = @options[:visibility] || @account.user_default_visibility
     @visibility   = :unlisted if @visibility.in?([nil, 'public']) && @account.silenced? || @account.force_unlisted
 
     if @in_reply_to.present? && @in_reply_to.visibility.present?
@@ -66,9 +66,9 @@ class PostStatusService < BaseService
       @visibility = @in_reply_to.visibility if @visibility.nil? || v.index(@visibility) < v.index(@in_reply_to.visibility)
     end
 
-    @local_only = true if @account.user_always_local? || @in_reply_to&.local_only
+    @local_only = true if @account.user_always_local_only? || @in_reply_to&.local_only
 
-    @sensitive = (@account.default_sensitive? || @options[:spoiler_text].present?) if @sensitive.nil?
+    @sensitive = (@account.user_defaults_to_sensitive? || @options[:spoiler_text].present?) if @sensitive.nil?
 
     @scheduled_at = @options[:scheduled_at]&.to_datetime
     @scheduled_at = nil if scheduled_in_the_past?
@@ -184,7 +184,7 @@ class PostStatusService < BaseService
       visibility: @visibility,
       local_only: @local_only,
       sharekey: @sharekey,
-      language: language_from_option(@options[:language]) || @account.user&.setting_default_language&.presence || 'en',
+      language: language_from_option(@options[:language]) || @account.default_language&.presence || 'en',
       application: @options[:application],
       content_type: @options[:content_type] || @account.user&.setting_default_content_type,
     }.compact

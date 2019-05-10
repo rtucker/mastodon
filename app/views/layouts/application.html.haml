@@ -37,7 +37,7 @@
     - if Setting.custom_css.present?
       = stylesheet_link_tag custom_css_path, media: 'all'
 
-		- if current_account&.user&.setting_disable_color
+    - if current_account.user_hides_color_formatting?
       :css
         .status__content p > span,
         .reply-indicator__content p > span,
@@ -46,20 +46,20 @@
         .account__header__fields p > span
         { color: inherit !important }
 
-    - if current_account&.user&.setting_hide_captions
+    - if current_account.user_hides_captions?
       :css
         div .media-caption,
         span .caption
         { display: none }
 
-    - if current_account&.user&.setting_larger_menus
+    - if current_account.user_wants_larger_menus?
       :css
         .dropdown-menu__item a
         { padding: 14px 14px !important; font-size: 14px !important }
         .dropdown--active .dropdown__content > ul > li > a
         { padding: 14px 0 !important; font-size: 14px !important }
 
-    - if current_account&.user&.setting_larger_buttons
+    - if current_account.user_wants_larger_buttons?
       :css
         .drawer { min-width: 350px !important }
         .status__action-bar .icon-button,
@@ -73,15 +73,15 @@
           margin-right: 24px;
         }
 
-    - if current_account&.user&.setting_larger_drawer
+    - if current_account.user_wants_larger_drawer?
       :css
         .drawer { min-width: 400px !important }
 
-    - if current_account&.user&.setting_remove_filtered
+    - if current_account.user_hides_filtered_gap?
       :css
         .status__wrapper--filtered { display: none !important; }
 
-    - if current_account&.user&.setting_hide_mascot
+    - if current_account.user_hides_mascot?
       :css
         .drawer__inner__mastodon>img { display: none !important }
 

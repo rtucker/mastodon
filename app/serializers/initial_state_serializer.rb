@@ -38,8 +38,8 @@ class InitialStateSerializer < ActiveModel::Serializer
 
     if object.current_account
       store[:me]              = object.current_account.id.to_s
-      store[:default_local]   = object.current_account.user.setting_default_local
-      store[:always_local]    = object.current_account.user.setting_always_local
+      store[:default_local]   = object.current_account.user_defaults_to_local_only?
+      store[:always_local]    = object.current_account.user_always_local_only?
       store[:unfollow_modal]  = object.current_account.user.setting_unfollow_modal
       store[:boost_modal]     = object.current_account.user.setting_boost_modal
       store[:favourite_modal] = object.current_account.user.setting_favourite_modal
@@ -60,8 +60,8 @@ class InitialStateSerializer < ActiveModel::Serializer
 
     if object.current_account
       store[:me]                = object.current_account.id.to_s
-      store[:default_privacy]   = object.current_account.user.setting_default_privacy
-      store[:default_sensitive] = object.current_account.user.setting_default_sensitive
+      store[:default_privacy]   = object.current_account.user_default_visibility
+      store[:default_sensitive] = object.current_account.user_defaults_to_sensitive?
     end
 
     store[:text] = object.text if object.text

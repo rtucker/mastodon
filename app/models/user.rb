@@ -225,92 +225,100 @@ class User < ApplicationRecord
     save!
   end
 
-  def larger_menus?
-    @larger_menus ||= (settings.larger_menus || false)
+  def wants_larger_menus?
+    @wants_larger_menus ||= (settings.larger_menus || false)
   end
 
-  def larger_buttons?
-    @larger_buttons ||= (settings.larger_buttons || false)
+  def wants_larger_buttons?
+    @wants_larger_buttons ||= (settings.larger_buttons || false)
   end
 
-  def larger_drawer?
-    @larger_drawer ||= (settings.larger_drawer || false)
+  def wants_larger_drawer?
+    @wants_larger_drawer ||= (settings.larger_drawer || false)
   end
 
-  def remove_filtered?
-    @remove_filtered ||= (settings.remove_filtered || false)
+  def hides_filtered_gap?
+    @hides_filtered_gap ||= (settings.remove_filtered || false)
   end
 
-  def hide_replies_muted?
-    @hide_replies ||= (settings.hide_replies_muted || true)
+  def hides_replies_of_muted?
+    @hides_replies_of_muted ||= (settings.hide_replies_muted || true)
   end
 
-  def hide_replies_of_blocked?
-    @hide_replies_of_blocked ||= (settings.hide_replies_blocked || true)
+  def hides_replies_of_blocked?
+    @hides_replies_of_blocked ||= (settings.hide_replies_blocked || true)
   end
 
-  def hide_replies_of_blocker?
-    @hide_replies_of_blocker ||= (settings.hide_replies_blocker || true)
+  def hides_replies_of_blocker?
+    @hides_replies_of_blocker ||= (settings.hide_replies_blocker || true)
   end
 
-  def hide_mentions_of_muted?
-    @hide_mentions_of_muted ||= (settings.hide_mntions_muted || true)
+  def hides_mentions_of_muted?
+    @hides_mentions_of_muted ||= (settings.hide_mntions_muted || true)
   end
 
-  def hide_mentions_of_blocked?
-    @hide_mentions_of_blocked ||= (settings.hide_mntions_blocked || true)
+  def hides_mentions_of_blocked?
+    @hides_mentions_of_blocked ||= (settings.hide_mntions_blocked || true)
   end
 
-  def hide_mentions_of_blocker?
-    @hide_mentions_of_blocker ||= (settings.hide_mntions_blocker || true)
+  def hides_mentions_of_blocker?
+    @hides_mentions_of_blocker ||= (settings.hide_mntions_blocker || true)
   end
 
-  def hide_mentions_outside_scope?
-    @hide_mentions_outside_scope ||= (settings.hide_mntions_packm8 || true)
+  def hides_mentions_outside_scope?
+    @hides_mentions_outside_scope ||= (settings.hide_mntions_packm8 || true)
   end
 
-  def gently_kobolds?
-    @gently_kobolds ||= (settings.gently_kobolds || false)
+  def gentlies_kobolds?
+    @gentlies_kobolds ||= (settings.gently_kobolds || false)
   end
 
-  def user_is_kobold?
-    @user_is_kobold ||= (settings.user_is_kobold || false)
+  def is_a_kobold?
+    @is_a_kobold ||= (settings.user_is_kobold || false)
   end
 
-  def hide_mascot?
-    @hide_mascop ||= (settings.hide_mascot || false)
+  def hides_mascot?
+    @hides_mascot ||= (settings.hide_mascot || false)
   end
 
-  def hide_interactions?
-    @hide_interactions ||= (settings.hide_interactions || false)
+  def hides_interactions?
+    @hides_interactions ||= (settings.hide_interactions || false)
   end
 
-  def default_local?
-    @default_local ||= (settings.default_local || false)
+  def defaults_to_local_only?
+    @defaults_to_local_only ||= (settings.default_local || false)
   end
 
-  def always_local?
-    @always_local ||= (settings.always_local || false)
+  def always_local_only?
+    @always_local_only ||= (settings.always_local || false)
   end
 
-  def rawr_federated?
-    @rawr_federated ||= (settings.rawr_federated || false)
+  def wants_raw_federated?
+    @wants_raw_federated ||= (settings.rawr_federated || false)
   end
 
-  def disable_color?
-    @disable_color ||= (settings.disable_color || false)
+  def hides_color_formatting?
+    @hides_color_formatting ||= (settings.disable_color || false)
   end
 
-  def hide_stats?
-    @hide_stats ||= (settings.hide_stats || false)
+  def hides_stats?
+    @hides_stats ||= (settings.hide_stats || false)
   end
 
-  def hide_captions?
-    @hide_captions ||= (settings.hide_captions || false)
+  def hides_captions?
+    @hides_captions ||= (settings.hide_captions || false)
   end
 
-  def default_sensitive?
-    @default_sensitive ||= settings.default_sensitive
+  def defaults_to_sensitive?
+    @defaults_to_sensitive ||= settings.default_sensitive
+  end
+
+  def default_visibility
+    @default_visibility ||= setting_default_privacy
+  end
+
+  def default_language
+    @_default_language ||= (setting.default_language || 'en')
   end
 
   def setting_default_privacy

@@ -39,8 +39,8 @@ module StreamEntriesHelper
       roles = []
       roles << content_tag(:div, t('accounts.roles.bot'), class: 'account-role bot') if account.bot?
       roles << content_tag(:div, t('accounts.roles.adults_only'), class: 'account-role adults-only') if account.adults_only?
-      roles << content_tag(:div, t('accounts.roles.gentlies_kobolds'), class: 'account-role gentlies') if account&.user&.setting_gently_kobolds
-      roles << content_tag(:div, t('accounts.roles.kobold'), class: 'account-role kobold') if account&.user&.setting_user_is_kobold
+      roles << content_tag(:div, t('accounts.roles.gentlies_kobolds'), class: 'account-role gentlies') if account.user_gentlies_kobolds?
+      roles << content_tag(:div, t('accounts.roles.kobold'), class: 'account-role kobold') if account.user_is_kobold?
 
       if (Setting.show_staff_badge && account.user_staff?) || all
         if all && !account.user_staff?
@@ -71,7 +71,7 @@ module StreamEntriesHelper
   end
 
   def hide_stats?(account)
-    Setting.hide_stats || account.user&.setting_hide_stats
+    Setting.hide_stats || account.user_hides_stats?
   end
 
   def account_description(account)

@@ -65,13 +65,13 @@
       ·
       %span.detailed-status__link<
         = fa_icon('lock')
-    - elsif user_signed_in? && !@account.user&.setting_hide_stats
+    - elsif user_signed_in? && !@account.user_hides_stats?
       ·
       = link_to remote_interaction_path(status, type: :reblog), class: 'modal-button detailed-status__link', title: number_to_human(status.reblogs_count, strip_insignificant_zeros: true) do
         = fa_icon('repeat')
         = " "
 
-    - if user_signed_in? && !@account.user&.setting_hide_stats
+    - if user_signed_in? && !@account.user_hides_stats?
       ·
       = link_to remote_interaction_path(status, type: :favourite), class: 'modal-button detailed-status__link', title: number_to_human(status.favourites_count, strip_insignificant_zeros: true) do
         = fa_icon('star')
