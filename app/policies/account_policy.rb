@@ -29,6 +29,22 @@ class AccountPolicy < ApplicationPolicy
     staff?
   end
 
+  def force_unlisted?
+    staff?
+  end
+
+  def allow_public?
+    staff?
+  end
+
+  def force_sensitive?
+    staff?
+  end
+
+  def allow_nonsensitive?
+    staff?
+  end
+
   def redownload?
     admin?
   end

@@ -53,7 +53,7 @@ module Admin
     end
 
     def resource_params
-      params.require(:domain_block).permit(:domain, :severity, :reject_media, :reject_reports)
+      params.require(:domain_block).permit(:domain, :severity, :force_sensitive, :reject_media, :reject_reports)
     end
   end
 end

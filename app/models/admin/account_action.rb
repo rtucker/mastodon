@@ -8,6 +8,8 @@ class Admin::AccountAction
   TYPES = %w(
     none
     disable
+    force_sensitive
+    force_unlisted
     silence
     suspend
   ).freeze
@@ -56,6 +58,10 @@ class Admin::AccountAction
     case type
     when 'disable'
       handle_disable!
+    when 'force_sensitive'
+      handle_force_sensitive!
+    when 'force_unlisted'
+      handle_force_unlisted!
     when 'silence'
       handle_silence!
     when 'suspend'
@@ -95,6 +101,18 @@ class Admin::AccountAction
     authorize(target_account.user, :disable?)
     log_action(:disable, target_account.user)
     target_account.user&.disable!
+  end
+
+  def handle_force_sensitive!
+    authorize(target_account, :force_sensitive?)
+    log_action(:force_sensitive, target_account.user)
+    target_account.force_sensitive!
+  end
+
+  def handle_force_unlisted!
+    authorize(target_account, :force_unlisted?)
+    log_action(:force_unlisted, target_account.user)
+    target_account.force_unlisted!
   end
 
   def handle_silence!

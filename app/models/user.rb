@@ -309,6 +309,10 @@ class User < ApplicationRecord
     @hide_captions ||= (settings.hide_captions || false)
   end
 
+  def default_sensitive?
+    @default_sensitive ||= settings.default_sensitive
+  end
+
   def setting_default_privacy
     settings.default_privacy || 'public'
   end

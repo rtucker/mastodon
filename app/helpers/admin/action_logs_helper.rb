@@ -19,7 +19,7 @@ module Admin::ActionLogsHelper
     elsif log.target_type == 'User' && [:change_email].include?(log.action)
       log.recorded_changes.slice('email', 'unconfirmed_email')
     elsif log.target_type == 'DomainBlock'
-      log.recorded_changes.slice('severity', 'reject_media')
+      log.recorded_changes.slice('severity', 'reject_media', 'force_sensitive')
     elsif log.target_type == 'Status' && log.action == :update
       log.recorded_changes.slice('sensitive')
     end
@@ -55,13 +55,13 @@ module Admin::ActionLogsHelper
 
   def class_for_log_icon(log)
     case log.action
-    when :enable, :unsuspend, :unsilence, :confirm, :promote, :resolve
+    when :enable, :allow_public, :allow_nonsensitive, :unsuspend, :unsilence, :confirm, :promote, :resolve
       'positive'
     when :create
       opposite_verbs?(log) ? 'negative' : 'positive'
     when :update, :reset_password, :disable_2fa, :memorialize, :change_email
       'neutral'
-    when :demote, :silence, :disable, :suspend, :remove_avatar, :remove_header, :reopen
+    when :demote, :force_sensitive, :force_unlisted, :silence, :disable, :suspend, :remove_avatar, :remove_header, :reopen
       'negative'
     when :destroy
       opposite_verbs?(log) ? 'positive' : 'negative'

@@ -34,6 +34,9 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     process_tags
     process_audience
 
+    @params[:visibility] = :unlisted if @params[:visibility] == :public && @account.force_unlisted?
+    @params[:sensitive] = true if @account.force_sensitive?
+
     ApplicationRecord.transaction do
       @status = Status.create!(@params)
       attach_tags(@status)

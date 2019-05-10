@@ -189,7 +189,8 @@ class Header extends ImmutablePureComponent {
     const content          = { __html: account.get('note_emojified') };
     const displayNameHtml = { __html: account.get('display_name_html') };
     const fields          = account.get('fields');
-    const badge           = account.get('bot') ? (<div className='account-role bot'><FormattedMessage id='account.badges.bot' defaultMessage='Bot' /></div>) : null;
+    const badge_bot       = account.get('bot') ? (<div className='account-role bot'><FormattedMessage id='account.badges.bot' defaultMessage='Bot' /></div>) : null;
+    const badge_ao        = account.get('adults_only') ? (<div className='account-role adults-only'><FormattedMessage id='account.badges.adults_only' defaultMessage="🔞 Adult content"  /></div>) : null;
     const acct            = account.get('acct').indexOf('@') === -1 && domain ? `${account.get('acct')}@${domain}` : account.get('acct');
 
     return (
@@ -219,7 +220,7 @@ class Header extends ImmutablePureComponent {
 
           <div className='account__header__tabs__name'>
             <h1>
-              <span dangerouslySetInnerHTML={displayNameHtml} /> {badge}
+              <span dangerouslySetInnerHTML={displayNameHtml} /> {badge_ao}{badge_bot}
               <small>@{acct} {lockedIcon}</small>
             </h1>
           </div>
@@ -243,7 +244,7 @@ class Header extends ImmutablePureComponent {
                   {fields.map((pair, i) => (
                     <dl key={i}>
                       <dt dangerouslySetInnerHTML={{ __html: pair.get('name_emojified') }} title={pair.get('name')} />
- 
+
                       <dd className={pair.get('verified_at') && 'verified'} title={pair.get('value_plain')}>
                         {pair.get('verified_at') && <span title={intl.formatMessage(messages.linkVerifiedOn, { date: intl.formatDate(pair.get('verified_at'), dateFormatOptions) })}><Icon id='check' className='verified__mark' /></span>} <span dangerouslySetInnerHTML={{ __html: pair.get('value_emojified') }} />
                       </dd>

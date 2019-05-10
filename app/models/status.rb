@@ -40,8 +40,6 @@ class Status < ApplicationRecord
 
   # match both with and without U+FE0F (the emoji variation selector)
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
-  FORCE_SENSITIVE = ENV.fetch('FORCE_SENSITIVE', '').chomp.split(/\.?\s+/).freeze
-  FORCE_UNLISTED = ENV.fetch('FORCE_UNLISTED', '').chomp.split(/\.?\s+/).freeze
 
   # If `override_timestamps` is set at creation time, Snowflake ID creation
   # will be based on current time instead of `created_at`
@@ -561,9 +559,6 @@ class Status < ApplicationRecord
   def set_visibility
     self.visibility = reblog.visibility if reblog? && visibility.nil?
     self.visibility = (account.locked? ? :private : :public) if visibility.nil?
-    self.visibility = :unlisted if visibility == :public && account.domain.in?(FORCE_UNLISTED)
-    self.sensitive  = true if account.domain.in?(FORCE_SENSITIVE)
-    self.sensitive  = false if sensitive.nil?
   end
 
   def set_locality

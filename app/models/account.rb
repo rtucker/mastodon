@@ -48,6 +48,9 @@
 #  vars                    :jsonb            not null
 #  replies                 :boolean          default(TRUE), not null
 #  unlisted                :boolean          default(FALSE), not null
+#  force_unlisted          :boolean          default(FALSE), not null
+#  force_sensitive         :boolean          default(FALSE), not null
+#  adults_only             :boolean          default(FALSE), not null
 #
 
 class Account < ApplicationRecord
@@ -120,6 +123,7 @@ class Account < ApplicationRecord
            :moderator?,
            :staff?,
            :locale,
+           :default_sensitive?,
            :hides_network?,
            :shows_application?,
            :always_local?,
@@ -183,6 +187,28 @@ class Account < ApplicationRecord
   def refresh!
     return if local?
     ResolveAccountService.new.call(acct)
+  end
+
+  def force_unlisted!
+    transaction do
+      update!(force_unlisted: true)
+      Status.where(account_id: id, visibility: :public).in_batches.update_all(visibility: :unlisted)
+    end
+  end
+
+  def force_sensitive!
+    transaction do
+      update!(force_sensitive: true)
+      Status.where(account_id: id, sensitive: false).in_batches.update_all(sensitive: true)
+    end
+  end
+
+  def allow_public!
+    update!(force_unlisted: false)
+  end
+
+  def allow_nonsensitive!
+    update!(force_sensitive: false)
   end
 
   def silenced?

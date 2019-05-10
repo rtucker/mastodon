@@ -74,6 +74,7 @@ en:
       moderator: Mod
       kobold: Gently the kobold
       gentlies_kobolds: Gentlies kobolds
+      adults_only: 🔞 Adult content
     unavailable: Profile unavailable
     unfollow: Unfollow
   admin:
@@ -134,6 +135,8 @@ en:
         active: Active
         all: All
         pending: Pending
+        force_sensitive: Sensitive
+        force_unlisted: Unlisted
         silenced: Silenced
         suspended: Suspended
         title: Moderation
@@ -175,6 +178,8 @@ en:
       show:
         created_reports: Made reports
         targeted_reports: Reported by others
+      force_unlisted: Force unlisted
+      force_sensitive: Force sensitive
       silence: Silence
       silenced: Silenced
       statuses: Statuses
@@ -182,6 +187,8 @@ en:
       suspended: Suspended
       title: Accounts
       unconfirmed_email: Unconfirmed email
+      allow_nonsensitive: Allow non-sensitive
+      allow_public: Allow public
       undo_silenced: Undo silence
       undo_suspension: Undo suspension
       unsubscribe: Unsubscribe
@@ -213,9 +220,14 @@ en:
         reopen_report: "%{name} reopened report %{target}"
         reset_password_user: "%{name} reset password of creature %{target}"
         resolve_report: "%{name} resolved report %{target}"
+        force_sensitive_user: "%{name} forced %{target}'s media to be marked sensitive"
+        force_sensitive_account: "%{name} forced %{target}'s media to be marked sensitive"
+        force_unlisted_account: "%{name} forced %{target}'s roars to be marked unlisted"
         silence_account: "%{name} silenced %{target}'s account"
         suspend_account: "%{name} suspended %{target}'s account"
         unassigned_report: "%{name} unassigned report %{target}"
+        allow_nonsensitive_account: "%{name} allowed non-sensitive media from %{target}'s account"
+        allow_public_account: "%{name} allowed public roars from %{target}'s account"
         unsilence_account: "%{name} unsilenced %{target}'s account"
         unsuspend_account: "%{name} unsuspended %{target}'s account"
         update_custom_emoji: "%{name} updated emoji %{target}"
@@ -281,11 +293,14 @@ en:
         create: Create block
         hint: The domain block will not prevent creation of account entries in the database, but will retroactively and automatically apply specific moderation methods on those accounts.
         severity:
-          desc_html: "<strong>Silence</strong> will make the account's roars invisible to anyone who isn't following them. <strong>Suspend</strong> will remove all of the account's content, media, and profile data. Use <strong>None</strong> if you just want to reject media files."
+          desc_html: "<strong>Force Unlisted</strong> will force the account's roars to a maximum of unlisted visibility. <strong>Silence</strong> will make the account's roars invisible to anyone who isn't following them as well as disable notification. <strong>Suspend</strong> will remove all of the account's content, media, and profile data. Use <strong>None</strong> if you just want to reject media files."
           noop: None
+          force_unlisted: Force unlisted
           silence: Silence
           suspend: Suspend
         title: New domain block
+      force_sensitive: Mark media sensitive
+      force_sensitive_hint: Forces all media from this domain to be marked sensitive.
       reject_media: Reject media files
       reject_media_hint: Removes locally stored media files and refuses to download any in the future. Irrelevant for suspensions
       reject_reports: Reject reports
@@ -293,15 +308,17 @@ en:
       rejecting_media: rejecting media files
       rejecting_reports: rejecting reports
       severity:
+        force_unlisted: force unlisted
         silence: silenced
         suspend: suspended
       show:
         affected_accounts:
-          one: One account in the database affected
-          other: "%{count} accounts in the database affected"
+          one: One account affected
+          other: "%{count} accounts affected"
         retroactive:
           silence: Unsilence existing affected accounts from this domain
           suspend: Unsuspend existing affected accounts from this domain
+          force_unlisted: Allow public roars on all existing accounts from this domain
         title: Undo domain block for %{domain}
         undo: Undo
       undo: Undo domain block
@@ -1057,18 +1074,24 @@ en:
     warning:
       explanation:
         disable: While your account is frozen, your account data remains intact, but you cannot perform any actions until it is unlocked.
+        force_sensitive: Your account's media has been forced to sensitive visibility until this limit is removed by a moderator.
+        force_unlisted: Your account's roars have been forced to unlisted visibility until this limit is removed by a moderator.
         silence: While your account is limited, only monsters who are already following you will see your roars on this server, and you may be excluded from various public listings. However, others may still manually join your pack.
-        suspend: Your account has been suspended, and all of your roars and your uploaded media files have been irreversibly removed from this server, and servers where you had packmates.
+        suspend: Your account has been suspended. All of your roars and your uploaded media files have been irreversibly removed from this server, and servers where you had packmates.
       review_server_policies: Review server policies
       subject:
-        disable: Your account %{acct} has been frozen
-        none: Warning for %{acct}
-        silence: Your account %{acct} has been limited
-        suspend: Your account %{acct} has been suspended
+        disable: "%{acct}, you account has been frozen."
+        none: "%{acct}, you've been given a moderation warning."
+        force_sensitive: "%{acct}, your account's media visibility has been limited."
+        force_unlisted: "%{acct}, your account's roar visibility has been limited."
+        silence: "%{acct}, your account has been silenced."
+        suspend: "%{acct}, your account has been suspended."
       title:
         disable: Account frozen
         none: Warning
-        silence: Account limited
+        force_sensitive: Media visibility limited
+        force_unlisted: Roar visibility limited
+        silence: Account silenced
         suspend: Account suspended
     welcome:
       edit_profile_action: Setup profile

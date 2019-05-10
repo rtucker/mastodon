@@ -30,6 +30,7 @@ class PostStatusService < BaseService
     @in_reply_to = @options[:thread]
     @tags        = @options[:tags]
     @local_only  = @options[:local_only]
+    @sensitive   = (@account.force_sensitive? ? true : @options[:sensitive])
 
     return idempotency_duplicate if idempotency_given? && idempotency_duplicate?
 
@@ -58,7 +59,7 @@ class PostStatusService < BaseService
     end
 
     @visibility   = @options[:visibility] || @account.user&.setting_default_privacy
-    @visibility   = :unlisted if @visibility == :public && @account.silenced?
+    @visibility   = :unlisted if @visibility.in?([nil, 'public']) && @account.silenced? || @account.force_unlisted
 
     if @in_reply_to.present? && @in_reply_to.visibility.present?
       v = %w(public unlisted private direct limited)
@@ -66,6 +67,8 @@ class PostStatusService < BaseService
     end
 
     @local_only = true if @account.user_always_local? || @in_reply_to&.local_only
+
+    @sensitive = (@account.default_sensitive? || @options[:spoiler_text].present?) if @sensitive.nil?
 
     @scheduled_at = @options[:scheduled_at]&.to_datetime
     @scheduled_at = nil if scheduled_in_the_past?
@@ -176,7 +179,7 @@ class PostStatusService < BaseService
       media_attachments: @media || [],
       thread: @in_reply_to,
       poll_attributes: poll_attributes,
-      sensitive: (@options[:sensitive].nil? ? @account.user&.setting_default_sensitive : @options[:sensitive]) || @options[:spoiler_text].present?,
+      sensitive: @sensitive,
       spoiler_text: @options[:spoiler_text] || '',
       visibility: @visibility,
       local_only: @local_only,

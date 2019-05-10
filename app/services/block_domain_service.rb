@@ -12,8 +12,11 @@ class BlockDomainService < BaseService
 
   def process_domain_block!
     clear_media! if domain_block.reject_media?
+    force_accounts_sensitive! if domain_block.force_sensitive?
 
-    if domain_block.silence?
+    if domain_block.force_unlisted?
+      force_accounts_unlisted!
+    elsif domain_block.silence?
       silence_accounts!
     elsif domain_block.suspend?
       suspend_accounts!
@@ -26,6 +29,24 @@ class BlockDomainService < BaseService
     # longer point to a local file, we need to clear the cache to make those
     # changes appear in the API and UI
     @affected_status_ids.each { |id| Rails.cache.delete_matched("statuses/#{id}-*") }
+  end
+
+  def force_accounts_sensitive!
+    ApplicationRecord.transaction do
+      blocked_domain_accounts.in_batches.update_all(force_sensitive: true)
+      blocked_domain_accounts.reorder(nil).find_each do |account|
+        account.statuses.where(sensitive: false).in_batches.update_all(sensitive: true)
+      end
+    end
+  end
+
+  def force_accounts_unlisted!
+    ApplicationRecord.transaction do
+      blocked_domain_accounts.in_batches.update_all(force_unlisted: true)
+      blocked_domain_accounts.reorder(nil).find_each do |account|
+        account.statuses.with_public_visibility.in_batches.update_all(visibility: :unlisted)
+      end
+    end
   end
 
   def silence_accounts!
@@ -44,7 +65,6 @@ class BlockDomainService < BaseService
 
   def suspend_accounts!
     blocked_domain_accounts.without_suspended.reorder(nil).find_each do |account|
-      UnsubscribeService.new.call(account) if account.subscribed?
       SuspendAccountService.new.call(account, suspended_at: @domain_block.created_at)
     end
   end

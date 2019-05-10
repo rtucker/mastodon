@@ -151,6 +151,9 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.jsonb "vars", default: {}, null: false
     t.boolean "replies", default: true, null: false
     t.boolean "unlisted", default: false, null: false
+    t.boolean "force_unlisted", default: false, null: false
+    t.boolean "force_sensitive", default: false, null: false
+    t.boolean "adults_only", default: false, null: false
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
     t.index "lower((username)::text), lower((domain)::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
     t.index ["moved_to_account_id"], name: "index_accounts_on_moved_to_account_id"
@@ -258,6 +261,7 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.integer "severity", default: 0
     t.boolean "reject_media", default: false, null: false
     t.boolean "reject_reports", default: false, null: false
+    t.boolean "force_sensitive", default: false, null: false
     t.index ["domain"], name: "index_domain_blocks_on_domain", unique: true
   end
 
@@ -651,6 +655,7 @@ ActiveRecord::Schema.define(version: 2019_05_19_130537) do
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20180106", order: { id: :desc }
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id"
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id"
+    t.index ["network"], name: "index_statuses_on_network", where: "network"
     t.index ["reblog_of_id", "account_id"], name: "index_statuses_on_reblog_of_id_and_account_id"
     t.index ["tsv"], name: "tsv_idx", using: :gin
     t.index ["uri"], name: "index_statuses_on_uri", unique: true

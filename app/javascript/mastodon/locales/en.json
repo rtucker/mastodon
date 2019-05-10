@@ -1,6 +1,7 @@
 {
   "account.add_or_remove_from_list": "Add or Remove from lists",
   "account.badges.bot": "Bot",
+  "account.badges.adults_only": "🔞 Adult content",
   "account.block": "Block @{name}",
   "account.block_domain": "Hide {domain}",
   "account.blocked": "Blocked",

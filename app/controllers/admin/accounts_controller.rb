@@ -2,7 +2,7 @@
 
 module Admin
   class AccountsController < BaseController
-    before_action :set_account, only: [:show, :redownload, :remove_avatar, :remove_header, :enable, :unsilence, :unsuspend, :memorialize, :approve, :reject]
+    before_action :set_account, only: [:show, :redownload, :remove_avatar, :remove_header, :enable, :allow_public, :allow_nonsensitive, :unsilence, :unsuspend, :memorialize, :approve, :reject]
     before_action :require_remote_account!, only: [:redownload]
     before_action :require_local_account!, only: [:enable, :memorialize, :approve, :reject]
 
@@ -43,6 +43,34 @@ module Admin
       authorize @account.user, :reject?
       SuspendAccountService.new.call(@account, including_user: true, destroy: true, skip_distribution: true)
       redirect_to admin_accounts_path(pending: '1')
+    end
+
+    def force_sensitive
+      authorize @account, :force_sensitive?
+      @account.force_sensitive!
+      log_action :force_sensitive, @account
+      redirect_to admin_account_path(@account.id)
+    end
+
+    def allow_nonsensitive
+      authorize @account, :allow_nonsensitive?
+      @account.allow_nonsensitive!
+      log_action :allow_nonsensitive, @account
+      redirect_to admin_account_path(@account.id)
+    end
+
+    def force_unlisted
+      authorize @account, :force_unlisted?
+      @account.force_unlisted!
+      log_action :force_unlisted, @account
+      redirect_to admin_account_path(@account.id)
+    end
+
+    def allow_public
+      authorize @account, :allow_public?
+      @account.allow_public!
+      log_action :allow_public, @account
+      redirect_to admin_account_path(@account.id)
     end
 
     def unsilence

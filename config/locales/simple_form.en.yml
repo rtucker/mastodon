@@ -11,6 +11,7 @@ en:
         warning_preset_id: Optional. You can still add custom text to end of the preset
       defaults:
         hidden: Toggles whether your public profile is publicaly accessible
+        adults_only: This account may contain mature or sensitive content
         unlisted: Excludes you from public repeated/admired by lists of *local* monsters
         autofollow: People who sign up through the invite will automatically join your pack
         avatar: PNG, GIF or JPG. At most %{size}. Will be downscaled to %{dimensions}px
@@ -66,11 +67,14 @@ en:
         types:
           disable: Disable
           none: Do nothing
+          force_sensitive: Force sensitive
+          force_unlisted: Force unlisted
           silence: Silence
           suspend: Suspend and irreversibly delete account data
         warning_preset_id: Use a warning preset
       defaults:
         hidden: Disable your public profile
+        adults_only: Adult content
         unlisted: Exclude from public interaction lists
         replies: Show your public replies
         autofollow: Invite to join your pack

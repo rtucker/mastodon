@@ -48,11 +48,13 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def create_account
     @account = Account.new
-    @account.username     = @username
-    @account.domain       = @domain
-    @account.private_key  = nil
-    @account.suspended_at = domain_block.created_at if auto_suspend?
-    @account.silenced_at = domain_block.created_at if auto_silence?
+    @account.username         = @username
+    @account.domain           = @domain
+    @account.private_key      = nil
+    @account.suspended_at     = domain_block.created_at if auto_suspend?
+    @account.silenced_at      = domain_block.created_at if auto_silence?
+    @account.force_unlisted   = true if force_unlisted?
+    @account.force_sensitive  = true if force_sensitive?
   end
 
   def update_account
@@ -75,6 +77,7 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.display_name            = @json['name'] || ''
     @account.note                    = @json['summary'] || ''
     @account.locked                  = @json['manuallyApprovesFollowers'] || false
+    @account.adults_only             = @json['suggestedMinAge'].to_i >= 18
     @account.fields                  = property_values || {}
     @account.also_known_as           = as_array(@json['alsoKnownAs'] || []).map { |item| value_or_id(item) }
     @account.actor_type              = actor_type
@@ -193,6 +196,14 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def auto_silence?
     domain_block&.silence?
+  end
+
+  def auto_force_unlisted?
+    domain_block&.force_unlisted?
+  end
+
+  def auto_force_sensitive?
+    domain_block&.force_sensitive?
   end
 
   def domain_block

@@ -6,7 +6,8 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
   context :security
 
   context_extensions :manually_approves_followers, :featured, :also_known_as,
-                     :moved_to, :property_value, :hashtag, :emoji, :identity_proof
+                     :moved_to, :property_value, :hashtag, :emoji, :identity_proof,
+                     :adults_only
 
   attributes :id, :type, :following, :followers,
              :inbox, :outbox, :featured,
@@ -20,6 +21,7 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
 
   attribute :moved_to, if: :moved?
   attribute :also_known_as, if: :also_known_as?
+  attribute :adults_only, if: :adults_only?
 
   class EndpointsSerializer < ActivityPub::Serializer
     include RoutingHelper
@@ -64,6 +66,10 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
 
   def featured
     account_collection_url(object, :featured)
+  end
+
+  def adults_only
+    18
   end
 
   def endpoints
@@ -124,6 +130,10 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
 
   def also_known_as?
     !object.also_known_as.empty?
+  end
+
+  def adults_only?
+    object.adults_only
   end
 
   class CustomEmojiSerializer < ActivityPub::EmojiSerializer
