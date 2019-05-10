@@ -11,6 +11,7 @@ class PostStatusService < BaseService
   # @option [String] :text Message
   # @option [Status] :thread Optional status to reply to
   # @option [Tag] :tags Optional tags to include
+  # @option [Time] :created_at Optional time which status was originally posted
   # @option [Boolean] :sensitive
   # @option [String] :visibility
   # @option [Boolean] :local_only
@@ -107,9 +108,9 @@ class PostStatusService < BaseService
 
   def postprocess_status!
     LinkCrawlWorker.perform_async(@status.id) unless @status.spoiler_text?
-    DistributionWorker.perform_async(@status.id)
+    DistributionWorker.perform_async(@status.id) unless @options[:distribute] == false
 
-    unless @status.local_only?
+    unless @status.local_only? || @options[:distribute] == false || @options[:federate] == false
       ActivityPub::DistributionWorker.perform_async(@status.id)
     end
 
@@ -175,6 +176,7 @@ class PostStatusService < BaseService
 
   def status_attributes
     {
+      created_at: @options[:created_at] ? @options[:created_at].to_datetime : Time.now.utc,
       text: @text,
       media_attachments: @media || [],
       thread: @in_reply_to,
