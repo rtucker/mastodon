@@ -21,7 +21,7 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
 
   attribute :moved_to, if: :moved?
   attribute :also_known_as, if: :also_known_as?
-  attribute :adults_only, if: :adults_only?
+  attribute :adults_only, key: :suggestedMinAge, if: :adults_only?
 
   class EndpointsSerializer < ActivityPub::Serializer
     include RoutingHelper
