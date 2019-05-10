@@ -40,7 +40,7 @@ module StreamEntriesHelper
       roles << content_tag(:div, t('accounts.roles.bot'), class: 'account-role bot') if account.bot?
       roles << content_tag(:div, t('accounts.roles.adults_only'), class: 'account-role adults-only') if account.adults_only?
       roles << content_tag(:div, t('accounts.roles.gentlies_kobolds'), class: 'account-role gentlies') if account.user_gentlies_kobolds?
-      roles << content_tag(:div, t('accounts.roles.kobold'), class: 'account-role kobold') if account.user_is_kobold?
+      roles << content_tag(:div, t('accounts.roles.kobold'), class: 'account-role kobold') if account.user_is_a_kobold?
 
       if (Setting.show_staff_badge && account.user_staff?) || all
         if all && !account.user_staff?

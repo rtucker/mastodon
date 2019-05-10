@@ -318,7 +318,7 @@ class User < ApplicationRecord
   end
 
   def default_language
-    @_default_language ||= (setting.default_language || 'en')
+    @_default_language ||= (settings.default_language || 'en')
   end
 
   def setting_default_privacy

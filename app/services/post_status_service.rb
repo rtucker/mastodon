@@ -184,7 +184,7 @@ class PostStatusService < BaseService
       visibility: @visibility,
       local_only: @local_only,
       sharekey: @sharekey,
-      language: language_from_option(@options[:language]) || @account.default_language&.presence || 'en',
+      language: language_from_option(@options[:language]) || @account.user_default_language&.presence || 'en',
       application: @options[:application],
       content_type: @options[:content_type] || @account.user&.setting_default_content_type,
     }.compact

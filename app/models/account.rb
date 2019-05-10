@@ -153,7 +153,7 @@ class Account < ApplicationRecord
            :hides_filtered_gap?,
            :hides_mascot?,
            :hides_color_formatting?,
-           :hides_captions,
+           :hides_captions?,
 
            to: :user,
            prefix: true,
