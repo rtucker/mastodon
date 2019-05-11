@@ -91,7 +91,7 @@ services:
     restart: always
     scale: 1
     env_file: .env.production
-    command: bundle exec sidekiq -c 10
+    command: bundle exec sidekiq
     depends_on:
       - db
       - redis
