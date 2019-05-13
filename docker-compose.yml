@@ -89,7 +89,7 @@ services:
   sidekiq:
     image: vulpineclub/mastodon:production
     restart: always
-    scale: 1
+    scale: 2
     env_file: .env.production
     command: bundle exec sidekiq
     depends_on:
