@@ -1,5 +1,7 @@
 #  Mastodon Glitch Edition (Vulpine Club Remix)  #
 
+>   Now with automated deploys!
+
 [![Build Status](https://img.shields.io/circleci/project/github/vulpineclub/mastodon.svg)][circleci]
 
 [circleci]: https://circleci.com/gh/vulpineclub/mastodon
@@ -13,7 +15,7 @@ So here's the deal: we all work on this code, and then it runs on dev.glitch.soc
 
 [circleci-vulpineclub]: https://circleci.com/gh/vulpineclub/mastodon
 
-This is what's running on https://vulpine.club/, more or less. No warranties, it could destroy everything. 
+This is what's running on https://vulpine.club/, more or less. No warranties, it could destroy everything.
 
 This is a fork of https://github.com/glitch-soc/mastodon (hereafter referred to as "glitchsoc"), which is itself a fork of https://github.com/tootsuite/mastodon ("tootsuite").
 
