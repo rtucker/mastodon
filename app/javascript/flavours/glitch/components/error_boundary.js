@@ -55,7 +55,7 @@ export default class ErrorBoundary extends React.PureComponent {
                 <FormattedMessage
                   id='web_app_crash.report_issue'
                   defaultMessage='Report a bug in the {issuetracker}'
-                  values={{ issuetracker: <a href='https://github.com/vulpineclub/mastodon/issues' rel='noopener' target='_blank'><FormattedMessage id='web_app_crash.issue_tracker' defaultMessage='issue tracker' /></a> }}
+                  values={{ issuetracker: <a href='https://github.com/glitch-soc/mastodon/issues' rel='noopener' target='_blank'><FormattedMessage id='web_app_crash.issue_tracker' defaultMessage='issue tracker' /></a> }}
                 />
                 { debugInfo !== '' && (
                   <details>
@@ -72,7 +72,7 @@ export default class ErrorBoundary extends React.PureComponent {
               <li>
                 <FormattedMessage
                   id='web_app_crash.reload_page'
-                  defaultMessage='{reload} the current page (RECOMMENDED)'
+                  defaultMessage='{reload} the current page'
                   values={{ reload: <a href='#' onClick={this.handleReload}><FormattedMessage id='web_app_crash.reload' defaultMessage='Reload' /></a> }}
                 />
               </li>
