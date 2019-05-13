@@ -23,6 +23,11 @@ if Rails.env.production?
     data_hosts << "https://#{url.host}"
   end
 
+  # BEGIN TEMPORARY
+  data_hosts << "https://cdn-assets.vulpine.owogroupllc.com"
+  data_hosts << "https://assets.vulpine.club"
+  # END TEMPORARY
+
   data_hosts.uniq!
 
   Rails.application.config.content_security_policy do |p|
