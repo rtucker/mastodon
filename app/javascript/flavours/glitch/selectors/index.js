@@ -44,10 +44,10 @@ const escapeRegExp = string =>
 export const regexFromFilters = (status, filters) => {
   if (filters === undefined || filters.size === 0) { return null; }
 
-  let has_media = status.get('media_attachments').size > 0;
+  let has_media = status.get('media_attachments').size !== 0;
 
   filters = filters.filter(filter => {
-    return (!has_media && filter.get('exclude_media')) || (has_media && filter.get('media_only'))
+    return (!has_media && filter.get('exclude_media')) || (has_media && filter.get('media_only')) || (!filter.get('exclude_media') && !filter.get('media_only'))
   });
 
   if (filters.size === 0) { return null; }
