@@ -28,8 +28,11 @@ const emojify = (str, customEmojis = {}) => {
         // now got a replacee as ':shortname:'
         // if you want additional emoji handler, add statements below which set replacement and return true.
         if (shortname in customEmojis) {
-          const filename = autoPlayGif ? customEmojis[shortname].url : customEmojis[shortname].static_url;
-          replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${filename}" />`;
+          if (autoPlayGif) {
+            replacement = `<img draggable="false" class="emojione" alt="${shortname}" title="${shortname}" src="${customEmojis[shortname].url}" />`;
+          } else {
+            replacement = `<img draggable="false" class="emojione hoverplay" alt="${shortname}" title="${shortname}" src="${customEmojis[shortname].static_url}" style="background-image:url(${customEmojis[shortname].url})" />`;
+          }
           return true;
         }
         return false;
