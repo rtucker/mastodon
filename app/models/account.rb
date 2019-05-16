@@ -150,6 +150,7 @@ class Account < ApplicationRecord
            :wants_larger_menus?,
            :wants_larger_buttons?,
            :wants_larger_drawer?,
+           :wants_larger_emoji?,
            :hides_filtered_gap?,
            :hides_mascot?,
            :hides_color_formatting?,

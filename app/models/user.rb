@@ -111,6 +111,7 @@ class User < ApplicationRecord
     :larger_menus,
     :larger_buttons,
     :larger_drawer,
+    :larger_emoji,
     :remove_filtered,
     :hide_replies_muted,
     :hide_replies_blocked,
@@ -235,6 +236,10 @@ class User < ApplicationRecord
 
   def wants_larger_drawer?
     @wants_larger_drawer ||= (settings.larger_drawer || false)
+  end
+
+  def wants_larger_emoji?
+    @wants_larger_emoji ||= (settings.larger_emoji || false)
   end
 
   def hides_filtered_gap?

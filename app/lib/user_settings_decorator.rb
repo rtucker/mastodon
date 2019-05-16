@@ -35,6 +35,7 @@ class UserSettingsDecorator
     user.settings['hide_captions']       = hide_captions_preference if change?('setting_hide_captions')
     user.settings['hide_mascot']         = hide_mascot_preference if change?('setting_hide_mascot')
     user.settings['hide_interactions']   = hide_interactions_preference if change?('setting_hide_interactions')
+    user.settings['larger_emoji']        = larger_emoji_preference if change?('setting_larger_emoji')
 
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
@@ -70,6 +71,10 @@ class UserSettingsDecorator
 
   def larger_drawer_preference
     boolean_cast_setting 'setting_larger_drawer'
+  end
+
+  def larger_emoji_preference
+    boolean_cast_setting 'setting_larger_emoji'
   end
 
   def remove_filtered_preference

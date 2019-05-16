@@ -122,6 +122,7 @@ en:
         setting_larger_menus: Increase size and spacing of menu items
         setting_larger_buttons: Increase size and spacing of action buttons
         setting_larger_drawer: Increase width of compose drawer column
+        setting_larger_emoji: Increase size of emoji
         setting_remove_filtered: Don't show placeholder gap for filtered roars
         setting_hide_replies_muted: Filter replies to those who you are muting
         setting_hide_replies_blocked: Filter replies to those who you are blocking

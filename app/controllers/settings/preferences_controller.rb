@@ -37,6 +37,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_larger_menus,
       :setting_larger_buttons,
       :setting_larger_drawer,
+      :setting_larger_emoji,
       :setting_remove_filtered,
       :setting_hide_replies_muted,
       :setting_hide_replies_blocked,
