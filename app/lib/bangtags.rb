@@ -461,7 +461,7 @@ class Bangtags
 
     account.save
 
-    status.text = @chunks.join('')
+    status.text = @chunks.join
     status.save
 
     postprocess_after_save
@@ -476,9 +476,13 @@ class Bangtags
         name = @vars['_they:are']
         next if name.blank?
         description = @vars["_they:are:#{name}"]
-        next if description.blank? || @chunks.last(5).any? {|c| c.include?('—')}
+        next if description.blank? || @chunks.last(5).join.include?('—')
         status.local_only = true if Status::LOCAL_ONLY_TOKENS.match?(@chunks.last)
-        @chunks << "\n\n[right]— #{description}\u200c[/right]"
+        if @chunks.first(5).any? { |c| c.strip.match?(/[\r\n]/) || c.lstrip.match?(/^(?:[>#]|```|---|\* |\d+\)|\[\wi+)/) }
+          @chunks << "\n\n[right]— #{description}\u200c[/right]"
+        else
+          @chunks << " [rfloat]— #{description}[/rfloat]"
+        end
       when 'media'
         media_idx = post_cmd[1]
         media_cmd = post_cmd[2]
