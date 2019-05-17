@@ -481,7 +481,7 @@ class Bangtags
         if @chunks.first(5).any? { |c| c.strip.match?(/[\r\n]/) || c.lstrip.match?(/^(?:[>#]|```|---|\* |\d+\)|\[\wi+)/) }
           @chunks << "\n\n[right]— #{description}\u200c[/right]"
         else
-          @chunks << " [rfloat]— #{description}[/rfloat]"
+          @chunks << " [rfloat]— #{description}\u200c[/rfloat]"
         end
       when 'media'
         media_idx = post_cmd[1]
