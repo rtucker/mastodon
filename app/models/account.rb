@@ -25,8 +25,6 @@
 #  header_file_size        :integer
 #  header_updated_at       :datetime
 #  avatar_remote_url       :string
-#  silenced                :boolean          default(FALSE), not null
-#  suspended               :boolean          default(FALSE), not null
 #  locked                  :boolean          default(FALSE), not null
 #  header_remote_url       :string           default(""), not null
 #  last_webfingered_at     :datetime
@@ -41,9 +39,6 @@
 #  actor_type              :string
 #  discoverable            :boolean
 #  also_known_as           :string           is an Array
-#  silenced_at             :datetime
-#  suspended_at            :datetime
-#  hidden                  :boolean
 #  hidden                  :boolean          default(FALSE), not null
 #  vars                    :jsonb            not null
 #  replies                 :boolean          default(TRUE), not null
@@ -51,6 +46,8 @@
 #  force_unlisted          :boolean          default(FALSE), not null
 #  force_sensitive         :boolean          default(FALSE), not null
 #  adults_only             :boolean          default(FALSE), not null
+#  silenced_at             :datetime
+#  suspended_at            :datetime
 #
 
 class Account < ApplicationRecord
