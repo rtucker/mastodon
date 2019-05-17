@@ -12,8 +12,6 @@ class StatusFilter
   def filtered?
     return false if !account.nil? && account.id == status.account_id
     return true if blocked_by_policy? || (account_present? && filtered_status?) || silenced_account?
-    # filter non-op posts replying to something marked no replies
-    non_self_reply? && reply_to_no_replies?
   end
 
   private
@@ -86,15 +84,6 @@ class StatusFilter
 
   def reply_to_blocker?
     status.in_reply_to_account.present? && status.in_reply_to_account.blocking?(status.account_id)
-  end
-
-  def non_self_reply?
-    status.reply? && status.in_reply_to_account_id != status.account_id
-  end
-
-  def reply_to_no_replies?
-    parent_status = Status.find(status.in_reply_to_id)
-    parent_status&.marked_no_replies? && !parent_status.mentions.pluck(:account_id).include?(status.account_id)
   end
 
   def silenced_account?

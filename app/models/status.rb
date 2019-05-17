@@ -526,10 +526,6 @@ class Status < ApplicationRecord
     LOCAL_ONLY_TOKENS.match?(content)
   end
 
-  def marked_no_replies?
-    /(:ms_dont_at_me:|(don't|do not|no) ((at|@|mention) me)|reply|replies)/.match?(spoiler_text)
-  end
-
   private
 
   def update_status_stat!(attrs)
