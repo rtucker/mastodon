@@ -423,9 +423,14 @@ class Bangtags
             'bbc'         => 'text/x-bbcode',
             'bbcode'      => 'text/x-bbcode',
 
+            'd'           => 'text/x-bbcode+markdown',
             'bm'          => 'text/x-bbcode+markdown',
             'bbm'         => 'text/x-bbcode+markdown',
             'bbdown'      => 'text/x-bbcode+markdown',
+
+            'h'           => 'text/html',
+            'htm'         => 'text/html',
+            'html'        => 'text/html',
           }
           v = cmd[1].downcase
           status.content_type = content_types[c] unless content_types[c].nil?
