@@ -45,7 +45,7 @@ import { REDRAFT } from 'flavours/glitch/actions/statuses';
 import { Map as ImmutableMap, List as ImmutableList, OrderedSet as ImmutableOrderedSet, fromJS } from 'immutable';
 import uuid from 'flavours/glitch/util/uuid';
 import { privacyPreference } from 'flavours/glitch/util/privacy_preference';
-import { me, defaultContentType, defaultLocal, alwaysLoal } from 'flavours/glitch/util/initial_state';
+import { me, defaultContentType, defaultLocal, alwaysLocal } from 'flavours/glitch/util/initial_state';
 import { overwrite } from 'flavours/glitch/util/js_helpers';
 import { unescapeHTML } from 'flavours/glitch/util/html';
 import { recoverHashtags } from 'flavours/glitch/util/hashtag';
