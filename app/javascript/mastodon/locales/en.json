@@ -353,7 +353,7 @@
   "status.reply": "Reply",
   "status.replyAll": "Reply to thread",
   "status.report": "Report @{name}",
-  "status.sensitive_warning": "Sensitive content",
+  "status.sensitive_warning": "Reveal",
   "status.sensitive_toggle": "Reveal",
   "status.share": "Share",
   "status.show_less": "Hide",

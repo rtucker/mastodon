@@ -216,6 +216,7 @@ class Formatter
   end
 
   def format_markdown(html)
+    html = html.gsub("\r\n", "\n").gsub("\r", "\n")
     html = reformat(markdown_formatter.render(html))
     html.delete("\r").delete("\n")
   end
