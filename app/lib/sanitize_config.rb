@@ -20,7 +20,7 @@ class Sanitize
     end
 
     MASTODON_STRICT ||= freeze_config(
-      elements: %w(p br span a abbr del pre blockquote code b strong u sub i em h1 h2 h3 h4 h5 ul ol li),
+      elements: %w(p br span a abbr del pre sub sup blockquote code b strong u i em h1 h2 h3 h4 h5 h6 ul ol li hr),
 
       attributes: {
         'a'          => %w(href rel class title),
