@@ -30,9 +30,11 @@ en:
         phrase: Will be matched regardless of casing in text or content warning of a roar
         scopes: Which APIs the application will be allowed to access. If you select a top-level scope, you don't need to select individual ones.
         setting_aggregate_reblogs: Do not show new repeats for roars that have been recently repeated (only affects newly-received repeats)
-        setting_default_content_type_html: When writing roars, assume they are written in raw HTML, unless specified otherwise
-        setting_default_content_type_markdown: When writing roars, assume they are using Markdown for rich text formatting, unless specified otherwise
-        setting_default_content_type_plain: When writing roars, assume they are plain text with no special formatting, unless specified otherwise (default Mastodon behavior)
+        setting_default_content_type_html: Assume your roars are formatted with HTML unless specified otherwise
+        setting_default_content_type_markdown: Assume your roars are formatted with Markdown unless specified otherwise
+        setting_default_content_type_plain: Assume your roars are plain text unless specified otherwise
+        setting_default_content_type_x_bbcode: Assume your roars are formatted with BBcode unless specified otherwise
+        setting_default_content_type_x_bbcode_markdown: Assume your roars are formatted with BBdown unless specified otherwise (default)
         setting_default_language: The language of your roars can be detected automatically, but it's not always accurate
         setting_display_media_default: Hide media marked as sensitive
         setting_display_media_hide_all: Always hide all media
@@ -111,6 +113,8 @@ en:
         setting_default_content_type_html: HTML
         setting_default_content_type_markdown: Markdown
         setting_default_content_type_plain: Plain text
+        setting_default_content_type_x_bbcode: BBCode
+        setting_default_content_type_x_bbcode_markdown: BBdown
         setting_default_language: Posting language
         setting_default_privacy: Post privacy
         setting_default_local: Default to Monsterpit-only roars (in Glitch flavour)
