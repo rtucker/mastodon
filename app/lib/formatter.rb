@@ -210,13 +210,17 @@ class Formatter
       html = html.delete("\n")
     end
 
-    html = append_footer(html, status.footer)
+    unless status.footer.blank?
+      footer = status.footer
+      footer = encode_and_link_urls(footer)
+      footer = encode_custom_emojis(footer, status.emojis, options[:autoplay]) if options[:custom_emojify]
+      html = "#{html.strip}<p class=\"signature\">— #{footer}</p>"
+    end
 
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
 
   def format_markdown(html)
-    html = html.gsub("\r\n", "\n").gsub("\r", "\n")
     html = reformat(markdown_formatter.render(html))
     html.delete("\r").delete("\n")
   end
@@ -226,11 +230,12 @@ class Formatter
     html = html.gsub(/<hr>.*<\/hr>/im, '<hr />')
     return html unless sanitize
     html = reformat(html)
-    html.delete("\n")
+    html.delete("\r").delete("\n")
   end
 
   def format_bbdown(html)
     html = format_bbcode(html, false)
+    html = html.gsub(/<br *\/>|<br>/, '')
     format_markdown(html)
   end
 
@@ -293,11 +298,6 @@ class Formatter
   end
 
   private
-
-  def append_footer(html, footer)
-    return html if footer.blank?
-    "#{html.strip}<p class=\"signature\">— #{encode(footer)}</p>"
-  end
 
   def bbcode_formatter(html)
     begin

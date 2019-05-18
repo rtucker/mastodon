@@ -251,6 +251,7 @@ class Status < ApplicationRecord
 
     fields  = [spoiler_text, text]
     fields += preloadable_poll.options unless preloadable_poll.nil?
+    fields << footer unless footer.nil?
 
     @emojis = CustomEmoji.from_text(fields.join(' '), account.domain)
   end
