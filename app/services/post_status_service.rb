@@ -28,6 +28,7 @@ class PostStatusService < BaseService
     @account     = account
     @options     = options
     @text        = @options[:text] || ''
+    @footer      = @options[:footer]
     @in_reply_to = @options[:thread]
     @tags        = @options[:tags]
     @local_only  = @options[:local_only]
@@ -53,11 +54,19 @@ class PostStatusService < BaseService
 
   private
 
+  def set_footer_from_i_am
+    name = @account.vars['_they:are']
+    return if name.blank?
+    @account.vars["_they:are:#{name}"]
+  end
+
   def preprocess_attributes!
     if @text.blank? && @options[:spoiler_text].present?
      @text = '.'
      @text = @media.find(&:video?) ? '📹' : '🖼' if @media.size > 0
     end
+
+    @footer = set_footer_from_i_am if @footer.nil?
 
     @visibility   = @options[:visibility] || @account.user_default_visibility
     @visibility   = :unlisted if @visibility.in?([nil, 'public']) && @account.silenced? || @account.force_unlisted
@@ -178,6 +187,7 @@ class PostStatusService < BaseService
     {
       created_at: @options[:created_at] ? @options[:created_at].to_datetime : Time.now.utc,
       text: @text,
+      footer: @footer,
       media_attachments: @media || [],
       thread: @in_reply_to,
       poll_attributes: poll_attributes,
