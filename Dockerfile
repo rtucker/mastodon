@@ -119,14 +119,15 @@ ENV RAILS_SERVE_STATIC_FILES="true"
 USER mastodon
 
 ENV GITHUB_REPOSITORY=vulpineclub/mastodon
-ARG BUILD_CDN_HOST=https://assets.vulpine.club
+
+# add to the RUN to use this: CDN_HOST=${BUILD_CDN_HOST} \
+#ARG BUILD_CDN_HOST=https://assets.vulpine.club
 
 ARG SOURCE_TAG
 ENV SOURCE_TAG ${SOURCE_TAG}
 
 # Precompile assets
 RUN cd ~ && \
-	CDN_HOST=${BUILD_CDN_HOST} \
 	GITHUB_REPOSITORY=${GITHUB_REPOSITORY} \
 	OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder rails assets:precompile && \
 	yarn cache clean
