@@ -423,7 +423,7 @@ export default class MediaGallery extends React.PureComponent {
           {children}
         </div>
 
-        <div className='status__content' tabIndex='0'>
+        <div className='media-caption'>
           {descriptions}
         </div>
       </React.Fragment>
