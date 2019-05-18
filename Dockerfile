@@ -119,7 +119,7 @@ ENV RAILS_SERVE_STATIC_FILES="true"
 USER mastodon
 
 ENV GITHUB_REPOSITORY=vulpineclub/mastodon
-ARG BUILD_CDN_HOST=https://assets.vulpine.club
+ARG BUILD_CDN_HOST=https://cdn-assets.vulpine.owogroupllc.com
 
 ARG SOURCE_TAG
 ENV SOURCE_TAG ${SOURCE_TAG}
