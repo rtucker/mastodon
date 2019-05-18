@@ -26,7 +26,7 @@ class Bangtags
     # list of transformation commands
     @tf_cmds = []
     # list of post-processing commands
-    @post_cmds = [['signature']]
+    @post_cmds = []
     # hash of bangtag variables
     @vars = account.vars
     # keep track of what variables we're appending the value of between chunks
@@ -36,7 +36,7 @@ class Bangtags
   end
 
   def process
-    return unless status.text&.present?
+    return unless status.text&.present? && status.text.include?('#!')
 
     status.text.gsub!('#!!', "#\u200c!")
 
@@ -367,16 +367,19 @@ class Bangtags
             who = cmd[2]
             if who.blank?
               @vars.delete('_they:are')
+              status.footer = nil
               next
             elsif who == 'not'
               who = cmd[3]
               next if who.blank?
               name = who.downcase.gsub(/\s+/, '')
               @vars.delete("_they:are:#{name}")
-              @vars.delete('_they:are') if @vars['_they:are'] == name
+              next unless @vars['_they:are'] == name
+              @vars.delete('_they:are')
+              status.footer = nil
               next
             end
-            name = who.downcase.gsub(/\s+/, '')
+            name = who.downcase.gsub(/\s+/, '').strip
             description = cmd[3..-1].join(':').strip
             if description.blank?
               if @vars["_they:are:#{name}"].nil?
@@ -385,7 +388,8 @@ class Bangtags
             else
               @vars["_they:are:#{name}"] = description
             end
-            @vars['_they:are'] = name.strip
+            @vars['_they:are'] = name
+            status.footer = @vars["_they:are:#{name}"]
           end
         when 'sharekey'
           next if cmd[1].nil?
@@ -401,6 +405,30 @@ class Bangtags
           @vore_stack.push('_draft')
           @component_stack.push(:var)
           add_tags(status, 'self:draft')
+        when 'format', 'type'
+          chunk = nil
+          next if cmd[1].nil?
+          content_types = {
+            't'           => 'text/plain',
+            'txt'         => 'text/plain',
+            'text'        => 'text/plain',
+            'plain'       => 'text/plain',
+            'plaintext'   => 'text/plain',
+
+            'm'           => 'text/markdown',
+            'md'          => 'text/markdown',
+            'markdown'    => 'text/markdown',
+
+            'b'           => 'text/x-bbcode',
+            'bbc'         => 'text/x-bbcode',
+            'bbcode'      => 'text/x-bbcode',
+
+            'bm'          => 'text/x-bbcode+markdown',
+            'bbm'         => 'text/x-bbcode+markdown',
+            'bbdown'      => 'text/x-bbcode+markdown',
+          }
+          v = cmd[1].downcase
+          status.content_type = content_types[c] unless content_types[c].nil?
         when 'visibility'
           chunk = nil
           next if cmd[1].nil?
@@ -421,7 +449,7 @@ class Bangtags
             'world'       => :public,
           }
           v = cmd[1].downcase
-          status.visibility = visibilities[v] if visibilities[v].nil?
+          status.visibility = visibilities[v] unless visibilities[v].nil?
         end
       end
 
@@ -472,17 +500,6 @@ class Bangtags
   def postprocess_before_save
     @post_cmds.each do |post_cmd|
       case post_cmd[0]
-      when 'signature'
-        name = @vars['_they:are']
-        next if name.blank?
-        description = @vars["_they:are:#{name}"]
-        next if description.blank? || @chunks.last(5).join.include?('—')
-        status.local_only = true if Status::LOCAL_ONLY_TOKENS.match?(@chunks.last)
-        if @chunks.first(5).any? { |c| c.strip.match?(/[\r\n]/) || c.lstrip.match?(/^(?:[>#]|```|---|\* |\d+\)|\[\wi+)/) }
-          @chunks << "\n\n[right]— #{description}\u200c[/right]"
-        else
-          @chunks << " [rfloat]— #{description}\u200c[/rfloat]"
-        end
       when 'media'
         media_idx = post_cmd[1]
         media_cmd = post_cmd[2]

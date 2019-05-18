@@ -14,6 +14,8 @@ class Sanitize
         next true if e =~ /^(h|p|u|dt|e)-/ # microformats classes
         next true if e =~ /^(mention|hashtag)$/ # semantic classes
         next true if e =~ /^(ellipsis|invisible)$/ # link formatting classes
+        next true if e =~ /^bbcode__([a-z1-6\-]+)$/ # bbcode
+        next true if e == 'signature'
       end
 
       node['class'] = class_list.join(' ')
@@ -23,10 +25,11 @@ class Sanitize
       elements: %w(p br span a abbr del pre sub sup blockquote code b strong u i em h1 h2 h3 h4 h5 h6 ul ol li hr),
 
       attributes: {
-        'a'          => %w(href rel class title),
+        'a'          => %w(href rel class title alt),
         'span'       => %w(class),
         'abbr'       => %w(title),
         'blockquote' => %w(cite),
+        'p'          => %w(class),
       },
 
       add_attributes: {

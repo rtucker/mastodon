@@ -1,0 +1,56 @@
+/*
+// Original:
+// https://github.com/computerfairies/mastodon/blob/master/app/javascript/styles/mastodon/bbcode.scss
+*/
+
+.bbcode {
+  &__flip-horizontal {
+    display: inline-block;
+    -webkit-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+  }
+
+  &__flip-vertical {
+    display: inline-block;
+    -webkit-transform: scale(1, -1);
+    -ms-transform: scale(1, -1);
+    transform: scale(1, -1);
+  }
+
+  @for $i from 1 through 6 {
+    &__size-#{$i} {
+      font-size: #{6 * $i}px;
+
+      & .emojione {
+        width: #{6 * $i}px !important;
+        height:  #{6 * $i}px !important;
+      }
+
+      & .hoverplay {
+        padding-left: #{6 * $i}px !important;
+      }
+    }
+  }
+
+  @for $i from 1 through 2 {
+    &__size-#{$i}:hover {
+      font-size: 12px;
+    }
+  }
+
+  &__left { display: block; text-align: left; }
+  &__center { display: block; text-align: center; }
+  &__right { display: block; text-align: right; }
+  &__lfloat { float: left; }
+  &__rfloat { float: right; }
+  &__spoiler-wrapper {
+    background: black;
+    color: black;
+    padding: 1px 2em 1px 2em;
+  }
+  &__spoiler { color: black; visibility: hidden; }
+  &__spoiler-wrapper:hover > &__spoiler,
+  &__spoiler-wrapper:active > &__spoiler
+  { color: white; visibility: visible; }
+}

@@ -25,6 +25,14 @@ const messages = defineMessages({
     defaultMessage: 'Attach...',
     id: 'compose.attach',
   },
+  bbcode: {
+    defaultMessage: 'BBCode',
+    id: 'compose.content-type.bbcode',
+  },
+  bbdown: {
+    defaultMessage: 'BBdown',
+    id: 'compose.content-type.bbdown',
+  },
   change_privacy: {
     defaultMessage: 'Adjust status privacy',
     id: 'privacy.change',
@@ -232,7 +240,7 @@ class ComposerOptions extends ImmutablePureComponent {
 
     const contentTypeItems = {
       plain: {
-        icon: 'align-left',
+        icon: 'file-text',
         name: 'text/plain',
         text: <FormattedMessage {...messages.plain} />,
       },
@@ -242,9 +250,19 @@ class ComposerOptions extends ImmutablePureComponent {
         text: <FormattedMessage {...messages.html} />,
       },
       markdown: {
-        icon: 'arrow-circle-down',
+        icon: 'hashtag',
         name: 'text/markdown',
         text: <FormattedMessage {...messages.markdown} />,
+      },
+      xbbcode: {
+        icon: 'thumb-tack',
+        name: 'text/x-bbcode',
+        text: <FormattedMessage {...messages.bbcode} />,
+      },
+      xbbcodemarkdown: {
+        icon: 'arrow-circle-down',
+        name: 'text/x-bbcode+markdown',
+        text: <FormattedMessage {...messages.bbdown} />,
       },
     };
 
@@ -315,11 +333,13 @@ class ComposerOptions extends ImmutablePureComponent {
         {showContentTypeChoice && (
           <Dropdown
             disabled={disabled}
-            icon={(contentTypeItems[contentType.split('/')[1]] || {}).icon}
+            icon={(contentTypeItems[contentType.split('/')[1].replace(/[+-]/g, '')] || {}).icon}
             items={[
-              contentTypeItems.plain,
-              contentTypeItems.html,
+              contentTypeItems.xbbcodemarkdown,
               contentTypeItems.markdown,
+              contentTypeItems.xbbcode,
+              contentTypeItems.html,
+              contentTypeItems.plain,
             ]}
             onChange={onChangeContentType}
             onModalClose={onModalClose}

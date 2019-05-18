@@ -30,6 +30,141 @@ class Formatter
 
   include ActionView::Helpers::TextHelper
 
+	BBCODE_TAGS = {
+    :url => {
+			:html_open => '<a href="%url%" rel="noopener nofollow" target="_blank">', :html_close => '</a>',
+			:description => '', :example => '',
+			:allow_quick_param => true, :allow_between_as_param => false,
+			:quick_param_format => /(\S+)/,
+			:quick_param_format_description => 'The size parameter \'%param%\' is incorrect, a number is expected',
+			:param_tokens => [{:token => :url}]
+    },
+		:ul => {
+			:html_open => '<ul>', :html_close => '</ul>',
+			:description => '', :example => '',
+		},
+		:ol => {
+			:html_open => '<ol>', :html_close => '</ol>',
+			:description => '', :example => '',
+		},
+		:li => {
+			:html_open => '<li>', :html_close => '</li>',
+			:description => '', :example => '',
+		},
+		:sub => {
+			:html_open => '<sub>', :html_close => '</sub>',
+			:description => '', :example => '',
+		},
+		:sup => {
+			:html_open => '<sup>', :html_close => '</sup>',
+			:description => '', :example => '',
+		},
+		:h1 => {
+			:html_open => '<h1>', :html_close => '</h1>',
+			:description => '', :example => '',
+		},
+		:h2 => {
+			:html_open => '<h2>', :html_close => '</h2>',
+			:description => '', :example => '',
+		},
+		:h3 => {
+			:html_open => '<h3>', :html_close => '</h3>',
+			:description => '', :example => '',
+		},
+		:h4 => {
+			:html_open => '<h4>', :html_close => '</h4>',
+			:description => '', :example => '',
+		},
+		:h5 => {
+			:html_open => '<h5>', :html_close => '</h5>',
+			:description => '', :example => '',
+		},
+		:h6 => {
+			:html_open => '<h6>', :html_close => '</h6>',
+			:description => '', :example => '',
+		},
+		:abbr => {
+			:html_open => '<abbr>', :html_close => '</abbr>',
+			:description => '', :example => '',
+		},
+		:hr => {
+			:html_open => '<hr>', :html_close => '</hr>',
+			:description => '', :example => '',
+		},
+		:b => {
+			:html_open => '<strong>', :html_close => '</strong>',
+			:description => '', :example => '',
+		},
+		:i => {
+			:html_open => '<em>', :html_close => '</em>',
+			:description => '', :example => '',
+		},
+		:flip => {
+			:html_open => '<span class="bbcode__flip-%direction%">', :html_close => '</span>',
+			:description => '', :example => '',
+			:allow_quick_param => true, :allow_between_as_param => false,
+			:quick_param_format => /(h|v)/,
+			:quick_param_format_description => 'The size parameter \'%param%\' is incorrect, a number is expected',
+			:param_tokens => [{:token => :direction}]
+    },
+		:size => {
+			:html_open => '<span class="bbcode__size-%size%">', :html_close => '</span>',
+			:description => '', :example => '',
+			:allow_quick_param => true, :allow_between_as_param => false,
+			:quick_param_format => /([1-6])/,
+			:quick_param_format_description => 'The size parameter \'%param%\' is incorrect, a number is expected',
+			:param_tokens => [{:token => :size}]
+    },
+		:quote => {
+			:html_open => '<blockquote>', :html_close => '</blockquote>',
+			:description => '', :example => '',
+    },
+		:kbd => {
+			:html_open => '<pre><code>', :html_close => '</code></pre>',
+			:description => '', :example => '',
+    },
+		:code => {
+			:html_open => '<pre>', :html_close => '</pre>',
+			:description => '', :example => '',
+    },
+		:u => {
+			:html_open => '<u>', :html_close => '</u>',
+			:description => '', :example => '',
+    },
+		:s => {
+			:html_open => '<s>', :html_close => '</s>',
+			:description => '', :example => '',
+    },
+		:del => {
+			:html_open => '<del>', :html_close => '</del>',
+			:description => '', :example => '',
+    },
+		:left => {
+			:html_open => '<span class="bbcode__left">', :html_close => '</span>',
+			:description => '', :example => '',
+    },
+		:center => {
+			:html_open => '<span class="bbcode__center">', :html_close => '</span>',
+			:description => '', :example => '',
+    },
+		:right => {
+			:html_open => '<span class="bbcode__right">', :html_close => '</span>',
+			:description => '', :example => '',
+    },
+		:lfloat => {
+			:html_open => '<span class="bbcode__lfloat">', :html_close => '</span>',
+			:description => '', :example => '',
+    },
+		:rfloat => {
+			:html_open => '<span class="bbcode__rfloat">', :html_close => '</span>',
+			:description => '', :example => '',
+    },
+		:spoiler => {
+			:html_open => '<span class="bbcode__spoiler-wrapper"><span class="bbcode__spoiler">', :html_close => '</span></span>',
+			:description => '', :example => '',
+    },
+	}
+
   def format(status, **options)
     if status.reblog?
       prepend_reblog = status.reblog.account.acct
@@ -57,14 +192,25 @@ class Formatter
 
     html = raw_content
     html = "RT @#{prepend_reblog} #{html}" if prepend_reblog
-    html = format_markdown(html) if status.content_type == 'text/markdown'
-    html = encode_and_link_urls(html, linkable_accounts, keep_html: %w(text/markdown text/html).include?(status.content_type))
+
+    case status.content_type
+    when 'text/markdown'
+      html = format_markdown(html)
+    when 'text/x-bbcode'
+      html = format_bbcode(html)
+    when 'text/x-bbcode+markdown'
+      html = format_bbdown(html)
+    end
+
+    html = encode_and_link_urls(html, linkable_accounts, keep_html: %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type))
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
 
-    unless %w(text/markdown text/html).include?(status.content_type)
+    unless %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type)
       html = simple_format(html, {}, sanitize: false)
       html = html.delete("\n")
     end
+
+    html = append_footer(html, status.footer)
 
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
@@ -72,6 +218,19 @@ class Formatter
   def format_markdown(html)
     html = reformat(markdown_formatter.render(html))
     html.delete("\r").delete("\n")
+  end
+
+  def format_bbcode(html, sanitize = true)
+    html = bbcode_formatter(html)
+    html = html.gsub(/<hr>.*<\/hr>/im, '<hr />')
+    return html unless sanitize
+    html = reformat(html)
+    html.delete("\n")
+  end
+
+  def format_bbdown(html)
+    html = format_bbcode(html, false)
+    format_markdown(html)
   end
 
   def reformat(html)
@@ -133,6 +292,19 @@ class Formatter
   end
 
   private
+
+  def append_footer(html, footer)
+    return html if footer.blank?
+    "#{html.strip}<p class=\"signature\">— #{encode(footer)}</p>"
+  end
+
+  def bbcode_formatter(html)
+    begin
+      html = html.bbcode_to_html(false, BBCODE_TAGS, :enable, *BBCODE_TAGS.keys)
+    rescue Exception => e
+    end
+    html
+  end
 
   def markdown_formatter
     return @markdown_formatter if defined?(@markdown_formatter)
