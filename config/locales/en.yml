@@ -284,21 +284,21 @@ en:
       week_users_active: active this week
       week_users_new: users this week
     domain_blocks:
-      add_new: Add new domain block
-      created_msg: Domain block is now being processed
-      destroyed_msg: Domain block has been undone
+      add_new: Add new domain policy
+      created_msg: Domain policy is now being processed
+      destroyed_msg: Domain policy has been undone
       domain: Domain
-      existing_domain_block_html: You have already imposed stricter limits on %{name}, you need to <a href="%{unblock_url}">unblock it</a> first.
+      existing_domain_block_html: You have already imposed stricter limits on %{name}, you need to <a href="%{unblock_url}">remove it</a> first.
       new:
-        create: Create block
-        hint: The domain block will not prevent creation of account entries in the database, but will retroactively and automatically apply specific moderation methods on those accounts.
+        create: Create policy
+        hint: The domain policy will not prevent creation of account entries in the database, but will retroactively and automatically apply specific moderation methods on those accounts.
         severity:
           desc_html: "<strong>Force Unlisted</strong> will force the account's roars to a maximum of unlisted visibility. <strong>Silence</strong> will make the account's roars invisible to anyone who isn't following them as well as disable notification. <strong>Suspend</strong> will remove all of the account's content, media, and profile data. Use <strong>None</strong> if you just want to reject media files."
           noop: None
           force_unlisted: Force unlisted
           silence: Silence
           suspend: Suspend
-        title: New domain block
+        title: New domain policy
       force_sensitive: Mark media sensitive
       force_sensitive_hint: Forces all media from this domain to be marked sensitive.
       reject_media: Reject media files
@@ -319,9 +319,9 @@ en:
           silence: Unsilence existing affected accounts from this domain
           suspend: Unsuspend existing affected accounts from this domain
           force_unlisted: Allow public roars on all existing accounts from this domain
-        title: Undo domain block for %{domain}
+        title: Undo domain policy for %{domain}
         undo: Undo
-      undo: Undo domain block
+      undo: Undo domain policy
     email_domain_blocks:
       add_new: Add new
       created_msg: Successfully added e-mail domain to blacklist
@@ -714,6 +714,8 @@ en:
       domain_blocking: Domain blocking list
       following: Following list
       muting: Muting list
+      profile: Profile information (JSON)
+      statuses: Roars (JSON)
     upload: Upload
   in_memoriam_html: In Memoriam.
   invites:
