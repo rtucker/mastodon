@@ -27,7 +27,7 @@
         height:  #{6 * $i}px !important;
       }
 
-      & .hoverplay {
+      & .hoverplay:hover {
         padding-left: #{6 * $i}px !important;
       }
     }
