@@ -190,9 +190,11 @@ class Header extends ImmutablePureComponent {
     const displayNameHtml = { __html: account.get('display_name_html') };
     const fields          = account.get('fields');
     const badge_bot       = account.get('bot') ? (<div className='account-role bot'><FormattedMessage id='account.badges.bot' defaultMessage='Bot' /></div>) : null;
-    const badge_ao        = account.get('adults_only') ? (<div className='account-role adults-only'><FormattedMessage id='account.badges.adults_only' defaultMessage="🔞 Adult content"  /></div>) : null;
-    const badge_gntly_kbld = account.get('gentlies_kobolds') ? (<div className='account-role gentlies'><FormattedMessage id='account.badges.gentlies_kobolds' defaultMessage="Gentlies kobolds"  /></div>) : null;
-    const badge_kobold    = account.get('is_a_kobold') ? (<div className='account-role kobold'><FormattedMessage id='account.badges.kobold' defaultMessage="Gently the kobold"  /></div>) : null;
+    const badge_ao        = account.get('adults_only') ? (<div className='account-role adults-only'><FormattedMessage id='account.badges.adults_only' defaultMessage="🔞 Adult content" /></div>) : null;
+    const badge_gntly_kbld = account.get('gentlies_kobolds') ? (<div className='account-role gentlies'><FormattedMessage id='account.badges.gentlies_kobolds' defaultMessage="Gentlies kobolds" /></div>) : null;
+    const badge_kobold    = account.get('is_a_kobold') ? (<div className='account-role kobold'><FormattedMessage id='account.badges.kobold' defaultMessage="Gently the kobold" /></div>) : null;
+    const badge_mod       = account.get('role') == 'moderator' ? (<div className='account-role moderator'><FormattedMessage id='account.badges.moderator' defaultMessage="Moderator" /></div>) : null;
+    const badge_admin     = account.get('role') == 'admin' ? (<div className='account-role admin'><FormattedMessage id='account.badges.admin' defaultMessage="Admin" /></div>) : null;
     const acct            = account.get('acct').indexOf('@') === -1 && domain ? `${account.get('acct')}@${domain}` : account.get('acct');
 
     return (
@@ -224,7 +226,7 @@ class Header extends ImmutablePureComponent {
             <h1>
               <span dangerouslySetInnerHTML={displayNameHtml} />
               <small>@{acct} {lockedIcon}</small>
-              <div className='roles'>{badge_ao}{badge_bot}{badge_gntly_kbld}{badge_kobold}</div>
+              <div className='roles'>{badge_admin}{badge_mod}{badge_ao}{badge_bot}{badge_gntly_kbld}{badge_kobold}</div>
             </h1>
           </div>
 
