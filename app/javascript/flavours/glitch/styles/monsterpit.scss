@@ -43,3 +43,34 @@ div.media-caption {
     }
   }
 }
+
+div.drawer__inner__admin {
+  margin-left: 10px;
+
+  h2 {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  ul {
+    list-style-type: circle;
+    margin-left: 20px;
+
+    li {
+      margin-bottom: 4px;
+    }
+  }
+
+  a {
+    color: darken($secondary-text-color, 15%);
+    text-decoration: none;
+    padding: 0;
+    border-radius: 8px;
+
+    &:hover {
+      text-decoration: underline;
+      color: lighten($dark-text-color, 10%);
+    }
+  }
+}
