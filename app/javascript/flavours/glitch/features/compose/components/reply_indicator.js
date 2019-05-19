@@ -47,7 +47,7 @@ class ReplyIndicator extends ImmutablePureComponent {
     }
 
     const account     = status.get('account');
-    const content     = status.get('content');
+    const content     = status.get('contentHtml');
     const attachments = status.get('media_attachments');
 
     //  The result.
