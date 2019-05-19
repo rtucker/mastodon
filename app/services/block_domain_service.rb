@@ -38,6 +38,7 @@ class BlockDomainService < BaseService
         account.statuses.where(sensitive: false).in_batches.update_all(sensitive: true)
       end
     end
+    invalidate_association_caches!
   end
 
   def force_accounts_unlisted!
@@ -47,6 +48,7 @@ class BlockDomainService < BaseService
         account.statuses.with_public_visibility.in_batches.update_all(visibility: :unlisted)
       end
     end
+    invalidate_association_caches!
   end
 
   def silence_accounts!
