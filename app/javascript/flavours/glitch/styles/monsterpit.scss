@@ -1,42 +1,6 @@
 .status__content__text,
-.reply-indicator__content,
-.composer--reply > .content,
-.account__header__content,
 .e-content
 {
-  s { text-decoration: line-through; }
-  del { text-decoration: line-through; }
-  h6 { font-size: 8px; font-weight: bold; }
-  hr { border-color: lighten($dark-text-color, 10%); }
-  sub {
-    vertical-align: sub;
-    font-size: smaller;
-  }
-  sup {
-    vertical-align: super;
-    font-size: smaller;
-  }
-  pre, code {
-    color: lighten($dark-text-color, 33%);
-  }
-  mark {
-    background-color: #ccff15;
-    color: black;
-  }
-  blockquote {
-    font-style: italic;
-  }
-  .caption {
-    display: block;
-    margin: auto;
-    font-size: 12px !important;
-    padding-top: 0;
-    text-align: center;
-    max-width: 80%;
-  }
-  .caption-hidden {
-    display: none;
-  }
   p.signature {
     color: lighten($dark-text-color, 20%);
     font-style: italic;
@@ -51,31 +15,32 @@ div.media-caption {
     margin-bottom: 0;
     text-align: center;
   }
+
   a {
-		color: $secondary-text-color;
-		text-decoration: none;
-		font-weight: bold;
+    background-color: lighten($ui-base-color, 7%);
+    color: darken($secondary-text-color, 10%);
+    text-decoration: none;
+    padding: 2px;
+    border: 1px solid lighten($ui-base-color, 20%);
+    border-radius: 8px;
 
-		&:hover {
-			text-decoration: underline;
+    &:hover {
+      border: 1px solid darken($secondary-text-color, 20%);
+      color: lighten($dark-text-color, 10%);
+    }
 
-			.fa {
-				color: lighten($dark-text-color, 7%);
-			}
-		}
+    &.mention {
+      &:hover {
+        text-decoration: none;
 
-		&.mention {
-			&:hover {
-				text-decoration: none;
+        span {
+          text-decoration: underline;
+        }
+      }
+    }
 
-				span {
-					text-decoration: underline;
-				}
-			}
-		}
-
-		.fa {
-			color: $dark-text-color;
-		}
-	}
+    .fa {
+      color: $dark-text-color;
+    }
+  }
 }

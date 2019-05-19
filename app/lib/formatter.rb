@@ -251,7 +251,9 @@ class Formatter
   end
 
   def simplified_format(account, **options)
-    html = account.local? ? linkify(account.note) : reformat(account.note)
+    return reformat(account.note) unless account.local?
+    html = format_bbdown(account.note)
+    html = encode_and_link_urls(html, keep_html: true)
     html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if options[:custom_emojify]
     html.html_safe # rubocop:disable Rails/OutputSafety
   end

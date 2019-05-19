@@ -58,6 +58,7 @@
       border-left: 3px solid $darker-text-color;
       color: $darker-text-color;
       white-space: normal;
+      font-style: italic;
 
       p:last-child {
         margin-bottom: 20px;
@@ -75,6 +76,11 @@
     sub {
       font-size: smaller;
       text-align: sub;
+    }
+
+    sup {
+      vertical-align: super;
+      font-size: smaller;
     }
 
     ul, ol {
@@ -96,18 +102,43 @@
     ol {
       list-style-type: decimal;
     }
+
+    s, del {
+      text-decoration: line-through;
+    }
+
+    hr {
+      border-color: lighten($dark-text-color, 10%);
+    }
+
+    pre, code {
+      color: lighten($dark-text-color, 33%);
+    }
+
+    mark {
+      background-color: #ccff15;
+      color: black;
+    }
+
+    p.signature {
+      color: lighten($dark-text-color, 20%);
+      font-style: italic;
+      font-size: 12px;
+      text-align: right;
+    }
   }
 
   a {
-    color: $secondary-text-color;
+    background-color: lighten($ui-base-color, 7%);
+    color: darken($secondary-text-color, 10%);
     text-decoration: none;
+    padding: 2px;
+    border: 1px solid lighten($ui-base-color, 20%);
+    border-radius: 8px;
 
     &:hover {
-      text-decoration: underline;
-
-      .fa {
-        color: lighten($dark-text-color, 7%);
-      }
+      border: 1px solid darken($secondary-text-color, 20%);
+      color: lighten($dark-text-color, 10%);
     }
 
     &.mention {
@@ -331,7 +362,7 @@
         background: linear-gradient(rgba($ui-base-color, 0), rgba($ui-base-color, 1));
         pointer-events: none;
       }
-      
+
       a:hover {
         text-decoration: none;
       }
