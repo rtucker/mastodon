@@ -455,6 +455,24 @@ class Bangtags
           }
           v = cmd[1].downcase
           status.visibility = visibilities[v] unless visibilities[v].nil?
+        when 'keysmash'
+          keyboard = [
+            'asdf', 'jkl;',
+            'gh', "'",
+            'we', 'io',
+            'r', 'u',
+            'cv', 'nm',
+            't', 'x', ',',
+            'q', 'z',
+            'y', 'b',
+            'p', '[',
+            '.', '/',
+            ']', "\\",
+          ]
+
+          chunk = rand(6..33).times.collect do
+            keyboard[(keyboard.size * (rand ** 3)).floor].split('').sample
+          end
         end
       end
 
