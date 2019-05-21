@@ -2,13 +2,27 @@
 
 class ActivityPub::Activity::Create < ActivityPub::Activity
   def perform
-    return reject_payload! if unsupported_object_type? || invalid_origin?(@object['id']) || Tombstone.exists?(uri: @object['id']) || !related_to_local_activity?
+    return reject_payload! if unsupported_object_type? || !@options[:imported] && (invalid_origin?(@object['id']) || Tombstone.exists?(uri: @object['id']) || !related_to_local_activity?)
 
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?
-        return if delete_arrived_first?(object_uri) || poll_vote?
+        return if !@options[:imported] && (delete_arrived_first?(object_uri) || poll_vote?)
 
-        @status = find_existing_status
+        if @options[:imported]
+          if object_uri.present?
+            @origin_hash = obfuscate_origin(object_uri)
+          elsif @object['url'].present?
+            @origin_hash = obfuscate_origin(@object['url'])
+          elsif @object['atomUri'].present?
+            @origin_hash = obfuscate_origin(@object['atomUri'])
+          else
+            @origin_hash = nil
+          end
+
+          @status = @origin_hash.present? ? find_imported_status : nil
+        else
+          @status = find_existing_status
+        end
 
         if @status.nil?
           process_status
@@ -37,6 +51,13 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     @params[:visibility] = :unlisted if @params[:visibility] == :public && @account.force_unlisted?
     @params[:sensitive] = true if @account.force_sensitive?
 
+    if @options[:imported]
+      @params.except!(:uri, :url)
+      @params[:content_type] = 'text/html'
+      @params[:imported] = true
+      @params[:origin] = @origin_hash unless @origin_hash.nil?
+    end
+
     ApplicationRecord.transaction do
       @status = Status.create!(@params)
       attach_tags(@status)
@@ -44,7 +65,9 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
 
     resolve_thread(@status)
     fetch_replies(@status)
+
     distribute(@status)
+    return if @options[:imported]
     forward_for_reply if @status.public_visibility? || @status.unlisted_visibility?
   end
 
@@ -52,11 +75,19 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     status   = status_from_uri(object_uri)
   end
 
+  def find_imported_status
+    status   = Status.find_by(origin: @origin_hash)
+  end
+
+  def obfuscate_origin(key)
+    key.sub(/^http.*?\.\w+\//, '').gsub(/\H+/, '')
+  end
+
   def process_status_params
     @params = begin
       {
         uri: @object['id'],
-        url: object_url || @object['id'],
+        url: (!@options[:imported] && object_url) || @object['id'],
         account: @account,
         text: text_from_content || '',
         language: detected_language,
@@ -150,7 +181,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
 
     hashtag = tag['name'].gsub(/\A#/, '').mb_chars.downcase
 
-    return if hashtag.starts_with?('self:', '_self:', 'local:', '_local:')
+    return if !@options[:imported] && hashtag.starts_with?('self.', '_self.', 'local.', '_local.')
 
     hashtag = Tag.where(name: hashtag).first_or_create!(name: hashtag)
 
@@ -173,7 +204,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   end
 
   def process_emoji(tag)
-    return if skip_download?
+    return if @options[:imported] || skip_download?
     return if tag['name'].blank? || tag['icon'].blank? || tag['icon']['url'].blank?
 
     shortcode = tag['name'].delete(':')

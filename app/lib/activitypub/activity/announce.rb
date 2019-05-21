@@ -2,7 +2,7 @@
 
 class ActivityPub::Activity::Announce < ActivityPub::Activity
   def perform
-    return reject_payload! if delete_arrived_first?(@json['id']) || !related_to_local_activity?
+    return reject_payload! if !@options[:imported] && (delete_arrived_first?(@json['id']) || !related_to_local_activity?)
 
     original_status = status_from_object
 
@@ -15,10 +15,11 @@ class ActivityPub::Activity::Announce < ActivityPub::Activity
     status = Status.create!(
       account: @account,
       reblog: original_status,
-      uri: @json['id'],
+      uri: @options[:imported] ? nil : @json['id'],
       created_at: @json['published'],
       override_timestamps: @options[:override_timestamps],
-      visibility: visibility_from_audience
+      visibility: visibility_from_audience,
+      imported: @options[:imported] == true
     )
 
     distribute(status)

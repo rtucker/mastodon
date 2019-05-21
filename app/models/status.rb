@@ -29,6 +29,9 @@
 #  network                :boolean          default(FALSE), not null
 #  content_type           :string
 #  footer                 :text
+#  edited                 :boolean
+#  imported               :boolean
+#  origin                 :string
 #
 
 class Status < ApplicationRecord

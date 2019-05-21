@@ -17,14 +17,14 @@
 #
 
 class Import < ApplicationRecord
-  FILE_TYPES = %w(text/plain text/csv).freeze
+  FILE_TYPES = %w(text/plain text/html text/csv application/json application/json+ld).freeze
   MODES = %i(merge overwrite).freeze
 
   self.inheritance_column = false
 
   belongs_to :account
 
-  enum type: [:following, :blocking, :muting, :domain_blocking]
+  enum type: [:following, :blocking, :muting, :domain_blocking, :statuses]
 
   validates :type, presence: true
 

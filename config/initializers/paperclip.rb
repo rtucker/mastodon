@@ -84,3 +84,9 @@ else
     url: (ENV['PAPERCLIP_ROOT_URL'] || '/system') + '/:class/:attachment/:id_partition/:style/:filename',
   )
 end
+
+Paperclip.options[:content_type_mappings] = {
+  json:   %w(text/plain text/html application/json application/json+ld),
+  jsonld: %w(text/plain text/html application/json application/json+ld),
+  csv:    %w(text/plain),
+}

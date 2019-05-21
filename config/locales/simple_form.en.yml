@@ -48,7 +48,7 @@ en:
       featured_tag:
         name: 'You might want to use one of these:'
       imports:
-        data: CSV file exported from another Monsterpit server
+        data: CSV or JSON file exported from another server
       invite_request:
         text: This will help us review your join request
       sessions:
