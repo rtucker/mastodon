@@ -226,10 +226,13 @@ class Bangtags
           case cmd[1].downcase
           when 'reall'
             if status.conversation_id.present?
-              mention_ids = Status.where(conversation_id: status.conversation_id).flat_map { |s| s.mentions.pluck(:account_id) }
-              mention_ids.uniq!
-              mentions = Account.where(id: mention_ids).map { |a| "@#{a.username}" }
-              chunk = mentions.join(' ')
+              participants = Status.where(conversation_id: status.conversation_id)
+                .pluck(:account_id).uniq.without(@account.id)
+              participants = Account.where(id: participants)
+                .pluck(:username, :domain)
+                .map { |a| "@#{a.compact.join('@')}" }
+              participants = (cmd[2..-1].map(&:strip) | participants) unless cmd[2].nil?
+              chunk = participants.join(' ')
             end
           when 'sharekey'
             next if cmd[2].nil?
