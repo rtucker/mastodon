@@ -66,7 +66,7 @@ class PostStatusService < BaseService
      @text = @media.find(&:video?) ? '📹' : '🖼' if @media.size > 0
     end
 
-    @footer = set_footer_from_i_am if @footer.nil?
+    @footer = set_footer_from_i_am if @footer.nil? && !@options[:no_footer]
 
     @visibility   = @options[:visibility] || @account.user_default_visibility
     @visibility   = :unlisted if @visibility.in?([nil, 'public']) && @account.silenced? || @account.force_unlisted
@@ -185,7 +185,7 @@ class PostStatusService < BaseService
 
   def status_attributes
     {
-      created_at: @options[:created_at] ? @options[:created_at].to_datetime : Time.now.utc,
+      created_at: @options[:created_at] ? @options[:created_at].to_datetime.utc : Time.now.utc,
       text: @text,
       footer: @footer,
       media_attachments: @media || [],
