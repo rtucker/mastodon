@@ -73,7 +73,7 @@ class Tag < ApplicationRecord
 
   class << self
     def search_for(term, limit = 5, offset = 0)
-      pattern = sanitize_sql_like(term.strip) + '%'
+      pattern = sanitize_sql_like(term.strip.gsub(':', '.')) + '%'
 
       Tag.where('lower(name) like lower(?)', pattern)
          .order(:name)
@@ -82,7 +82,7 @@ class Tag < ApplicationRecord
     end
 
     def find_normalized(name)
-      find_by(name: name.mb_chars.downcase.to_s)
+      find_by(name: name.mb_chars.gsub(':', '.').downcase.to_s)
     end
 
     def find_normalized!(name)
@@ -98,7 +98,7 @@ class Tag < ApplicationRecord
   end
 
   def set_scope
-    self.private = true if name.starts_with?('self', '_self')
-    self.local = true if self.private || name.starts_with?('local', '_local')
+    self.private = true if name.in?(['self', '_self']) || name.starts_with?('self.', '_self.')
+    self.local = true if self.private || name.in?(['local', '_local']) || name.starts_with?('local.', '_local.')
   end
 end
