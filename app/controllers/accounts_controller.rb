@@ -73,6 +73,10 @@ class AccountsController < ApplicationController
     @account.statuses.not_local_only.where(visibility: [:public, :unlisted])
   end
 
+  def account_media_status_ids
+    @account.media_attachments.attached.reorder(nil).select(:status_id).distinct
+  end
+
   def hashtag_scope
     tag = Tag.find_normalized(params[:tag])
 
