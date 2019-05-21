@@ -63,7 +63,7 @@ class AccountsController < ApplicationController
     elsif media_requested?
       default_statuses.where(id: account_media_status_ids)
     elsif tag_requested?
-      default_statuses.hashtag_scope
+      hashtag_scope
     else
       default_statuses.without_replies.without_reblogs
     end
@@ -81,7 +81,7 @@ class AccountsController < ApplicationController
     tag = Tag.find_normalized(params[:tag])
 
     if tag
-      return Status.none if !user_signed_in && (tag.local || tag.private) || tag.private && current_account.id != @account.id
+      return Status.none if !user_signed_in? && (tag.local || tag.private) || tag.private && current_account.id != @account.id
       scope = tag.private ? current_account.statuses : tag.local ? Status.local : Status
       scope.tagged_with(tag.id)
     else

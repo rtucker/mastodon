@@ -220,6 +220,8 @@ class Bangtags
           chunk = nil
           tags = cmd[1..-1].map {|t| t.gsub(':', '.')}
           add_tags(status, *tags)
+        when '10629'
+          chunk = "\u200b:gargamel:\u200b I really don't think we should do this."
         when 'thread'
           chunk = nil
           next if cmd[1].nil?
