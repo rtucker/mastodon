@@ -40,7 +40,7 @@
   "boost_modal.combo": "You can press {combo} to skip this next time",
   "bundle_column_error.body": "Something went wrong while loading this component.",
   "bundle_column_error.retry": "Try again",
-  "bundle_column_error.title": "Network error... plz stop chewing on the wires plz",
+  "bundle_column_error.title": "Network error, oh no!",
   "bundle_modal_error.close": "Close",
   "bundle_modal_error.message": "Something went wrong while loading this component.",
   "bundle_modal_error.retry": "Try again",
