@@ -212,7 +212,7 @@ class ImportService < BaseService
 
       activity = ActivityPub::Activity.factory(activity, @account, imported: true)
       activity&.perform
-    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound, Mastodon::ValidationError => e
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound, Mastodon::ValidationError, HTTP::ConnectionError, HTTP::TimeoutError, OpenSSL::SSL::SSLError, Paperclip::Errors::NotIdentifiedByImageMagickError, Addressable::URI::InvalidURIError, Mastodon::HostValidationError, Mastodon::LengthValidationError => e
       Rails.logger.error "Error importing status (ActivityPub): #{e}"
       nil
     end
