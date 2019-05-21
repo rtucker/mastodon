@@ -36,7 +36,7 @@ class Bangtags
   end
 
   def process
-    return unless status.text&.present? && status.text.include?('#!')
+    return unless !@vars['_bangtags:disable'] && status.text&.present? && status.text.include?('#!')
 
     status.text.gsub!('#!!', "#\u200c!")
 
@@ -218,7 +218,7 @@ class Bangtags
           chunk = mentions.join(' ')
         when 'tag'
           chunk = nil
-          tags = cmd[1..-1].map {|t| t.gsub('.', ':')}
+          tags = cmd[1..-1].map {|t| t.gsub(':', '.')}
           add_tags(status, *tags)
         when 'thread'
           chunk = nil
@@ -291,7 +291,7 @@ class Bangtags
           when 'tag'
             chunk = nil
             next unless @parent_status.account.id == @account.id
-            tags = cmd[2..-1].map {|t| t.gsub('.', ':')}
+            tags = cmd[2..-1].map {|t| t.gsub(':', '.')}
             add_tags(@parent_status, *tags)
           when 'emoji'
             @parent_status.emojis.each do |theirs|
@@ -404,7 +404,7 @@ class Bangtags
           status.visibility = :direct
           @vore_stack.push('_draft')
           @component_stack.push(:var)
-          add_tags(status, 'self:draft')
+          add_tags(status, 'self.draft')
         when 'format', 'type'
           chunk = nil
           next if cmd[1].nil?
