@@ -352,6 +352,15 @@ export default function compose(state = initialState, action) {
     });
   case COMPOSE_REPLY_CANCEL:
     state = state.setIn(['advanced_options', 'threaded_mode'], false);
+    return state.withMutations(map => {
+      map.set('in_reply_to', null);
+      map.set('privacy', state.get('default_privacy'));
+      map.update(
+        'advanced_options',
+        map => map.mergeWith(overwrite, state.get('default_advanced_options'))
+      );
+      map.set('idempotencyKey', uuid());
+    });
   case COMPOSE_RESET:
     return state.withMutations(map => {
       map.set('in_reply_to', null);
