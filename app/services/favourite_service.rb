@@ -7,7 +7,7 @@ class FavouriteService < BaseService
   # @param [Account] account
   # @param [Status] status
   # @return [Favourite]
-  def call(account, status)
+  def call(account, status, skip_notify = false)
     authorize_with account, status, :favourite?
 
     favourite = Favourite.find_by(account: account, status: status)
@@ -17,7 +17,7 @@ class FavouriteService < BaseService
     favourite = Favourite.create!(account: account, status: status)
 
     curate_status(status)
-    create_notification(favourite)
+    create_notification(favourite) unless skip_notify
     bump_potential_friendship(account, status)
 
     favourite

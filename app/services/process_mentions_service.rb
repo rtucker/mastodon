@@ -4,7 +4,7 @@ class ProcessMentionsService < BaseService
   # Scan status for mentions and fetch remote mentioned users, create
   # local mention pointers
   # @param [Status] status
-  def call(status)
+  def call(status, skip_notify = false)
     return unless status.local? && !status.draft?
 
     @status  = status
@@ -31,6 +31,7 @@ class ProcessMentionsService < BaseService
 
     status.save!
 
+    return if skip_notify
     mentions.each { |mention| create_notification(mention) }
   end
 

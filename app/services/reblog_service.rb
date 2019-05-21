@@ -28,7 +28,7 @@ class ReblogService < BaseService
     end
 
     curate_status(reblogged_status)
-    create_notification(reblog)
+    create_notification(reblog) unless options[:skip_notify]
     bump_potential_friendship(account, reblog)
 
     reblog
