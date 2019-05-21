@@ -78,7 +78,7 @@ Rails.application.routes.draw do
   get '/@:username/with_replies', to: 'accounts#show', as: :short_account_with_replies
   get '/@:username/media', to: 'accounts#show', as: :short_account_media
   get '/@:username/reblogs', to: 'accounts#show', as: :short_account_reblogs
-  get '/@:username/tagged/:tag', to: 'accounts#show', as: :short_account_tag
+  get '/@:username/tagged/:tag', to: 'accounts#show', as: :short_account_tag, constraints: { tag: /[\w._·\-]+/ }
   get '/@:account_username/:id', to: 'statuses#show', as: :short_account_status
   get '/@:account_username/:id/embed', to: 'statuses#embed', as: :embed_short_account_status
 
@@ -86,7 +86,7 @@ Rails.application.routes.draw do
   post '/interact/:id', to: 'remote_interaction#create'
 
   get '/explore', to: 'directories#index', as: :explore
-  get '/explore/:id', to: 'directories#show', as: :explore_hashtag
+  get '/explore/:id', to: 'directories#show', as: :explore_hashtag, constraints: { id: /[\w._·\-]+/ }
 
   namespace :settings do
     resource :profile, only: [:show, :update]
@@ -124,14 +124,14 @@ Rails.application.routes.draw do
     resource :migration, only: [:show, :update]
 
     resources :sessions, only: [:destroy]
-    resources :featured_tags, only: [:index, :create, :destroy]
+    resources :featured_tags, only: [:index, :create, :destroy], constraints: { id: /[\w._·\-]+/ }
   end
 
   resources :media, only: [:show] do
     get :player
   end
 
-  resources :tags,   only: [:show]
+  resources :tags,   only: [:show], constraints: { id: /[\w._·\-]+/ }
   resources :emojis, only: [:show]
   resources :invites, only: [:index, :create, :destroy]
   resources :filters, except: [:show]
@@ -293,7 +293,7 @@ Rails.application.routes.draw do
         resource :direct, only: :show, controller: :direct
         resource :home, only: :show, controller: :home
         resource :public, only: :show, controller: :public
-        resources :tag, only: :show
+        resources :tag, only: :show, constraints: { id: /[\w._·\-]+/ }
         resources :list, only: :show
       end
 
