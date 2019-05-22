@@ -279,6 +279,7 @@
 .drawer__inner__mastodon {
   flex: 1;
   min-height: 47px;
+  display: none;
 
   > img {
     display: block;
@@ -297,6 +298,10 @@
     height: 100%;
     border: none;
     cursor: inherit;
+  }
+
+  @media screen and (min-height: 640px) {
+    display: block;
   }
 }
 

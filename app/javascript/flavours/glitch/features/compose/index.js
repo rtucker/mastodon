@@ -61,26 +61,12 @@ class Compose extends React.PureComponent {
         <div className='drawer__pager'>
           {!isSearchPage && <div className='drawer__inner'>
             <NavigationContainer />
+
             <ComposeFormContainer />
-            {isStaff && multiColumn && (
-              <div className='drawer__inner__admin'>
-                <h2>Staff Tools</h2>
-                <ul>
-                  <li><a href="/admin/action_logs" target="_blank" rel="nofollow noopener">Audit log</a></li>
-                  <li><a href="/admin/reports" target="_blank" rel="nofollow noopener">Reports</a></li>
-                  <li><a href="/admin/pending_accounts" target="_blank" rel="nofollow noopener">Pending accounts</a></li>
-                  <li><a href="/admin/domain_blocks/new" target="_blank" rel="nofollow noopener">Add domain policy...</a></li>
-                  <li><a href="/admin/instances" target="_blank" rel="nofollow noopener">Federation</a></li>
-                  <li><a href="/admin/accounts" target="_blank" rel="nofollow noopener">Accounts</a></li>
-                  <li><a href="/admin/custom_emojis" target="_blank" rel="nofollow noopener">Custom emojis</a></li>
-                </ul>
-              </div>
-            )}
-            {multiColumn && (
-              <div className='drawer__inner__mastodon'>
-                {mascot ? <img alt='' draggable='false' src={mascot} /> : <button className='mastodon' onClick={onClickElefriend} />}
-              </div>
-            )}
+
+            <div className='drawer__inner__mastodon'>
+              {mascot ? <img alt='' draggable='false' src={mascot} /> : <button className='mastodon' onClick={onClickElefriend} />}
+            </div>
           </div>}
 
           <Motion defaultStyle={{ x: isSearchPage ? 0 : -100 }} style={{ x: spring(showSearch || isSearchPage ? 0 : -100, { stiffness: 210, damping: 20 }) }}>
