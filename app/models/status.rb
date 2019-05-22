@@ -35,6 +35,8 @@
 #
 
 class Status < ApplicationRecord
+  self.ignored_columns = %w(tsv)
+
   before_destroy :unlink_from_conversations
 
   include Paginable
