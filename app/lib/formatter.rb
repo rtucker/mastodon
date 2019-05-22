@@ -205,7 +205,9 @@ class Formatter
     html = encode_and_link_urls(html, linkable_accounts, keep_html: %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type))
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
 
-    unless %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type)
+    if %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type)
+      html = reformat(html)
+    else
       html = simple_format(html, {}, sanitize: false)
       html = html.delete("\n")
     end
@@ -221,26 +223,22 @@ class Formatter
   end
 
   def format_markdown(html)
-    html = reformat(markdown_formatter.render(html))
-    html.delete("\r").delete("\n")
+    html = markdown_formatter.render(html)
   end
 
-  def format_bbcode(html, sanitize = true)
+  def format_bbcode(html)
     html = bbcode_formatter(html)
     html = html.gsub(/<hr>.*<\/hr>/im, '<hr />')
-    return html unless sanitize
-    html = reformat(html)
-    html.delete("\r").delete("\n")
   end
 
   def format_bbdown(html)
-    html = format_bbcode(html, false)
+    html = format_bbcode(html)
     html = html.gsub(/<br *\/>|<br>/, '')
     format_markdown(html)
   end
 
   def reformat(html)
-    sanitize(html, Sanitize::Config::MASTODON_STRICT)
+    sanitize(html, Sanitize::Config::MASTODON_STRICT).delete("\r").delete("\n")
   end
 
   def plaintext(status)
