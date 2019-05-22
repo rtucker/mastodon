@@ -131,7 +131,7 @@ Rails.application.routes.draw do
     get :player
   end
 
-  resources :tags,   only: [:show], constraints: { id: /[\w._·\-]+/ }
+  resources :tags,   only: [:show], constraints: { id: /[\w:._·\-]+/ }
   resources :emojis, only: [:show]
   resources :invites, only: [:index, :create, :destroy]
   resources :filters, except: [:show]
