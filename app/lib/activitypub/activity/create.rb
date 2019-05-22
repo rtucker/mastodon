@@ -179,7 +179,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   def process_hashtag(tag)
     return if tag['name'].blank?
 
-    hashtag = tag['name'].gsub(/\A#/, '').mb_chars.downcase
+    hashtag = tag['name'].gsub(/\A#/, '').gsub(':', '.').mb_chars.downcase
 
     return if !@options[:imported] && hashtag.starts_with?('self.', '_self.', 'local.', '_local.')
 

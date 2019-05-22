@@ -19,7 +19,7 @@ class Tag < ApplicationRecord
   has_many :featured_tags, dependent: :destroy, inverse_of: :tag
   has_one :account_tag_stat, dependent: :destroy
 
-  HASHTAG_NAME_RE = '[[:word:]._\-]*[[:alpha:]._·\-][[:word:]._\-]*'
+  HASHTAG_NAME_RE = '[[:word:]:._\-]*[[:alpha:]:._·\-][[:word:]:._\-]*'
   HASHTAG_RE = /(?:^|[^\/\)\w])#(#{HASHTAG_NAME_RE})/i
 
   validates :name, presence: true, uniqueness: true, format: { with: /\A#{HASHTAG_NAME_RE}\z/i }
@@ -82,7 +82,7 @@ class Tag < ApplicationRecord
     end
 
     def find_normalized(name)
-      find_by(name: name.mb_chars.gsub(':', '.').downcase.to_s)
+      find_by(name: name.gsub(':', '.').mb_chars.downcase.to_s)
     end
 
     def find_normalized!(name)
