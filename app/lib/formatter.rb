@@ -61,7 +61,9 @@ class Formatter
     html = encode_and_link_urls(html, linkable_accounts, keep_html: %w(text/markdown text/html).include?(status.content_type))
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
 
-    unless %w(text/markdown text/html).include?(status.content_type)
+    if %w(text/markdown text/html).include?(status.content_type)
+      html = reformat(html)
+    else
       html = simple_format(html, {}, sanitize: false)
       html = html.delete("\n")
     end
@@ -70,7 +72,7 @@ class Formatter
   end
 
   def format_markdown(html)
-    html = reformat(markdown_formatter.render(html))
+    html = markdown_formatter.render(html)
     html.delete("\r").delete("\n")
   end
 
@@ -135,8 +137,6 @@ class Formatter
   private
 
   def markdown_formatter
-    return @markdown_formatter if defined?(@markdown_formatter)
-
     extensions = {
       autolink: true,
       no_intra_emphasis: true,
@@ -161,7 +161,7 @@ class Formatter
       link_attributes: { target: '_blank', rel: 'nofollow noopener' },
     })
 
-    @markdown_formatter = Redcarpet::Markdown.new(renderer, extensions)
+    Redcarpet::Markdown.new(renderer, extensions)
   end
 
   def html_entities
