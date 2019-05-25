@@ -163,6 +163,9 @@ class User < ApplicationRecord
     :aggregate_reblogs,
     :show_application,
     :default_content_type,
+
+    :theme,
+    :advanced_layout,
     to: :settings,
     prefix: :setting,
     allow_nil: false
@@ -247,37 +250,6 @@ class User < ApplicationRecord
     self.otp_required_for_login = false
     otp_backup_codes&.clear
     save!
-  end
-
-  def notify_staff_about_pending_account!
-    LogWorker.perform_async("\xf0\x9f\x86\x95 New account <#{self.account.username}> is awaiting admin approval.\n\nReview (moderators only): https://#{Rails.configuration.x.web_domain || Rails.configuration.x.local_domain}/admin/pending_accounts")
-    User.staff.includes(:account).each do |u|
-      next unless u.allows_pending_account_emails?
-      AdminMailer.new_pending_account(u.account, self).deliver_later
-    end
-  end
-
-  def detect_spam!
-    janitor = janitor_account || Account.representative
-
-    intro = self.invite_request&.text
-    # normalize it
-    intro = intro.gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '').strip.downcase unless intro.nil?
-
-    return false unless intro.blank? || intro.split.count < 5 || SPAM_TRIGGERS.match?(intro)
-
-    user_friendly_action_log(janitor, :reject_registration, self.account.username, "Registration was spam filtered.")
-    Form::AccountBatch.new(current_account: janitor, account_ids: account_id, action: 'reject').save
-
-    true
-  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
-    false
-  end
-
-  def janitor_account
-    account_id = ENV.fetch('JANITOR_USER', '').to_i
-    return if account_id == 0
-    Account.find_by(id: account_id)
   end
 
   def wants_larger_menus?
@@ -479,6 +451,11 @@ class User < ApplicationRecord
     super
   end
 
+  def send_confirmation_instructions
+    return false if detect_spam!
+    super
+  end
+
   def send_reset_password_instructions
     return false if encrypted_password.blank? && (Devise.pam_authentication || Devise.ldap_authentication)
     super
@@ -486,11 +463,6 @@ class User < ApplicationRecord
 
   def reset_password!(new_password, new_password_confirmation)
     return false if encrypted_password.blank? && (Devise.pam_authentication || Devise.ldap_authentication)
-    super
-  end
-
-  def send_confirmation_instructions
-    return false if detect_spam!
     super
   end
 
@@ -537,6 +509,37 @@ class User < ApplicationRecord
   def prepare_returning_user!
     ActivityTracker.record('activity:logins', id)
     regenerate_feed! if needs_feed_update?
+  end
+
+  def notify_staff_about_pending_account!
+    LogWorker.perform_async("\xf0\x9f\x86\x95 New account <#{self.account.username}> is awaiting admin approval.\n\nReview (moderators only): https://#{Rails.configuration.x.web_domain || Rails.configuration.x.local_domain}/admin/pending_accounts")
+    User.staff.includes(:account).each do |u|
+      next unless u.allows_pending_account_emails?
+      AdminMailer.new_pending_account(u.account, self).deliver_later
+    end
+  end
+
+  def detect_spam!
+    janitor = janitor_account || Account.representative
+
+    intro = self.invite_request&.text
+    # normalize it
+    intro = intro.gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '').strip.downcase unless intro.nil?
+
+    return false unless intro.blank? || intro.split.count < 5 || SPAM_TRIGGERS.match?(intro)
+
+    user_friendly_action_log(janitor, :reject_registration, self.account.username, "Registration was spam filtered.")
+    Form::AccountBatch.new(current_account: janitor, account_ids: account_id, action: 'reject').save
+
+    true
+  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
+    false
+  end
+
+  def janitor_account
+    account_id = ENV.fetch('JANITOR_USER', '').to_i
+    return if account_id == 0
+    Account.find_by(id: account_id)
   end
 
   def regenerate_feed!
