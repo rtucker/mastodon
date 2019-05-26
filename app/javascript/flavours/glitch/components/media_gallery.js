@@ -261,7 +261,6 @@ export default class MediaGallery extends React.PureComponent {
 
   static propTypes = {
     sensitive: PropTypes.bool,
-    revealed: PropTypes.bool,
     standalone: PropTypes.bool,
     letterbox: PropTypes.bool,
     fullwidth: PropTypes.bool,
@@ -272,6 +271,8 @@ export default class MediaGallery extends React.PureComponent {
     intl: PropTypes.object.isRequired,
     defaultWidth: PropTypes.number,
     cacheWidth: PropTypes.func,
+    visible: PropTypes.bool,
+    onToggleVisibility: PropTypes.func,
   };
 
   static defaultProps = {
@@ -279,13 +280,15 @@ export default class MediaGallery extends React.PureComponent {
   };
 
   state = {
-    visible: this.props.revealed === undefined ? (displayMedia !== 'hide_all' && !this.props.sensitive || displayMedia === 'show_all') : this.props.revealed,
+    visible: this.props.visible !== undefined ? this.props.visible : (displayMedia !== 'hide_all' && !this.props.sensitive || displayMedia === 'show_all'),
     width: this.props.defaultWidth,
   };
 
   componentWillReceiveProps (nextProps) {
-    if (!is(nextProps.media, this.props.media) || nextProps.revealed === true) {
-      this.setState({ visible: nextProps.revealed === undefined ? (displayMedia !== 'hide_all' && !nextProps.sensitive || displayMedia === 'show_all') : nextProps.revealed });
+    if (!is(nextProps.media, this.props.media) && nextProps.visible === undefined) {
+      this.setState({ visible: displayMedia !== 'hide_all' && !nextProps.sensitive || displayMedia === 'show_all' });
+    } else if (!is(nextProps.visible, this.props.visible) && nextProps.visible !== undefined) {
+      this.setState({ visible: nextProps.visible });
     }
   }
 
@@ -298,7 +301,11 @@ export default class MediaGallery extends React.PureComponent {
   }
 
   handleOpen = () => {
-    this.setState({ visible: !this.state.visible });
+    if (this.props.onToggleVisibility) {
+      this.props.onToggleVisibility();
+    } else {
+      this.setState({ visible: !this.state.visible });
+    }
   }
 
   handleClick = (index) => {
