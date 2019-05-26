@@ -24,86 +24,15 @@ class Sanitize
       node['class'] = class_list.join(' ')
     end
 
-    ANCHOR_SANITIZER = lambda do |env|
-      return unless env[:node_name] == 'a'
+    IMG_TAG_TRANSFORMER = lambda do |env|
       node = env[:node]
-      return if node['href'].blank? || node.text.blank?
 
-      class_list = node['class']&.split(/[\t\n\f\r ]/)
-      return if class_list && (class_list.include?('mention') || class_list.include?('hashtag'))
+      return unless env[:node_name] == 'img'
 
-      # href matches link text verbatim?
-      href = node['href']
-      return if href == node.text.strip
+      node.name = 'a'
 
-      # href matches link text with sanitized query string?
-      text = Sanitize::sanitize_query_string(node.text.strip)
-      return if text.blank?
-      if href == text
-        node.inner_html = "\u2728 #{node.inner_html}"
-        return
-      end
-
-      # strip ellipse & replace keyword search obscuring
-      text = text.sub(/ *(?:\u2026|\.\.\.)\Z/, '').gsub(/ dot /i, '.').gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '')
-
-      # href now matches text without obscuring?
-      if href == text
-        node.inner_html = "\u2728 #{node.inner_html}"
-        return
-      end
-
-      # try to detect pseudomentions
-      if text.start_with?('@') && text.match?(Account::MENTION_RE)
-        username, domain = text[1..-1].split('@', 2)
-        return if href == "https://#{domain}/@#{username}"
-        return if href == "https://#{domain}/#{username}"
-        return if href == "https://#{username}.#{domain}"
-        return if href == "https://#{domain}/users/#{username}"
-        return if href == "https://#{domain}/user/#{username}"
-      end
-
-      # try to detect filenames
-      href_filename = '/'.in?(href) ? href.rpartition('/')[2] : nil
-      unless href_filename.blank? || !('.'.in?(href_filename))
-        # possibly linked media?
-        ext = href_filename.rpartition('.')[2]
-        if ext.downcase.in?(MEDIA_EXTENSIONS)
-          node.inner_html = "\xf0\x9f\x96\xbc\xef\xb8\x8f #{node.inner_html}"
-          return
-        end
-      end
-
-      # grab first url from link text
-      first_url = text.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*\S*/).first
-
-      return if first_url.nil?
-
-      # strip trailing punctuation
-      text.sub!(/\p{Punct}+\Z/, '')
-
-      # href starts with link text?
-      return if href.start_with?(text)
-
-      # split href into parts & grab shortened href
-      uri = Addressable::URI.parse(href)
-      short_href = "#{uri.host}#{uri.path}"
-      normalized_short_href = "#{uri.normalized_host}#{uri.normalized_path}"
-
-      # shortened href starts with link text?
-      return if short_href.start_with?(text) || normalized_short_href.start_with?(text)
-
-      # first domain in link text (if there is one) matches href domain?
-      return if short_href == first_url || normalized_short_href == first_url
-
-      # possibly misleading link text
-      node.inner_html = "\u26a0\ufe0f #{node.inner_html}"
-    rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
-      # strip malformed links
-      node = env[:node]
-      node['href'] = '#'
-      node.children.remove
-      node.inner_html = "\u274c #{node.inner_html}"
+      node['href'] = node['src']
+      node.content = "[🖼 #{node['alt'] || node['href']}]"
     end
 
     QUERY_STRING_SANITIZER = lambda do |env|
@@ -144,7 +73,7 @@ class Sanitize
       transformers: [
         CLASS_WHITELIST_TRANSFORMER,
         QUERY_STRING_SANITIZER,
-        ANCHOR_SANITIZER
+        IMG_TAG_TRANSFORMER,
       ]
     )
 
