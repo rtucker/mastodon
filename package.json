@@ -34,8 +34,7 @@
       "<rootDir>/config/",
       "<rootDir>/log/",
       "<rootDir>/public/",
-      "<rootDir>/tmp/",
-      "<rootDir>/app/javascript/themes/"
+      "<rootDir>/tmp/"
     ],
     "setupFiles": [
       "raf/polyfill"
@@ -72,7 +71,6 @@
     "@babel/runtime": "^7.3.4",
     "@clusterws/cws": "^0.14.0",
     "array-includes": "^3.0.3",
-    "atrament": "^0.2.3",
     "autoprefixer": "^9.4.10",
     "axios": "^0.18.0",
     "babel-loader": "^8.0.5",
@@ -93,8 +91,7 @@
     "es6-symbol": "^3.1.1",
     "escape-html": "^1.0.3",
     "exif-js": "^2.3.0",
-    "express": "^4.16.4",
-    "favico.js": "^0.3.10",
+    "express": "^4.17.1",
     "fibers": "^3.1.1",
     "file-loader": "^3.0.1",
     "font-awesome": "^4.7.0",
@@ -108,8 +105,8 @@
     "intl-messageformat": "^2.2.0",
     "intl-relativeformat": "^2.2.0",
     "is-nan": "^1.2.1",
-    "js-yaml": "^3.13.1",
-    "lodash": "^4.17.13",
+    "js-yaml": "^3.11.0",
+    "lodash": "^4.7.11",
     "mark-loader": "^0.1.6",
     "marky": "^1.2.1",
     "mini-css-extract-plugin": "^0.5.0",
