@@ -31,10 +31,9 @@ class MediaAttachment < ApplicationRecord
   AUDIO_FILE_EXTENSIONS = ['.mp3', '.m4a', '.wav', '.ogg', '.aac'].freeze
 
   IMAGE_MIME_TYPES             = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].freeze
-  VIDEO_MIME_TYPES             = ['video/ogg', 'video/webm', 'video/mp4', 'video/quicktime'].freeze
-  VIDEO_CONVERTIBLE_MIME_TYPES = ['video/quicktime'].freeze
-  AUDIO_MIME_TYPES             = ['audio/mp3', 'audio/x-mp3', 'audio/mpeg', 'audio/x-mpeg', 'audio/mp4', 'audio/vnd.wav', 'audio/wav', 'audio/x-wav', 'audio/x-wave', 'audio/ogg', 'audio/aac', 'audio/flac'].freeze
-  AUDIO_CONVERTIBLE_MIME_TYPES = ['audio/vnd.wav', 'audio/wav', 'audio/x-wav', 'audio/x-wave', 'audio/ogg', 'audio/flac'].freeze
+  VIDEO_MIME_TYPES             = ['video/webm', 'video/mp4', 'video/quicktime'].freeze
+  VIDEO_CONVERTIBLE_MIME_TYPES = ['video/webm', 'video/quicktime'].freeze
+  AUDIO_MIME_TYPES             = ['audio/mpeg', 'audio/mp4', 'audio/vnd.wav', 'audio/wav', 'audio/x-wav', 'audio/x-wave', 'audio/ogg', 'audio/flac',].freeze
 
   BLURHASH_OPTIONS = {
     x_comp: 4,
@@ -54,41 +53,18 @@ class MediaAttachment < ApplicationRecord
     },
   }.freeze
 
-  GIF_THUMB_FORMAT = {
-    format: 'png',
-    pixels: 160_000, # 400x400px
-    file_geometry_parser: FastGeometryParser,
-  }.freeze
-
   AUDIO_STYLES = {
-    small: {
-      format: 'png',
-      time: 0,
+    original: {
+      format: 'mp4',
       convert_options: {
         output: {
-          filter_complex: '"showwavespic=s=400x100:colors=lime|green"',
+          filter_complex: '"[0:a]compand,showwaves=s=640x360:mode=line,format=yuv420p[v]"',
+          map: '"[v]" -map 0:a', 
+          threads: 2,
+          vcodec: 'libx264',
+          acodec: 'aac',
+          movflags: '+faststart',
         },
-      },
-    },
-
-    thumb: {
-      format: 'png',
-      time: 0,
-      convert_options: {
-        output: {
-          filter_complex: '"showwavespic=s=400x100:colors=lime|green"',
-        },
-      },
-    },
-  }.freeze
-
-  AUDIO_FORMAT = {
-    format: 'm4a',
-    convert_options: {
-      output: {
-        vn: '',
-        acodec: 'aac',
-        movflags: '+faststart',
       },
     },
   }.freeze
@@ -125,8 +101,8 @@ class MediaAttachment < ApplicationRecord
     },
   }.freeze
 
-  SIZE_LIMIT = (ENV['MAX_SIZE_LIMIT'] || 66.megabytes).to_i.megabytes
-  GIF_LIMIT = ENV.fetch('MAX_GIF_SIZE', 333).to_i.kilobytes
+  IMAGE_LIMIT = (ENV['MAX_IMAGE_SIZE'] || 8.megabytes).to_i
+  VIDEO_LIMIT = (ENV['MAX_VIDEO_SIZE'] || 40.megabytes).to_i
 
   belongs_to :account,          inverse_of: :media_attachments, optional: true
   belongs_to :status,           inverse_of: :media_attachments, optional: true
@@ -137,9 +113,10 @@ class MediaAttachment < ApplicationRecord
                     processors: ->(f) { file_processors f },
                     convert_options: { all: '-quality 90 -strip' }
 
-  do_not_validate_attachment_file_type :file
-  validates_attachment_size :file, less_than: SIZE_LIMIT
-  remotable_attachment :file, SIZE_LIMIT
+  validates_attachment_content_type :file, content_type: IMAGE_MIME_TYPES + VIDEO_MIME_TYPES + AUDIO_MIME_TYPES
+  validates_attachment_size :file, less_than: IMAGE_LIMIT, unless: :video_or_gifv?
+  validates_attachment_size :file, less_than: VIDEO_LIMIT, if: :video_or_gifv?
+  remotable_attachment :file, VIDEO_LIMIT
 
   include Attachmentable
 
@@ -161,19 +138,15 @@ class MediaAttachment < ApplicationRecord
     (file.blank? || (Paperclip::Attachment.default_options[:storage] == :filesystem && !File.exist?(file.path))) && remote_url.present?
   end
 
+  def video_or_gifv?
+    video? || gifv?
+  end
+
   def blocked?
     domains = Set[self.account.domain]
     domains.add(remote_url.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first) if remote_url.present?
     blocks = DomainBlock.suspend.or(DomainBlock.where(reject_media: true))
     domains.any? { |domain| blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists? }
-  end
-
-  def video_or_audio?
-    video? || gifv? || audio?
-  end
-
-  def is_media?
-    file_content_type.in?(IMAGE_MIME_TYPES + VIDEO_MIME_TYPES + AUDIO_MIME_TYPES)
   end
 
   def to_param
@@ -201,9 +174,7 @@ class MediaAttachment < ApplicationRecord
   after_commit :reset_parent_cache, on: :update
   before_create :prepare_description, unless: :local?
   before_create :set_shortcode
-  before_create :set_file_name, unless: :is_media?
   before_post_process :set_type_and_extension
-  before_post_process :is_media?
   before_save :set_meta
 
   class << self
@@ -211,24 +182,12 @@ class MediaAttachment < ApplicationRecord
 
     def file_styles(f)
       if f.instance.file_content_type == 'image/gif'
-        if f.instance.file_file_size > GIF_LIMIT
-          {
-            small: IMAGE_STYLES[:small],
-            original: VIDEO_FORMAT,
-          }
-        else
-          {
-            small: GIF_THUMB_FORMAT,
-            original: IMAGE_STYLES[:original],
-          }
-        end
+        {
+          small: IMAGE_STYLES[:small],
+          original: VIDEO_FORMAT,
+        }
       elsif IMAGE_MIME_TYPES.include? f.instance.file_content_type
         IMAGE_STYLES
-      elsif AUDIO_CONVERTIBLE_MIME_TYPES.include?(f.instance.file_content_type)
-        {
-          small: AUDIO_STYLES[:small],
-          original: AUDIO_FORMAT,
-        }
       elsif AUDIO_MIME_TYPES.include? f.instance.file_content_type
         AUDIO_STYLES
       elsif VIDEO_CONVERTIBLE_MIME_TYPES.include?(f.instance.file_content_type)
@@ -236,25 +195,19 @@ class MediaAttachment < ApplicationRecord
           small: VIDEO_STYLES[:small],
           original: VIDEO_FORMAT,
         }
-      elsif VIDEO_MIME_TYPES.include? f.instance.file_content_type
-        VIDEO_STYLES
       else
-        {original: {}}
+        VIDEO_STYLES
       end
     end
 
     def file_processors(f)
       if f.file_content_type == 'image/gif'
-        if f.file_file_size > GIF_LIMIT
-          [:gif_transcoder, :blurhash_transcoder]
-        else
-          [:lazy_thumbnail, :blurhash_transcoder]
-        end
+        [:gif_transcoder, :blurhash_transcoder]
       elsif VIDEO_MIME_TYPES.include? f.file_content_type
         [:video_transcoder, :blurhash_transcoder]
       elsif AUDIO_MIME_TYPES.include? f.file_content_type
         [:audio_transcoder]
-      elsif IMAGE_MIME_TYPES.include? f.file_content_type
+      else
         [:lazy_thumbnail, :blurhash_transcoder]
       end
     end
@@ -274,24 +227,11 @@ class MediaAttachment < ApplicationRecord
   end
 
   def prepare_description
-    self.description = description.strip[0...666] unless description.nil?
-  end
-
-  def set_file_name
-    temp = file.queued_for_write[:original]
-    unless temp.nil?
-      orig = temp.original_filename
-      ext = File.extname(orig).downcase
-      name = File.basename(orig, '.*')
-      self.file.instance_write(:file_name, "#{name}#{ext}")
-    end
+    self.description = description.strip[0...420] unless description.nil?
   end
 
   def set_type_and_extension
-    self.type = VIDEO_MIME_TYPES.include?(file_content_type) ? :video :
-      AUDIO_MIME_TYPES.include?(file_content_type) ? :audio :
-      IMAGE_MIME_TYPES.include?(file_content_type) ? :image :
-      :unknown
+    self.type = VIDEO_MIME_TYPES.include?(file_content_type) ? :video : AUDIO_MIME_TYPES.include?(file_content_type) ? :audio : :image
   end
 
   def set_meta
