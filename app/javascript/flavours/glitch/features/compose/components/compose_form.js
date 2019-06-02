@@ -21,12 +21,10 @@ const messages = defineMessages({
   placeholder_as: {
     id: 'compose_form.placeholder_as',
     defaultMessage: "Signing as {nickname}.\nRoar shamelessly!",
-    values: {nickname: 'yourself'}
+    values: { nickname: 'yourself' }
   },
-  missingDescriptionMessage: {  id: 'confirmations.missing_media_description.message',
-                                defaultMessage: 'At least one media attachment is lacking a description. Consider describing all media attachments for the visually impaired before sending your toot.' },
-  missingDescriptionConfirm: {  id: 'confirmations.missing_media_description.confirm',
-                                defaultMessage: 'Send anyway' },
+  missingDescriptionMessage: {  id: 'confirmations.missing_media_description.message', defaultMessage: 'At least one media attachment is lacking a description. Consider describing all media attachments for the visually impaired before sending your toot.' },
+  missingDescriptionConfirm: {  id: 'confirmations.missing_media_description.confirm', defaultMessage: 'Send anyway' },
   spoiler_placeholder: { id: 'compose_form.spoiler_placeholder', defaultMessage: 'Write your warning here' },
 });
 
@@ -350,32 +348,31 @@ class ComposeForm extends ImmutablePureComponent {
           />
         </div>
 
-        <div className='composer--textarea'>
-          <TextareaIcons advancedOptions={advancedOptions} />
-
-          <AutosuggestTextarea
-            ref={this.setAutosuggestTextarea}
-            placeholder={nickname ? intl.formatMessage(messages.placeholder_as, {nickname: nickname}) : intl.formatMessage(messages.placeholder)}
-            disabled={isSubmitting}
-            value={this.props.text}
-            onChange={this.handleChange}
-            suggestions={this.props.suggestions}
-            onFocus={this.handleFocus}
-            onKeyDown={this.handleKeyDown}
-            onSuggestionsFetchRequested={onFetchSuggestions}
-            onSuggestionsClearRequested={onClearSuggestions}
-            onSuggestionSelected={this.onSuggestionSelected}
-            onPaste={onPaste}
-            autoFocus={!showSearch && !isMobile(window.innerWidth, layout)}
-          />
-
+        <div className='emoji-picker-wrapper'>
           <EmojiPicker onPickEmoji={handleEmoji} />
         </div>
 
-        <div className='compose-form__modifiers'>
-          <UploadFormContainer />
-          <PollFormContainer />
-        </div>
+        <AutosuggestTextarea
+          ref={this.setAutosuggestTextarea}
+          placeholder={nickname ? intl.formatMessage(messages.placeholder_as, { nickname: nickname }) : intl.formatMessage(messages.placeholder)}
+          disabled={isSubmitting}
+          value={this.props.text}
+          onChange={this.handleChange}
+          suggestions={this.props.suggestions}
+          onFocus={this.handleFocus}
+          onKeyDown={this.handleKeyDown}
+          onSuggestionsFetchRequested={onFetchSuggestions}
+          onSuggestionsClearRequested={onClearSuggestions}
+          onSuggestionSelected={this.onSuggestionSelected}
+          onPaste={onPaste}
+          autoFocus={!showSearch && !isMobile(window.innerWidth, layout)}
+        >
+          <TextareaIcons advancedOptions={advancedOptions} />
+          <div className='compose-form__modifiers'>
+            <UploadFormContainer />
+            <PollFormContainer />
+          </div>
+        </AutosuggestTextarea>
 
         <OptionsContainer
           advancedOptions={advancedOptions}
