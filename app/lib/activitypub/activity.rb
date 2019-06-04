@@ -145,7 +145,7 @@ class ActivityPub::Activity
 
     # If the boosted toot is embedded and it is a self-boost, handle it like a Create
     unless unsupported_object_type?
-      actor_id = value_or_id(first_of_value(@object['attributedTo'])) || @account.uri
+      actor_id = value_or_id(first_of_value(@object['attributedTo']))
 
       if actor_id == @account.uri
         return ActivityPub::Activity.factory({ 'type' => 'Create', 'actor' => actor_id, 'object' => @object }, @account, announced_by: announced_by).perform
