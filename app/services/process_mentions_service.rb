@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class ProcessMentionsService < BaseService
+  include Payloadable
+
   # Scan status for mentions and fetch remote mentioned users, create
-  # local mention pointers
+  # local mention pointers, send Salmon notifications to mentioned
+  # remote users
   # @param [Status] status
   def call(status, skip_notify: false)
     return unless status.local? && !status.draft?
@@ -55,12 +58,7 @@ class ProcessMentionsService < BaseService
 
   def activitypub_json
     return @activitypub_json if defined?(@activitypub_json)
-    payload = ActiveModelSerializers::SerializableResource.new(
-      @status,
-      serializer: ActivityPub::ActivitySerializer,
-      adapter: ActivityPub::Adapter
-    ).as_json
-    @activitypub_json = Oj.dump(@status.distributable? ? ActivityPub::LinkedDataSignature.new(payload).sign!(@status.account) : payload)
+    @activitypub_json = Oj.dump(serialize_payload(@status, ActivityPub::ActivitySerializer, signer: @status.account))
   end
 
   def resolve_account_service

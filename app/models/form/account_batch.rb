@@ -3,6 +3,7 @@
 class Form::AccountBatch
   include ActiveModel::Model
   include Authorization
+  include Payloadable
 
   attr_accessor :account_ids, :action, :current_account
 
@@ -52,13 +53,9 @@ class Form::AccountBatch
   def reject_follow!(follow)
     follow.destroy
 
-    json = ActiveModelSerializers::SerializableResource.new(
-      follow,
-      serializer: ActivityPub::RejectFollowSerializer,
-      adapter: ActivityPub::Adapter
-    ).to_json
+    return unless follow.account.activitypub?
 
-    ActivityPub::DeliveryWorker.perform_async(json, current_account.id, follow.account.inbox_url)
+    ActivityPub::DeliveryWorker.perform_async(Oj.dump(serialize_payload(follow, ActivityPub::RejectFollowSerializer)), current_account.id, follow.account.inbox_url)
   end
 
   def approve!
