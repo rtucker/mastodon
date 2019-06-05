@@ -15,18 +15,18 @@ en:
     contact: Contact
     contact_missing: Not set
     contact_unavailable: N/A
-    discover_users: Discover users
+    discover_users: Discover critters
     documentation: Documentation
     extended_description_html: |
       <h3>A good place for rules</h3>
       <p>The extended description has not been set up yet.</p>
-    federation_hint_html: With an account on %{instance} you'll be able to follow people on any Mastodon server and beyond.
+    federation_hint_html: With an account on %{instance}, you'll be able to follow people on any Mastodon server and beyond.
     generic_description: "%{domain} is one server in the network"
     get_apps: Try a mobile app
     hosted_on: Mastodon hosted on %{domain}
     learn_more: Learn more
     privacy_policy: Privacy policy
-    see_whats_happening: What's going on in this thread...?
+    see_whats_happening: See what's going on in this thread...
     server_stats: 'Server stats:'
     source_code: Source code
     status_count_after:
@@ -54,8 +54,8 @@ en:
     moved_html: "%{name} has moved to %{new_profile_link}:"
     network_hidden: This information is not available
     nothing_here: There is nothing here!
-    people_followed_by: People whom %{name} follows
-    people_who_follow: People who follow %{name}
+    people_followed_by: Critters whom %{name} follows
+    people_who_follow: Critters who follow %{name}
     pin_errors:
       following: You must be already following the critter you want to endorse
     posts:
@@ -341,7 +341,7 @@ en:
     relays:
       add_new: Add new relay
       delete: Delete
-      description_html: A <strong>federation relay</strong> is an intermediary server that exchanges large volumes of public posts between servers that subscribe and publish to it. <strong>It can help small and medium servers discover content from the fediverse</strong>, which would otherwise require local critters manually following other animals on remote servers.
+      description_html: A <strong>federation relay</strong> is an intermediary server that exchanges large volumes of public posts between servers that subscribe and publish to it. <strong>It can help small and medium servers discover content from the fediverse</strong>, which would otherwise require local critters manually following folks on remote servers.
       disable: Disable
       disabled: Disabled
       enable: Enable
@@ -595,15 +595,15 @@ en:
       one: "%{count} person"
       other: "%{count} people"
   errors:
-    '403': You don't have permission to view this page.
-    '404': The page you are looking for isn't here.
-    '410': The page you were looking for doesn't exist here anymore. *burp*
+    '403': You don't have permission to view this page. (403)
+    '404': The page you are looking for isn't here. (404)
+    '410': The page you were looking for doesn't exist here anymore. *burp* (410)
     '422':
-      content: Security verification failed. Are you blocking cookies? They are delicious and important.
-      title: Security verification failed
-    '429': Throttled (chill the f out, yo)
+      content: Security verification failed. Are you blocking cookies? They are delicious and important. (422)
+      title: 422 Security verification failed
+    '429': Throttled (chill the f out, yo) (429)
     '500':
-      content: We're sorry, but something went wrong on our end. Please try again in a few moments, or see https://vulpineclub.github.io/status if it just won't stop being broken.
+      content: We're sorry, but something went wrong on our end. Please try again in a few moments. (500)
       title: 500 Internal Fox Error
     noscript_html: To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the <a href="%{apps_path}">native apps</a> for Mastodon for your platform.
   existing_username_validator:
@@ -674,7 +674,7 @@ en:
     i_am_html: I am %{username} on %{service}.
     identity: Identity
     inactive: Inactive
-    publicize_checkbox: 'And toot this:'
+    publicize_checkbox: 'And post this:'
     publicize_toot: 'It is proven! I am %{username} on %{service}: %{url}'
     status: Verification status
     view_proof: View proof
@@ -824,7 +824,7 @@ en:
       prompt: 'You want to awoo this post:'
     reply:
       proceed: Proceed to reply
-      prompt: 'You want to rawr at this post:'
+      prompt: 'You want to reply to this post:'
   remote_unfollow:
     error: Error
     title: Title
