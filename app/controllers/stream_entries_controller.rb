@@ -12,18 +12,12 @@ class StreamEntriesController < ApplicationController
   before_action :check_account_suspension
   before_action :set_cache_headers
 
-
   def show
     respond_to do |format|
       format.html do
-        use_pack 'public'
+        expires_in 5.minutes, public: true unless @stream_entry.hidden?
 
-        unless user_signed_in?
-          skip_session!
-          expires_in 5.minutes, public: true
-        end
-
-        redirect_to short_account_status_url(params[:account_username], @stream_entry.activity) if @type == 'status'
+        redirect_to short_account_status_url(params[:account_username], @stream_entry.activity)
       end
     end
   end
@@ -48,10 +42,10 @@ class StreamEntriesController < ApplicationController
 
   def set_stream_entry
     @stream_entry = @account.stream_entries.where(activity_type: 'Status').find(params[:id])
-    @type         = @stream_entry.activity_type.downcase
+    @type         = 'status'
 
     raise ActiveRecord::RecordNotFound if @stream_entry.activity.nil?
-    authorize @stream_entry.activity, :show? if @stream_entry.hidden? || @stream_entry.local_only?
+    authorize @stream_entry.activity, :show? if @stream_entry.hidden?
   rescue Mastodon::NotPermittedError
     # Reraise in order to get a 404
     raise ActiveRecord::RecordNotFound
