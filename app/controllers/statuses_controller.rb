@@ -30,9 +30,7 @@ class StatusesController < ApplicationController
   def show
     respond_to do |format|
       format.html do
-        use_pack 'public'
-
-        unless user_signed_in?
+        if current_account.nil?
           skip_session!
           expires_in 10.seconds, public: true
         end
@@ -64,7 +62,6 @@ class StatusesController < ApplicationController
   end
 
   def embed
-    use_pack 'embed'
     raise ActiveRecord::RecordNotFound if @status.hidden?
 
     skip_session!
