@@ -188,6 +188,7 @@ en:
       statuses: Statuses
       subscribe: Subscribe
       suspended: Suspended
+      time_in_queue: Waiting in queue %{time}
       title: Accounts
       unconfirmed_email: Unconfirmed email
       allow_nonsensitive: Allow non-sensitive
