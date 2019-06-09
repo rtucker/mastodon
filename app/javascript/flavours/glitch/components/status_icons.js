@@ -22,6 +22,7 @@ export default class StatusIcons extends React.PureComponent {
     mediaIcon: PropTypes.string,
     collapsible: PropTypes.bool,
     collapsed: PropTypes.bool,
+    directMessage: PropTypes.bool,
     setCollapsed: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
   };
@@ -42,6 +43,7 @@ export default class StatusIcons extends React.PureComponent {
       mediaIcon,
       collapsible,
       collapsed,
+      directMessage,
       intl,
     } = this.props;
 
@@ -65,9 +67,7 @@ export default class StatusIcons extends React.PureComponent {
         {status.get('reject_replies') ? (
           <i className='fa fa-microphone-slash' title='Rejecting replies' aria-hidden='true' />
         ) : null}
-        {(
-          <VisibilityIcon visibility={status.get('visibility')} />
-        )}
+        {!directMessage && <VisibilityIcon visibility={status.get('visibility')} />}
         {collapsible ? (
           <IconButton
             className='status__collapse-button'
