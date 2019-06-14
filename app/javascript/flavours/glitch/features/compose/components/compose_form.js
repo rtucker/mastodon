@@ -28,10 +28,6 @@ const messages = defineMessages({
 export default @injectIntl
 class ComposeForm extends ImmutablePureComponent {
 
-  setRef = c => {
-    this.composeForm = c;
-  };
-
   static contextTypes = {
     router: PropTypes.object,
   };
@@ -145,6 +141,10 @@ class ComposeForm extends ImmutablePureComponent {
     }
   }
 
+  setRef = c => {
+    this.composeForm = c;
+  };
+
   //  Inserts an emoji at the caret.
   handleEmoji = (data) => {
     const { textarea: { selectionStart } } = this;
@@ -213,7 +213,9 @@ class ComposeForm extends ImmutablePureComponent {
   }
 
   handleFocus = () => {
-    this.composeForm.scrollIntoView();
+    if (this.composeForm) {
+      this.composeForm.scrollIntoView();
+    }
   }
 
   //  This statement does several things:
@@ -335,32 +337,28 @@ class ComposeForm extends ImmutablePureComponent {
           />
         </div>
 
-        <div className='composer--textarea'>
-          <TextareaIcons advancedOptions={advancedOptions} />
-
-          <AutosuggestTextarea
-            ref={this.setAutosuggestTextarea}
-            placeholder={intl.formatMessage(messages.placeholder)}
-            disabled={isSubmitting}
-            value={this.props.text}
-            onChange={this.handleChange}
-            suggestions={this.props.suggestions}
-            onFocus={this.handleFocus}
-            onKeyDown={this.handleKeyDown}
-            onSuggestionsFetchRequested={onFetchSuggestions}
-            onSuggestionsClearRequested={onClearSuggestions}
-            onSuggestionSelected={this.onSuggestionSelected}
-            onPaste={onPaste}
-            autoFocus={!showSearch && !isMobile(window.innerWidth, layout)}
-          />
-
+        <AutosuggestTextarea
+          ref={this.setAutosuggestTextarea}
+          placeholder={intl.formatMessage(messages.placeholder)}
+          disabled={isSubmitting}
+          value={this.props.text}
+          onChange={this.handleChange}
+          suggestions={this.props.suggestions}
+          onFocus={this.handleFocus}
+          onKeyDown={this.handleKeyDown}
+          onSuggestionsFetchRequested={onFetchSuggestions}
+          onSuggestionsClearRequested={onClearSuggestions}
+          onSuggestionSelected={this.onSuggestionSelected}
+          onPaste={onPaste}
+          autoFocus={!showSearch && !isMobile(window.innerWidth, layout)}
+        >
           <EmojiPicker onPickEmoji={handleEmoji} />
-        </div>
-
-        <div className='compose-form__modifiers'>
-          <UploadFormContainer />
-          <PollFormContainer />
-        </div>
+          <TextareaIcons advancedOptions={advancedOptions} />
+          <div className='compose-form__modifiers'>
+            <UploadFormContainer />
+            <PollFormContainer />
+          </div>
+        </AutosuggestTextarea>
 
         <OptionsContainer
           advancedOptions={advancedOptions}
