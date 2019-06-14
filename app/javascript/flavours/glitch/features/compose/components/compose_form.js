@@ -70,8 +70,6 @@ class ComposeForm extends ImmutablePureComponent {
     preselectOnReply: PropTypes.bool,
     onChangeSpoilerness: PropTypes.func,
     onChangeVisibility: PropTypes.func,
-    onMount: PropTypes.func,
-    onUnmount: PropTypes.func,
     onPaste: PropTypes.func,
     onMediaDescriptionConfirm: PropTypes.func,
     account: ImmutablePropTypes.map.isRequired,
@@ -203,22 +201,6 @@ class ComposeForm extends ImmutablePureComponent {
   handleRefSpoilerText = (spoilerComponent) => {
     if (spoilerComponent) {
       this.spoilerText = spoilerComponent.input;
-    }
-  }
-
-  //  Tells our state the composer has been mounted.
-  componentDidMount () {
-    const { onMount } = this.props;
-    if (onMount) {
-      onMount();
-    }
-  }
-
-  //  Tells our state the composer has been unmounted.
-  componentWillUnmount () {
-    const { onUnmount } = this.props;
-    if (onUnmount) {
-      onUnmount();
     }
   }
 

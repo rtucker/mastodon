@@ -9,10 +9,8 @@ import {
   clearComposeSuggestions,
   fetchComposeSuggestions,
   insertEmojiCompose,
-  mountCompose,
   selectComposeSuggestion,
   submitCompose,
-  unmountCompose,
   uploadCompose,
   resetCompose,
 } from 'flavours/glitch/actions/compose';
@@ -116,14 +114,6 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
 
   onChangeVisibility(value) {
     dispatch(changeComposeVisibility(value));
-  },
-
-  onMount() {
-    dispatch(mountCompose());
-  },
-
-  onUnmount() {
-    dispatch(unmountCompose());
   },
 
   onMediaDescriptionConfirm(routerHistory) {
