@@ -59,6 +59,7 @@ class ComposeForm extends ImmutablePureComponent {
     onPickEmoji: PropTypes.func,
     showSearch: PropTypes.bool,
     anyMedia: PropTypes.bool,
+    singleColumn: PropTypes.bool,
 
     advancedOptions: ImmutablePropTypes.map,
     layout: PropTypes.string,
@@ -205,7 +206,7 @@ class ComposeForm extends ImmutablePureComponent {
   }
 
   handleFocus = () => {
-    if (this.composeForm) {
+    if (this.composeForm && !this.props.singleColumn) {
       this.composeForm.scrollIntoView();
     }
   }
@@ -229,6 +230,7 @@ class ComposeForm extends ImmutablePureComponent {
       preselectDate,
       text,
       preselectOnReply,
+      singleColumn,
     } = this.props;
     let selectionEnd, selectionStart;
 
@@ -248,7 +250,7 @@ class ComposeForm extends ImmutablePureComponent {
       if (textarea) {
         textarea.setSelectionRange(selectionStart, selectionEnd);
         textarea.focus();
-        textarea.scrollIntoView();
+        if (!singleColumn) textarea.scrollIntoView();
       }
 
     //  Refocuses the textarea after submitting.
