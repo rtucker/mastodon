@@ -10,6 +10,7 @@ map $http_upgrade $connection_upgrade {
 }
 
 limit_conn_zone $binary_remote_addr zone=streamaddr:10m;
+limit_conn_status 429;
 
 server {
   listen 80;
