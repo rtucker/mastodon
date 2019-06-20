@@ -125,7 +125,7 @@ class MediaAttachment < ApplicationRecord
     },
   }.freeze
 
-  SIZE_LIMIT = 66.megabytes
+  SIZE_LIMIT = (ENV['MAX_SIZE_LIMIT'] || 66.megabytes).to_i.megabytes
   GIF_LIMIT = ENV.fetch('MAX_GIF_SIZE', 333).to_i.kilobytes
 
   belongs_to :account,          inverse_of: :media_attachments, optional: true
