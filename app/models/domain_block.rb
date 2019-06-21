@@ -33,12 +33,38 @@ class DomainBlock < ApplicationRecord
 
   before_save :set_processing
 
-  def self.blocked?(domain)
-    suspend.where(domain: domain).or(suspend.where('domain LIKE ?', "%.#{domain}")).exists?
-  end
+  class << self
+    def suspend?(domain)
+      !!rule_for(domain)&.suspend?
+    end
 
-  def self.force_unlisted?(domain)
-    where(domain: domain, severity: :force_unlisted).exists?
+    def silence?(domain)
+      !!rule_for(domain)&.silence?
+    end
+
+    def reject_media?(domain)
+      !!rule_for(domain)&.reject_media?
+    end
+
+    def reject_reports?(domain)
+      !!rule_for(domain)&.reject_reports?
+    end
+
+    def force_unlisted?(domain)
+      !!rule_for(domain)&.severity == 'force_unlisted'
+    end
+
+    alias blocked? suspend?
+
+    def rule_for(domain)
+      return if domain.blank?
+
+      uri      = Addressable::URI.new.tap { |u| u.host = domain.gsub(/[\/]/, '') }
+      segments = uri.normalized_host.split('.')
+      variants = segments.map.with_index { |_, i| segments[i..-1].join('.') }
+
+      where(domain: variants[0..-2]).order(Arel.sql('char_length(domain) desc')).first
+    end
   end
 
   def stricter_than?(other_block)

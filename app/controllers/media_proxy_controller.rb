@@ -40,4 +40,8 @@ class MediaProxyController < ApplicationController
   def lock_options
     { redis: Redis.current, key: "media_download:#{params[:id]}" }
   end
+
+  def reject_media?
+    DomainBlock.reject_media?(@media_attachment.account.domain)
+  end
 end

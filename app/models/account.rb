@@ -122,6 +122,7 @@ class Account < ApplicationRecord
   scope :popular, -> { order('account_stats.followers_count desc') }
   scope :without_hidden, -> { where(hidden: false) }
   scope :without_unlisted, -> { where(unlisted: false) }
+  scope :by_domain_and_subdomains, ->(domain) { where(domain: domain).or(where(arel_table[:domain].matches('%.' + domain))) }
 
   delegate :email,
            :unconfirmed_email,

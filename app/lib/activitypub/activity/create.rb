@@ -486,10 +486,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
 
   def skip_download?(remote_url = nil)
     return @skip_download if defined?(@skip_download)
-    domains = Set[@account.domain]
-    domains.add(remote_url.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first) if remote_url.present?
-    blocks = DomainBlock.suspend.or(DomainBlock.where(reject_media: true))
-    @skip_download ||= domains.any? { |domain| blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists? }
+    @skip_download ||= DomainBlock.reject_media?(@account.domain)
   end
 
   def reply_to_local?

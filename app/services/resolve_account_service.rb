@@ -102,6 +102,8 @@ class ResolveAccountService < BaseService
     end
 
     @account
+  rescue Oj::ParseError
+    nil
   end
 
   def webfinger_update_due?
@@ -109,7 +111,10 @@ class ResolveAccountService < BaseService
   end
 
   def activitypub_ready?
-    !@webfinger.link('self').nil? && ['application/activity+json', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'].include?(@webfinger.link('self').type)
+    !@webfinger.link('self').nil? &&
+      ['application/activity+json', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'].include?(@webfinger.link('self').type) &&
+      !actor_json.nil? &&
+      actor_json['inbox'].present?
   end
 
   def actor_url
