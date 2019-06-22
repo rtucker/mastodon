@@ -30,10 +30,15 @@ class MediaAttachment < ApplicationRecord
   VIDEO_FILE_EXTENSIONS = ['.webm', '.mp4', '.m4v', '.mov'].freeze
   AUDIO_FILE_EXTENSIONS = ['.ogg', '.oga', '.mp3', '.wav', '.flac', '.opus'].freeze
 
+<<<<<<< HEAD
   IMAGE_MIME_TYPES             = ['image/jpeg', 'image/png', 'image/gif'].freeze
   VIDEO_MIME_TYPES             = ['video/webm', 'video/mp4', 'video/quicktime'].freeze
+=======
+  IMAGE_MIME_TYPES             = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].freeze
+  VIDEO_MIME_TYPES             = ['video/webm', 'video/mp4', 'video/quicktime', 'video/ogg'].freeze
+>>>>>>> b927bb3f0... Fix audio-only OGG and WebM files not being processed as such (#11151)
   VIDEO_CONVERTIBLE_MIME_TYPES = ['video/webm', 'video/quicktime'].freeze
-  AUDIO_MIME_TYPES             = ['audio/wave', 'audio/wav', 'audio/x-wav', 'audio/x-pn-wave', 'audio/ogg', 'audio/mpeg', 'audio/webm', 'audio/flac'].freeze
+  AUDIO_MIME_TYPES             = ['audio/wave', 'audio/wav', 'audio/x-wav', 'audio/x-pn-wave', 'audio/ogg', 'audio/mpeg', 'audio/mp3', 'audio/webm', 'audio/flac'].freeze
 
   BLURHASH_OPTIONS = {
     x_comp: 4,

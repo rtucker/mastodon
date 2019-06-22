@@ -11,9 +11,20 @@ module Attachmentable
     before_post_process :obfuscate_file_name
     before_post_process :set_file_extensions
     before_post_process :check_image_dimensions
+    before_post_process :set_file_content_type
   end
 
   private
+
+  def set_file_content_type
+    self.class.attachment_definitions.each_key do |attachment_name|
+      attachment = send(attachment_name)
+
+      next if attachment.blank? || attachment.queued_for_write[:original].blank?
+
+      attachment.instance_write :content_type, calculated_content_type(attachment)
+    end
+  end
 
   def set_file_extensions
     self.class.attachment_definitions.each_key do |attachment_name|
