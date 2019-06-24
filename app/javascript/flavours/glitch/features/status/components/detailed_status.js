@@ -163,7 +163,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
             onToggleVisibility={this.props.onToggleMediaVisibility}
           />
         );
-        mediaIcon = 'video-camera';
+        mediaIcon = attachment.get('type') === 'video' ? 'video-camera' : 'music';
       } else {
         media = (
           <MediaGallery
