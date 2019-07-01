@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ImmutablePureComponent from 'react-immutable-pure-component';
 import scheduleIdleTask from 'flavours/glitch/util/schedule_idle_task';
 import getRectFromEntry from 'flavours/glitch/util/get_rect_from_entry';
 
-export default class IntersectionObserverArticle extends ImmutablePureComponent {
+// Diff these props in the "unrendered" state
+const updateOnPropsForUnrendered = ['id', 'index', 'listLength', 'cachedHeight'];
+
+export default class IntersectionObserverArticle extends React.Component {
 
   static propTypes = {
     intersectionObserverWrapper: PropTypes.object.isRequired,
@@ -22,19 +24,20 @@ export default class IntersectionObserverArticle extends ImmutablePureComponent 
   }
 
   shouldComponentUpdate (nextProps, nextState) {
-    if (!nextState.isIntersecting && nextState.isHidden) {
-      // It's only if we're not intersecting (i.e. offscreen) and isHidden is true
-      // that either "isIntersecting" or "isHidden" matter, and then they're
-      // the only things that matter (and updated ARIA attributes).
-      return this.state.isIntersecting || !this.state.isHidden || nextProps.listLength !== this.props.listLength;
-    } else if (nextState.isIntersecting && !this.state.isIntersecting) {
-      // If we're going from a non-intersecting state to an intersecting state,
-      // (i.e. offscreen to onscreen), then we definitely need to re-render
+    const isUnrendered = !this.state.isIntersecting && (this.state.isHidden || this.props.cachedHeight);
+    const willBeUnrendered = !nextState.isIntersecting && (nextState.isHidden || nextProps.cachedHeight);
+    if (!!isUnrendered !== !!willBeUnrendered) {
+      // If we're going from rendered to unrendered (or vice versa) then update
       return true;
     }
-    // Otherwise, diff based on "updateOnProps" and "updateOnStates"
-    return super.shouldComponentUpdate(nextProps, nextState);
+    // If we are and remain hidden, diff based on props
+    if (isUnrendered) {
+      return !updateOnPropsForUnrendered.every(prop => nextProps[prop] === this.props[prop]);
+    }
+    // Else, assume the children have changed
+    return true;
   }
+
 
   componentDidMount () {
     const { intersectionObserverWrapper, id } = this.props;
@@ -119,7 +122,7 @@ export default class IntersectionObserverArticle extends ImmutablePureComponent 
         data-id={id}
         tabIndex='0'
         style={style}>
-          {children && React.cloneElement(children, { hidden: !isIntersecting && (isHidden || cachedHeight) })}
+          {children && React.cloneElement(children, { hidden: !isIntersecting && (isHidden || !!cachedHeight) })}
       </article>
     );
   }

@@ -87,6 +87,7 @@ class User < ApplicationRecord
   scope :approved, -> { where(approved: true) }
   scope :confirmed, -> { where.not(confirmed_at: nil) }
   scope :enabled, -> { where(disabled: false) }
+  scope :disabled, -> { where(disabled: true) }
   scope :inactive, -> { where(arel_table[:current_sign_in_at].lt(ACTIVE_DURATION.ago)) }
   scope :active, -> { confirmed.where(arel_table[:current_sign_in_at].gteq(ACTIVE_DURATION.ago)).joins(:account).where(accounts: { suspended_at: nil }) }
   scope :matches_email, ->(value) { where(arel_table[:email].matches("#{value}%")) }
@@ -105,7 +106,7 @@ class User < ApplicationRecord
   delegate :auto_play_gif, :default_sensitive, :unfollow_modal, :boost_modal, :favourite_modal, :delete_modal,
            :reduce_motion, :system_font_ui, :noindex, :flavour, :skin, :display_media, :hide_network, :hide_followers_count,
            :expand_spoilers, :default_language, :aggregate_reblogs, :show_application,
-           :advanced_layout, :default_content_type, to: :settings, prefix: :setting, allow_nil: false
+           :advanced_layout, :default_content_type, :use_blurhash, to: :settings, prefix: :setting, allow_nil: false
 
   attr_reader :invite_code
   attr_writer :external
