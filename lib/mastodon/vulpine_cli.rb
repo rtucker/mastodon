@@ -63,20 +63,22 @@ module Mastodon
       if domain.nil?
         say('No domain given', :red)
         exit(1)
-      else
-        rs = Sidekiq::RetrySet.new
 
-        jobs = rs.select {|j| j.value.include? "https://#{domain}"}
+      rs = Sidekiq::RetrySet.new
 
-        # This is incredibly naive guess for inbox URL
-        inbox_url = "https://#{domain}/inbox"
+      jobs = rs.select {|j| j.value.include? "https://#{domain}"}
 
-        say("Retrying #{jobs.size} from #{domain}", :green, false)
+      say("Retrying #{jobs.size} from #{domain}", :green)
 
-        jobs.each do |job|
+      jobs.map {|j| j.item['args'][2]}.uniq.each do |inbox|
+        say("Inbox: #{inbox} ", :green, false)
+
+        inbox_jobs = jobs.select {|x| x.item['args'][2] == "#{inbox}"}
+
+        inbox_jobs.each do |job|
           sleep 1
 
-          light = Stoplight(inbox_url)
+          light = Stoplight(inbox)
 
           if light.color == "green"
             job.retry
@@ -84,7 +86,8 @@ module Mastodon
           elsif light.color == "yellow"
             say('!', :yellow, false)
           else
-            say('x', :red, false)
+            say('x', :red)
+            next
           end
         end
 
