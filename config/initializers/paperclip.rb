@@ -28,7 +28,6 @@ if ENV['S3_ENABLED'] == 'true'
       'Cache-Control' => 'public, max-age=315576000, immutable',
     },
     s3_permissions: ENV.fetch('S3_PERMISSION') { 'public-read' },
-    s3_server_side_encryption: ENV.fetch('S3_SERVER_SIDE_ENCRYPTION') { false },
     s3_region: s3_region,
     s3_credentials: {
       bucket: ENV['S3_BUCKET'],
