@@ -9,9 +9,10 @@ require_relative 'mastodon/search_cli'
 require_relative 'mastodon/settings_cli'
 require_relative 'mastodon/statuses_cli'
 require_relative 'mastodon/domains_cli'
-require_relative 'mastodon/vulpine_cli'
 require_relative 'mastodon/cache_cli'
 require_relative 'mastodon/version'
+
+require_relative 'mastodon/vulpine_cli'
 
 module Mastodon
   class CLI < Thor
