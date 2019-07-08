@@ -12,10 +12,12 @@
 #
 
 class AccountModerationNote < ApplicationRecord
+  MAX_ACCOUNT_MODERATION_NOTE_LENGTH = (ENV['MAX_ACCOUNT_MOD_NOTE_CHARS'] || 500).to_i
+
   belongs_to :account
   belongs_to :target_account, class_name: 'Account'
 
   scope :latest, -> { reorder('created_at DESC') }
 
-  validates :content, presence: true, length: { maximum: 50000 }
+  validates :content, presence: true, length: { maximum: MAX_ACCOUNT_MODERATION_NOTE_LENGTH }
 end
