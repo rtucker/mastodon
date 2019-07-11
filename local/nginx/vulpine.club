@@ -19,6 +19,15 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
+  # Block all Gab user agents. 
+  # note: this could also be "if $gabuser" from nginx.conf, but that's not defined in this file, so
+  # i feel a little sketchy about using it here.
+  # maybe some day i'll write a nginx config stdlib and then i'd feel comfortable using a documented
+  # variable so it doesn't seem quite as magic.
+  if ($http_user_agent ~* (gabsocial)) {
+	  return 444;
+  }
+
   # Useful for Let's Encrypt
   location /.well-known/acme-challenge/ { allow all; }
 
@@ -68,6 +77,16 @@ server {
   gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
   root /srv/mastodon/vulpine.club/public;
+
+  # Block all Gab user agents. 
+  # note: this could also be "if $gabuser" from nginx.conf, but that's not defined in this file, so
+  # i feel a little sketchy about using it here.
+  # maybe some day i'll write a nginx config stdlib and then i'd feel comfortable using a documented
+  # variable so it doesn't seem quite as magic.
+  if ($http_user_agent ~* (gabsocial)) {
+	  return 444;
+  }
+
 
   # favicon trickery
   if ($http_host = 0.vulpine.club) {
@@ -199,6 +218,16 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
+  # Block all Gab user agents. 
+  # note: this could also be "if $gabuser" from nginx.conf, but that's not defined in this file, so
+  # i feel a little sketchy about using it here.
+  # maybe some day i'll write a nginx config stdlib and then i'd feel comfortable using a documented
+  # variable so it doesn't seem quite as magic.
+  if ($http_user_agent ~* (gabsocial)) {
+	  return 444;
+  }
+
+
   add_header Referrer-Policy "strict-origin-when-cross-origin";
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
   #add_header Access-Control-Allow-Origin "https://vulpine.club";
@@ -238,6 +267,16 @@ server {
 
   add_header Referrer-Policy "strict-origin-when-cross-origin";
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+  # Block all Gab user agents. 
+  # note: this could also be "if $gabuser" from nginx.conf, but that's not defined in this file, so
+  # i feel a little sketchy about using it here.
+  # maybe some day i'll write a nginx config stdlib and then i'd feel comfortable using a documented
+  # variable so it doesn't seem quite as magic.
+  if ($http_user_agent ~* (gabsocial)) {
+	  return 444;
+  }
+
 
   return 301 https://vulpine.club$request_uri;
 }
