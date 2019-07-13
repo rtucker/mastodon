@@ -9,6 +9,12 @@ map $http_upgrade $connection_upgrade {
   ''      close;
 }
 
+map $http_user_agent $badactor {
+	~*(kiwifarms) 1;
+	~*(gabsocial) 1;
+	default 0;
+}
+
 limit_conn_zone $binary_remote_addr zone=streamaddr:10m;
 limit_conn_status 429;
 
@@ -19,12 +25,8 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
-  # Block all Gab user agents. 
-  # note: this could also be "if $gabuser" from nginx.conf, but that's not defined in this file, so
-  # i feel a little sketchy about using it here.
-  # maybe some day i'll write a nginx config stdlib and then i'd feel comfortable using a documented
-  # variable so it doesn't seem quite as magic.
-  if ($http_user_agent ~* (gabsocial)) {
+  # see the mapping at the top of this config for definition of $badactor
+  if ($badactor) {
 	  return 444;
   }
 
@@ -33,7 +35,7 @@ server {
 
   location /stub_stats {
     # Disallow anyone external from accessing this.
-    allow 127.0.0.1/24;
+    allow 127.0.0.0/24;
     allow 172.16.0.0/12;
     deny all;
 
@@ -42,7 +44,7 @@ server {
 
   location /vts_stats {
     # Disallow anyone external from accessing this.
-    allow 127.0.0.1/24;
+    allow 127.0.0.0/24;
     allow 172.16.0.0/12;
     deny all;
 
@@ -78,12 +80,8 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
-  # Block all Gab user agents. 
-  # note: this could also be "if $gabuser" from nginx.conf, but that's not defined in this file, so
-  # i feel a little sketchy about using it here.
-  # maybe some day i'll write a nginx config stdlib and then i'd feel comfortable using a documented
-  # variable so it doesn't seem quite as magic.
-  if ($http_user_agent ~* (gabsocial)) {
+  # see the mapping at the top of this config for definition of $badactor
+  if ($badactor) {
 	  return 444;
   }
 
@@ -218,12 +216,8 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
-  # Block all Gab user agents. 
-  # note: this could also be "if $gabuser" from nginx.conf, but that's not defined in this file, so
-  # i feel a little sketchy about using it here.
-  # maybe some day i'll write a nginx config stdlib and then i'd feel comfortable using a documented
-  # variable so it doesn't seem quite as magic.
-  if ($http_user_agent ~* (gabsocial)) {
+  # see the mapping at the top of this config for definition of $badactor
+  if ($badactor) {
 	  return 444;
   }
 
@@ -268,12 +262,8 @@ server {
   add_header Referrer-Policy "strict-origin-when-cross-origin";
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-  # Block all Gab user agents. 
-  # note: this could also be "if $gabuser" from nginx.conf, but that's not defined in this file, so
-  # i feel a little sketchy about using it here.
-  # maybe some day i'll write a nginx config stdlib and then i'd feel comfortable using a documented
-  # variable so it doesn't seem quite as magic.
-  if ($http_user_agent ~* (gabsocial)) {
+  # see the mapping at the top of this config for definition of $badactor
+  if ($badactor) {
 	  return 444;
   }
 
