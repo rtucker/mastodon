@@ -9,11 +9,8 @@ map $http_upgrade $connection_upgrade {
   ''      close;
 }
 
-map $http_user_agent $badactor {
-	~*(kiwifarms) 1;
-	~*(gabsocial) 1;
-	default 0;
-}
+# this file defines $badactor.
+include /etc/nginx/bad-actors.conf;
 
 limit_conn_zone $binary_remote_addr zone=streamaddr:10m;
 limit_conn_status 429;
@@ -25,7 +22,6 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
-  # see the mapping at the top of this config for definition of $badactor
   if ($badactor) {
 	  return 444;
   }
@@ -80,7 +76,6 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
-  # see the mapping at the top of this config for definition of $badactor
   if ($badactor) {
 	  return 444;
   }
@@ -216,7 +211,6 @@ server {
 
   root /srv/mastodon/vulpine.club/public;
 
-  # see the mapping at the top of this config for definition of $badactor
   if ($badactor) {
 	  return 444;
   }
@@ -262,7 +256,6 @@ server {
   add_header Referrer-Policy "strict-origin-when-cross-origin";
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-  # see the mapping at the top of this config for definition of $badactor
   if ($badactor) {
 	  return 444;
   }
