@@ -31,137 +31,156 @@ class Formatter
   include ActionView::Helpers::TextHelper
 
 	BBCODE_TAGS = {
-    :url => {
-			:html_open => '<a href="%url%" rel="noopener nofollow" target="_blank">', :html_close => '</a>',
-			:description => '', :example => '',
-			:allow_quick_param => true, :allow_between_as_param => false,
-			:quick_param_format => /(\S+)/,
-			:quick_param_format_description => 'The size parameter \'%param%\' is incorrect, a number is expected',
-			:param_tokens => [{:token => :url}]
+    url: {
+			html_open: '<a href="%url%" rel="noopener nofollow" target="_blank">', html_close: '</a>',
+			description: '', example: '',
+      require_between: true,
+      allow_quick_param: true, allow_between_as_param: true,
+      quick_param_format: %r{^((((https?|ftps?|sftp|ircs?|telnets?|dat)://)|/).+)$},
+      quick_param_format_description: '',
+			param_tokens: [{token: :url}]
     },
-		:ul => {
-			:html_open => '<ul>', :html_close => '</ul>',
-			:description => '', :example => '',
+		list: {
+			html_open: '<ul>', html_close: '</ul>',
+			description: '', example: '',
+      only_allow: [:li, '*'.to_sym],
+      block_tag: true,
 		},
-		:ol => {
-			:html_open => '<ol>', :html_close => '</ol>',
-			:description => '', :example => '',
+		ul: {
+			html_open: '<ul>', html_close: '</ul>',
+			description: '', example: '',
+      only_allow: [:li, '*'.to_sym],
+      block_tag: true,
 		},
-		:li => {
-			:html_open => '<li>', :html_close => '</li>',
-			:description => '', :example => '',
+		ol: {
+			html_open: '<ol>', html_close: '</ol>',
+			description: '', example: '',
+      only_allow: [:li, '*'.to_sym],
+      block_tag: true,
 		},
-		:sub => {
-			:html_open => '<sub>', :html_close => '</sub>',
-			:description => '', :example => '',
+		li: {
+			html_open: '<li>', html_close: '</li>',
+			description: '', example: '',
+      block_tag: true,
+      only_in: %i[list ul ol]
 		},
-		:sup => {
-			:html_open => '<sup>', :html_close => '</sup>',
-			:description => '', :example => '',
+    '*': {
+			html_open: '<li>', html_close: '</li>',
+			description: '', example: '',
+      self_closable: true, block_tag: true,
+      only_in: %i[list ul ol]
 		},
-		:h1 => {
-			:html_open => '<h1>', :html_close => '</h1>',
-			:description => '', :example => '',
+		sub: {
+			html_open: '<sub>', html_close: '</sub>',
+			description: '', example: '',
 		},
-		:h2 => {
-			:html_open => '<h2>', :html_close => '</h2>',
-			:description => '', :example => '',
+		sup: {
+			html_open: '<sup>', html_close: '</sup>',
+			description: '', example: '',
 		},
-		:h3 => {
-			:html_open => '<h3>', :html_close => '</h3>',
-			:description => '', :example => '',
+		h1: {
+			html_open: '<h1>', html_close: '</h1>',
+			description: '', example: '',
 		},
-		:h4 => {
-			:html_open => '<h4>', :html_close => '</h4>',
-			:description => '', :example => '',
+		h2: {
+			html_open: '<h2>', html_close: '</h2>',
+			description: '', example: '',
 		},
-		:h5 => {
-			:html_open => '<h5>', :html_close => '</h5>',
-			:description => '', :example => '',
+		h3: {
+			html_open: '<h3>', html_close: '</h3>',
+			description: '', example: '',
 		},
-		:h6 => {
-			:html_open => '<h6>', :html_close => '</h6>',
-			:description => '', :example => '',
+		h4: {
+			html_open: '<h4>', html_close: '</h4>',
+			description: '', example: '',
 		},
-		:abbr => {
-			:html_open => '<abbr>', :html_close => '</abbr>',
-			:description => '', :example => '',
+		h5: {
+			html_open: '<h5>', html_close: '</h5>',
+			description: '', example: '',
 		},
-		:hr => {
-			:html_open => '<hr>', :html_close => '</hr>',
-			:description => '', :example => '',
+		h6: {
+			html_open: '<h6>', html_close: '</h6>',
+			description: '', example: '',
 		},
-		:b => {
-			:html_open => '<strong>', :html_close => '</strong>',
-			:description => '', :example => '',
+		abbr: {
+			html_open: '<abbr>', html_close: '</abbr>',
+			description: '', example: '',
 		},
-		:i => {
-			:html_open => '<em>', :html_close => '</em>',
-			:description => '', :example => '',
+		hr: {
+			html_open: '<hr>', html_close: '</hr>',
+			description: '', example: '',
 		},
-		:flip => {
-			:html_open => '<span class="bbcode__flip-%direction%">', :html_close => '</span>',
-			:description => '', :example => '',
-			:allow_quick_param => true, :allow_between_as_param => false,
-			:quick_param_format => /(h|v)/,
-			:quick_param_format_description => 'The size parameter \'%param%\' is incorrect, a number is expected',
-			:param_tokens => [{:token => :direction}]
+		b: {
+			html_open: '<strong>', html_close: '</strong>',
+			description: '', example: '',
+		},
+		i: {
+			html_open: '<em>', html_close: '</em>',
+			description: '', example: '',
+		},
+		flip: {
+			html_open: '<span class="bbcode__flip-%direction%">', html_close: '</span>',
+			description: '', example: '',
+			allow_quick_param: true, allow_between_as_param: false,
+			quick_param_format: /(h|v)/,
+			param_tokens: [{token: :direction}]
     },
-		:size => {
-			:html_open => '<span class="bbcode__size-%size%">', :html_close => '</span>',
-			:description => '', :example => '',
-			:allow_quick_param => true, :allow_between_as_param => false,
-			:quick_param_format => /([1-6])/,
-			:quick_param_format_description => 'The size parameter \'%param%\' is incorrect, a number is expected',
-			:param_tokens => [{:token => :size}]
+		size: {
+			html_open: '<span class="bbcode__size-%size%">', html_close: '</span>',
+			description: '', example: '',
+			allow_quick_param: true, allow_between_as_param: false,
+			quick_param_format: /([1-6])/,
+			param_tokens: [{token: :size}]
     },
-		:quote => {
-			:html_open => '<blockquote>', :html_close => '</blockquote>',
-			:description => '', :example => '',
+		quote: {
+			html_open: '<blockquote>', html_close: '</blockquote>',
+			description: '', example: '',
+      block_tag: true,
     },
-		:kbd => {
-			:html_open => '<pre><code>', :html_close => '</code></pre>',
-			:description => '', :example => '',
+		kbd: {
+			html_open: '<pre><code>', html_close: '</code></pre>',
+			description: '', example: '',
     },
-		:code => {
-			:html_open => '<pre>', :html_close => '</pre>',
-			:description => '', :example => '',
+		code: {
+			html_open: '<pre>', html_close: '</pre>',
+			description: '', example: '',
+      block_tag: true,
     },
-		:u => {
-			:html_open => '<u>', :html_close => '</u>',
-			:description => '', :example => '',
+		u: {
+			html_open: '<u>', html_close: '</u>',
+			description: '', example: '',
     },
-		:s => {
-			:html_open => '<s>', :html_close => '</s>',
-			:description => '', :example => '',
+		s: {
+			html_open: '<s>', html_close: '</s>',
+			description: '', example: '',
     },
-		:del => {
-			:html_open => '<del>', :html_close => '</del>',
-			:description => '', :example => '',
+		del: {
+			html_open: '<del>', html_close: '</del>',
+			description: '', example: '',
     },
-		:left => {
-			:html_open => '<span class="bbcode__left">', :html_close => '</span>',
-			:description => '', :example => '',
+		left: {
+			html_open: '<span class="bbcode__left">', html_close: '</span>',
+			description: '', example: '',
     },
-		:center => {
-			:html_open => '<span class="bbcode__center">', :html_close => '</span>',
-			:description => '', :example => '',
+		center: {
+			html_open: '<span class="bbcode__center">', html_close: '</span>',
+			description: '', example: '',
     },
-		:right => {
-			:html_open => '<span class="bbcode__right">', :html_close => '</span>',
-			:description => '', :example => '',
+		right: {
+			html_open: '<span class="bbcode__right">', html_close: '</span>',
+			description: '', example: '',
     },
-		:lfloat => {
-			:html_open => '<span class="bbcode__lfloat">', :html_close => '</span>',
-			:description => '', :example => '',
+		lfloat: {
+			html_open: '<span class="bbcode__lfloat">', html_close: '</span>',
+			description: '', example: '',
     },
-		:rfloat => {
-			:html_open => '<span class="bbcode__rfloat">', :html_close => '</span>',
-			:description => '', :example => '',
+		rfloat: {
+			html_open: '<span class="bbcode__rfloat">', html_close: '</span>',
+			description: '', example: '',
     },
-		:spoiler => {
-			:html_open => '<span class="bbcode__spoiler-wrapper"><span class="bbcode__spoiler">', :html_close => '</span></span>',
-			:description => '', :example => '',
+		spoiler: {
+			html_open: '<span class="bbcode__spoiler-wrapper"><span class="bbcode__spoiler">', html_close: '</span></span>',
+			description: '', example: '',
     },
 	}
 
