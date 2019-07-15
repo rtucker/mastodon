@@ -53,7 +53,7 @@ class Status < ApplicationRecord
 
   update_index('statuses#status', :proper) if Chewy.enabled?
 
-  enum visibility: [:public, :unlisted, :private, :direct, :limited], _suffix: :visibility
+  enum visibility: [:public, :unlisted, :private, :direct, :limited, :local, :chat], _suffix: :visibility
 
   belongs_to :application, class_name: 'Doorkeeper::Application', optional: true
 
@@ -103,7 +103,8 @@ class Status < ApplicationRecord
   scope :without_reblogs, -> { where('statuses.reblog_of_id IS NULL') }
   scope :reblogs, -> { where('statuses.reblog_of_id IS NOT NULL') } # all reblogs
   scope :with_public_visibility, -> { where(visibility: :public) }
-  scope :public_browsable, -> { where(visibility: [:public, :unlisted]) }
+  scope :public_local_visibility, -> { where(visibility: [:public, :local]) }
+  scope :public_browsable, -> { where(visibility: [:public, :unlisted, :local, :chat]) }
   scope :tagged_with, ->(tag) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag }) }
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced_at: nil }) }
   scope :including_silenced_accounts, -> { left_outer_joins(:account).where.not(accounts: { silenced_at: nil }) }
@@ -240,7 +241,7 @@ class Status < ApplicationRecord
   end
 
   def distributable?
-    public_visibility? || unlisted_visibility?
+    public_visibility? || unlisted_visibility? || local_visibility?
   end
 
   def with_media?
@@ -259,6 +260,11 @@ class Status < ApplicationRecord
     fields << footer unless footer.nil?
 
     @emojis = CustomEmoji.from_text(fields.join(' '), account.domain)
+  end
+
+  def chat_tags
+    return @chat_tags if defined?(@chat_tags)
+    @chat_tags = tags.only_chat
   end
 
   def mark_for_mass_destruction!
@@ -313,7 +319,7 @@ class Status < ApplicationRecord
       pattern = sanitize_sql_like(term)
       pattern = "#{pattern}"
       scope = Status.where("tsv @@ plainto_tsquery('english', ?)", pattern)
-      query = scope.where(visibility: :public)
+      query = scope.public_local_visibility
       if account.present?
         query = query
           .or(scope.where(account: account))
@@ -333,7 +339,7 @@ class Status < ApplicationRecord
     end
 
     def as_home_timeline(account)
-      where(account: [account] + account.following).where(visibility: [:public, :unlisted, :private])
+      where(account: [account] + account.following, visibility: [:public, :unlisted, :local, :private])
     end
 
     def as_direct_timeline(account, limit = 20, max_id = nil, since_id = nil, cache_ids = false)
@@ -390,7 +396,7 @@ class Status < ApplicationRecord
 
     def as_tag_timeline(tag, account = nil, local_only = false, priv = false)
       query = tag_timeline_scope(account, local_only, priv).tagged_with(tag)
-      apply_timeline_filters(query, account, local_only)
+      apply_timeline_filters(query, account, local_only, true)
     end
 
     def as_outbox_timeline(account)
@@ -438,7 +444,7 @@ class Status < ApplicationRecord
     end
 
     def permitted_for(target_account, account)
-      visibility = [:public, :unlisted]
+      visibility = [:public, :unlisted, :local]
 
       if account.nil?
         query = where(visibility: visibility).not_local_only
@@ -464,7 +470,7 @@ class Status < ApplicationRecord
 
     def timeline_scope(local_only = false)
       starting_scope = local_only ? Status.network : Status
-      starting_scope = starting_scope.with_public_visibility
+      starting_scope = local_only ? starting_scope.public_local_visibility : starting_scope.with_public_visibility
       if Setting.show_reblogs_in_public_timelines
         starting_scope
       else
@@ -498,19 +504,19 @@ class Status < ApplicationRecord
       end
     end
 
-    def apply_timeline_filters(query, account, local_only)
+    def apply_timeline_filters(query, account = nil, local_only = false, tag_timeline = false)
       if account.nil?
         filter_timeline_default(query)
       else
-        filter_timeline_for_account(query, account, local_only)
+        filter_timeline_for_account(query, account, local_only, tag_timeline)
       end
     end
 
-    def filter_timeline_for_account(query, account, local_only)
+    def filter_timeline_for_account(query, account, local_only, tag_timeline)
       query = query.not_excluded_by_account(account)
       query = query.not_domain_blocked_by_account(account) unless local_only
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
-      query = query.reply_not_excluded_by_account(account)
+      query = query.reply_not_excluded_by_account(account) unless tag_timeline
       query = query.mention_not_excluded_by_account(account)
       query.merge(account_silencing_filter(account))
     end

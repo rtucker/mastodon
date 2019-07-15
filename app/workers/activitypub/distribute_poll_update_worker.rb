@@ -35,7 +35,7 @@ class ActivityPub::DistributePollUpdateWorker
       end
     end
 
-    @inboxes.concat(@account.followers.inboxes) unless @status.direct_visibility?
+    @inboxes.concat(@account.followers.inboxes) unless @status.direct_visibility? || @status.chat_visibility?
     @inboxes.uniq!
     @inboxes.compact!
     @inboxes

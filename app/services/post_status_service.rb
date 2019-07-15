@@ -4,6 +4,15 @@ class PostStatusService < BaseService
   include Redisable
 
   MIN_SCHEDULE_OFFSET = 5.minutes.freeze
+  VISIBILITY_RANK = {
+    'public'    => 0,
+    'unlisted'  => 1,
+    'local'     => 1,
+    'private'   => 2,
+    'direct'    => 3,
+    'limited'   => 3,
+    'chat'      => 4
+  }
 
   # Post a text status update, fetch and notify remote users mentioned
   # @param [Account] account Account from which to post
@@ -30,9 +39,10 @@ class PostStatusService < BaseService
     @text        = @options[:text] || ''
     @footer      = @options[:footer]
     @in_reply_to = @options[:thread]
-    @tags        = @options[:tags]
+    @tags        = @options[:tags] || []
     @local_only  = @options[:local_only]
     @sensitive   = (@account.force_sensitive? ? true : @options[:sensitive])
+    @preloaded_tags = @options[:preloaded_tags] || []
 
     return idempotency_duplicate if idempotency_given? && idempotency_duplicate?
 
@@ -55,9 +65,54 @@ class PostStatusService < BaseService
   private
 
   def set_footer_from_i_am
+    return if @footer.nil? || @options[:no_footer]
     name = @account.vars['_they:are']
     return if name.blank?
-    @account.vars["_they:are:#{name}"]
+    @footer = @account.vars["_they:are:#{name}"]
+  end
+
+  def set_initial_visibility
+    @visibility = @options[:visibility] || @account.user_default_visibility
+  end
+
+  def limit_visibility_if_silenced
+    @visibility = :unlisted if @visibility.in?([nil, 'public']) && @account.silenced? || @account.force_unlisted
+  end
+
+  def limit_visibility_to_reply
+    return if @in_reply_to.nil?
+    @visibility = @in_reply_to.visibility if @visibility.nil? ||
+      VISIBILITY_RANK[@visibility] < VISIBILITY_RANK[@in_reply_to.visibility]
+  end
+
+  def set_local_only
+    @local_only = true if @account.user_always_local_only? || @in_reply_to&.local_only
+  end
+
+  def set_chat
+    if @in_reply_to.present?
+      unless @in_reply_to.chat_tags.blank?
+        @preloaded_tags |= @in_reply_to.chat_tags
+        @visibility = :chat
+        @in_reply_to = nil
+      end
+    elsif @tags.present? && @tags.any? { |t| t.start_with?('chat.', '.chat.') }
+      @visibility = :chat
+      @local_only = true if @tags.any? { |t| t.in?(%w(chat.local .chat.local)) || t.start_with?('chat.local.', '.chat.local.') }
+    end
+  end
+
+  # move tags out of body so we can format them later
+  def extract_tags
+    chunks = []
+    @text.split(/^((?:#[\w:._·\-]*\s*)+)/).each do |chunk|
+      if chunk.start_with?('#')
+        @tags |= chunk[1..-1].split(/\s+/)
+      else
+        chunks << chunk
+      end
+    end
+    @text = chunks.join
   end
 
   def preprocess_attributes!
@@ -66,17 +121,16 @@ class PostStatusService < BaseService
      @text = @media.find(&:video?) ? '📹' : '🖼' if @media.size > 0
     end
 
-    @footer = set_footer_from_i_am if @footer.nil? && !@options[:no_footer]
+    set_footer_from_i_am
+    extract_tags
+    set_chat
+    set_local_only
 
-    @visibility   = @options[:visibility] || @account.user_default_visibility
-    @visibility   = :unlisted if @visibility.in?([nil, 'public']) && @account.silenced? || @account.force_unlisted
-
-    if @in_reply_to.present? && @in_reply_to.visibility.present?
-      v = %w(public unlisted private direct limited)
-      @visibility = @in_reply_to.visibility if @visibility.nil? || v.index(@visibility) < v.index(@in_reply_to.visibility)
+    unless @visibility == :chat
+      set_initial_visibility
+      limit_visibility_if_silenced
+      limit_visibility_to_reply
     end
-
-    @local_only = true if @account.user_always_local_only? || @in_reply_to&.local_only
 
     @sensitive = (@account.user_defaults_to_sensitive? || @options[:spoiler_text].present?) if @sensitive.nil?
 
@@ -94,7 +148,7 @@ class PostStatusService < BaseService
       @status = @account.statuses.create!(status_attributes)
     end
 
-    process_hashtags_service.call(@status, @tags)
+    process_hashtags_service.call(@status, @tags, @preloaded_tags)
     process_mentions_service.call(@status)
   end
 

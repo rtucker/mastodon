@@ -9,6 +9,8 @@
 #  updated_at :datetime         not null
 #  local      :boolean          default(FALSE), not null
 #  private    :boolean          default(FALSE), not null
+#  unlisted   :boolean          default(FALSE), not null
+#  chat       :boolean          default(FALSE), not null
 #
 
 class Tag < ApplicationRecord
@@ -17,6 +19,9 @@ class Tag < ApplicationRecord
   has_and_belongs_to_many :sample_accounts, -> { searchable.discoverable.popular.limit(3) }, class_name: 'Account'
 
   has_many :featured_tags, dependent: :destroy, inverse_of: :tag
+  has_many :chat_accounts, dependent: :destroy, inverse_of: :tag
+  has_many :chatters, through: :chat_accounts, source: :account
+
   has_one :account_tag_stat, dependent: :destroy
 
   HASHTAG_NAME_RE = '[[:word:]:._\-]*[[:alpha:]:._·\-][[:word:]:._\-]*'
@@ -28,10 +33,12 @@ class Tag < ApplicationRecord
   scope :hidden, -> { where(account_tag_stats: { hidden: true }) }
   scope :most_used, ->(account) { joins(:statuses).where(statuses: { account: account }).group(:id).order(Arel.sql('count(*) desc')) }
 
-  scope :only_local, -> { where(local: true) }
-  scope :only_global, -> { where(local: false) }
+  scope :only_local, -> { where(local: true, unlisted: false) }
+  scope :only_global, -> { where(local: false, unlisted: false) }
   scope :only_private, -> { where(private: true) }
-  scope :only_public, -> { where(private: false) }
+  scope :only_unlisted, -> { where(unlisted: true) }
+  scope :only_chat, -> { where(chat: true) }
+  scope :only_public, -> { where(unlisted: false) }
 
   delegate :accounts_count,
            :accounts_count=,
@@ -73,9 +80,11 @@ class Tag < ApplicationRecord
 
   class << self
     def search_for(term, limit = 5, offset = 0)
-      pattern = sanitize_sql_like(term.strip.gsub(':', '.')) + '%'
+      term = term.strip.gsub(':', '.')
+      pattern = sanitize_sql_like(term) + '%'
 
-      Tag.where('lower(name) like lower(?)', pattern)
+      Tag.only_public.where('lower(name) like lower(?)', pattern)
+         .or(Tag.only_unlisted.where(name: term))
          .order(:name)
          .limit(limit)
          .offset(offset)
@@ -98,7 +107,11 @@ class Tag < ApplicationRecord
   end
 
   def set_scope
-    self.private = true if name.in?(['self', '_self']) || name.starts_with?('self.', '_self.')
-    self.local = true if self.private || name.in?(['local', '_local']) || name.starts_with?('local.', '_local.')
+    self.private = true if name.in?(%w(self .self)) || name.starts_with?('self.', '.self.')
+    self.unlisted = true if self.private || name.starts_with?('.')
+    self.chat = true if name.starts_with?('chat.', '.chat')
+    self.local = true if self.private ||
+      name.in?(%w(local .local chat.local .chat.local)) ||
+      name.starts_with?('local.', '.local', 'chat.local.' '.chat.local')
   end
 end

@@ -55,11 +55,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
   end
 
   def visibility
-    # This visibility is masked behind "private"
-    # to avoid API changes because there are no
-    # UX differences
     if object.limited_visibility?
       'private'
+    elsif object.local_visibility? || object.chat_visibility?
+      'unlisted'
     else
       object.visibility
     end
@@ -121,7 +120,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
     current_user? &&
       current_user.account_id == object.account_id &&
       !object.reblog? &&
-      %w(public unlisted private).include?(object.visibility)
+      %w(public unlisted local private).include?(object.visibility)
   end
 
   def source_requested?

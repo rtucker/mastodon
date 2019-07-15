@@ -452,8 +452,9 @@ class Bangtags
             'group'       => :private,
 
             'unlisted'    => :unlisted,
-            'local'       => :unlisted,
-            'monsterpit'  => :unlisted,
+
+            'local'       => :local,
+            'monsterpit'  => :local,
 
             'public'      => :public,
             'world'       => :public,
@@ -552,9 +553,25 @@ class Bangtags
   end
 
   def add_tags(to_status, *tags)
-    records = []
-    valid_name = /^[[:word:]:_\-]*[[:alpha:]:_·\-][[:word:]:_\-]*$/
+    valid_name = /^[[:word:]:._\-]*[[:alpha:]:._·\-][[:word:]:._\-]*$/
     tags = tags.select {|t| t.present? && valid_name.match?(t)}.uniq
     ProcessHashtagsService.new.call(to_status, tags)
+    to_status.save
+  end
+
+  def del_tags(from_status, *tags)
+    valid_name = /^[[:word:]:._\-]*[[:alpha:]:._·\-][[:word:]:._\-]*$/
+    tags = tags.select {|t| t.present? && valid_name.match?(t)}.uniq
+    tags.map { |str| str.mb_chars.downcase }.uniq(&:to_s).each do |name|
+      name.gsub!(/[:.]+/, '.')
+      next if name.blank? || name == '.'
+      if name.ends_with?('.')
+        filtered_tags = from_status.tags.select { |t| t.name == name || t.name.starts_with?(name) }
+      else
+        filtered_tags = from_status.tags.select { |t| t.name == name }
+      end
+      from_status.tags.destroy(filtered_tags)
+    end
+    from_status.save
   end
 end

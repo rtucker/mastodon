@@ -6,7 +6,7 @@ class FanOutOnWriteService < BaseService
   def call(status)
     raise Mastodon::RaceConditionError if status.visibility.nil?
 
-    deliver_to_self(status) if status.account.local?
+    deliver_to_self(status) if status.account.local? && !status.chat_visibility?
 
     render_anonymous_payload(status)
 
@@ -16,28 +16,35 @@ class FanOutOnWriteService < BaseService
       deliver_to_own_conversation(status)
     elsif status.limited_visibility?
       deliver_to_mentioned_followers(status)
+    elsif status.chat_visibility?
+      deliver_to_mentioned_followers(status)
+      deliver_to_hashtags(status)
+    elsif status.local_visibility?
+      deliver_to_followers(status)
+      deliver_to_lists(status)
+      deliver_to_local(status) unless filtered?(status)
     else
       deliver_to_followers(status)
       deliver_to_lists(status)
+
+      return if status.reblog? && !Setting.show_reblogs_in_public_timelines
+      return if filtered?(status) || (status.reblog? && filtered?(status.reblog))
+
+      if !status.reblog? && status.distributable?
+        deliver_to_hashtags(status)
+        deliver_to_public(status) if status.curated
+      end
+
+      if status.relayed?
+        status = Status.find(status.reblog_of_id)
+        return if filtered?(status)
+        render_anonymous_payload(status)
+      end
+
+      return unless status.network? && status.public_visibility? && !status.reblog
+
+      deliver_to_local(status)
     end
-
-    return if status.reblog? && !Setting.show_reblogs_in_public_timelines
-    return if filtered?(status)
-
-    if !status.reblog? && status.distributable?
-      deliver_to_hashtags(status)
-      deliver_to_public(status) if status.curated
-    end
-
-    if status.relayed?
-      status = Status.find(status.reblog_of_id)
-      return if filtered?(status)
-      render_anonymous_payload(status)
-    end
-
-    return unless status.network? && status.public_visibility? && !status.reblog
-
-    deliver_to_local(status)
   end
 
   private
