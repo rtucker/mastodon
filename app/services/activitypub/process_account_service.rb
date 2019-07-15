@@ -20,8 +20,10 @@ class ActivityPub::ProcessAccountService < BaseService
         @account        = Account.find_remote(@username, @domain)
         @old_public_key = @account&.public_key
 
-        create_account if @account.nil?
+        is_new_account = @account.nil?
+        create_account if is_new_account
         update_account
+        update_account_domain_blocks if is_new_account
         process_tags
         process_attachments
       else
@@ -103,6 +105,11 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def check_links!
     VerifyAccountLinksWorker.perform_async(@account.id)
+  end
+
+  def update_account_domain_blocks
+    return if @account.domain.nil? || @account.local?
+    UpdateAccountDomainBlocksWorker.perform_async(@account.id)
   end
 
   def actor_type
