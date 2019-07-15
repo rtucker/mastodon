@@ -276,6 +276,7 @@ class Formatter
     return reformat(account.note) unless account.local?
     html = format_bbdown(account.note)
     html = encode_and_link_urls(html, keep_html: true)
+    html = reformat(html)
     html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if options[:custom_emojify]
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
