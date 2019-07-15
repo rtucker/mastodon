@@ -450,18 +450,25 @@ class Bangtags
             'direct'      => :direct,
             'dm'          => :direct,
             'whisper'     => :direct,
+            'd'           => :direct,
 
             'private'     => :private,
             'packmate'    => :private,
             'group'       => :private,
+            'f'           => :private,
+            'g'           => :private,
 
             'unlisted'    => :unlisted,
+            'u'           => :unlisted,
 
             'local'       => :local,
             'monsterpit'  => :local,
+            'l'           => :local,
+            'm'           => :local,
 
             'public'      => :public,
             'world'       => :public,
+            'p'           => :public,
           }
           v = cmd[1].downcase
           status.visibility = visibilities[v] unless visibilities[v].nil?
