@@ -105,8 +105,8 @@ class PostStatusService < BaseService
   # move tags out of body so we can format them later
   def extract_tags
     chunks = []
-    @text.split(/^((?:#[\w:._·\-]*\s*)+)/).each do |chunk|
-      if chunk.start_with?('#')
+    @text.split(/^((?:#[\w:._·\-]+\s*)+)/).each do |chunk|
+      if chunk.start_with?('#') && !chunk.start_with?('#!')
         @tags |= chunk[1..-1].split(/\s+/)
       else
         chunks << chunk
