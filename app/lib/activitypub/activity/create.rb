@@ -45,6 +45,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     @params   = {}
 
     process_status_params
+    return reject_payload! if twitter_retweet?
     process_tags
     process_audience
 
@@ -81,6 +82,10 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
 
   def obfuscate_origin(key)
     key.sub(/^http.*?\.\w+\//, '').gsub(/\H+/, '')
+  end
+
+  def twitter_retweet?
+    @params[:text] =~ /^RT / || '🐦🔗:'.in?(@params[:text])
   end
 
   def process_status_params
