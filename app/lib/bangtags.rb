@@ -293,11 +293,15 @@ class Bangtags
           case cmd[1].downcase
           when 'permalink'
             chunk = TagManager.instance.url_for(@parent_status)
-          when 'tag'
+          when 'tag', 'untag'
             chunk = nil
             next unless @parent_status.account.id == @account.id
             tags = cmd[2..-1].map {|t| t.gsub(':', '.')}
-            add_tags(@parent_status, *tags)
+            if cmd[1].downcase == 'tag'
+              add_tags(@parent_status, *tags)
+            else
+              del_tags(@parent_status, *tags)
+            end
           when 'emoji'
             @parent_status.emojis.each do |theirs|
               ours = CustomEmoji.find_or_initialize_by(shortcode: theirs.shortcode, domain: nil)
