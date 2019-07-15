@@ -23,19 +23,19 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
     adult_content: {
       'mp' => 'https://monsterpit.net/ns#',
       'adultContent' => 'mp:adultContent'
-    }
+    },
     gently: {
       'mp' => 'https://monsterpit.net/ns#',
       'gently' => 'mp:gently'
-    }
+    },
     kobold: {
       'mp' => 'https://monsterpit.net/ns#',
       'kobold' => 'mp:kobold'
-    }
+    },
     supports_chat: {
       'mp' => 'https://monsterpit.net/ns#',
       'supportsChat' => 'mp:supportsChat'
-    }
+    },
   }.freeze
 
   def self.default_key_transform
