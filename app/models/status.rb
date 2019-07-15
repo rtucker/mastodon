@@ -23,7 +23,6 @@
 #  in_reply_to_account_id :bigint(8)
 #  local_only             :boolean
 #  poll_id                :bigint(8)
-#  tsv                    :tsvector
 #  curated                :boolean          default(FALSE), not null
 #  sharekey               :string
 #  network                :boolean          default(FALSE), not null
