@@ -35,9 +35,12 @@ class StatusFilter
 
     # Grab a list of account IDs mentioned in the status.
     mentioned_account_ids = status.mentions.pluck(:account_id)
+    mentioned_accounts = Account.where(id: mentioned_account_ids)
 
     # Don't filter statuses mentioning you.
     return false if mentioned_account_ids.include?(account.id)
+
+    return true if account.user_hides_mentions_of_blocked? && mentioned_accounts.where.not(suspended_at: nil).exists?
 
     return true if mentioned_account_ids.any? do |mentioned_account_id|
       return true if @preloaded_relations[:muting] && account.user_hides_mentions_of_muted? && @preloaded_relations[:muting][mentioned_account_id]
@@ -46,16 +49,17 @@ class StatusFilter
       if @preloaded_relations[:blocked_by]
         return true if account.user_hides_mentions_of_blocker? && @preloaded_relations[:blocked_by][mentioned_account_id]
       else
-        return true if account.user_hides_mentions_of_blocker? && Account.find(mentioned_account_id)&.blocking?(account.id)
+        return true if account.user_hides_mentions_of_blocker? && Block.where(account_id: mentioned_account_id, target_account_id: account.id).exists?
       end
 
-      return false unless status.private_visibility? && status.reply?
-      @preloaded_relations[:following] && account.user_hides_mentions_outside_scope? && !@preloaded_relations[:following][mentioned_account_id]
+      return false unless status.reply?
+      @preloaded_relations[:following] && account.user_hides_mentions_outside_scope? && status.private_visibility? && !@preloaded_relations[:following][mentioned_account_id]
     end
 
-    return true if !@preloaded_relations[:following] && account.user_hides_mentions_outside_scope? && status.private_visibility? && status.reply? && (mentioned_account_ids - account.following_ids).any?
     return true if !@preloaded_relations[:muting] && account.user_hides_mentions_of_muted? && account.muting?(mentioned_account_ids)
     return true if !@preloaded_relations[:blocking] && account.user_hides_mentions_of_blocked? && account.blocking?(mentioned_account_ids)
+    return false unless status.reply?
+    return true if !@preloaded_relations[:following] && account.user_hides_mentions_outside_scope? && status.private_visibility? && (mentioned_account_ids - account.following_ids).any?
   end
 
   def reply_to_blocked?
