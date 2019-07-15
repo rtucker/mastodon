@@ -325,7 +325,9 @@ class Formatter
 
   def bbcode_formatter(html)
     begin
+      html.gsub!(/\[(?=\W)/, "\uf666")
       html = html.bbcode_to_html(false, BBCODE_TAGS, :enable, *BBCODE_TAGS.keys)
+      html.gsub!("\uf666", '[')
     rescue Exception => e
     end
     html
