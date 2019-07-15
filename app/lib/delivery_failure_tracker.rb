@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DeliveryFailureTracker
-  FAILURE_DAYS_THRESHOLD = 7
+  FAILURE_DAYS_THRESHOLD = 3
 
   def initialize(inbox_url)
     @inbox_url = inbox_url
