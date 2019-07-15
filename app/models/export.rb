@@ -29,6 +29,14 @@ class Export
     end
   end
 
+  def to_followers_accounts_csv
+    CSV.generate(headers: ['Account address'], write_headers: true) do |csv|
+      account.followers.find_each do |follow|
+        csv << [acct(follow)]
+      end
+    end
+  end
+
   def to_lists_csv
     CSV.generate do |csv|
       account.owned_lists.select(:title, :id).each do |list|
