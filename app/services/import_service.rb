@@ -100,8 +100,8 @@ class ImportService < BaseService
   end
 
   def import_json_statuses
-    @account.vars['_bangtags:disable'] = true
-    @account.save
+    @account.user.vars['_bangtags:disable'] = true
+    @account.user.save
 
     @data.each do |json|
       # skip if invalid status object
@@ -172,8 +172,8 @@ class ImportService < BaseService
       nil
     end
 
-    @account.vars.delete('_bangtags:disable')
-    @account.save
+    @account.user.vars.delete('_bangtags:disable')
+    @account.user.save
   end
 
   def import_activitypub

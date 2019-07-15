@@ -28,7 +28,7 @@ class Bangtags
     # list of post-processing commands
     @post_cmds = []
     # hash of bangtag variables
-    @vars = account.vars
+    @vars = account.user.vars
     # keep track of what variables we're appending the value of between chunks
     @vore_stack = []
     # keep track of what type of nested components are active so we can !end them in order
@@ -516,7 +516,7 @@ class Bangtags
 
     postprocess_before_save
 
-    account.save
+    account.user.save
 
     status.text = @chunks.join
     status.save

@@ -313,6 +313,10 @@ class Account < ApplicationRecord
     self[:also_known_as] || []
   end
 
+  def field
+    @field ||= fields.map { |f| [f.name, f.value] }.to_h
+  end
+
   def fields
     (self[:fields] || []).map { |f| Field.new(self, f) }
   end
@@ -352,6 +356,7 @@ class Account < ApplicationRecord
     self.fields = tmp
   end
 
+  # needs to be removed after migration
   def vars
     self[:vars]
   end

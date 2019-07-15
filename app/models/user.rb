@@ -38,6 +38,7 @@
 #  chosen_languages          :string           is an Array
 #  created_by_application_id :bigint(8)
 #  approved                  :boolean          default(TRUE), not null
+#  vars                      :jsonb            not null
 #
 
 class User < ApplicationRecord
@@ -150,6 +151,10 @@ class User < ApplicationRecord
 
   attr_reader :invite_code
   attr_writer :external
+
+  def vars
+    self[:vars]
+  end
 
   def confirmed?
     confirmed_at.present?
