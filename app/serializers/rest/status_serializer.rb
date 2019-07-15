@@ -72,6 +72,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
     Formatter.instance.format(object)
   end
 
+  def text
+    "#{object.proper.text}\n\n#{object.tags.pluck(:name).sort.map{ |t| "##{t}" }.join(' ')}"
+  end
+
   def url
     TagManager.instance.url_for(object)
   end
