@@ -533,7 +533,7 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.7)
-    ruby-bbcode (2.0.3)
+    ruby-bbcode (2.1.0)
       activesupport (>= 4.2.2)
     ruby-progressbar (1.10.0)
     ruby-saml (1.9.0)
