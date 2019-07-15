@@ -443,7 +443,7 @@ class Bangtags
           }
           v = cmd[1].downcase
           status.content_type = content_types[c] unless content_types[c].nil?
-        when 'visibility'
+        when 'visibility', 'v'
           chunk = nil
           next if cmd[1].nil?
           visibilities = {
