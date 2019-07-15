@@ -175,6 +175,7 @@ class FeedManager
       return should_filter
     elsif status.reblog?                                                                                                         # Filter out a reblog
       should_filter   = Follow.where(account_id: receiver_id, target_account_id: status.account_id, show_reblogs: false).exists? # if the reblogger's reblogs are suppressed
+      should_filter ||= (status.reblog.account.silenced? && !Follow.where(account_id: receiver_id, target_account_id: status.reblog.account_id).exists?) # or if the account is silenced and I'm not following them
       should_filter ||= Block.where(account_id: status.reblog.account_id, target_account_id: receiver_id).exists?                # or if the author of the reblogged status is blocking me
       should_filter ||= AccountDomainBlock.where(account_id: receiver_id, domain: status.reblog.account.domain).exists?          # or the author's domain is blocked
       return should_filter
@@ -194,7 +195,7 @@ class FeedManager
     check_for_blocks.concat([status.in_reply_to_account]) if status.reply? && !status.in_reply_to_account_id.nil?
 
     should_filter   = blocks_or_mutes?(receiver_id, check_for_blocks, :mentions)                                                         # Filter if it's from someone I blocked, in reply to someone I blocked, or mentioning someone I blocked (or muted)
-    should_filter ||= (status.account.silenced? && !Follow.where(account_id: receiver_id, target_account_id: status.account_id).exists?) # of if the account is silenced and I'm not following them
+    should_filter ||= (status.account.silenced? && !Follow.where(account_id: receiver_id, target_account_id: status.account_id).exists?) # or if the account is silenced and I'm not following them
 
     should_filter
   end
