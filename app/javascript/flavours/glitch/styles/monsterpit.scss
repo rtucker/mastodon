@@ -7,6 +7,28 @@
     font-size: 12px;
     text-align: right;
   }
+  details.tags {
+    color: lighten($dark-text-color, 20%);
+    font-size: 12px;
+    text-align: right;
+
+    a {
+      color: darken($secondary-text-color, 20%);
+    }
+  }
+}
+
+.composer--reply > .content {
+  p.signature {
+    color: $dark-text-color;
+  }
+  details.tags {
+    color: $dark-text-color;
+
+    a {
+      color: darken($secondary-text-color, 50%);
+    }
+  }
 }
 
 div.media-caption {
