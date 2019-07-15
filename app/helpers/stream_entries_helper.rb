@@ -38,9 +38,9 @@ module StreamEntriesHelper
     content_tag(:div, class: 'roles') do
       roles = []
       roles << content_tag(:div, t('accounts.roles.bot'), class: 'account-role bot') if account.bot?
-      roles << content_tag(:div, t('accounts.roles.adults_only'), class: 'account-role adults-only') if account.adults_only?
-      roles << content_tag(:div, t('accounts.roles.gentlies_kobolds'), class: 'account-role gentlies') if account.user_gentlies_kobolds?
-      roles << content_tag(:div, t('accounts.roles.kobold'), class: 'account-role kobold') if account.user_is_a_kobold?
+      roles << content_tag(:div, t('accounts.roles.adult'), class: 'account-role adult') if account.adult_content?
+      roles << content_tag(:div, t('accounts.roles.gently'), class: 'account-role gently') if account.gently?
+      roles << content_tag(:div, t('accounts.roles.kobold'), class: 'account-role kobold') if account.kobold?
 
       if (Setting.show_staff_badge && account.user_staff?) || all
         if all && !account.user_staff?

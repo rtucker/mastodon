@@ -45,9 +45,12 @@
 #  unlisted                :boolean          default(FALSE), not null
 #  force_unlisted          :boolean          default(FALSE), not null
 #  force_sensitive         :boolean          default(FALSE), not null
-#  adults_only             :boolean          default(FALSE), not null
+#  adult_content           :boolean          default(FALSE), not null
 #  silenced_at             :datetime
 #  suspended_at            :datetime
+#  supports_chat           :boolean          default(FALSE), not null
+#  gently                  :boolean          default(FALSE), not null
+#  kobold                  :boolean          default(FALSE), not null
 #
 
 class Account < ApplicationRecord

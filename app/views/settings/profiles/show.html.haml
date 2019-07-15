@@ -22,15 +22,20 @@
 
   .fields-group
     = f.input :locked, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.locked')
-    = f.input :hidden, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.hidden')
+    = f.input :hidden, as: :boolean, wrapper: :with_label
     = f.input :unlisted, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.unlisted')
     = f.input :replies, as: :boolean, wrapper: :with_label
+    = f.input :supports_chat, as: :boolean, wrapper: :with_label
 
   .fields-group
-    = f.input :adults_only, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.adults_only')
+    = f.input :adult_content, as: :boolean, wrapper: :with_label
 
   .fields-group
     = f.input :bot, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.bot')
+
+  .fields-group
+    = f.input :gently, as: :boolean, wrapper: :with_label
+    = f.input :kobold, as: :boolean, wrapper: :with_label
 
   - if Setting.profile_directory
     .fields-group

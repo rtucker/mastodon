@@ -19,7 +19,23 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
     focal_point: { 'toot' => 'http://joinmastodon.org/ns#', 'focalPoint' => { '@container' => '@list', '@id' => 'toot:focalPoint' } },
     identity_proof: { 'toot' => 'http://joinmastodon.org/ns#', 'IdentityProof' => 'toot:IdentityProof' },
     blurhash: { 'toot' => 'http://joinmastodon.org/ns#', 'blurhash' => 'toot:blurhash' },
-    adults_only: { 'schema' => 'http://schema.org#', 'suggestedMinAge' => 'schema:suggestedMinAge' }
+
+    adult_content: {
+      'mp' => 'https://monsterpit.net/ns#',
+      'adultContent' => 'mp:adultContent'
+    }
+    gently: {
+      'mp' => 'https://monsterpit.net/ns#',
+      'gently' => 'mp:gently'
+    }
+    kobold: {
+      'mp' => 'https://monsterpit.net/ns#',
+      'kobold' => 'mp:kobold'
+    }
+    supports_chat: {
+      'mp' => 'https://monsterpit.net/ns#',
+      'supportsChat' => 'mp:supportsChat'
+    }
   }.freeze
 
   def self.default_key_transform

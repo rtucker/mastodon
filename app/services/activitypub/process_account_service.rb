@@ -79,7 +79,10 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.display_name            = @json['name'] || ''
     @account.note                    = @json['summary'] || ''
     @account.locked                  = @json['manuallyApprovesFollowers'] || false
-    @account.adults_only             = @json['suggestedMinAge'].to_i >= 18
+    @account.adult_content           = @json['adultContent'] || (@json['suggestedMinAge'].to_i >= 18)
+    @account.supports_chat           = @json['supportsChat'] || false
+    @account.gently                  = @json['gently'] || false
+    @account.kobold                  = @json['kobold'] || false
     @account.fields                  = property_values || {}
     @account.also_known_as           = as_array(@json['alsoKnownAs'] || []).map { |item| value_or_id(item) }
     @account.actor_type              = actor_type

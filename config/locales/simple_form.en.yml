@@ -10,8 +10,6 @@ en:
         type_html: Choose what to do with <strong>%{acct}</strong>
         warning_preset_id: Optional. You can still add custom text to end of the preset
       defaults:
-        hidden: Toggles whether your public profile is publicaly accessible
-        adults_only: This account may contain mature or sensitive content
         unlisted: Excludes you from public repeated/admired by lists of *local* monsters
         autofollow: People who sign up through the invite will automatically join your pack
         avatar: PNG, GIF or JPG. At most %{size}. Will be downscaled to %{dimensions}px
@@ -76,7 +74,10 @@ en:
         warning_preset_id: Use a warning preset
       defaults:
         hidden: Disable your public profile
-        adults_only: Adult content
+        adult_content: Contains adult content
+        supports_chat: Allow chat messages
+        gently: Gently the kobolds
+        kobold: I am a kobold
         unlisted: Exclude from public interaction lists
         replies: Show your public replies
         autofollow: Invite to join your pack

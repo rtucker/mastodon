@@ -6,7 +6,7 @@ class REST::AccountSerializer < ActiveModel::Serializer
   attributes :id, :username, :acct, :display_name, :locked, :bot, :created_at,
              :note, :url, :avatar, :avatar_static, :header, :header_static,
              :followers_count, :following_count, :statuses_count, :replies,
-             :adults_only, :gentlies_kobolds, :is_a_kobold, :role
+             :adult_content, :supports_chat, :gently, :kobold, :role
 
   has_one :moved_to_account, key: :moved, serializer: REST::AccountSerializer, if: :moved_and_not_nested?
   has_many :emojis, serializer: REST::CustomEmojiSerializer
@@ -55,14 +55,6 @@ class REST::AccountSerializer < ActiveModel::Serializer
 
   def followers_count
     (Setting.hide_followers_count || object.user&.setting_hide_followers_count) ? -1 : object.followers_count
-  end
-
-  def gentlies_kobolds
-    object.user_gentlies_kobolds? || false
-  end
-
-  def is_a_kobold
-    object.user_is_a_kobold? || false
   end
 
   def role
