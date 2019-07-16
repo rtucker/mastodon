@@ -1,3 +1,4 @@
+import escapeTextContentForBrowser from 'escape-html';
 import { createSelector } from 'reselect';
 import { List as ImmutableList, is } from 'immutable';
 import { me } from 'flavours/glitch/util/initial_state';
@@ -20,7 +21,7 @@ export const makeGetAccount = () => {
   });
 };
 
-const toServerSideType = columnType => {
+export const toServerSideType = columnType => {
   switch (columnType) {
   case 'home':
   case 'notifications':
@@ -39,7 +40,7 @@ const toServerSideType = columnType => {
 const escapeRegExp = string =>
   string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 
-const regexFromFilters = filters => {
+export const regexFromFilters = filters => {
   if (filters.size === 0) {
     return null;
   }
@@ -89,10 +90,13 @@ export const makeGetStatus = () => {
       (state, { id }) => state.getIn(['statuses', state.getIn(['statuses', id, 'reblog'])]),
       (state, { id }) => state.getIn(['accounts', state.getIn(['statuses', id, 'account'])]),
       (state, { id }) => state.getIn(['accounts', state.getIn(['statuses', state.getIn(['statuses', id, 'reblog']), 'account'])]),
+      (state, _) => state.getIn(['local_settings', 'filtering_behavior']),
+      (state, _) => state.get('filters', ImmutableList()),
+      (_, { contextType }) => contextType,
       getFiltersRegex,
     ],
 
-    (statusBase, statusReblog, accountBase, accountReblog, filtersRegex) => {
+    (statusBase, statusReblog, accountBase, accountReblog, filteringBehavior, filters, contextType, filtersRegex) => {
       if (!statusBase) {
         return null;
       }
@@ -115,6 +119,26 @@ export const makeGetStatus = () => {
       }
 
       filtered = filtered || regex && regex.test(statusBase.get('search_index'));
+
+      if (filtered && filteringBehavior === 'drop') {
+        return null;
+      } else if (filtered && filteringBehavior === 'content_warning') {
+        let spoilerText = (statusReblog || statusBase).get('spoiler_text', '');
+        const searchIndex = (statusReblog || statusBase).get('search_index');
+        const serverSideType = toServerSideType(contextType);
+        const enabledFilters = filters.filter(filter => filter.get('context').includes(serverSideType) && (filter.get('expires_at') === null || Date.parse(filter.get('expires_at')) > (new Date()))).toArray();
+        const matchingFilters = enabledFilters.filter(filter => {
+          const regexp = regexFromFilters([filter]);
+          return regexp.test(searchIndex) && !regexp.test(spoilerText);
+        });
+        if (statusReblog) {
+          statusReblog = statusReblog.set('spoiler_text', matchingFilters.map(filter => filter.get('phrase')).concat([spoilerText]).filter(cw => !!cw).join(', '));
+          statusReblog = statusReblog.update('spoilerHtml', '', spoilerText => matchingFilters.map(filter => escapeTextContentForBrowser(filter.get('phrase'))).concat([spoilerText]).filter(cw => !!cw).join(', '));
+        } else {
+          statusBase = statusBase.set('spoiler_text', matchingFilters.map(filter => filter.get('phrase')).concat([spoilerText]).filter(cw => !!cw).join(', '));
+          statusBase = statusBase.update('spoilerHtml', '', spoilerText => matchingFilters.map(filter => escapeTextContentForBrowser(filter.get('phrase'))).concat([spoilerText]).filter(cw => !!cw).join(', '));
+        }
+      }
 
       return statusBase.withMutations(map => {
         map.set('reblog', statusReblog);
