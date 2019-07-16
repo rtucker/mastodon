@@ -63,6 +63,7 @@ module Mastodon
       if domain.nil?
         say('No domain given', :red)
         exit(1)
+      end
 
       rs = Sidekiq::RetrySet.new
 
