@@ -387,6 +387,13 @@ class Bangtags
               @vars.delete('_they:are')
               status.footer = nil
               next
+            elsif who == 'list'
+              @status.visibility = :direct
+              @status.content_type = 'text/markdown'
+              names = @vars.keys.select { |k| k.start_with?('_they:are:') }
+              names.map! { |k| "    <code>#{k[10..-1]}</code> is <em>#{@vars[k]}</em>" }
+              @chunks << (['`i:am:list`:'] + names).join("\n") + "\n"
+              next
             end
             name = who.downcase.gsub(/\s+/, '').strip
             description = cmd[3..-1].join(':').strip
