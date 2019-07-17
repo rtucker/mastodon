@@ -38,10 +38,11 @@ class Bangtags
   def process
     return unless !@vars['_bangtags:disable'] && status.text&.present? && status.text.include?('#!')
 
-    status.text.gsub!('#!!', "#\u200c!")
+    status.text.gsub!('#!!', "#\uf666!")
 
     status.text.split(/(#!(?:.*:!#|{.*?}|[^\s#]+))/).each do |chunk|
       if @vore_stack.last == '_draft' || (@chunks.present? && @chunks.first.include?('#!draft'))
+        chunk.gsub("#\uf666!", '#!')
         @chunks << chunk
       elsif chunk.starts_with?("#!")
         chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
@@ -539,6 +540,8 @@ class Bangtags
           end
         end
       end
+
+      chunk.gsub!("#\uf666!", '#!') unless chunk.blank?
 
       if chunk.present? && @tf_cmds.present?
         @tf_cmds.each do |tf_cmd|
