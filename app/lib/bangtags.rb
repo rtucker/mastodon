@@ -518,13 +518,12 @@ class Bangtags
           @status.visibility = :direct
           @status.local_only = true
           @status.content_type = 'text/markdown'
-          chunk = "\n# <code>#!</code><code>admin:#{cmd[1].downcase}</code>:\n<hr />\n"
+          @chunks << "\n# <code>#!</code><code>admin:#{cmd[1].downcase}</code>:\n<hr />\n"
           case cmd[1].downcase
           when 'silence', 'unsilence', 'suspend', 'unsuspend', 'forgive'
             @tf_cmds.push(cmd)
             @component_stack.push(:tf)
           when 'exec', 'eval'
-            @chunks << chunk
             unless @account.username.in?((ENV['ALLOW_ADMIN_EVAL_FROM'] || '').split)
               @chunks << "<em>Unauthorized.</em>"
               next
@@ -563,20 +562,30 @@ class Bangtags
                 if c.start_with?('@')
                   parts = c.split('@')[1..2]
                   a = Account.find_by(username: parts[0], domain: parts[1])
-                  next if a.nil?
+                  if a.nil? || a.id == @account.id
+                    output << "<em>Skipped</em> <code>@#{parts.join('@')}</code>."
+                    next
+                  end
                   output << "<strong>Silenced<strong> <code>@#{parts.join('@')}</code>."
                   Admin::ActionLog.create(account: @account, action: :silence, target: a)
                   a.silence!
                   a.save
                 elsif c.match?(/^[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*$/)
                   c.downcase!
-                  next if c.end_with?('monsterpit.net', 'tailma.ws')
+                  if c.end_with?('monsterpit.net', 'tailma.ws')
+                    output << "<em>Skipped</em> <code>#{c}</code>."
+                    next
+                  end
                   begin
                     code = Request.new(:head, "https://#{c}").perform(&:code)
                   rescue
+                    output << "<em>Skipped</em> <code>#{c}</code>."
                     next
                   end
-                  next if [404, 410].include?(code)
+                  if [404, 410].include?(code)
+                    output << "<em>Skipped</em> <code>#{c}</code>."
+                    next
+                  end
                   domain_block = DomainBlock.find_or_create_by(domain: c)
                   domain_block.severity = "silence"
                   domain_block.save
@@ -592,7 +601,10 @@ class Bangtags
                 if c.start_with?('@')
                   parts = c.split('@')[1..2]
                   a = Account.find_by(username: parts[0], domain: parts[1])
-                  next if a.nil?
+                  if a.nil? || a.id == @account.id
+                    output << "<em>Skipped</em> <code>@#{parts.join('@')}</code>."
+                    next
+                  end
                   output << "<strong>Reset policy</strong> for <code>@#{parts.join('@')}</code>."
                   Admin::ActionLog.create(account: @account, action: :unsilence, target: a)
                   a.unsilence!
@@ -601,9 +613,15 @@ class Bangtags
                   a.save
                 elsif c.match?(/^[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*$/)
                   c.downcase!
-                  next if c.end_with?('monsterpit.net', 'tailma.ws')
+                  if c.end_with?('monsterpit.net', 'tailma.ws')
+                    output << "<em>Skipped</em> <code>#{c}</code>."
+                    next
+                  end
                   domain_block = DomainBlock.find_by(domain: c)
-                  next if domain_block.nil?
+                  if domain_block.nil?
+                    output << "<em>Skipped</em> <code>#{c}</code>."
+                    next
+                  end
                   output << "<strong>Reset policy</strong> for <code>#{c}<code>."
                   Admin::ActionLog.create(account: @account, action: :destroy, target: domain_block)
                   UnblockDomainService.new.call(domain_block)
@@ -616,19 +634,29 @@ class Bangtags
                 if c.start_with?('@')
                   parts = c.split('@')[1..2]
                   a = Account.find_by(username: parts[0], domain: parts[1])
-                  next if a.nil?
+                  if a.nil? || a.id == @account.id
+                    output << "<em>Skipped</em> <code>@#{parts.join('@')}</code>."
+                    next
+                  end
                   output << "<strong>Suspended</strong> <code>@#{parts.join('@')}</code>."
                   Admin::ActionLog.create(account: @account, action: :suspend, target: a)
                   SuspendAccountService.new.call(a, include_user: true)
                 elsif c.match?(/\A[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*\Z/)
                   c.downcase!
-                  next if c.end_with?('monsterpit.net', 'tailma.ws')
+                  if c.end_with?('monsterpit.net', 'tailma.ws')
+                    output << "<em>Skipped</em> <code>#{c}</code>."
+                    next
+                  end
                   begin
                     code = Request.new(:head, "https://#{c}").perform(&:code)
                   rescue
+                    output << "<em>Skipped</em> <code>#{c}</code>."
                     next
                   end
-                  next if [404, 410].include?(code)
+                  if [404, 410].include?(code)
+                    output << "<em>Skipped</em> <code>#{c}</code>."
+                    next
+                  end
                   domain_block = DomainBlock.find_or_create_by(domain: c)
                   domain_block.severity = "suspend"
                   domain_block.reject_media = true
