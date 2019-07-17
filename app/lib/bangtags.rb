@@ -505,12 +505,28 @@ class Bangtags
           chunk = nil
           next unless @account.user.admin?
           next if cmd[1].nil?
+          @status.visibility = :direct
+          @status.local_only = true
+          @status.content_type = 'text/markdown'
+          chunk = "\n# <code>#!</code><code>admin:#{cmd[1].downcase}</code>:\n<hr />\n"
           case cmd[1].downcase
           when 'silence', 'unsilence', 'suspend', 'unsuspend', 'forgive'
-            @status.content_type = 'text/markdown'
-            chunk = "<code>admin:#{cmd[1].downcase}</code>:\n"
             @tf_cmds.push(cmd)
             @component_stack.push(:tf)
+          when 'exec', 'eval'
+            @chunks << chunk
+            unless @account.username.in?((ENV['ALLOW_ADMIN_EVAL_FROM'] || '').split)
+              @chunks << "<em>Unauthorized.</em>"
+              next
+            end
+            @chunks << "<strong>Input:</strong>"
+            unless cmd[2].present? && cmd[2].downcase == 'last'
+              @vars.delete("_admin:eval")
+              @vore_stack.push("_admin:eval")
+              @component_stack.push(:var)
+            end
+            @post_cmds.push(['admin', 'eval'])
+            chunk = nil
           end
         end
       end
@@ -659,6 +675,25 @@ class Bangtags
         when 'desc'
           status.media_attachments[media_idx-1].description = @vars["_media:#{media_idx}:desc"]
           status.media_attachments[media_idx-1].save
+          @vars.delete("_media:#{media_idx}:desc")
+        end
+      when 'admin'
+        next unless @account.user.admin?
+        next if post_cmd[1].nil?
+        case post_cmd[1]
+        when 'eval'
+          @chunks << "<pre><code>"
+          @chunks << html_entities.encode(@vars["_admin:eval"])
+          @chunks << "</code></pre>\n"
+          @chunks << "<strong>Output:</strong>"
+          begin
+            result = eval(@vars["_admin:eval"])
+          rescue Exception => e
+            result = "\u274c #{e.message}"
+          end
+          @chunks << "<pre><code>"
+          @chunks << html_entities.encode(result)
+          @chunks << "</code></pre>"
         end
       end
     end
@@ -694,5 +729,9 @@ class Bangtags
       from_status.tags.destroy(filtered_tags)
     end
     from_status.save
+  end
+
+  def html_entities
+    @html_entities ||= HTMLEntities.new
   end
 end
