@@ -495,7 +495,7 @@ class Bangtags
           next unless @account.user.admin?
           next if cmd[1].nil?
           case cmd[1].downcase
-          when 'silence', 'suspend'
+          when 'silence', 'unsilence', 'suspend', 'unsuspend', 'forgive'
             chunk = "`admin:#{cmd[1].downcase}`:\n"
             @tf_cmds.push(cmd)
             @component_stack.push(:tf)
@@ -545,6 +545,30 @@ class Bangtags
                   output << "    Silenced `#{c}`"
                   Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
                   BlockDomainService.new.call(domain_block)
+                end
+              end
+              output = ['    No action.'] if output.blank?
+              chunk = output.join("\n") + "\n"
+            when 'forgive', 'unsilence', 'unsuspend'
+              chunk.split.each do |c|
+                if c.start_with?('@')
+                  parts = c.split('@')[1..2]
+                  a = Account.find_by(username: parts[0], domain: parts[1])
+                  next if a.nil?
+                  output << "    Reset policy for `@#{parts.join('@')}`"
+                  Admin::ActionLog.create(account: @account, action: :unsilence, target: a)
+                  a.unsilence!
+                  Admin::ActionLog.create(account: @account, action: :unsuspend, target: a)
+                  a.unsuspend!
+                  a.save
+                elsif c.match?(/^[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*$/)
+                  c.downcase!
+                  next if c.end_with?('monsterpit.net', 'tailma.ws')
+                  domain_block = DomainBlock.find_by(domain: c)
+                  next if domain_block.nil?
+                  output << "    Reset policy for `#{c}`"
+                  Admin::ActionLog.create(account: @account, action: :destroy, target: domain_block)
+                  UnblockDomainService.new.call(domain_block)
                 end
               end
               output = ['    No action.'] if output.blank?
