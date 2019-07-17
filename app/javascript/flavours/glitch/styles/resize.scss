@@ -1,24 +1,21 @@
-.drawer{
-    padding-top: 10px;
-    padding-bottom: 0;
-    flex: 0 1 300px;
-    max-width: 300px !important;
-    min-width: 300px !important;
-}
-.column {
-    min-width: 300px !important;
-    max-width: 480px !important;
-    flex: 2 1 auto !important;
-    filter: initial;
-}
-.column:last-child {
-    flex: 1 2 auto !important;
-}
-.columns-area {
-    display: flex;
-    flex-direction: row;
-}
-.compose-form .compose-form__modifiers .compose-form__upload,
-.composer--upload_form--item {
-    flex: 1 0 100%;
+:root {
+  @media screen and (min-width: 600px) {
+    .column {
+        min-width: 300px;
+        max-width: 480px;
+        flex: 2 1 auto;
+        filter: initial;
+    }
+    .column:last-child {
+        flex: 1 2 auto;
+    }
+    .columns-area {
+        display: flex;
+        flex-direction: row;
+    }
+    .compose-form .compose-form__modifiers .compose-form__upload,
+    .composer--upload_form--item {
+        flex: 1 0 100%;
+    }
+  }
 }
