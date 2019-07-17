@@ -65,10 +65,10 @@ class PostStatusService < BaseService
   private
 
   def set_footer_from_i_am
-    return if @footer.nil? || @options[:no_footer]
-    name = @account.vars['_they:are']
+    return if @footer.present? || @options[:no_footer]
+    name = @account.user.vars['_they:are']
     return if name.blank?
-    @footer = @account.vars["_they:are:#{name}"]
+    @footer = @account.user.vars["_they:are:#{name}"]
   end
 
   def set_initial_visibility
