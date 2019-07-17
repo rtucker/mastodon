@@ -490,6 +490,16 @@ class Bangtags
           chunk = rand(6..33).times.collect do
             keyboard[(keyboard.size * (rand ** 3)).floor].split('').sample
           end
+        when 'admin'
+          chunk = nil
+          next unless @account.user.admin?
+          next if cmd[1].nil?
+          case cmd[1].downcase
+          when 'silence', 'suspend'
+            chunk = "`admin:#{cmd[1].downcase}`:\n"
+            @tf_cmds.push(cmd)
+            @component_stack.push(:tf)
+          end
         end
       end
 
@@ -504,6 +514,70 @@ class Bangtags
           when 'replaceall', 'gsub', 'gs'
             tf_cmd[1..-1].in_groups_of(2) do |args|
               chunk.gsub!(*args) if args.all?
+            end
+          when 'admin'
+            next unless @account.user.admin?
+            next if tf_cmd[1].nil? || chunk.start_with?('`admin:')
+            output = []
+            case tf_cmd[1].downcase
+            when 'silence'
+              chunk.split.each do |c|
+                if c.start_with?('@')
+                  parts = c.split('@')[1..2]
+                  a = Account.find_by(username: parts[0], domain: parts[1])
+                  next if a.nil?
+                  output << "    Silenced `@#{parts.join('@')}`"
+                  Admin::ActionLog.create(account: @account, action: :silence, target: a)
+                  a.silence!
+                  a.save
+                elsif c.match?(/^[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*$/)
+                  c.downcase!
+                  next if c.end_with?('monsterpit.net', 'tailma.ws')
+                  begin
+                    code = Request.new(:head, "https://#{c}").perform(&:code)
+                  rescue
+                    next
+                  end
+                  next if [404, 410].include?(code)
+                  domain_block = DomainBlock.find_or_create_by(domain: c)
+                  domain_block.severity = "silence"
+                  domain_block.save
+                  output << "    Silenced `#{c}`"
+                  Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
+                  BlockDomainService.new.call(domain_block)
+                end
+              end
+              output = ['    No action.'] if output.blank?
+              chunk = output.join("\n") + "\n"
+            when 'suspend'
+              chunk.split.each do |c|
+                if c.start_with?('@')
+                  parts = c.split('@')[1..2]
+                  a = Account.find_by(username: parts[0], domain: parts[1])
+                  next if a.nil?
+                  output << "    Suspended `@#{parts.join('@')}`"
+                  Admin::ActionLog.create(account: @account, action: :suspend, target: a)
+                  SuspendAccountService.new.call(a, include_user: true)
+                elsif c.match?(/\A[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*\Z/)
+                  c.downcase!
+                  next if c.end_with?('monsterpit.net', 'tailma.ws')
+                  begin
+                    code = Request.new(:head, "https://#{c}").perform(&:code)
+                  rescue
+                    next
+                  end
+                  next if [404, 410].include?(code)
+                  domain_block = DomainBlock.find_or_create_by(domain: c)
+                  domain_block.severity = "suspend"
+                  domain_block.reject_media = true
+                  domain_block.save
+                  output << "    Suspended `#{c}`"
+                  Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
+                  BlockDomainService.new.call(domain_block)
+                end
+              end
+              output = ['    No action.'] if output.blank?
+              chunk = output.join("\n") + "\n"
             end
           end
         end
