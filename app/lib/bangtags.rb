@@ -390,10 +390,11 @@ class Bangtags
               next
             elsif who == 'list'
               @status.visibility = :direct
+              @status.local_only = true
               @status.content_type = 'text/markdown'
               names = @vars.keys.select { |k| k.start_with?('_they:are:') }
-              names.map! { |k| "    <code>#{k[10..-1]}</code> is <em>#{@vars[k]}</em>" }
-              @chunks << (['`i:am:list`:'] + names).join("\n") + "\n"
+              names.map! { |k| "<code>#{k[10..-1]}</code> is <em>#{@vars[k]}</em>" }
+              @chunks << (["\n# <code>#!</code><code>i:am:list</code>:\n<hr />\n"] + names).join("\n") + "\n"
               next
             end
             name = who.downcase.gsub(/\s+/, '').strip
