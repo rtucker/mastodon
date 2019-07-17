@@ -310,6 +310,16 @@ class Bangtags
                 ours.save
               end
             end
+          when 'urls'
+            plain = @parent_status.text.gsub(/(<br \/>|<br>|<\/p>)+/) { |match| "#{match}\n" }
+            plain = ActionController::Base.helpers.strip_tags(plain)
+            plain.gsub!(/ dot /i, '.')
+            chunk = plain.scan(/https?:\/\/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).uniq.join(' ')
+          when 'domains'
+            plain = @parent_status.text.gsub(/(<br \/>|<br>|<\/p>)+/) { |match| "#{match}\n" }
+            plain = ActionController::Base.helpers.strip_tags(plain)
+            plain.gsub!(/ dot /i, '.')
+            chunk = plain.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).uniq.join(' ')
           end
         when 'media'
           chunk = nil
