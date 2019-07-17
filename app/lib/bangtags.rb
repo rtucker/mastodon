@@ -295,7 +295,7 @@ class Bangtags
             chunk = TagManager.instance.url_for(@parent_status)
           when 'tag', 'untag'
             chunk = nil
-            next unless @parent_status.account.id == @account.id
+            next unless @parent_status.account.id == @account.id || @account.user.admin?
             tags = cmd[2..-1].map {|t| t.gsub(':', '.')}
             if cmd[1].downcase == 'tag'
               add_tags(@parent_status, *tags)
