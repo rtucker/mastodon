@@ -554,7 +554,7 @@ class Bangtags
                   parts = c.split('@')[1..2]
                   a = Account.find_by(username: parts[0], domain: parts[1])
                   next if a.nil?
-                  output << "    Silenced <code>@#{parts.join('@')}</code>"
+                  output << "<strong>Silenced<strong> <code>@#{parts.join('@')}</code>."
                   Admin::ActionLog.create(account: @account, action: :silence, target: a)
                   a.silence!
                   a.save
@@ -570,12 +570,12 @@ class Bangtags
                   domain_block = DomainBlock.find_or_create_by(domain: c)
                   domain_block.severity = "silence"
                   domain_block.save
-                  output << "    Silenced <code>#{c}</code>"
+                  output << "<strong>Silenced</strong> <code>#{c}</code>."
                   Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
                   BlockDomainService.new.call(domain_block)
                 end
               end
-              output = ['    No action.'] if output.blank?
+              output = ['<em>No action.</em>'] if output.blank?
               chunk = output.join("\n") + "\n"
             when 'forgive', 'unsilence', 'unsuspend'
               chunk.split.each do |c|
@@ -583,7 +583,7 @@ class Bangtags
                   parts = c.split('@')[1..2]
                   a = Account.find_by(username: parts[0], domain: parts[1])
                   next if a.nil?
-                  output << "    Reset policy for <code>@#{parts.join('@')}</code>"
+                  output << "<strong>Reset policy</strong> for <code>@#{parts.join('@')}</code>."
                   Admin::ActionLog.create(account: @account, action: :unsilence, target: a)
                   a.unsilence!
                   Admin::ActionLog.create(account: @account, action: :unsuspend, target: a)
@@ -594,12 +594,12 @@ class Bangtags
                   next if c.end_with?('monsterpit.net', 'tailma.ws')
                   domain_block = DomainBlock.find_by(domain: c)
                   next if domain_block.nil?
-                  output << "    Reset policy for <code>#{c}<code>"
+                  output << "<strong>Reset policy</strong> for <code>#{c}<code>."
                   Admin::ActionLog.create(account: @account, action: :destroy, target: domain_block)
                   UnblockDomainService.new.call(domain_block)
                 end
               end
-              output = ['    No action.'] if output.blank?
+              output = ['<em>No action.</em>'] if output.blank?
               chunk = output.join("\n") + "\n"
             when 'suspend'
               chunk.split.each do |c|
@@ -607,7 +607,7 @@ class Bangtags
                   parts = c.split('@')[1..2]
                   a = Account.find_by(username: parts[0], domain: parts[1])
                   next if a.nil?
-                  output << "    Suspended <code>@#{parts.join('@')}</code>"
+                  output << "<strong>Suspended</strong> <code>@#{parts.join('@')}</code>."
                   Admin::ActionLog.create(account: @account, action: :suspend, target: a)
                   SuspendAccountService.new.call(a, include_user: true)
                 elsif c.match?(/\A[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*\Z/)
@@ -623,12 +623,12 @@ class Bangtags
                   domain_block.severity = "suspend"
                   domain_block.reject_media = true
                   domain_block.save
-                  output << "    Suspended <code>#{c}</code>"
+                  output << "<strong>Suspended</strong> <code>#{c}</code>."
                   Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
                   BlockDomainService.new.call(domain_block)
                 end
               end
-              output = ['    No action.'] if output.blank?
+              output = ['<em>No action.</em>'] if output.blank?
               chunk = output.join("\n") + "\n"
             end
           end
