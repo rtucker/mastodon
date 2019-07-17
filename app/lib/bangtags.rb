@@ -325,9 +325,10 @@ class Bangtags
           case media_cmd.downcase
           when 'desc'
             if media_args.present?
-              @vars["media_#{media_idx}_desc"] = media_args.join(':')
+              @vars["_media:#{media_idx}:desc"] = media_args.join(':')
             else
-              @vore_stack.push("media_#{media_idx}_desc")
+              @vars.delete("_media:#{media_idx}:desc")
+              @vore_stack.push("_media:#{media_idx}:desc")
               @component_stack.push(:var)
             end
           end
@@ -654,7 +655,7 @@ class Bangtags
 
         case media_cmd
         when 'desc'
-          status.media_attachments[media_idx-1].description = @vars["media_#{media_idx}_desc"]
+          status.media_attachments[media_idx-1].description = @vars["_media:#{media_idx}:desc"]
           status.media_attachments[media_idx-1].save
         end
       end
