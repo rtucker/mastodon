@@ -417,7 +417,8 @@ class Bangtags
         when 'draft'
           chunk = nil
           @chunks.insert(0, "[center]`#!draft!#`[/center]\n") unless @chunks.present? && @chunks.first.include?('#!draft')
-          status.visibility = :direct
+          @status.visibility = :direct
+          @status.content_type = 'text/x-bbcode+markdown'
           @vore_stack.push('_draft')
           @component_stack.push(:var)
           add_tags(status, 'self.draft')
