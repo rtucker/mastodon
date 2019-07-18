@@ -6,6 +6,7 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 
 const messages = defineMessages({
   public: { id: 'privacy.public.short', defaultMessage: 'Public' },
+  local: { id: 'privacy.local.short', defaultMessage: 'Community' },
   unlisted: { id: 'privacy.unlisted.short', defaultMessage: 'Unlisted' },
   private: { id: 'privacy.private.short', defaultMessage: 'Followers-only' },
   direct: { id: 'privacy.direct.short', defaultMessage: 'Direct' },
@@ -25,6 +26,7 @@ export default class VisibilityIcon extends ImmutablePureComponent {
 
     const visibilityClass = {
       public: 'globe',
+      local: 'users',
       unlisted: 'unlock',
       private: 'lock',
       direct: 'envelope',

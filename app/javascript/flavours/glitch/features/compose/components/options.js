@@ -33,6 +33,14 @@ const messages = defineMessages({
     defaultMessage: 'BBdown',
     id: 'compose.content-type.bbdown',
   },
+  local_short: {
+    defaultMessage: 'Community',
+    id: 'privacy.local.short'
+  },
+  local_long: {
+    defaultMessage: 'Post to community timeline',
+    id: 'privacy.local.long'
+  },
   change_privacy: {
     defaultMessage: 'Adjust status privacy',
     id: 'privacy.change',
@@ -236,6 +244,12 @@ class ComposerOptions extends ImmutablePureComponent {
         name: 'unlisted',
         text: <FormattedMessage {...messages.unlisted_short} />,
       },
+      local: {
+        icon: 'users',
+        meta: <FormattedMessage {...messages.local_long} />,
+        name: 'local',
+        text: <FormattedMessage {...messages.local_short} />,
+      }
     };
 
     const contentTypeItems = {
@@ -320,6 +334,7 @@ class ComposerOptions extends ImmutablePureComponent {
           icon={(privacyItems[privacy] || {}).icon}
           items={[
             privacyItems.public,
+            privacyItems.local,
             privacyItems.unlisted,
             privacyItems.private,
             privacyItems.direct,

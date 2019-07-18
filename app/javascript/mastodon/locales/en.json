@@ -292,6 +292,8 @@
   "privacy.change": "Adjust roar privacy",
   "privacy.direct.long": "Roar to mentioned creatures only",
   "privacy.direct.short": "Whisper",
+  "privacy.local.short": "Monsterpit",
+  "privacy.local.long": "Roar to Monsterpit timeline",
   "privacy.private.long": "Roar to packmates only",
   "privacy.private.short": "Packmates-only",
   "privacy.public.long": "Roar to public timelines",
