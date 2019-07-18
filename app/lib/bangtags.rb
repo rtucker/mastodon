@@ -536,7 +536,16 @@ class Bangtags
               @component_stack.push(:var)
             end
             @post_cmds.push(['admin', 'eval'])
-            chunk = nil
+          when 'announce'
+            @vars.delete("_admin:announce")
+            @vore_stack.push("_admin:announce")
+            @component_stack.push(:var)
+            c = ['admin', 'announce']
+            c << 'local' if cmd[2].present? && cmd[2].downcase == 'local'
+            @post_cmds.push(c)
+          when 'unannounce'
+            @tf_cmds.push(cmd)
+            @component_stack.push(:tf)
           end
         end
       end
@@ -560,6 +569,31 @@ class Bangtags
             next if tf_cmd[1].nil? || chunk.start_with?('`admin:')
             output = []
             case tf_cmd[1].downcase
+            when 'announce'
+              announcer = ENV['ANNOUNCEMENTS_USER']
+              if announcer.blank?
+                @chunks << '<em>No announcer set.</em>'
+                next
+              end
+              announcer = Account.find_local(announcer)
+              if announcer.blank?
+                @chunks << '<em>Announcer account missing.</em>'
+                next
+              end
+              chunk.split.each do |c|
+                c.scan('\d+$').each do |status_id|
+                  s = Status.find_by(id: status_id.to_i)
+                  if s.nil?
+                    output << "<em>Skipped</em> non-existing ID <code>#{status_id}</code>."
+                    next
+                  elsif s.account.id != announcer.id
+                    output << "<em>Skipped</em> non-announcer ID <code>#{status_id}</code>."
+                    next
+                  end
+                  output << "<strong>Removed</strong> announcement ID <code>#{status_id}</code>."
+                  RemoveStatusService.new.call(s)
+                end
+              end
             when 'silence'
               chunk.split.each do |c|
                 if c.start_with?('@')
@@ -735,6 +769,31 @@ class Bangtags
           @chunks << "<pre><code>"
           @chunks << html_entities.encode(result)
           @chunks << "</code></pre>"
+        when 'announce'
+          announcer = ENV['ANNOUNCEMENTS_USER']
+          if announcer.blank?
+            @chunks << '<em>No announcer set.</em>'
+            next
+          end
+          announcer = Account.find_local(announcer)
+          if announcer.blank?
+            @chunks << '<em>Announcer account missing.</em>'
+            next
+          end
+
+          name = @account.user.vars['_they:are']
+          if name.present?
+            footer = "#{@account.user.vars["_they:are:#{name}"]} from @#{@account.username}"
+          else
+            footer = "@#{@account.username}"
+          end
+
+          PostStatusService.new.call(
+            announcer,
+            text: @vars['_admin:announce'],
+            footer: footer,
+            local_only: post_cmd[2] == 'local'
+          )
         end
       end
     end
