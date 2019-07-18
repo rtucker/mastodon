@@ -956,6 +956,10 @@ en:
       public_long: Everyone can see
       unlisted: Unlisted
       unlisted_long: Everyone can see, but not listed on public timelines
+      local: Monsterpit
+      local_long: Everyone can see, but only listed on Monsterpit timeline
+      chat: Chat
+      chat_long: Special visibility for only for chat messages
   stream_entries:
     pinned: Pinned roar
     reblogged: boosted
