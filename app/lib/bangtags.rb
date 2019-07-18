@@ -292,7 +292,7 @@ class Bangtags
           chunk = nil
           next if cmd[1].nil? || @parent_status.nil?
           case cmd[1].downcase
-          when 'permalink'
+          when 'permalink', 'link'
             chunk = TagManager.instance.url_for(@parent_status)
           when 'tag', 'untag'
             chunk = nil
