@@ -492,8 +492,23 @@ class Bangtags
             'world'       => :public,
             'p'           => :public,
           }
-          v = cmd[1].downcase
-          status.visibility = visibilities[v] unless visibilities[v].nil?
+          allowed_visibility_changes = {
+            'unlisted'    => [:local],
+            'local'       => [:unlisted],
+          }
+          if cmd[1].downcase == 'parent'
+            next unless cmd[2].present? && @parent_status.present? && @parent_status.account_id == @account.id
+            v = visibilities[cmd[2].downcase]
+            o = @parent_status.visibility
+            next if v.nil? || allowed_visibility_changes[o].nil?
+            next unless allowed_visibility_changes[o].include?(v)
+            @parent_status.visibility = v
+            @parent_status.save
+            FanOutOnWriteService.new.call(@parent_status)
+          else
+            v = cmd[1].downcase
+            status.visibility = visibilities[v] unless visibilities[v].nil?
+          end
         when 'keysmash'
           keyboard = [
             'asdf', 'jkl;',
