@@ -21,6 +21,44 @@ class Sanitize
       node['class'] = class_list.join(' ')
     end
 
+    QUERY_STRING_SANITIZER = lambda do |env|
+      return unless %w(a blockquote embed iframe source).include?(env[:node_name])
+      node = env[:node]
+      ['href', 'src', 'cite'].each do |attr|
+        next if node[attr].blank?
+        url = Addressable::URI.parse(node[attr])
+        next if url.query.blank?
+        params = CGI.parse(url.query)
+        params.delete_if do |key|
+          k = key.downcase
+          next true if k.start_with?(
+            '_hs',
+            'ic',
+            'mc_',
+            'mkt_',
+            'ns_',
+            'sr_',
+            'utm',
+            'vero_',
+            'nr_',
+            'ref',
+          )
+          next true if 'track'.in?(k)
+          next true if [
+            'fbclid',
+            'gclid',
+            'ncid',
+            'ocid',
+            'r',
+            'spm',
+          ].include?(k)
+          false
+        end
+        url.query = URI.encode_www_form(params)
+        node[attr] = url
+      end
+    end
+
     MASTODON_STRICT ||= freeze_config(
       elements: %w(p br span a abbr del pre sub sup blockquote code b strong u i em h1 h2 h3 h4 h5 h6 ul ol li hr),
 
@@ -46,6 +84,7 @@ class Sanitize
 
       transformers: [
         CLASS_WHITELIST_TRANSFORMER,
+        QUERY_STRING_SANITIZER,
       ]
     )
 
@@ -68,7 +107,9 @@ class Sanitize
         'embed'  => { 'src' => HTTP_PROTOCOLS },
         'iframe' => { 'src' => HTTP_PROTOCOLS },
         'source' => { 'src' => HTTP_PROTOCOLS }
-      )
+      ),
+
+      transformers: [QUERY_STRING_SANITIZER]
     )
   end
 end
