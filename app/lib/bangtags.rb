@@ -730,10 +730,14 @@ class Bangtags
 
     account.user.save
 
-    status.text = @chunks.join
-    status.save
-
-    postprocess_after_save
+    text = @chunks.join
+    if text.blank?
+      RemoveStatusService.new.call(@status)
+    else
+      status.text = text
+      status.save
+      postprocess_after_save
+    end
   end
 
   private

@@ -52,7 +52,7 @@ class PostStatusService < BaseService
     if scheduled?
       schedule_status!
     else
-      process_status!
+      return unless process_status!
       postprocess_status!
       bump_potential_friendship!
     end
@@ -148,8 +148,11 @@ class PostStatusService < BaseService
       @status = @account.statuses.create!(status_attributes)
     end
 
+    return false if @status.destroyed?
+
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
     process_mentions_service.call(@status)
+    return true
   end
 
   def schedule_status!

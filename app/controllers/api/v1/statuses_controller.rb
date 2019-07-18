@@ -58,7 +58,11 @@ class Api::V1::StatusesController < Api::BaseController
                                          content_type: status_params[:content_type],
                                          idempotency: request.headers['Idempotency-Key'])
 
-    render json: @status, serializer: @status.is_a?(ScheduledStatus) ? REST::ScheduledStatusSerializer : REST::StatusSerializer
+    if @status.nil?
+      raise Mastodon::ValidationError, 'Bangtags processed. No output.'
+    else
+      render json: @status, serializer: @status.is_a?(ScheduledStatus) ? REST::ScheduledStatusSerializer : REST::StatusSerializer
+    end
   end
 
   def destroy
