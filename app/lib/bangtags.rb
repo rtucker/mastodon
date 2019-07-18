@@ -788,12 +788,16 @@ class Bangtags
             footer = "@#{@account.username}"
           end
 
-          PostStatusService.new.call(
+          s = PostStatusService.new.call(
             announcer,
+            visibility: :local,
             text: @vars['_admin:announce'],
             footer: footer,
             local_only: post_cmd[2] == 'local'
           )
+          FanOutOnWriteService.new.call(s)
+
+          @chunks << 'Announce successful.'
         end
       end
     end
