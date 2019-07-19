@@ -26,6 +26,9 @@ class Sanitize
       node = env[:node]
       return if node['href'].blank? || node.text.blank?
 
+      class_list = node['class']&.split(/[\t\n\f\r ]/)
+      return if class_list && class_list.include?('mention') || class_list.include?('hashtag')
+
       # href matches link text verbatim?
       href = node['href']
       return if href == node.text.strip
