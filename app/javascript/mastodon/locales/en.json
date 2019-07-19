@@ -4,6 +4,7 @@
   "account.badges.adult": "🔞 Adult content",
   "account.badges.gently": "Gentlies kobolds",
   "account.badges.kobold": "Gently the kobold",
+  "account.badges.locked": "🔒 Locked",
   "account.block": "Block @{name}",
   "account.block_domain": "Hide {domain}",
   "account.blocked": "Blocked",

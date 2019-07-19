@@ -73,8 +73,9 @@ en:
       bot: Bot
       moderator: Mod
       kobold: Gently the kobold
-      gentlies_kobolds: Gentlies kobolds
-      adults_only: 🔞 Adult content
+      gently: Gentlies kobolds
+      adult_content: 🔞 Adult content
+      locked: 🔒 Locked
     unavailable: Profile unavailable
     unfollow: Unfollow
   admin:

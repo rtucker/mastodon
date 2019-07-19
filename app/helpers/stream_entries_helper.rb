@@ -37,6 +37,7 @@ module StreamEntriesHelper
   def account_badge(account, all: false)
     content_tag(:div, class: 'roles') do
       roles = []
+      roles << content_tag(:div, t('accounts.roles.locked'), class: 'account-role locked') if account.locked?
       roles << content_tag(:div, t('accounts.roles.bot'), class: 'account-role bot') if account.bot?
       roles << content_tag(:div, t('accounts.roles.adult'), class: 'account-role adult') if account.adult_content?
       roles << content_tag(:div, t('accounts.roles.gently'), class: 'account-role gently') if account.gently?
