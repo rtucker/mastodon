@@ -3,6 +3,7 @@ module UrlHelper
     return if url.blank?
     url = Addressable::URI.parse(url)
     return url.to_s if url.query.blank?
+    return unless '='.in?(url.query)
     params = CGI.parse(url.query)
 		params.delete_if do |key|
       k = key.downcase
@@ -29,7 +30,7 @@ module UrlHelper
       ].include?(k)
       false
     end
-    url.query = URI.encode_www_form(params)
+    url.query = params.to_query
     return url.to_s
   rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
     return '#'
