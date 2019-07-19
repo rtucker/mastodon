@@ -21,6 +21,53 @@ class Sanitize
       node['class'] = class_list.join(' ')
     end
 
+    ANCHOR_SANITIZER = lambda do |env|
+      return unless env[:node_name] == 'a'
+      node = env[:node]
+      return if node['href'].blank? || node.text.blank?
+
+      # href matches link text verbatim?
+      href = node['href']
+      return if href == node.text.strip
+
+      # remove query string from link text
+      node.inner_html = node.inner_html.sub(/\?\S+=\S+/, '')
+
+      # href matches link text without query string?
+      text = node.text.strip
+      return if href == text
+
+      uri = Addressable::URI.parse(node['href'])
+      text.sub!(/ *(?:\u2026|\.\.\.)/, '')
+
+      # href starts with link text?
+      return if href.start_with?(text)
+      # shortened href starts with link text?
+      return if (uri.host + uri.path).start_with?(text)
+      # shorterned & normalized href starts with link text?
+      return if (uri.normalized_host + uri.normalized_path).start_with?(text)
+
+      # grab first domain from link text
+      text = text.downcase.gsub(' dot ', '.')
+      first_domain = text.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
+
+      # first domain in link text (if there is one) matches href domain?
+      if first_domain.nil? || uri.domain == first_domain
+        # link text customized by author
+        node.inner_html = "\u270d\ufe0f #{node.inner_html}"
+        return
+      end
+
+      # possibly misleading link text
+      node.inner_html = "\u26a0\ufe0f #{node.inner_html}"
+    rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
+      # strip malformed links
+      node = env[:node]
+      node['href'] = '#'
+      node.children.remove
+      node.inner_html = "\u274c #{node.inner_html}"
+    end
+
     QUERY_STRING_SANITIZER = lambda do |env|
       return unless %w(a blockquote embed iframe source).include?(env[:node_name])
       node = env[:node]
@@ -85,6 +132,7 @@ class Sanitize
       transformers: [
         CLASS_WHITELIST_TRANSFORMER,
         QUERY_STRING_SANITIZER,
+        ANCHOR_SANITIZER
       ]
     )
 
