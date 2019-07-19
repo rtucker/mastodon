@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class FetchLinkCardService < BaseService
+  include UrlHelper
+
   URL_PATTERN = %r{
     (                                                                                                 #   $1 URL
       (https?:\/\/)                                                                                   #   $2 Protocol (required)
@@ -17,7 +19,8 @@ class FetchLinkCardService < BaseService
 
     return if @url.nil? || @status.preview_cards.any?
 
-    @url = @url.to_s
+    @url = sanitize_query_string(@url.to_s)
+    return if @url.nil?
 
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?

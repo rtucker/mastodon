@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Sanitize
+  extend UrlHelper
+
   module Config
     HTTP_PROTOCOLS ||= ['http', 'https', 'dat', 'dweb', 'ipfs', 'ipns', 'ssb', 'gopher', :relative].freeze
 
@@ -91,35 +93,8 @@ class Sanitize
       node = env[:node]
       ['href', 'src', 'cite'].each do |attr|
         next if node[attr].blank?
-        url = Addressable::URI.parse(node[attr])
-        next if url.query.blank?
-        params = CGI.parse(url.query)
-        params.delete_if do |key|
-          k = key.downcase
-          next true if k.start_with?(
-            '_hs',
-            'ic',
-            'mc_',
-            'mkt_',
-            'ns_',
-            'sr_',
-            'utm',
-            'vero_',
-            'nr_',
-            'ref',
-          )
-          next true if 'track'.in?(k)
-          next true if [
-            'fbclid',
-            'gclid',
-            'ncid',
-            'ocid',
-            'r',
-            'spm',
-          ].include?(k)
-          false
-        end
-        url.query = URI.encode_www_form(params)
+        url = Sanitize::sanitize_query_string(node[attr])
+        next if url.blank?
         node[attr] = url
       end
     end
