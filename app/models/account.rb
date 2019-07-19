@@ -137,9 +137,6 @@ class Account < ApplicationRecord
            :hides_stats?,
            :shows_application?,
 
-           :gentlies_kobolds?,
-           :is_a_kobold?,
-
            :hides_replies_of_muted?,
            :hides_replies_of_blocked?,
            :hides_replies_of_blocker?,
