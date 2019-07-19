@@ -36,6 +36,10 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
       'mp' => 'https://monsterpit.net/ns#',
       'supportsChat' => 'mp:supportsChat'
     },
+    locked: {
+      'mp' => 'https://monsterpit.net/ns#',
+      'locked' => 'mp:locked'
+    },
   }.freeze
 
   def self.default_key_transform
