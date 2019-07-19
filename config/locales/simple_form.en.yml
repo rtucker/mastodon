@@ -136,8 +136,6 @@ en:
         setting_hide_mntions_blocked: Filter mentions of those who you are blocking
         setting_hide_mntions_blocker: Filter mentions of those who are blocking you
         setting_hide_mntions_packm8: Filter group chat branches addressed to participants you aren't a packmate of
-        setting_gently_kobolds: Gently the kobolds
-        setting_user_is_kobold: I am a kobold
         setting_hide_mascot: Don't show the mascot image
         setting_hide_interactions: Make your roar interaction lists private
         setting_aggregate_reblogs: Group repeats in timelines
