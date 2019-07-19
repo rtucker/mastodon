@@ -40,22 +40,37 @@ class Sanitize
       text = node.text.strip
       return if href == text
 
-      uri = Addressable::URI.parse(node['href'])
-      text.sub!(/ *(?:\u2026|\.\.\.)/, '')
+      # strip ellipse & replace keyword search obscuring
+      text = text.sub(/ *(?:\u2026|\.\.\.)\Z/, '').gsub(/ dot /i, '.').gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '')
+
+      # href now matches text without obscuring?
+      return if href == text
+
+      # grab first url from link text
+      first_url = text.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*\S*/).first
+
+      # if there's no link in the text mark as custom text
+      if first_url.nil?
+        node.inner_html = "\u270d\ufe0f #{node.inner_html}"
+        return
+      end
+
+      # strip trailing slashes
+      text.sub!(/\/+\Z/, '')
 
       # href starts with link text?
       return if href.start_with?(text)
-      # shortened href starts with link text?
-      return if (uri.host + uri.path).start_with?(text)
-      # shorterned & normalized href starts with link text?
-      return if (uri.normalized_host + uri.normalized_path).start_with?(text)
 
-      # grab first domain from link text
-      text = text.downcase.gsub(' dot ', '.')
-      first_domain = text.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
+      # split href into parts & grab shortened href
+      uri = Addressable::URI.parse(node['href'])
+      short_href = uri.host + uri.path
+      normalized_short_href = uri.normalized_host + uri.normalized_path
+
+      # shortened href starts with link text?
+      return if short_href.start_with?(text) || normalized_short_href.start_with?(text)
 
       # first domain in link text (if there is one) matches href domain?
-      if first_domain.nil? || uri.domain == first_domain
+      if short_href == first_url || normalized_short_href == first_url
         # link text customized by author
         node.inner_html = "\u270d\ufe0f #{node.inner_html}"
         return
