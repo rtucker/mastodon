@@ -51,6 +51,7 @@
 #  supports_chat           :boolean          default(FALSE), not null
 #  gently                  :boolean          default(FALSE), not null
 #  kobold                  :boolean          default(FALSE), not null
+#  froze                   :boolean
 #
 
 class Account < ApplicationRecord
@@ -170,6 +171,10 @@ class Account < ApplicationRecord
 
   def moved?
     moved_to_account_id.present?
+  end
+
+  def frozen?
+    local? ? (self&.user.nil? ? true : user.disabled?) : frozen
   end
 
   def bot?

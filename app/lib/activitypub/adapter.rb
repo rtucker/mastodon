@@ -36,9 +36,9 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
       'mp' => 'https://monsterpit.net/ns#',
       'supportsChat' => 'mp:supportsChat'
     },
-    locked: {
+    froze: {
       'mp' => 'https://monsterpit.net/ns#',
-      'locked' => 'mp:locked'
+      'froze' => 'mp:froze'
     },
   }.freeze
 

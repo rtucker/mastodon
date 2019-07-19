@@ -5,6 +5,7 @@
   "account.badges.gently": "Gentlies kobolds",
   "account.badges.kobold": "Gently the kobold",
   "account.badges.locked": "🔒 Locked",
+  "account.badges.froze": "❄️ Frozen by admin",
   "account.block": "Block @{name}",
   "account.block_domain": "Hide {domain}",
   "account.blocked": "Blocked",

@@ -236,6 +236,12 @@
   }
 
   &.locked {
+    color: lighten(pink, 12%);
+    background-color: rgba(lighten(pink, 12%), 0.1);
+    border-color: rgba(lighten(pink, 12%), 0.5);
+  }
+
+  &.froze {
     color: lighten($warning-red, 12%);
     background-color: rgba(lighten($warning-red, 12%), 0.1);
     border-color: rgba(lighten($warning-red, 12%), 0.5);
