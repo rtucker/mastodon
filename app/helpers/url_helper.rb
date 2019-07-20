@@ -30,7 +30,7 @@ module UrlHelper
       ].include?(k)
       false
     end
-    url.query = params.to_query
+    url.query_values = params
     return url.to_s
   rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
     return '#'
