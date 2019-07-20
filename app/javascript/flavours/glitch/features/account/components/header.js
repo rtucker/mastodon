@@ -230,7 +230,7 @@ class Header extends ImmutablePureComponent {
               <span className='account__header__locked'>{lockedIcon}</span>
               <span dangerouslySetInnerHTML={displayNameHtml} />
               <small>@{acct}</small>
-              <div className='roles'>{badge_froze}{badge_locked}{badge_admin}{badge_mod}{badge_ac}{badge_bot}{badge_gently}{badge_kobold}</div>
+              <div className='roles'>{badge_admin}{badge_mod}{badge_froze}{badge_locked}{badge_ac}{badge_bot}{badge_gently}{badge_kobold}</div>
             </h1>
           </div>
 
