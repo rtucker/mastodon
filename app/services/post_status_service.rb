@@ -104,15 +104,13 @@ class PostStatusService < BaseService
 
   # move tags out of body so we can format them later
   def extract_tags
-    chunks = []
-    @text.split(/^((?:#[\w:._·\-]+\s*)+)/).each do |chunk|
-      if chunk.match?(/\A#[\w:._·\-]/)
-        @tags |= chunk.strip.gsub('#', '').split(/\s+/)
-      else
-        chunks << chunk
-      end
-    end
-    @text = chunks.join
+    @text.gsub!(/^##/, "\uf666")
+    @text.gsub!('##', "\uf669")
+    @tags |= Extractor.extract_hashtags(@text)
+    @text.strip!
+    @text.gsub!(/^(?:#[\w:._·\-]+\s*)+|(?:#[\w:._·\-]+\s*)+\Z/, '')
+    @text.gsub!("\uf669", "##")
+    @text.gsub!("\uf666", "#")
   end
 
   def preprocess_attributes!
