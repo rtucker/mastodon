@@ -485,6 +485,8 @@ class Bangtags
 
             'local'       => :local,
             'monsterpit'  => :local,
+            'community'   => :local,
+            'c'           => :local,
             'l'           => :local,
             'm'           => :local,
 
