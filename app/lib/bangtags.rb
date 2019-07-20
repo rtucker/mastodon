@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Bangtags
+  #include BangtagHelper
   attr_reader :status, :account
 
   def initialize(status)
@@ -789,7 +790,7 @@ class Bangtags
         case post_cmd[1]
         when 'eval'
           @chunks << "<pre><code>"
-          @chunks << html_entities.encode(@vars["_admin:eval"])
+          @chunks << html_entities.encode(@vars["_admin:eval"]).gsub("\n", '<br/>')
           @chunks << "</code></pre>\n"
           @chunks << "<strong>Output:</strong>"
           begin
@@ -798,7 +799,7 @@ class Bangtags
             result = "\u274c #{e.message}"
           end
           @chunks << "<pre><code>"
-          @chunks << html_entities.encode(result)
+          @chunks << html_entities.encode(result).gsub("\n", '<br/>')
           @chunks << "</code></pre>"
         when 'announce'
           announcer = ENV['ANNOUNCEMENTS_USER']
