@@ -173,8 +173,8 @@ class Account < ApplicationRecord
     moved_to_account_id.present?
   end
 
-  def frozen?
-    local? ? (self&.user.nil? ? true : user.disabled?) : frozen
+  def froze?
+    local? ? (self&.user.nil? ? true : user.disabled?) : froze
   end
 
   def bot?
