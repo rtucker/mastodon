@@ -303,6 +303,7 @@ class Bangtags
             else
               del_tags(@parent_status, *tags)
             end
+            Rails.cache.delete("statuses/#{@parent_status.id}")
           when 'emoji'
             @parent_status.emojis.each do |theirs|
               ours = CustomEmoji.find_or_initialize_by(shortcode: theirs.shortcode, domain: nil)
@@ -507,6 +508,7 @@ class Bangtags
             @parent_status.visibility = v
             @parent_status.local_only = false if cmd[3].downcase.in? %w(federate f public p world)
             @parent_status.save
+            Rails.cache.delete("statuses/#{@parent_status.id}")
             DistributionWorker.perform_async(@parent_status.id)
             ActivityPub::DistributionWorker.perform_async(@parent_status) unless @parent_status.local_only?
           else
