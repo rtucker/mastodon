@@ -80,7 +80,6 @@ class Header extends ImmutablePureComponent {
 
     let info        = [];
     let actionBtn   = '';
-    let lockedIcon  = '';
     let menu        = [];
 
     if (me !== account.get('id') && account.getIn(['relationship', 'followed_by'])) {
@@ -112,10 +111,6 @@ class Header extends ImmutablePureComponent {
 
     if (account.get('moved') && !account.getIn(['relationship', 'following'])) {
       actionBtn = '';
-    }
-
-    if (account.get('locked')) {
-      lockedIcon = <Icon icon='lock' title={intl.formatMessage(messages.account_locked)} />;
     }
 
     if (account.get('id') !== me) {
@@ -227,7 +222,6 @@ class Header extends ImmutablePureComponent {
 
           <div className='account__header__tabs__name'>
             <h1>
-              <span className='account__header__locked'>{lockedIcon}</span>
               <span dangerouslySetInnerHTML={displayNameHtml} />
               <small>@{acct}</small>
               <div className='roles'>{badge_admin}{badge_mod}{badge_froze}{badge_locked}{badge_ac}{badge_bot}{badge_gently}{badge_kobold}</div>
