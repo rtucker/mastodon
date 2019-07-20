@@ -235,13 +235,13 @@ class Formatter
       footer = status.footer
       footer = encode_and_link_urls(footer)
       footer = encode_custom_emojis(footer, status.emojis, options[:autoplay]) if options[:custom_emojify]
-      html = "#{html.strip}<p class=\"signature\">— #{footer}</p>"
+      html = "#{html.strip}\n<p class=\"signature\">— #{footer}</p>"
     end
 
     unless status.tags.blank?
       tags = status.tags.pluck(:name).reject { |t| t.end_with?('.') }.map{ |t| "##{t}" }
       tags = encode_and_link_urls(tags.join(' '))
-      html = "#{html}<p class=\"tags\">#{tags} \xf0\x9f\x8f\xb7</p>"
+      html = "#{html.strip}\n<p class=\"tags\">#{tags} \xf0\x9f\x8f\xb7</p>"
     end
 
     html.html_safe # rubocop:disable Rails/OutputSafety
