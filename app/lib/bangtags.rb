@@ -505,11 +505,19 @@ class Bangtags
             next if v.nil? || allowed_visibility_changes[o].nil?
             next unless allowed_visibility_changes[o].include?(v)
             @parent_status.visibility = v
+            @parent_status.local_only = false if cmd[3].downcase.in? %w(federate f public p world)
             @parent_status.save
-            FanOutOnWriteService.new.call(@parent_status)
+            DistributionWorker.perform_async(@parent_status.id)
+            ActivityPub::DistributionWorker.perform_async(@parent_status) unless @parent_status.local_only?
           else
             v = cmd[1].downcase
             status.visibility = visibilities[v] unless visibilities[v].nil?
+            case cmd[2].downcase
+            when 'federate', 'f', 'public', 'p', 'world'
+              status.local_only = false
+            when 'nofederate', 'nf', 'localonly', 'lo', 'local', 'l', 'monsterpit', 'm', 'community', 'c'
+              status.local_only = true
+            end
           end
         when 'keysmash'
           keyboard = [
