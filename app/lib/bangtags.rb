@@ -816,7 +816,9 @@ class Bangtags
             footer: footer,
             local_only: post_cmd[2] == 'local'
           )
-          FanOutOnWriteService.new.call(s)
+
+          DistributionWorker.perform_async(s.id)
+          ActivityPub::DistributionWorker.perform_async(s) unless s.local_only?
 
           @chunks << 'Announce successful.'
         end
