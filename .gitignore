@@ -60,3 +60,6 @@ docker-compose.override.yml
 
 # ignore misc directory
 /misc
+
+.generators
+.rakeTasks

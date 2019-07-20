@@ -179,6 +179,8 @@ class User < ApplicationRecord
     :aggregate_reblogs,
     :show_application,
     :default_content_type,
+    :use_blurhash,
+    :use_pending_items,
 
     :theme,
     :advanced_layout,

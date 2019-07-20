@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe ImportService, type: :service do
   let!(:account) { Fabricate(:account, locked: false) }
   let!(:bob)     { Fabricate(:account, username: 'bob', locked: false) }
-  let!(:foo)     { Fabricate(:account, username: 'foo', domain: 'ap.example.com', inbox_url: 'https://ap.example.com/inbox', locked: false) }
+  let!(:eve)     { Fabricate(:account, username: 'eve', domain: 'example.com', locked: false, inbox_url: 'https://example.com/inbox') }
 
   before do
-    stub_request(:post, "https://ap.example.com/inbox").to_return(:status => 200, :body => "", :headers => {})
+    stub_request(:post, "https://example.com/inbox").to_return(status: 200)
   end
 
   context 'import old-style list of muted users' do
@@ -96,6 +96,10 @@ RSpec.describe ImportService, type: :service do
       it 'follows the listed accounts, including boosts' do
         subject.call(import)
         expect(account.following.count).to eq 1
+<<<<<<< HEAD
+=======
+        expect(account.follow_requests.count).to eq 1
+>>>>>>> f1597e1ab... Merge pull request #1158 from ThibG/glitch-soc/merge-upstream
         expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
         expect(FollowRequest.find_by(account: account, target_account: foo)).to_not be_nil
       end
@@ -108,6 +112,10 @@ RSpec.describe ImportService, type: :service do
         account.follow!(bob, reblogs: false)
         subject.call(import)
         expect(account.following.count).to eq 1
+<<<<<<< HEAD
+=======
+        expect(account.follow_requests.count).to eq 1
+>>>>>>> f1597e1ab... Merge pull request #1158 from ThibG/glitch-soc/merge-upstream
         expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
         expect(FollowRequest.find_by(account: account, target_account: foo)).to_not be_nil
       end
@@ -120,6 +128,10 @@ RSpec.describe ImportService, type: :service do
         account.follow!(bob, reblogs: false)
         subject.call(import)
         expect(account.following.count).to eq 1
+<<<<<<< HEAD
+=======
+        expect(account.follow_requests.count).to eq 1
+>>>>>>> f1597e1ab... Merge pull request #1158 from ThibG/glitch-soc/merge-upstream
         expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
         expect(FollowRequest.find_by(account: account, target_account: foo)).to_not be_nil
       end
@@ -136,8 +148,14 @@ RSpec.describe ImportService, type: :service do
       it 'follows the listed accounts, respecting boosts' do
         subject.call(import)
         expect(account.following.count).to eq 1
+<<<<<<< HEAD
         expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
         expect(FollowRequest.find_by(account: account, target_account: foo)).to_not be_nil
+=======
+        expect(account.follow_requests.count).to eq 1
+        expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
+        expect(FollowRequest.find_by(account: account, target_account: eve).show_reblogs).to be false
+>>>>>>> f1597e1ab... Merge pull request #1158 from ThibG/glitch-soc/merge-upstream
       end
     end
 
@@ -148,8 +166,14 @@ RSpec.describe ImportService, type: :service do
         account.follow!(bob, reblogs: true)
         subject.call(import)
         expect(account.following.count).to eq 1
+<<<<<<< HEAD
         expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
         expect(FollowRequest.find_by(account: account, target_account: foo)).to_not be_nil
+=======
+        expect(account.follow_requests.count).to eq 1
+        expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
+        expect(FollowRequest.find_by(account: account, target_account: eve).show_reblogs).to be false
+>>>>>>> f1597e1ab... Merge pull request #1158 from ThibG/glitch-soc/merge-upstream
       end
     end
 
@@ -160,8 +184,14 @@ RSpec.describe ImportService, type: :service do
         account.follow!(bob, reblogs: true)
         subject.call(import)
         expect(account.following.count).to eq 1
+<<<<<<< HEAD
         expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
         expect(FollowRequest.find_by(account: account, target_account: foo)).to_not be_nil
+=======
+        expect(account.follow_requests.count).to eq 1
+        expect(Follow.find_by(account: account, target_account: bob).show_reblogs).to be true
+        expect(FollowRequest.find_by(account: account, target_account: eve).show_reblogs).to be false
+>>>>>>> f1597e1ab... Merge pull request #1158 from ThibG/glitch-soc/merge-upstream
       end
     end
   end

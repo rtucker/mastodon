@@ -3,24 +3,19 @@
 module AccountControllerConcern
   extend ActiveSupport::Concern
 
+  include AccountOwnedConcern
+
   FOLLOW_PER_PAGE = 12
 
   included do
     layout 'public'
 
-    before_action :set_account
-    before_action :check_account_approval
-    before_action :check_account_suspension
     before_action :check_account_hidden
     before_action :set_instance_presenter
-    before_action :set_link_headers
+    before_action :set_link_headers, if: -> { request.format.nil? || request.format == :html }
   end
 
   private
-
-  def set_account
-    @account = Account.find_local!(username_param)
-  end
 
   def set_instance_presenter
     @instance_presenter = InstancePresenter.new
@@ -35,14 +30,10 @@ module AccountControllerConcern
     )
   end
 
-  def username_param
-    params[:account_username]
-  end
-
   def webfinger_account_link
     [
       webfinger_account_url,
-      [%w(rel lrdd), %w(type application/xrd+xml)],
+      [%w(rel lrdd), %w(type application/jrd+json)],
     ]
   end
 
@@ -55,17 +46,6 @@ module AccountControllerConcern
 
   def webfinger_account_url
     webfinger_url(resource: @account.to_webfinger_s)
-  end
-
-  def check_account_approval
-    not_found if @account.user_pending?
-  end
-
-  def check_account_suspension
-    if @account.suspended?
-      expires_in(3.minutes, public: true)
-      gone
-    end
   end
 
   def check_account_hidden

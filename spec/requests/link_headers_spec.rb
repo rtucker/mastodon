@@ -11,10 +11,17 @@ describe 'Link headers' do
     end
 
     it 'contains webfinger url in link header' do
-      link_header = link_header_with_type('application/xrd+xml')
+      link_header = link_header_with_type('application/jrd+json')
 
       expect(link_header.href).to match 'http://www.example.com/.well-known/webfinger?resource=acct%3Atest%40cb6e6126.ngrok.io'
       expect(link_header.attr_pairs.first).to eq %w(rel lrdd)
+    end
+
+    it 'contains activitypub url in link header' do
+      link_header = link_header_with_type('application/activity+json')
+
+      expect(link_header.href).to eq 'https://cb6e6126.ngrok.io/users/test'
+      expect(link_header.attr_pairs.first).to eq %w(rel alternate)
     end
 
     def link_header_with_type(type)

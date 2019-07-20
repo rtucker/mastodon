@@ -26,6 +26,8 @@ class ReblogService < BaseService
 
       reblog = account.statuses.create!(reblog: reblogged_status, text: '', visibility: visibility)
     end
+    DistributionWorker.perform_async(reblog.id)
+    ActivityPub::DistributionWorker.perform_async(reblog.id) unless reblogged_status.local_only?
 
     if !options[:distribute] && account&.user&.boost_interval?
       QueuedBoost.find_or_create_by!(account_id: account.id, status_id: reblogged_status.id) if account&.user&.boost_interval?

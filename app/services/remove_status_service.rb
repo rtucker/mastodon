@@ -7,14 +7,13 @@ class RemoveStatusService < BaseService
   MIN_SCHEDULE_OFFSET = 60.seconds.freeze
 
   def call(status, **options)
-    @payload      = Oj.dump(event: :delete, payload: status.id.to_s)
-    @status       = status
-    @account      = status.account
-    @tags         = status.tags.pluck(:name).to_a
-    @mentions     = status.active_mentions.includes(:account).to_a
-    @reblogs      = status.reblogs.includes(:account).to_a
-    @stream_entry = status.stream_entry
-    @options      = options
+    @payload  = Oj.dump(event: :delete, payload: status.id.to_s)
+    @status   = status
+    @account  = status.account
+    @tags     = status.tags.pluck(:name).to_a
+    @mentions = status.active_mentions.includes(:account).to_a
+    @reblogs  = status.reblogs.includes(:account).to_a
+    @options  = options
 
     unless options[:defederate_only]
       RedisLock.acquire(lock_options) do |lock|
@@ -29,6 +28,7 @@ class RemoveStatusService < BaseService
           remove_from_public
           remove_from_media if status.media_attachments.any?
           remove_from_direct if status.direct_visibility?
+          remove_from_spam_check
 
           @status.destroy!
         else
@@ -160,6 +160,10 @@ class RemoveStatusService < BaseService
       Redis.current.publish("timeline:direct:#{mention.account.id}", @payload) if mention.account.local?
     end
     Redis.current.publish("timeline:direct:#{@account.id}", @payload) if @account.local?
+  end
+
+  def remove_from_spam_check
+    redis.zremrangebyscore("spam_check:#{@status.account_id}", @status.id, @status.id)
   end
 
   def lock_options

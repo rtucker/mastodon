@@ -1,19 +1,16 @@
 # frozen_string_literal: true
 
-class FetchAtomService < BaseService
+class FetchResourceService < BaseService
   include JsonLdHelper
-  include AutorejectHelper
+
+  ACCEPT_HEADER = 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams", text/html'
 
   def call(url)
     return if url.blank?
-    return if autoreject?(url)
 
-    result = process(url)
-  rescue OpenSSL::SSL::SSLError => e
-    Rails.logger.debug "SSL error: #{e}"
-    nil
-  rescue HTTP::ConnectionError => e
-    Rails.logger.debug "HTTP ConnectionError: #{e}"
+    process(url)
+  rescue HTTP::Error, OpenSSL::SSL::SSLError, Addressable::URI::InvalidURIError, Mastodon::HostValidationError, Mastodon::LengthValidationError => e
+    Rails.logger.debug "Error fetching resource #{@url}: #{e}"
     nil
   end
 
@@ -21,13 +18,12 @@ class FetchAtomService < BaseService
 
   def process(url, terminal = false)
     @url = url
+
     perform_request { |response| process_response(response, terminal) }
   end
 
   def perform_request(&block)
-    accept = 'application/activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams", text/html'
-
-    Request.new(:get, @url).add_headers('Accept' => accept).perform(&block)
+    Request.new(:get, @url).add_headers('Accept' => ACCEPT_HEADER).on_behalf_of(Account.representative).perform(&block)
   end
 
   def process_response(response, terminal = false)
@@ -36,13 +32,8 @@ class FetchAtomService < BaseService
     if ['application/activity+json', 'application/ld+json'].include?(response.mime_type)
       body = response.body_with_limit
       json = body_to_json(body)
-      if supported_context?(json) && equals_or_includes_any?(json['type'], ActivityPub::FetchRemoteAccountService::SUPPORTED_TYPES) && json['inbox'].present?
-        [json['id'], { prefetched_body: body, id: true }]
-      elsif supported_context?(json) && expected_type?(json)
-        [json['id'], { prefetched_body: body, id: true }]
-      else
-        nil
-      end
+
+      [json['id'], { prefetched_body: body, id: true }, :activitypub] if supported_context?(json) && (equals_or_includes_any?(json['type'], ActivityPub::FetchRemoteAccountService::SUPPORTED_TYPES) || expected_type?(json))
     elsif !terminal
       link_header = response['Link'] && parse_link_header(response)
 
@@ -59,28 +50,19 @@ class FetchAtomService < BaseService
   end
 
   def process_html(response)
-    page = Nokogiri::HTML(response.body_with_limit)
-
+    page      = Nokogiri::HTML(response.body_with_limit)
     json_link = page.xpath('//link[@rel="alternate"]').find { |link| ['application/activity+json', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'].include?(link['type']) }
 
-    result = process(json_link['href'], terminal: true) unless json_link.nil?
-    result ||= nil
-    result
+    process(json_link['href'], terminal: true) unless json_link.nil?
   end
 
   def process_link_headers(link_header)
     json_link = link_header.find_link(%w(rel alternate), %w(type application/activity+json)) || link_header.find_link(%w(rel alternate), ['type', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'])
 
-    result = process(json_link.href, terminal: true) unless json_link.nil?
-    result ||= nil
-    result
+    process(json_link.href, terminal: true) unless json_link.nil?
   end
 
   def parse_link_header(response)
     LinkHeader.parse(response['Link'].is_a?(Array) ? response['Link'].first : response['Link'])
-  end
-
-  def object_uri
-    nil
   end
 end

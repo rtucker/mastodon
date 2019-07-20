@@ -13,7 +13,7 @@ class FollowService < BaseService
     target_account = ResolveAccountService.new.call(target_account, skip_webfinger: true)
 
     raise ActiveRecord::RecordNotFound if target_account.nil? || target_account.id == source_account.id || target_account.suspended?
-    raise Mastodon::NotPermittedError  if target_account.blocking?(source_account) || source_account.blocking?(target_account) || target_account.moved?
+    raise Mastodon::NotPermittedError  if target_account.blocking?(source_account) || source_account.blocking?(target_account) || target_account.moved? || (!target_account.local? && target_account.ostatus?)
 
     target_account.mark_known! unless !Setting.auto_mark_known || target_account.known?
 
@@ -35,9 +35,11 @@ class FollowService < BaseService
     ActivityTracker.increment('activity:interactions')
 
     if target_account.local? && !target_account.locked?
-      follow = source_account.follow!(target_account, reblogs: reblogs)
-      LocalNotificationWorker.perform_async(target_account.id, follow.id, follow.class.name)
-      follow
+      direct_follow(source_account, target_account, reblogs: reblogs)
+#      follow = source_account.follow!(target_account, reblogs: reblogs)
+#      LocalNotificationWorker.perform_async(target_account.id, follow.id, follow.class.name)
+#      MergeWorker.perform_async(target_account.id, source_account.id)
+#      follow
     else
       request_follow(source_account, target_account, reblogs: reblogs)
     end
@@ -50,11 +52,20 @@ class FollowService < BaseService
 
     if target_account.local?
       LocalNotificationWorker.perform_async(target_account.id, follow_request.id, follow_request.class.name)
-    else
+    elsif target_account.activitypub?
       ActivityPub::DeliveryWorker.perform_async(build_json(follow_request), source_account.id, target_account.inbox_url)
     end
 
     follow_request
+  end
+
+  def direct_follow(source_account, target_account, reblogs: true)
+    follow = source_account.follow!(target_account, reblogs: reblogs)
+
+    LocalNotificationWorker.perform_async(target_account.id, follow.id, follow.class.name)
+    MergeWorker.perform_async(target_account.id, source_account.id)
+
+    follow
   end
 
   def build_json(follow_request)

@@ -55,6 +55,7 @@
 #  force_private           :boolean          default(FALSE), not null
 #  unboostable             :boolean          default(FALSE), not null
 #  block_anon              :boolean          default(FALSE), not null
+#  trust_level             :integer
 #
 
 class Account < ApplicationRecord
@@ -77,6 +78,13 @@ class Account < ApplicationRecord
   MAX_FIELDS = (ENV['MAX_PROFILE_FIELDS'] || 4).to_i
 
   LOCAL_DOMAINS = ENV.fetch('LOCAL_DOMAINS', '').chomp.split(/\.?\s+/).freeze
+  TRUST_LEVELS = {
+    untrusted: 0,
+    trusted: 1,
+  }.freeze
+
+# TODO: Remove this line if commenting it doesn't cause the server to catch on fire
+#  enum protocol: [:ostatus, :activitypub]
 
   validates :username, presence: true
 
@@ -85,7 +93,7 @@ class Account < ApplicationRecord
   validates :username, format: { with: /\A#{USERNAME_RE}\z/i }, if: -> { !local? && will_save_change_to_username? }
 
   # Local user validations
-  validates :username, format: { with: /\A[a-z0-9_]+\z/i }, length: { maximum: 66 }, if: -> { local? && will_save_change_to_username? }
+  validates :username, format: { with: /\A[a-z0-9_]+\z/i }, length: { maximum: 66 }, if: -> { local? && will_save_change_to_username? && actor_type != 'Application' }
   validates_with UniqueUsernameValidator, if: -> { local? && will_save_change_to_username? }
   validates_with UnreservedUsernameValidator, if: -> { local? && will_save_change_to_username? }
   validates :display_name, length: { maximum: MAX_DISPLAY_NAME_LENGTH }, if: -> { local? && will_save_change_to_display_name? }
@@ -191,6 +199,10 @@ class Account < ApplicationRecord
     %w(Application Service).include? actor_type
   end
 
+  def instance_actor?
+    id == -99
+  end
+
   alias bot bot?
 
   def bot=(val)
@@ -217,9 +229,12 @@ class Account < ApplicationRecord
     last_webfingered_at.nil? || last_webfingered_at <= 1.day.ago
   end
 
+  def trust_level
+    self[:trust_level] || 0
+  end
+
   def refresh!
-    return if local?
-    ResolveAccountService.new.call(acct)
+    ResolveAccountService.new.call(acct) unless local?
   end
 
   def mark_unknown!
@@ -276,21 +291,19 @@ class Account < ApplicationRecord
     silenced_at.present?
   end
 
-  def silence!(date = nil)
-    date ||= Time.now.utc
+  def silence!(date = Time.now.utc)
     update!(silenced_at: date)
   end
 
   def unsilence!
-    update!(silenced_at: nil)
+    update!(silenced_at: nil, trust_level: trust_level == TRUST_LEVELS[:untrusted] ? TRUST_LEVELS[:trusted] : trust_level)
   end
 
   def suspended?
     suspended_at.present?
   end
 
-  def suspend!(date = nil)
-    date ||= Time.now.utc
+  def suspend!(date = Time.now.utc)
     transaction do
       user&.disable! if local?
       update!(suspended_at: date)
@@ -400,24 +413,14 @@ class Account < ApplicationRecord
     self.fields = tmp
   end
 
+## TODO: See if I need to follow the below advice
   # needs to be removed after migration
-  def vars
-    self[:vars]
-  end
+#  def vars
+#    self[:vars]
+#  end
 
-  def magic_key
-    modulus, exponent = [keypair.public_key.n, keypair.public_key.e].map do |component|
-      result = []
-
-      until component.zero?
-        result << [component % 256].pack('C')
-        component >>= 8
-      end
-
-      result.reverse.join
-    end
-
-    (['RSA'] + [modulus, exponent].map { |n| Base64.urlsafe_encode64(n) }).join('.')
+  def subscription(webhook_url)
+    @subscription ||= OStatus2::Subscription.new(remote_url, secret: secret, webhook: webhook_url, hub: hub_url)
   end
 
   def save_with_optional_media!
@@ -626,7 +629,7 @@ class Account < ApplicationRecord
   end
 
   def generate_keys
-    return unless local? && !Rails.env.test?
+    return unless local? && private_key.blank? && public_key.blank?
 
     keypair = OpenSSL::PKey::RSA.new(2048)
     self.private_key = keypair.to_pem

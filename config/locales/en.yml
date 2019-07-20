@@ -24,6 +24,9 @@ en:
     generic_description: "%{domain} is one server in the network"
     get_apps: Try a mobile app
     hosted_on: Mastodon hosted on %{domain}
+    instance_actor_flash: |
+      This account is a virtual actor used to represent the server itself and not any individual user.
+      It is used for federation purposes and should not be blocked unless you want to block the whole instance, in which case you should use a domain block.
     learn_more: Learn more
     privacy_policy: Privacy policy
     see_whats_happening: See what's happening
@@ -277,6 +280,7 @@ en:
       feature_profile_directory: Profile directory
       feature_registrations: Registrations
       feature_relay: Federation relay
+      feature_spam_check: Anti-spam
       feature_timeline_preview: Timeline preview
       features: Features
       hidden_service: Federation with hidden services
@@ -501,6 +505,9 @@ en:
         desc_html: You can write your own privacy policy, terms of service or other legalese. You can use HTML tags
         title: Custom terms of service
       site_title: Server name
+      spam_check_enabled:
+        desc_html: Mastodon can auto-silence and auto-report accounts based on measures such as detecting accounts who send repeated unsolicited messages. There may be false positives.
+        title: Anti-spam
       thumbnail:
         desc_html: Used for previews via OpenGraph and API. 1200x630px recommended
         title: Server thumbnail
@@ -530,13 +537,6 @@ en:
       no_status_selected: No roars were changed as none were selected
       title: Account roars
       with_media: With media
-    subscriptions:
-      callback_url: Callback URL
-      confirmed: Confirmed
-      expires_in: Expires in
-      last_delivery: Last delivery
-      title: WebSub
-      topic: Topic
     tags:
       accounts: Accounts
       hidden: Hidden
@@ -949,6 +949,8 @@ en:
     profile: Profile
     relationships: Packmates
     two_factor_authentication: Two-factor Auth
+  spam_check:
+    spam_detected_and_silenced: This is an automated report. Spam has been detected and the sender has been silenced automatically. If this is a mistake, please unsilence the account.
   statuses:
     attached:
       description: 'Attached: %{attached}'

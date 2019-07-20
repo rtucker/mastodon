@@ -2,88 +2,114 @@
 
 class ResolveAccountService < BaseService
   include JsonLdHelper
+  include DomainControlHelper
 
-  DFRN_NS = 'http://purl.org/macgirvin/dfrn/1.0'
+  class WebfingerRedirectError < StandardError; end
 
-  # Find or create a local account for a remote user.
-  # When creating, look up the user's webfinger and fetch all
-  # important information from their feed
-  # @param [String, Account] uri User URI in the form of username@domain
+  # Find or create an account record for a remote user. When creating,
+  # look up the user's webfinger and fetch ActivityPub data
+  # @param [String, Account] uri URI in the username@domain format or account record
   # @param [Hash] options
+  # @option options [Boolean] :redirected Do not follow further Webfinger redirects
+  # @option options [Boolean] :skip_webfinger Do not attempt to refresh account data
   # @return [Account]
   def call(uri, options = {})
+    return if uri.blank?
+
+    process_options!(uri, options)
+
+    # First of all we want to check if we've got the account
+    # record with the URI already, and if so, we can exit early
+
+    return if domain_not_allowed?(@domain)
+
+    @account ||= Account.find_remote(@username, @domain)
+
+    return @account if @account&.local? || !webfinger_update_due?
+
+    # At this point we are in need of a Webfinger query, which may
+    # yield us a different username/domain through a redirect
+
+    process_webfinger!(@uri)
+
+    # Because the username/domain pair may be different than what
+    # we already checked, we need to check if we've already got
+    # the record with that URI, again
+
+    return if domain_not_allowed?(@domain)
+
+    @account ||= Account.find_remote(@username, @domain)
+
+    return @account if @account&.local? || !webfinger_update_due?
+
+    # Now it is certain, it is definitely a remote account, and it
+    # either needs to be created, or updated from fresh data
+
+    process_account!
+  rescue Goldfinger::Error, WebfingerRedirectError, Oj::ParseError => e
+    Rails.logger.debug "Webfinger query for #{@uri} failed: #{e}"
+    nil
+  end
+
+  private
+
+  def process_options!(uri, options)
     @options = options
 
     if uri.is_a?(Account)
       @account  = uri
       @username = @account.username
       @domain   = @account.domain
-      uri       = "#{@username}@#{@domain}"
-
-      return @account if @account.local? || !webfinger_update_due?
+      @uri      = [@username, @domain].compact.join('@')
     else
+      @uri               = uri
       @username, @domain = uri.split('@')
-
-      return Account.find_local(@username) if TagManager.instance.local_domain?(@domain)
-
-      @account = Account.find_remote(@username, @domain)
-
-      return @account unless webfinger_update_due?
     end
 
-    Rails.logger.debug "Looking up webfinger for #{uri}"
+    @domain = nil if TagManager.instance.local_domain?(@domain)
+  end
 
-    @webfinger = Goldfinger.finger("acct:#{uri}")
-
+  def process_webfinger!(uri, redirected = false)
+    @webfinger                           = Goldfinger.finger("acct:#{@uri}")
     confirmed_username, confirmed_domain = @webfinger.subject.gsub(/\Aacct:/, '').split('@')
 
     if confirmed_username.casecmp(@username).zero? && confirmed_domain.casecmp(@domain).zero?
       @username = confirmed_username
       @domain   = confirmed_domain
-    elsif options[:redirected].nil?
-      return call("#{confirmed_username}@#{confirmed_domain}", options.merge(redirected: true))
+      @uri      = uri
+    elsif !redirected
+      return process_webfinger!("#{confirmed_username}@#{confirmed_domain}", true)
     else
-      Rails.logger.debug 'Requested and returned acct URIs do not match'
-      return
+      raise WebfingerRedirectError, "The URI #{uri} tries to hijack #{@username}@#{@domain}"
     end
 
+    @domain = nil if TagManager.instance.local_domain?(@domain)
+  end
+
+  def process_account!
     return unless activitypub_ready?
-    return Account.find_local(@username) if TagManager.instance.local_domain?(@domain)
 
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?
         @account = Account.find_remote(@username, @domain)
-        handle_activitypub if activitypub_ready?
+
+        next if (@account.present? && !@account.activitypub?) || actor_json.nil?
+
+        @account = ActivityPub::ProcessAccountService.new.call(@username, @domain, actor_json)
       else
         raise Mastodon::RaceConditionError
       end
     end
 
     @account
-  rescue Goldfinger::Error => e
-    Rails.logger.debug "Webfinger query for #{uri} unsuccessful: #{e}"
-    nil
   end
-
-  private
 
   def webfinger_update_due?
     @account.nil? || @account.inbox_url.blank? || (!@options[:skip_webfinger] && @account.possibly_stale?)
   end
 
   def activitypub_ready?
-    !@webfinger.link('self').nil? &&
-      ['application/activity+json', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'].include?(@webfinger.link('self').type) &&
-      !actor_json.nil? &&
-      actor_json['inbox'].present?
-  end
-
-  def handle_activitypub
-    return if actor_json.nil?
-
-    @account = ActivityPub::ProcessAccountService.new.call(@username, @domain, actor_json)
-  rescue Oj::ParseError
-    nil
+    !@webfinger.link('self').nil? && ['application/activity+json', 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'].include?(@webfinger.link('self').type)
   end
 
   def actor_url

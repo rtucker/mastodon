@@ -69,6 +69,7 @@ defaults: &defaults
   auto_reject_unknown: true
   auto_mark_known: true
   werewolf_status: true
+  spam_check_enabled: true
 
 development:
   <<: *defaults

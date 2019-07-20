@@ -467,13 +467,6 @@ de:
       no_status_selected: Keine Beiträge wurden verändert, weil keine ausgewählt wurden
       title: Beiträge des Kontos
       with_media: Mit Medien
-    subscriptions:
-      callback_url: Callback-URL
-      confirmed: Bestätigt
-      expires_in: Verfällt in
-      last_delivery: Letzte Zustellung
-      title: WebSub
-      topic: Thema
     tags:
       accounts: Konten
       hidden: Versteckt
@@ -810,10 +803,6 @@ de:
     reply:
       proceed: Fortfahren zum Antworten
       prompt: 'Du möchtest auf diesen Beitrag antworten:'
-  remote_unfollow:
-    error: Fehler
-    title: Titel
-    unfollowed: Entfolgt
   scheduled_statuses:
     over_daily_limit: Du hast das Limit für geplante Beiträge, dass %{limit} beträgt, für heute erreicht
     over_total_limit: Du hast das Limit für geplante Beiträge, dass %{limit} beträgt, erreicht

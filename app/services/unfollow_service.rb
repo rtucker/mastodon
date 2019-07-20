@@ -21,8 +21,8 @@ class UnfollowService < BaseService
     return unless follow
 
     follow.destroy!
-    create_notification(follow) unless @target_account.local?
-    create_reject_notification(follow) if @target_account.local? && !@source_account.local?
+    create_notification(follow) if !@target_account.local? && @target_account.activitypub?
+    create_reject_notification(follow) if @target_account.local? && !@source_account.local? && @source_account.activitypub?
     UnmergeWorker.perform_async(@target_account.id, @source_account.id)
     follow
   end
@@ -42,7 +42,6 @@ class UnfollowService < BaseService
   end
 
   def create_reject_notification(follow)
-    # Rejecting an already-existing follow request
     ActivityPub::DeliveryWorker.perform_async(build_reject_json(follow), follow.target_account_id, follow.account.inbox_url)
   end
 

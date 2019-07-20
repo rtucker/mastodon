@@ -26,7 +26,6 @@ RSpec.describe SuspendAccountService, type: :service do
         [
           account.statuses,
           account.media_attachments,
-          account.stream_entries,
           account.notifications,
           account.favourites,
           account.active_relationships,
@@ -67,7 +66,6 @@ RSpec.describe SuspendAccountService, type: :service do
         [
           remote_bob.statuses,
           remote_bob.media_attachments,
-          remote_bob.stream_entries,
           remote_bob.notifications,
           remote_bob.favourites,
           remote_bob.active_relationships,

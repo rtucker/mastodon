@@ -3,7 +3,7 @@
 class FetchRemoteStatusService < BaseService
   def call(url, prefetched_body = nil, announced_by: nil, requested: false)
     if prefetched_body.nil?
-      resource_url, resource_options = FetchAtomService.new.call(url)
+      resource_url, resource_options = FetchResourceService.new.call(url)
       resource_options = {} if resource_options.nil?
     else
       resource_url     = url

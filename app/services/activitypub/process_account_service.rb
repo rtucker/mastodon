@@ -3,11 +3,12 @@
 class ActivityPub::ProcessAccountService < BaseService
   include JsonLdHelper
   include LogHelper
+  include DomainControlHelper
 
   # Should be called with confirmed valid JSON
   # and WebFinger-resolved username and domain
   def call(username, domain, json, options = {})
-    return if json['inbox'].blank? || unsupported_uri_scheme?(json['id'])
+    return if json['inbox'].blank? || unsupported_uri_scheme?(json['id']) || domain_not_allowed?(domain)
 
     @options     = options
     @json        = json

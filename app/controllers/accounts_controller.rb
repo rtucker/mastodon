@@ -4,8 +4,10 @@ class AccountsController < ApplicationController
   PAGE_SIZE = 20
 
   include AccountControllerConcern
+  include SignatureAuthentication
 
   before_action :set_cache_headers
+  before_action :set_body_classes
 
   def show
     respond_to do |format|
@@ -17,9 +19,8 @@ class AccountsController < ApplicationController
             not_found unless current_account && current_account.following?(@account)
           end
         end
-        mark_cacheable! unless user_signed_in?
+        expires_in 0, public: true unless user_signed_in?
 
-        @body_classes      = 'with-modals'
         @pinned_statuses   = []
         @endorsed_accounts = @account.endorsed_accounts.to_a.sample(4)
 
@@ -40,10 +41,8 @@ class AccountsController < ApplicationController
       end
 
       format.json do
-        # TODO: Remember to add authorized_fetch_mode, restrict_fields_to when ported
-#        expires_in 3.minutes, public: !(signed_request_account.present?)
-        expires_in 3.minutes, public: true
-        render_with_cache json: @account, content_type: 'application/activity+json', serializer: ActivityPub::ActorSerializer, adapter: ActivityPub::Adapter
+        expires_in 3.minutes, public: !(authorized_fetch_mode? && signed_request_account.present?)
+        render json: @account, content_type: 'application/activity+json', serializer: ActivityPub::ActorSerializer, adapter: ActivityPub::Adapter, fields: restrict_fields_to
       end
     end
   end
@@ -56,6 +55,10 @@ class AccountsController < ApplicationController
     else
       @account.pinned_statuses.where.not(visibility: :private)
     end
+  end
+
+  def set_body_classes
+    @body_classes = 'with-modals'
   end
 
   def show_pinned_statuses?
@@ -146,6 +149,14 @@ class AccountsController < ApplicationController
       filtered_statuses.paginate_by_min_id(PAGE_SIZE, params[:min_id]).reverse
     else
       filtered_statuses.paginate_by_max_id(PAGE_SIZE, params[:max_id], params[:since_id]).to_a
+    end
+  end
+
+  def restrict_fields_to
+    if signed_request_account.present? || public_fetch_mode?
+      # Return all fields
+    else
+      %i(id type preferred_username inbox public_key endpoints)
     end
   end
 end

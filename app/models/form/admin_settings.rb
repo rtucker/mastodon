@@ -37,6 +37,7 @@ class Form::AdminSettings
     auto_reject_unknown
     auto_mark_known
     werewolf_status
+    spam_check_enabled
   ).freeze
 
   BOOLEAN_KEYS = %i(
@@ -55,6 +56,7 @@ class Form::AdminSettings
     auto_reject_unknown
     auto_mark_known
     werewolf_status
+    spam_check_enabled
   ).freeze
 
   UPLOAD_KEYS = %i(

@@ -19,7 +19,7 @@ class StatusPolicy < ApplicationPolicy
     if private?
       following_author? && still_accessible?
     else
-      author_allows_anon? && still_accessible? && !author_blocking? || following_author?
+      author_allows_anon? && still_accessible? && (!author_blocking? && !author_blocking_domain?) || following_author?
     end
   end
 
@@ -63,6 +63,12 @@ class StatusPolicy < ApplicationPolicy
     else
       record.mentions.where(account: current_account).exists?
     end
+  end
+
+  def author_blocking_domain?
+    return false if current_account.nil? || current_account.domain.nil?
+
+    author.domain_blocking?(current_account.domain)
   end
 
   def blocking_author?

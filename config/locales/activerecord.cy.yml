@@ -1,6 +1,13 @@
 ---
 cy:
   activerecord:
+<<<<<<< HEAD
+=======
+    attributes:
+      poll:
+        expires_at: Terfyn amser
+        options: Dewisiadau
+>>>>>>> f1597e1ab... Merge pull request #1158 from ThibG/glitch-soc/merge-upstream
     errors:
       models:
         account:
