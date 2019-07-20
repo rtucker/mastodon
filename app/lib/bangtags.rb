@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bangtags
-  #include BangtagHelper
+  include BangtagHelper
   attr_reader :status, :account
 
   def initialize(status)
@@ -549,7 +549,7 @@ class Bangtags
           @status.content_type = 'text/markdown'
           @chunks << "\n# <code>#!</code><code>admin:#{cmd[1].downcase}</code>:\n<hr />\n"
           case cmd[1].downcase
-          when 'silence', 'unsilence', 'suspend', 'unsuspend', 'forgive'
+          when 'silence', 'unsilence', 'suspend', 'unsuspend', 'force_unlisted', 'allow_public', 'force_sensitive', 'allow_nonsensitive', 'reset', 'forgive'
             @tf_cmds.push(cmd)
             @component_stack.push(:tf)
           when 'exec', 'eval'
@@ -596,7 +596,8 @@ class Bangtags
             next unless @account.user.admin?
             next if tf_cmd[1].nil? || chunk.start_with?('`admin:')
             output = []
-            case tf_cmd[1].downcase
+            action = tf_cmd[1].downcase
+            case action
             when 'announce'
               announcer = ENV['ANNOUNCEMENTS_USER']
               if announcer.blank?
@@ -622,113 +623,19 @@ class Bangtags
                   RemoveStatusService.new.call(s)
                 end
               end
-            when 'silence'
+            when 'silence', 'unsilence', 'suspend', 'unsuspend', 'force_unlisted', 'allow_public', 'force_sensitive', 'allow_nonsensitive', 'reset', 'forgive'
+              action = 'reset' if action == 'forgive'
               chunk.split.each do |c|
                 if c.start_with?('@')
-                  parts = c.split('@')[1..2]
-                  a = Account.find_by(username: parts[0], domain: parts[1])
-                  if a.nil? || a.id == @account.id
-                    output << "<em>Skipped</em> <code>@#{parts.join('@')}</code>."
-                    next
-                  end
-                  output << "<strong>Silenced<strong> <code>@#{parts.join('@')}</code>."
-                  Admin::ActionLog.create(account: @account, action: :silence, target: a)
-                  a.silence!
-                  a.save
-                elsif c.match?(/^[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*$/)
-                  c.downcase!
-                  if c.end_with?('monsterpit.net', 'tailma.ws')
-                    output << "<em>Skipped</em> <code>#{c}</code>."
-                    next
-                  end
-                  begin
-                    code = Request.new(:head, "https://#{c}").perform(&:code)
-                  rescue
-                    output << "<em>Skipped</em> <code>#{c}</code>."
-                    next
-                  end
-                  if [404, 410].include?(code)
-                    output << "<em>Skipped</em> <code>#{c}</code>."
-                    next
-                  end
-                  domain_block = DomainBlock.find_or_create_by(domain: c)
-                  domain_block.severity = "silence"
-                  domain_block.save
-                  output << "<strong>Silenced</strong> <code>#{c}</code>."
-                  Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
-                  BlockDomainService.new.call(domain_block)
+                  account_parts = c.split('@')[1..2]
+                  successful = account_policy(account_parts[0], account_parts[1], action)
+                else
+                  successful = domain_policy(c, action)
                 end
-              end
-              output = ['<em>No action.</em>'] if output.blank?
-              chunk = output.join("\n") + "\n"
-            when 'forgive', 'unsilence', 'unsuspend'
-              chunk.split.each do |c|
-                if c.start_with?('@')
-                  parts = c.split('@')[1..2]
-                  a = Account.find_by(username: parts[0], domain: parts[1])
-                  if a.nil? || a.id == @account.id
-                    output << "<em>Skipped</em> <code>@#{parts.join('@')}</code>."
-                    next
-                  end
-                  output << "<strong>Reset policy</strong> for <code>@#{parts.join('@')}</code>."
-                  Admin::ActionLog.create(account: @account, action: :unsilence, target: a)
-                  a.unsilence!
-                  Admin::ActionLog.create(account: @account, action: :unsuspend, target: a)
-                  a.unsuspend!
-                  a.save
-                elsif c.match?(/^[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*$/)
-                  c.downcase!
-                  if c.end_with?('monsterpit.net', 'tailma.ws')
-                    output << "<em>Skipped</em> <code>#{c}</code>."
-                    next
-                  end
-                  domain_block = DomainBlock.find_by(domain: c)
-                  if domain_block.nil?
-                    output << "<em>Skipped</em> <code>#{c}</code>."
-                    next
-                  end
-                  output << "<strong>Reset policy</strong> for <code>#{c}<code>."
-                  Admin::ActionLog.create(account: @account, action: :destroy, target: domain_block)
-                  UnblockDomainService.new.call(domain_block)
-                end
-              end
-              output = ['<em>No action.</em>'] if output.blank?
-              chunk = output.join("\n") + "\n"
-            when 'suspend'
-              chunk.split.each do |c|
-                if c.start_with?('@')
-                  parts = c.split('@')[1..2]
-                  a = Account.find_by(username: parts[0], domain: parts[1])
-                  if a.nil? || a.id == @account.id
-                    output << "<em>Skipped</em> <code>@#{parts.join('@')}</code>."
-                    next
-                  end
-                  output << "<strong>Suspended</strong> <code>@#{parts.join('@')}</code>."
-                  Admin::ActionLog.create(account: @account, action: :suspend, target: a)
-                  SuspendAccountService.new.call(a, include_user: true)
-                elsif c.match?(/\A[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*\Z/)
-                  c.downcase!
-                  if c.end_with?('monsterpit.net', 'tailma.ws')
-                    output << "<em>Skipped</em> <code>#{c}</code>."
-                    next
-                  end
-                  begin
-                    code = Request.new(:head, "https://#{c}").perform(&:code)
-                  rescue
-                    output << "<em>Skipped</em> <code>#{c}</code>."
-                    next
-                  end
-                  if [404, 410].include?(code)
-                    output << "<em>Skipped</em> <code>#{c}</code>."
-                    next
-                  end
-                  domain_block = DomainBlock.find_or_create_by(domain: c)
-                  domain_block.severity = "suspend"
-                  domain_block.reject_media = true
-                  domain_block.save
-                  output << "<strong>Suspended</strong> <code>#{c}</code>."
-                  Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
-                  BlockDomainService.new.call(domain_block)
+                if successful
+                  output << "\u2705 <code>#{c}</code>"
+                else
+                  output << "\u274c <code>#{c}</code>"
                 end
               end
               output = ['<em>No action.</em>'] if output.blank?
