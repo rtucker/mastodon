@@ -241,7 +241,7 @@ class Formatter
     unless status.tags.blank?
       tags = status.tags.pluck(:name).reject { |t| t.end_with?('.') }.map{ |t| "##{t}" }
       tags = encode_and_link_urls(tags.join(' '))
-      html = "#{html}<details class=\"tags\"><summary>\xf0\x9f\x8f\xb7</summary><p class=\"tags\">#{tags}</p></details>"
+      html = "#{html}<p class=\"tags\">#{tags} \xf0\x9f\x8f\xb7</p>"
     end
 
     html.html_safe # rubocop:disable Rails/OutputSafety

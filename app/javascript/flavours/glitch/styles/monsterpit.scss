@@ -7,11 +7,13 @@
     font-style: italic;
     font-size: 12px;
     text-align: right;
+    margin-bottom: 4px;
   }
-  details.tags {
+  p.tags {
     color: lighten($dark-text-color, 20%);
     font-size: 12px;
     text-align: right;
+    margin-bottom: 4px;
 
     a {
       color: darken($secondary-text-color, 20%);
@@ -23,7 +25,7 @@
   p.signature {
     color: $dark-text-color;
   }
-  details.tags {
+  p.tags {
     color: $dark-text-color;
 
     a {
