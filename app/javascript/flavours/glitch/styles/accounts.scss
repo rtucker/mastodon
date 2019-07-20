@@ -236,9 +236,9 @@
   }
 
   &.locked {
-    color: lighten(pink, 12%);
-    background-color: rgba(lighten(pink, 12%), 0.1);
-    border-color: rgba(lighten(pink, 12%), 0.5);
+    color: lighten(pink, 5%);
+    background-color: rgba(pink, 0.1);
+    border-color: rgba(pink, 0.5);
   }
 
   &.froze {
