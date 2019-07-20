@@ -9,6 +9,8 @@ class Bangtags
     @account       = status.account
     @parent_status = Status.find(status.in_reply_to_id) if status.in_reply_to_id
 
+    @crunch_newlines = false
+
     @prefix_ns = {
       'permalink' => ['link'],
       'cloudroot' => ['link'],
@@ -557,7 +559,6 @@ class Bangtags
               @chunks << "<em>Unauthorized.</em>"
               next
             end
-            @chunks << "<strong>Input:</strong>"
             unless cmd[2].present? && cmd[2].downcase == 'last'
               @vars.delete("_admin:eval")
               @vore_stack.push("_admin:eval")
@@ -666,6 +667,8 @@ class Bangtags
     account.user.save
 
     text = @chunks.join
+    text.gsub!(/\n\n+/, "\n") if @crunch_newlines
+
     if text.blank?
       RemoveStatusService.new.call(@status)
     else
@@ -696,15 +699,18 @@ class Bangtags
         next if post_cmd[1].nil?
         case post_cmd[1]
         when 'eval'
+          @crunch_newlines = true
+          @vars["_admin:eval"].strip!
+          @chunks << "\n<strong>Input:</strong>"
           @chunks << "<pre><code>"
           @chunks << html_entities.encode(@vars["_admin:eval"]).gsub("\n", '<br/>')
-          @chunks << "</code></pre>\n"
-          @chunks << "<strong>Output:</strong>"
+          @chunks << "</code></pre>"
           begin
             result = eval(@vars["_admin:eval"])
           rescue Exception => e
             result = "\u274c #{e.message}"
           end
+          @chunks << "<strong>Output:</strong>"
           @chunks << "<pre><code>"
           @chunks << html_entities.encode(result).gsub("\n", '<br/>')
           @chunks << "</code></pre>"
