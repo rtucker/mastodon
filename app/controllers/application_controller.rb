@@ -224,11 +224,8 @@ class ApplicationController < ActionController::Base
 
   def respond_with_error(code)
     respond_to do |format|
-      format.any do
-        use_pack 'error'
-        render "errors/#{code}", layout: 'error', status: code, formats: [:html]
-      end
-      format.json { render json: { error: Rack::Utils::HTTP_STATUS_CODES[code] }, status: code }
+      format.any  { head code }
+      format.html { render "errors/#{code}", layout: 'error', status: code }
     end
   end
 
