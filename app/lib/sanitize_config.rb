@@ -43,29 +43,27 @@ class Sanitize
       text = node.text.strip
       return if href == text
 
-      # try to detect filenames
-      href_filename = href.rpartition('/')[-1]
-      url_filename = text.rpartition('/')[-1]
-
-      unless href_filename.blank?
-        if url_filename == href_filename
-          node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
-          return
-        end
-
-        # many fedi servers obfuscate media filenames
-        ext = url_filename.rpartition('.')[-1]
-        if ext.downcase.in?(MEDIA_EXTENSIONS) && ext == href_filename.rpartition('.')[-1]
-          node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
-          return
-        end
-      end
-
       # strip ellipse & replace keyword search obscuring
       text = text.sub(/ *(?:\u2026|\.\.\.)\Z/, '').gsub(/ dot /i, '.').gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '')
 
       # href now matches text without obscuring?
       return if href == text
+
+      # try to detect filenames
+      href_filename = '/'.in?(href) ? href.rpartition('/')[2] : nil
+      unless href_filename.blank?
+        if text == href_filename
+          node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
+          return
+        end
+
+        # many fedi servers obfuscate media filenames
+        ext = text.rpartition('.')[-1]
+        if ext.downcase.in?(MEDIA_EXTENSIONS) && ext == href_filename.rpartition('.')[2]
+          node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
+          return
+        end
+      end
 
       # grab first url from link text
       first_url = text.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*\S*/).first
