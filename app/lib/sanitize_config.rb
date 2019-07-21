@@ -5,6 +5,7 @@ class Sanitize
 
   module Config
     HTTP_PROTOCOLS ||= ['http', 'https', 'dat', 'dweb', 'ipfs', 'ipns', 'ssb', 'gopher', :relative].freeze
+    MEDIA_EXTENSIONS ||= %w(png apng jpg jpe jpeg mpg mpeg mpeg4 mp4 mp3 aac ogg oga ogv qt gif)
 
     CLASS_WHITELIST_TRANSFORMER = lambda do |env|
       node = env[:node]
@@ -41,6 +42,24 @@ class Sanitize
       # href matches link text without query string?
       text = node.text.strip
       return if href == text
+
+      # try to detect filenames
+      href_filename = href.rpartition('/')[-1]
+      url_filename = text.rpartition('/')[-1]
+
+      unless href_filename.blank?
+        if url_filename == href_filename
+          node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
+          return
+        end
+
+        # many fedi servers obfuscate media filenames
+        ext = url_filename.rpartition('.')[-1]
+        if ext.downcase.in?(MEDIA_EXTENSIONS) && ext == href_filename.rpartition('.')[-1]
+          node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
+          return
+        end
+      end
 
       # strip ellipse & replace keyword search obscuring
       text = text.sub(/ *(?:\u2026|\.\.\.)\Z/, '').gsub(/ dot /i, '.').gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '')
