@@ -314,18 +314,15 @@ class Status < ApplicationRecord
   after_create :process_bangtags, if: :local?
 
   class << self
-    def search_for(term, limit = 66, account = nil)
+    def search_for(term, limit = 33, account = nil)
+      return none if account.nil?
       pattern = sanitize_sql_like(term)
       pattern = "#{pattern}"
-      scope = Status.where("tsv @@ plainto_tsquery('english', ?)", pattern)
-      query = scope.public_local_visibility
-      if account.present?
-        query = query
-          .or(scope.where(account: account))
-          .or(scope.where(account: account.following, visibility: [:private, :unlisted]))
-          .or(scope.where(id: account.mentions.select(:status_id)))
-      end
-      query = query.where(reblog_of_id: nil).limit(limit)
+      scope = Status.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern)
+      query = scope.where(account: account)
+        .or(scope.where(account: account.following, visibility: [:private, :local, :unlisted]))
+        .or(scope.where(id: account.mentions.select(:status_id)))
+        .limit(limit)
       apply_timeline_filters(query, account, true)
     end
 
