@@ -32,13 +32,6 @@ class AccountsController < ApplicationController
         end
       end
 
-      format.rss do
-        mark_cacheable!
-
-        @statuses = cache_collection(default_statuses.without_reblogs.without_replies.limit(PAGE_SIZE), Status)
-        render xml: RSS::AccountSerializer.render(@account, @statuses)
-      end
-
       format.json do
         mark_cacheable!
 
