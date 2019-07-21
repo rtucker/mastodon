@@ -594,6 +594,11 @@ class Bangtags
             tf_cmd[1..-1].in_groups_of(2) do |args|
               chunk.gsub!(*args) if args.all?
             end
+          when 'stripanchors'
+            chunk.gsub!(/<a .*?<\/a>/mi, '')
+          when 'striplinks'
+            chunk.gsub!(/\S+:\/\/[\w\-]+\.\S+/, '')
+            chunk = ActionController::Base.helpers.strip_links(chunk)
           when 'head', 'take'
             n = tf_cmd[1].to_i
             n = 1 unless n > 0
