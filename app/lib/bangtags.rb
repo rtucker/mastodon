@@ -110,6 +110,7 @@ class Bangtags
             @tf_cmds = []
             @component_stack.reject! {|c| c == :tf}
           else
+            @vars['_tf:head:count'] = 0 if cmd[1].downcase.in?(%w(head take))
             @tf_cmds.push(cmd[1..-1])
             @component_stack.push(:tf)
           end
@@ -593,6 +594,14 @@ class Bangtags
             tf_cmd[1..-1].in_groups_of(2) do |args|
               chunk.gsub!(*args) if args.all?
             end
+          when 'head', 'take'
+            n = tf_cmd[1].to_i
+            n = 1 unless n > 0
+            next if @vars['_tf:head:count'] == n
+            c = @vars['_tf:head:count'] || 0
+            parts = chunk.split.take(n - c)
+            @vars['_tf:head:full'] = c + parts.count
+            chunk = parts.join(' ')
           when 'admin'
             next unless @account.user.admin?
             next if tf_cmd[1].nil? || chunk.start_with?('`admin:')
@@ -660,7 +669,7 @@ class Bangtags
       @chunks << chunk unless chunk.nil?
     end
 
-    @vars.transform_values! {|v| v.rstrip}
+    @vars.transform_values! {|v| v.rstrip if v.is_a?(String)}
 
     postprocess_before_save
 
