@@ -21,6 +21,7 @@ class FanOutOnWriteService < BaseService
       deliver_to_hashtags(status)
     elsif status.local_visibility?
       deliver_to_followers(status)
+      return if status.reblog? && !Setting.show_reblogs_in_public_timelines
       deliver_to_lists(status)
       deliver_to_local(status) unless filtered?(status)
     else
