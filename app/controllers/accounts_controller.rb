@@ -50,16 +50,17 @@ class AccountsController < ApplicationController
 
   def filtered_statuses
     if reblogs_requested?
-      default_statuses.reblogs
+      scope = default_statuses.reblogs
     elsif replies_requested?
-      @account.replies ? default_statuses : default_statuses.without_replies
+      scope = @account.replies ? default_statuses : default_statuses.without_replies
     elsif media_requested?
-      default_statuses.where(id: account_media_status_ids)
+      scope = default_statuses.where(id: account_media_status_ids)
     elsif tag_requested?
-      hashtag_scope
+      scope = hashtag_scope
     else
-      default_statuses.without_replies.without_reblogs
+      scope = default_statuses.without_replies.without_reblogs
     end
+    current_user.blank? ? scope.where(created_at: 6.days.ago..Time.current) : scope
   end
 
   def default_statuses
