@@ -74,8 +74,8 @@ class Sanitize
         return
       end
 
-      # strip trailing slashes
-      text.sub!(/\/+\Z/, '')
+      # strip trailing punctuation
+      text.sub!(/\p{Punct}+\Z/, '')
 
       # href starts with link text?
       return if href.start_with?(text)
