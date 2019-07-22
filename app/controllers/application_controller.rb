@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   rescue_from Mastodon::RaceConditionError, with: :service_unavailable
 
   before_action :store_current_location, except: :raise_not_found, unless: :devise_controller?
-  before_action :check_user_permissions, if: :user_signed_in?
+  before_action :require_functional!, if: :user_signed_in?
 
   skip_before_action :verify_authenticity_token, only: :raise_not_found
 
@@ -68,8 +68,8 @@ class ApplicationController < ActionController::Base
     forbidden unless current_user&.halfmod?
   end
 
-  def check_user_permissions
-    forbidden if current_user.disabled? || current_user.account.suspended?
+  def require_functional!
+    redirect_to edit_user_registration_path unless current_user.functional?
   end
 
   def after_sign_out_path_for(_resource_or_scope)
