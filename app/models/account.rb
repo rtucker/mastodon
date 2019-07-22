@@ -134,6 +134,7 @@ class Account < ApplicationRecord
            :always_local_only?,
            :max_public_history,
 
+           :hides_public_profile?,
            :hides_public_outbox?,
            :hides_interactions?,
            :hides_network?,

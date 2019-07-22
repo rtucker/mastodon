@@ -55,7 +55,7 @@ class ActivityPub::OutboxesController < Api::BaseController
 
   def set_statuses
     return unless page_requested?
-    if @account&.user && @account.user.hides_public_outbox?
+    if @account.hidden || @account&.user && @account.user.hides_public_outbox?
       @statuses = Status.none
     else
       @statuses = @account.statuses.permitted_for(@account, signed_request_account)

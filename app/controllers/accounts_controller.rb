@@ -17,7 +17,7 @@ class AccountsController < ApplicationController
         @pinned_statuses   = []
         @endorsed_accounts = @account.endorsed_accounts.to_a.sample(4)
 
-        if current_account && @account.blocking?(current_account)
+        if @account.hidden || (@account&.user && @account.user.hides_public_profile?) || (current_account && @account.blocking?(current_account))
           @statuses = []
           return
         end

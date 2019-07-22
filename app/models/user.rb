@@ -122,6 +122,7 @@ class User < ApplicationRecord
     :hide_mntions_packm8,
     :hide_mascot,
     :hide_interactions,
+    :hide_public_profile,
     :hide_public_outbox,
     :max_public_history,
 
@@ -284,6 +285,10 @@ class User < ApplicationRecord
 
   def hides_interactions?
     @hides_interactions ||= (settings.hide_interactions || false)
+  end
+
+  def hides_public_profile?
+    @hides_public_profile ||= (settings.hide_public_profile || false)
   end
 
   def hides_public_outbox?
