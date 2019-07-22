@@ -54,7 +54,7 @@ class Sanitize
 
       # try to detect filenames
       href_filename = '/'.in?(href) ? href.rpartition('/')[2] : nil
-      unless href_filename.blank?
+      unless href_filename.blank? || !('.'.in?(href_filename))
         if text == href_filename
           node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
           return
