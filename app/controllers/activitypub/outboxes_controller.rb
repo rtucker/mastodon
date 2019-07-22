@@ -55,10 +55,14 @@ class ActivityPub::OutboxesController < Api::BaseController
 
   def set_statuses
     return unless page_requested?
-    if @account.hidden || @account&.user && @account.user.hides_public_outbox?
-      @statuses = Status.none
-    else
+    account_owner = current_account && current_account.id == @account.id
+    outbox_hidden = @account&.user && @account.user.hides_public_outbox?
+    local_follower = current_account && current_account.following?(@account)
+
+    if account_owner || !@account.hidden? || (outbox_hidden && local_follower)
       @statuses = @account.statuses.permitted_for(@account, signed_request_account)
+    else
+      @statuses = Status.none
     end
     @statuses = params[:min_id].present? ? @statuses.paginate_by_min_id(LIMIT, params[:min_id]).reverse : @statuses.paginate_by_max_id(LIMIT, params[:max_id])
     @statuses = cache_collection(@statuses, Status)
