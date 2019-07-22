@@ -30,12 +30,11 @@ class UserSettingsDecorator
     user.settings['hide_mntions_blocked']= hide_mntions_blocked_preference if change?('setting_hide_mntions_blocked')
     user.settings['hide_mntions_blocker']= hide_mntions_blocker_preference if change?('setting_hide_mntions_blocker')
     user.settings['hide_mntions_packm8'] = hide_mntions_packm8_preference if change?('setting_hide_mntions_packm8')
-    user.settings['gently_kobolds']      = gently_kobolds_preference if change?('setting_gently_kobolds')
-    user.settings['user_is_kobold']      = user_is_kobold_preference if change?('setting_user_is_kobold')
     user.settings['hide_captions']       = hide_captions_preference if change?('setting_hide_captions')
     user.settings['hide_mascot']         = hide_mascot_preference if change?('setting_hide_mascot')
     user.settings['hide_interactions']   = hide_interactions_preference if change?('setting_hide_interactions')
     user.settings['larger_emoji']        = larger_emoji_preference if change?('setting_larger_emoji')
+    user.settings['max_public_history']  = max_public_history_preference if change?('setting_max_public_history')
 
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
@@ -109,20 +108,16 @@ class UserSettingsDecorator
     boolean_cast_setting 'setting_hide_mntions_packm8'
   end
 
-  def gently_kobolds_preference
-    boolean_cast_setting 'setting_gently_kobolds'
-  end
-
-  def user_is_kobold_preference
-    boolean_cast_setting 'setting_user_is_kobold'
-  end
-
   def hide_mascot_preference
     boolean_cast_setting 'setting_hide_mascot'
   end
 
   def hide_interactions_preference
     boolean_cast_setting 'setting_hide_interactions'
+  end
+
+  def max_public_history_preference
+    settings['setting_max_public_history']
   end
 
   def merged_notification_emails

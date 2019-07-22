@@ -132,6 +132,7 @@ class Account < ApplicationRecord
            :defaults_to_sensitive?,
            :defaults_to_local_only?,
            :always_local_only?,
+           :max_public_history,
 
            :hides_interactions?,
            :hides_network?,
@@ -152,7 +153,6 @@ class Account < ApplicationRecord
            :wants_larger_emoji?,
            :hides_filtered_gap?,
            :hides_mascot?,
-           :hides_color_formatting?,
            :hides_captions?,
 
            to: :user,

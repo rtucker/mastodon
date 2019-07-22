@@ -153,6 +153,20 @@ en:
         setting_favourite_modal: Show confirmation dialog before admiring (in Glitch flavour)
         setting_hide_followers_count: Hide your packmates count
         setting_hide_network: Make your packmate lists private
+        setting_max_public_history: Limit history of roars on public profile to
+        setting_max_public_history_1: 1 day
+        setting_max_public_history_3: 3 days
+        setting_max_public_history_6: 6 days
+        setting_max_public_history_7: 1 week
+        setting_max_public_history_14: 2 weeks
+        setting_max_public_history_30: 6 weeks
+        setting_max_public_history_60: 2 months
+        setting_max_public_history_90: 3 months
+        setting_max_public_history_180: 6 months
+        setting_max_public_history_365: 1 year
+        setting_max_public_history_730: 2 years
+        setting_max_public_history_1095: 3 years
+        setting_max_public_history_2190: 6 years
         setting_noindex: Opt-out of search engine indexing
         setting_reduce_motion: Reduce motion in animations
         setting_show_application: Disclose application used to send roars

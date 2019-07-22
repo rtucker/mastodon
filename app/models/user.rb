@@ -107,7 +107,6 @@ class User < ApplicationRecord
     :always_local,
     :rawr_federated,
     :hide_stats,
-    :disable_color,
     :hide_captions,
     :larger_menus,
     :larger_buttons,
@@ -121,10 +120,9 @@ class User < ApplicationRecord
     :hide_mntions_blocked,
     :hide_mntions_blocker,
     :hide_mntions_packm8,
-    :gently_kobolds,
-    :user_is_kobold,
     :hide_mascot,
     :hide_interactions,
+    :max_public_history,
 
     :auto_play_gif,
     :default_sensitive,
@@ -279,20 +277,16 @@ class User < ApplicationRecord
     @hides_mentions_outside_scope ||= (settings.hide_mntions_packm8 || true)
   end
 
-  def gentlies_kobolds?
-    @gentlies_kobolds ||= (settings.gently_kobolds || false)
-  end
-
-  def is_a_kobold?
-    @is_a_kobold ||= (settings.user_is_kobold || false)
-  end
-
   def hides_mascot?
     @hides_mascot ||= (settings.hide_mascot || false)
   end
 
   def hides_interactions?
     @hides_interactions ||= (settings.hide_interactions || false)
+  end
+
+  def max_public_history
+    @_max_public_history ||= (settings.max_public_history || 6)
   end
 
   def defaults_to_local_only?
@@ -305,10 +299,6 @@ class User < ApplicationRecord
 
   def wants_raw_federated?
     @wants_raw_federated ||= (settings.rawr_federated || false)
-  end
-
-  def hides_color_formatting?
-    @hides_color_formatting ||= (settings.disable_color || false)
   end
 
   def hides_stats?
