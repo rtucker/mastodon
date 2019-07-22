@@ -36,18 +36,21 @@ class Sanitize
       href = node['href']
       return if href == node.text.strip
 
-      # remove query string from link text
-      node.inner_html = node.inner_html.sub(/\?\S+=\S+/, '')
-
-      # href matches link text without query string?
-      text = node.text.strip
-      return if href == text
+      # href matches link text with sanitized query string?
+      text = Sanitize::sanitize_query_string(node.text.strip)
+      if href == text
+        node.inner_html = "\u2728 #{node.inner_html}"
+        return
+      end
 
       # strip ellipse & replace keyword search obscuring
       text = text.sub(/ *(?:\u2026|\.\.\.)\Z/, '').gsub(/ dot /i, '.').gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '')
 
       # href now matches text without obscuring?
-      return if href == text
+      if href == text
+        node.inner_html = "\u2728 #{node.inner_html}"
+        return
+      end
 
       # try to detect filenames
       href_filename = '/'.in?(href) ? href.rpartition('/')[2] : nil
@@ -57,10 +60,10 @@ class Sanitize
           return
         end
 
-        # many fedi servers obfuscate media filenames
-        ext = text.rpartition('.')[-1]
-        if ext.downcase.in?(MEDIA_EXTENSIONS) && ext == href_filename.rpartition('.')[2]
-          node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
+        # possibly linked media?
+        ext = href_filename.rpartition('.')[2]
+        if ext.downcase.in?(MEDIA_EXTENSIONS)
+          node.inner_html = "\xf0\x9f\x96\xbc\xef\xb8\x8f #{node.inner_html}"
           return
         end
       end
