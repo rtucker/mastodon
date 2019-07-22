@@ -33,6 +33,7 @@ class UserSettingsDecorator
     user.settings['hide_captions']       = hide_captions_preference if change?('setting_hide_captions')
     user.settings['hide_mascot']         = hide_mascot_preference if change?('setting_hide_mascot')
     user.settings['hide_interactions']   = hide_interactions_preference if change?('setting_hide_interactions')
+    user.settings['hide_public_outbox']  = hide_public_outbox_preference if change?('setting_hide_public_outbox')
     user.settings['larger_emoji']        = larger_emoji_preference if change?('setting_larger_emoji')
     user.settings['max_public_history']  = max_public_history_preference if change?('setting_max_public_history')
 
@@ -114,6 +115,10 @@ class UserSettingsDecorator
 
   def hide_interactions_preference
     boolean_cast_setting 'setting_hide_interactions'
+  end
+
+  def hide_public_outbox_preference
+    boolean_cast_setting 'setting_hide_public_outbox'
   end
 
   def max_public_history_preference

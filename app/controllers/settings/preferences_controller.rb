@@ -50,6 +50,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_user_is_kobold,
       :setting_hide_mascot,
       :setting_hide_interactions,
+      :setting_hide_public_outbox,
       :setting_max_public_history,
 
       :setting_default_privacy,

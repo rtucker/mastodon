@@ -153,6 +153,7 @@ en:
         setting_favourite_modal: Show confirmation dialog before admiring (in Glitch flavour)
         setting_hide_followers_count: Hide your packmates count
         setting_hide_network: Make your packmate lists private
+        setting_hide_public_outbox: Hide your public ActivityPub outbox (affects discoverability)
         setting_max_public_history: Limit history of roars on public profile to
         setting_max_public_history_1: 1 day
         setting_max_public_history_3: 3 days
