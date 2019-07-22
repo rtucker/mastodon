@@ -11,7 +11,12 @@ class AccountsController < ApplicationController
     respond_to do |format|
       format.html do
         use_pack 'public'
-        not_found if @account.hidden || (@account&.user && @account.user.hides_public_profile?)
+        unless current_account && current_account.id == @account.id
+          not_found if @account.hidden
+          if @account&.user && @account.user.hides_public_profile?
+            not_found unless current_account && current_account.following?(@account))
+          end
+        end
         mark_cacheable! unless user_signed_in?
 
         @body_classes      = 'with-modals'
