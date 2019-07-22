@@ -28,11 +28,11 @@ en:
         phrase: Will be matched regardless of casing in text or content warning of a roar
         scopes: Which APIs the application will be allowed to access. If you select a top-level scope, you don't need to select individual ones.
         setting_aggregate_reblogs: Do not show new repeats for roars that have been recently repeated (only affects newly-received repeats)
-        setting_default_content_type_html: Assume your roars are formatted with HTML unless specified otherwise
-        setting_default_content_type_markdown: Assume your roars are formatted with Markdown unless specified otherwise
-        setting_default_content_type_plain: Assume your roars are plain text unless specified otherwise
-        setting_default_content_type_x_bbcode: Assume your roars are formatted with BBcode unless specified otherwise
-        setting_default_content_type_x_bbcode_markdown: Assume your roars are formatted with BBdown unless specified otherwise (default)
+        setting_default_content_type_html_html: "<strong>&lt;strong&gt;Bold&lt;/strong&gt;</strong>, <u>&lt;u&gt;Underline&lt;/u&gt;</u>, <em>&lt;em&gt;Italic&lt;/em&gt;</em>, <code>&lt;code&gt;Console&lt;/code&gt;</code>, ..."
+        setting_default_content_type_markdown_html: "<strong>**Bold**</strong>, <u>_Underline_</u>, <em>*Italic*</em>, <code>`Console`</code>, ..."
+        setting_default_content_type_plain_html: No formatting.
+        setting_default_content_type_x_bbcode_html: "<strong>[b]Bold[/b]</strong>, <u>[u]Underline[/u]</u>, <em>[i]Italic[/i]</em>, <code>[code]Console[/code]</code>, ..."
+        setting_default_content_type_x_bbcode_markdown_html: "<strong>**Bold**</strong>, <u>[u]Underline[/u]</u>, <em>*Italic*</em>, <code>[code]Console[/code]</code>, ..."
         setting_default_language: The language of your roars can be detected automatically, but it's not always accurate
         setting_display_media_default: Hide media marked as sensitive
         setting_display_media_hide_all: Always hide all media
