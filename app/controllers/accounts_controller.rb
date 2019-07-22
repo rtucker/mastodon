@@ -11,16 +11,18 @@ class AccountsController < ApplicationController
     respond_to do |format|
       format.html do
         use_pack 'public'
+        not_found if @account.hidden || (@account&.user && @account.user.hides_public_profile?)
         mark_cacheable! unless user_signed_in?
 
         @body_classes      = 'with-modals'
         @pinned_statuses   = []
         @endorsed_accounts = @account.endorsed_accounts.to_a.sample(4)
 
-        if @account.hidden || (@account&.user && @account.user.hides_public_profile?) || (current_account && @account.blocking?(current_account))
+        if current_account && @account.blocking?(current_account)
           @statuses = []
           return
         end
+
 
         @pinned_statuses = cache_collection(@account.pinned_statuses, Status) if show_pinned_statuses?
         @statuses        = filtered_status_page(params)
