@@ -2,6 +2,7 @@
 
 class ActivityPub::Activity
   include JsonLdHelper
+  include AutorejectHelper
   include Redisable
 
   SUPPORTED_TYPES = %w(Note Question).freeze
@@ -184,38 +185,5 @@ class ActivityPub::Activity
   def reject_payload!
     Rails.logger.info("Rejected #{@json['type']} activity #{@json['id']} from #{@account.uri}#{@options[:relayed_through_account] && "via #{@options[:relayed_through_account].uri}"}")
     nil
-  end
-
-  def should_reject?
-    return unless @object
-
-    oid = @json['id']
-    return true if ENV.fetch('REJECT_IF_ID_STARTS_WITH', '').split.any? { |r| oid.start_with?(r) }
-    return true if ENV.fetch('REJECT_IF_ID_CONTAINS', '').split.any? { |r| r.in?(oid) }
-
-    url = object_uri.start_with?('http') ? object_uri : @object['url']
-    return if url.nil?
-
-    domain = url.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
-    blocks = DomainBlock.suspend
-    return true if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
-
-    if @object['@context'].is_a?(Array)
-      inline_context = @object['@context'].find { |item| item.is_a?(Hash) }
-      if inline_context
-        keys = inline_context.keys
-        return true if ENV.fetch('REJECT_IF_CONTEXT_EQUALS', '').split.any? { |r| r.in?(keys) }
-        return true if ENV.fetch('REJECT_IF_CONTEXT_STARTS_WITH', '').split.any? { |r| keys.any? { |k| k.start_with?(r) } }
-        return true if ENV.fetch('REJECT_IF_CONTEXT_CONTAINS', '').split.any? { |r| keys.any? { |k| r.in?(k) } }
-      end
-    end
-  end
-
-  def autoreject?
-    if @options[:imported] || should_reject?
-      Rails.logger.info("Auto-rejected #{@json['type']} activity #{@json['id']}")
-      return true
-    end
-    false
   end
 end

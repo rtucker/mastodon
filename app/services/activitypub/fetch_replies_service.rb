@@ -2,6 +2,7 @@
 
 class ActivityPub::FetchRepliesService < BaseService
   include JsonLdHelper
+  include AutorejectHelper
 
   def call(parent_status, collection_or_uri, allow_synchronous_requests = true)
     @account = parent_status.account
@@ -44,6 +45,10 @@ class ActivityPub::FetchRepliesService < BaseService
     # amplification attacks.
 
     # Also limit to 5 fetched replies to limit potential for DoS.
-    @items.map { |item| value_or_id(item) }.reject { |uri| invalid_origin?(uri) }.take(5)
+    @items.map { |item| value_or_id(item) }.reject { |uri| autoreject?(uri) || invalid_origin?(uri) }.take(5)
+  end
+
+  def object_uri
+    nil
   end
 end

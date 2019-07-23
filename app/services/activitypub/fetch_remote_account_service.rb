@@ -2,6 +2,7 @@
 
 class ActivityPub::FetchRemoteAccountService < BaseService
   include JsonLdHelper
+  include AutorejectHelper
 
   SUPPORTED_TYPES = %w(Application Group Organization Person Service).freeze
 
@@ -9,12 +10,14 @@ class ActivityPub::FetchRemoteAccountService < BaseService
   def call(uri, id: true, prefetched_body: nil, break_on_redirect: false, only_key: false)
     return ActivityPub::TagManager.instance.uri_to_resource(uri, Account) if ActivityPub::TagManager.instance.local_uri?(uri)
 
+    return if autoreject?(uri)
     @json = if prefetched_body.nil?
               fetch_resource(uri, id)
             else
               body_to_json(prefetched_body, compare_id: id ? uri : nil)
             end
 
+    return if autoreject?
     return if !supported_context? || !expected_type? || (break_on_redirect && @json['movedTo'].present?)
 
     @uri      = @json['id']
@@ -58,5 +61,9 @@ class ActivityPub::FetchRemoteAccountService < BaseService
 
   def expected_type?
     equals_or_includes_any?(@json['type'], SUPPORTED_TYPES)
+  end
+
+  def object_uri
+    nil
   end
 end

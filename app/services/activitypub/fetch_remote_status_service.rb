@@ -2,15 +2,19 @@
 
 class ActivityPub::FetchRemoteStatusService < BaseService
   include JsonLdHelper
+  include AutorejectHelper
 
   # Should be called when uri has already been checked for locality
   def call(uri, id: true, prefetched_body: nil, on_behalf_of: nil)
+    return if autoreject?(uri)
+
     @json = if prefetched_body.nil?
               fetch_resource(uri, id, on_behalf_of)
             else
               body_to_json(prefetched_body, compare_id: id ? uri : nil)
             end
 
+    return if autoreject?
     return unless supported_context? && expected_type?
 
     return if actor_id.nil? || !trustworthy_attribution?(@json['id'], actor_id)
@@ -48,5 +52,9 @@ class ActivityPub::FetchRemoteStatusService < BaseService
 
   def needs_update(actor)
     actor.possibly_stale?
+  end
+
+  def object_uri
+    nil
   end
 end
