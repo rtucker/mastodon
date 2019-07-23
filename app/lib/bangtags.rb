@@ -543,6 +543,7 @@ class Bangtags
           chunk = rand(6..33).times.collect do
             keyboard[(keyboard.size * (rand ** 3)).floor].split('').sample
           end
+          chunk = chunk.join
         when 'admin'
           chunk = nil
           next unless @account.user.admin?
