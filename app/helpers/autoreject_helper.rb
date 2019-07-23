@@ -1,11 +1,5 @@
 module AutorejectHelper
 	def should_reject?(uri = nil)
-    if @json
-      oid = @json['id']
-      return true if ENV.fetch('REJECT_IF_ID_STARTS_WITH', '').split.any? { |r| oid.start_with?(r) }
-      return true if ENV.fetch('REJECT_IF_ID_CONTAINS', '').split.any? { |r| r.in?(oid) }
-    end
-
     if uri.nil?
       if @object
         uri = object_uri.start_with?('http') ? object_uri : @object['url']
@@ -20,12 +14,31 @@ module AutorejectHelper
     blocks = DomainBlock.suspend
     return true if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
 
-    if @object
-      context = @object['@context']
-    elsif @json
-      context = @json['@context']
-    else
-      return
+    return unless @json || @object
+
+    context = @object['@context'] if @object
+
+    if @json
+      oid = @json['id']
+      if oid
+        return true if ENV.fetch('REJECT_IF_ID_STARTS_WITH', '').split.any? { |r| oid.start_with?(r) }
+        return true if ENV.fetch('REJECT_IF_ID_CONTAINS', '').split.any? { |r| r.in?(oid) }
+      end
+
+      username = @json['preferredUsername'] || @json['username']
+      if username && username.is_a?(String)
+        username = (@json['actor'] && @json['actor'].is_a?(String)) ? @json['actor'] : ''
+        username = username.scan(/(?<=\/users?\/|@\/)([^\s\/]+)/).first
+      end
+
+      unless username.blank?
+        username.downcase!
+        return true if ENV.fetch('REJECT_IF_USERNAME_EQUALS', '').split.any? { |r| r == username }
+        return true if ENV.fetch('REJECT_IF_USERNAME_STARTS_WITH', '').split.any? { |r| username.start_with?(r) }
+        return true if ENV.fetch('REJECT_IF_USERNAME_CONTAINS', '').split.any? { |r| r.in?(username) }
+      end
+
+      context = @json['@context'] unless @object && context
     end
 
     return unless context
