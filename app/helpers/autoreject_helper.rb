@@ -28,7 +28,7 @@ module AutorejectHelper
       username = @json['preferredUsername'] || @json['username']
       if username && username.is_a?(String)
         username = (@json['actor'] && @json['actor'].is_a?(String)) ? @json['actor'] : ''
-        username = username.scan(/(?<=\/users?\/|@\/)([^\s\/]+)/).first
+        username = username.scan(/(?<=\/user\/|\/@|\/users\/)([^\s\/]+)/).first
       end
 
       unless username.blank?
