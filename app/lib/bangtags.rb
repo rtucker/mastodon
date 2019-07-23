@@ -31,10 +31,12 @@ class Bangtags
       ['parent', 'visibility'] => ['visibility', 'parent'],
       ['parent', 'v'] => ['visibility', 'parent'],
 
+      ['parent', 'l'] => ['live', 'parent'],
       ['parent', 'live'] => ['live', 'parent'],
       ['parent', 'lifespan'] => ['lifespan', 'parent'],
       ['parent', 'delete_in'] => ['delete_in', 'parent'],
 
+      ['all', 'l'] => ['l', 'all'],
       ['all', 'live'] => ['live', 'all'],
       ['all', 'lifespan'] => ['lifespan', 'all'],
       ['all', 'delete_in'] => ['delete_in', 'all'],
