@@ -2,6 +2,7 @@
 
 class FetchLinkCardService < BaseService
   include UrlHelper
+  include AutorejectHelper
 
   URL_PATTERN = %r{
     (                                                                                                 #   $1 URL
@@ -21,6 +22,7 @@ class FetchLinkCardService < BaseService
 
     @url = sanitize_query_string(@url.to_s)
     return if @url.nil?
+    return if autoreject?(url)
 
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?
@@ -173,5 +175,9 @@ class FetchLinkCardService < BaseService
 
   def lock_options
     { redis: Redis.current, key: "fetch:#{@url}" }
+  end
+
+  def object_uri
+    nil
   end
 end

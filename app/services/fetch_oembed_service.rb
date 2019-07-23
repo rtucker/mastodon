@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 class FetchOEmbedService
+  include AutorejectHelper
+
   attr_reader :url, :options, :format, :endpoint_url
 
   def call(url, options = {})
     @url     = url
     @options = options
 
+    return if autoreject?(url)
     discover_endpoint!
     fetch!
   end
@@ -67,5 +70,9 @@ class FetchOEmbedService
     @html = @options[:html] || Request.new(:get, @url).perform do |res|
       res.code != 200 || res.mime_type != 'text/html' ? nil : res.body_with_limit
     end
+  end
+
+  def object_uri
+    nil
   end
 end

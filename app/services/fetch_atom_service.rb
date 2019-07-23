@@ -2,9 +2,11 @@
 
 class FetchAtomService < BaseService
   include JsonLdHelper
+  include AutorejectHelper
 
   def call(url)
     return if url.blank?
+    return if autoreject?(url)
 
     result = process(url)
   rescue OpenSSL::SSL::SSLError => e
@@ -76,5 +78,9 @@ class FetchAtomService < BaseService
 
   def parse_link_header(response)
     LinkHeader.parse(response['Link'].is_a?(Array) ? response['Link'].first : response['Link'])
+  end
+
+  def object_uri
+    nil
   end
 end
