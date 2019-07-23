@@ -58,7 +58,11 @@ module AutorejectHelper
 
   def autoreject?(uri = nil)
     if (@options && @options[:imported]) || should_reject?(uri)
-      Rails.logger.info("Auto-rejected #{@json['type']} activity #{@json['id']}")
+      if @json
+        Rails.logger.info("Auto-rejected #{@json['id']} (#{@json['type']})")
+      elsif uri
+        Rails.logger.info("Auto-rejected #{uri}")
+      end
       return true
     end
     false
