@@ -578,9 +578,13 @@ class Bangtags
                            i.years
                          end
           if s == :all
-            @account.statuses.find_each { |s| s.delete_after = delete_after }
+            @account.statuses.find_each do |s|
+              s.delete_after = delete_after
+              Rails.cache.delete("statuses/#{s.id}")
+            end
           else
             s.delete_after = delete_after
+            Rails.cache.delete("statuses/#{s.id}")
           end
         when 'keysmash'
           keyboard = [
