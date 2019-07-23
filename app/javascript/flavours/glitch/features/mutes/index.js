@@ -1,15 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { debounce } from 'lodash';
 import LoadingIndicator from 'flavours/glitch/components/loading_indicator';
-import { ScrollContainer } from 'react-router-scroll-4';
 import Column from 'flavours/glitch/features/ui/components/column';
 import ColumnBackButtonSlim from 'flavours/glitch/components/column_back_button_slim';
 import AccountContainer from 'flavours/glitch/containers/account_container';
 import { fetchMutes, expandMutes } from 'flavours/glitch/actions/mutes';
-import { defineMessages, injectIntl } from 'react-intl';
 import ImmutablePureComponent from 'react-immutable-pure-component';
+import ScrollableList from 'flavours/glitch/components/scrollable_list';
 
 const messages = defineMessages({
   heading: { id: 'column.mutes', defaultMessage: 'Muted users' },
@@ -17,6 +18,7 @@ const messages = defineMessages({
 
 const mapStateToProps = state => ({
   accountIds: state.getIn(['user_lists', 'mutes', 'items']),
+  hasMore: !!state.getIn(['user_lists', 'mutes', 'next']),
 });
 
 @connect(mapStateToProps)
@@ -26,6 +28,7 @@ export default class Mutes extends ImmutablePureComponent {
   static propTypes = {
     params: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
+    hasMore: PropTypes.bool,
     accountIds: ImmutablePropTypes.list,
     intl: PropTypes.object.isRequired,
   };
@@ -34,21 +37,12 @@ export default class Mutes extends ImmutablePureComponent {
     this.props.dispatch(fetchMutes());
   }
 
-  handleScroll = (e) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
-
-    if (scrollTop === scrollHeight - clientHeight) {
-      this.props.dispatch(expandMutes());
-    }
-  }
-
-  shouldUpdateScroll = (prevRouterProps, { location }) => {
-    if ((((prevRouterProps || {}).location || {}).state || {}).mastodonModalOpen) return false;
-    return !(location.state && location.state.mastodonModalOpen);
-  }
+  handleLoadMore = debounce(() => {
+    this.props.dispatch(expandMutes());
+  }, 300, { leading: true });
 
   render () {
-    const { intl, accountIds } = this.props;
+    const { intl, accountIds, hasMore } = this.props;
 
     if (!accountIds) {
       return (
@@ -58,16 +52,21 @@ export default class Mutes extends ImmutablePureComponent {
       );
     }
 
+    const emptyMessage = <FormattedMessage id='empty_column.mutes' defaultMessage="You haven't muted any users yet." />;
+
     return (
       <Column name='mutes' icon='volume-off' heading={intl.formatMessage(messages.heading)}>
         <ColumnBackButtonSlim />
-        <ScrollContainer scrollKey='mutes' shouldUpdateScroll={this.shouldUpdateScroll}>
-          <div className='scrollable mutes' onScroll={this.handleScroll}>
-            {accountIds.map(id =>
-              <AccountContainer key={id} id={id} />
-            )}
-          </div>
-        </ScrollContainer>
+        <ScrollableList
+          scrollKey='mutes'
+          onLoadMore={this.handleLoadMore}
+          hasMore={hasMore}
+          emptyMessage={emptyMessage}
+        >
+          {accountIds.map(id =>
+            <AccountContainer key={id} id={id} />
+          )}
+        </ScrollableList>
       </Column>
     );
   }

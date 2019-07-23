@@ -37,6 +37,7 @@ defaults: &defaults
   aggregate_reblogs: true
   advanced_layout: false
   use_blurhash: true
+  use_pending_items: false
   notification_emails:
     follow: false
     reblog: false
@@ -67,6 +68,7 @@ defaults: &defaults
   show_reblogs_in_public_timelines: false
   show_replies_in_public_timelines: false
   default_content_type: 'text/plain'
+  spam_check_enabled: true
 
 development:
   <<: *defaults

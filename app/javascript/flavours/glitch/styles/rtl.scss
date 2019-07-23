@@ -28,6 +28,15 @@ body.rtl {
     margin-left: 4px;
   }
 
+  .composer--publisher {
+    text-align: left;
+  }
+
+  .boost-modal__status-time,
+  .favourite-modal__status-time {
+    float: left;
+  }
+
   .navigation-bar__profile {
     margin-left: 0;
     margin-right: 8px;
@@ -50,8 +59,8 @@ body.rtl {
   .column-header__buttons {
     left: 0;
     right: auto;
-    margin-left: -15px;
-    margin-right: 0;
+    margin-left: 0;
+    margin-right: -15px;
   }
 
   .column-inline-form .icon-button {
@@ -87,11 +96,14 @@ body.rtl {
   }
 
   .status__avatar {
+    margin-left: 10px;
+    margin-right: 0;
+
+    // Those are used for public pages
     left: auto;
     right: 10px;
   }
 
-  .status,
   .activity-stream .status.light {
     padding-left: 10px;
     padding-right: 68px;
@@ -110,7 +122,7 @@ body.rtl {
 
   .status__prepend {
     margin-left: 0;
-    margin-right: 68px;
+    margin-right: 58px;
   }
 
   .status__prepend-icon-wrapper {
@@ -136,17 +148,7 @@ body.rtl {
   .status__relative-time,
   .activity-stream .status.light .status__header .status__meta {
     float: left;
-  }
-
-  .activity-stream .detailed-status.light .detailed-status__display-name > div {
-    float: right;
-    margin-right: 0;
-    margin-left: 10px;
-  }
-
-  .activity-stream .detailed-status.light .detailed-status__meta span > span {
-    margin-left: 0;
-    margin-right: 6px;
+    text-align: left;
   }
 
   .status__action-bar {
@@ -182,6 +184,10 @@ body.rtl {
     margin-right: 0;
   }
 
+  .detailed-status__display-name .display-name {
+    text-align: right;
+  }
+
   .detailed-status__display-avatar {
     margin-right: 0;
     margin-left: 10px;
@@ -195,7 +201,6 @@ body.rtl {
   }
 
   .fa-ul {
-    margin-left: 0;
     margin-left: 2.14285714em;
   }
 
