@@ -22,7 +22,7 @@ class FetchLinkCardService < BaseService
 
     @url = sanitize_query_string(@url.to_s)
     return if @url.nil?
-    return if autoreject?(url)
+    return if autoreject?(@url)
 
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?

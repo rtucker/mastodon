@@ -9,7 +9,7 @@ class FetchOEmbedService
     @url     = url
     @options = options
 
-    return if autoreject?(url)
+    return if autoreject?(@url)
     discover_endpoint!
     fetch!
   end
