@@ -2,6 +2,7 @@
 
 class ActivityPub::Activity::Create < ActivityPub::Activity
   def perform
+    return if autoreject?
     return reject_payload! if unsupported_object_type? || !@options[:imported] && (invalid_origin?(@object['id']) || Tombstone.exists?(uri: @object['id']) || !related_to_local_activity?)
 
     RedisLock.acquire(lock_options) do |lock|
