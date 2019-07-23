@@ -64,7 +64,7 @@ class Bangtags
           cmd = prefix + cmd unless prefix.nil?
 
           @aliases.each_key do |old_cmd|
-            cmd = aliases[old_cmd] + cmd.drop(old_cmd.length) if cmd.take(old_cmd.length) == old_cmd
+            cmd = @aliases[old_cmd] + cmd.drop(old_cmd.length) if cmd.take(old_cmd.length) == old_cmd
           end
         elsif chunk.in?(['#!comment:end', '#!comment:stop', '#!comment:endall', '#!comment:stopall'])
           @vore_stack.pop
