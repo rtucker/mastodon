@@ -13,6 +13,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   attribute :pinned, if: :pinnable?
   attribute :local_only if :local?
   attribute :sharekey, if: :owner?
+  attribute :delete_after, if: :current_user?
 
   attribute :content, unless: :source_requested?
   attribute :text, if: :source_requested?
@@ -133,6 +134,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
 
   def ordered_mentions
     object.active_mentions.to_a.sort_by(&:id)
+  end
+
+  def delete_after
+    object.delete_after
   end
 
   class ApplicationSerializer < ActiveModel::Serializer

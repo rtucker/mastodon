@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_22_014444) do
+ActiveRecord::Schema.define(version: 2019_07_23_152514) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -264,6 +264,13 @@ ActiveRecord::Schema.define(version: 2019_07_22_014444) do
     t.boolean "exclude_media", default: false, null: false
     t.boolean "media_only", default: false, null: false
     t.index ["account_id"], name: "index_custom_filters_on_account_id"
+  end
+
+  create_table "destructing_statuses", force: :cascade do |t|
+    t.bigint "status_id"
+    t.datetime "delete_after"
+    t.index ["delete_after"], name: "index_destructing_statuses_on_delete_after"
+    t.index ["status_id"], name: "index_destructing_statuses_on_status_id"
   end
 
   create_table "domain_blocks", force: :cascade do |t|
@@ -817,6 +824,7 @@ ActiveRecord::Schema.define(version: 2019_07_22_014444) do
   add_foreign_key "conversation_mutes", "accounts", name: "fk_225b4212bb", on_delete: :cascade
   add_foreign_key "conversation_mutes", "conversations", on_delete: :cascade
   add_foreign_key "custom_filters", "accounts", on_delete: :cascade
+  add_foreign_key "destructing_statuses", "statuses"
   add_foreign_key "favourites", "accounts", name: "fk_5eb6c2b873", on_delete: :cascade
   add_foreign_key "favourites", "statuses", name: "fk_b0e856845e", on_delete: :cascade
   add_foreign_key "featured_tags", "accounts", on_delete: :cascade

@@ -118,6 +118,7 @@ en:
         setting_default_content_type_x_bbcode_markdown: BBdown
         setting_default_language: Posting language
         setting_default_privacy: Post privacy
+        setting_roar_lifespan: Auto-delete new roars after
         setting_default_local: Default to Monsterpit-only roars (in Glitch flavour)
         setting_always_local: Don't send your roars outside Monsterpit
         setting_rawr_federated: Show raw world timeline (may contain offensive content!)
@@ -156,19 +157,6 @@ en:
         setting_hide_public_profile: Hide your public profile from anonymous viewers
         setting_hide_public_outbox: Hide your public ActivityPub outbox (affects discoverability)
         setting_max_public_history: Limit history of roars on public profile to
-        setting_max_public_history_1: 1 day
-        setting_max_public_history_3: 3 days
-        setting_max_public_history_6: 6 days
-        setting_max_public_history_7: 1 week
-        setting_max_public_history_14: 2 weeks
-        setting_max_public_history_30: 6 weeks
-        setting_max_public_history_60: 2 months
-        setting_max_public_history_90: 3 months
-        setting_max_public_history_180: 6 months
-        setting_max_public_history_365: 1 year
-        setting_max_public_history_730: 2 years
-        setting_max_public_history_1095: 3 years
-        setting_max_public_history_2190: 6 years
         setting_noindex: Opt-out of search engine indexing
         setting_reduce_motion: Reduce motion in animations
         setting_show_application: Disclose application used to send roars
@@ -180,6 +168,21 @@ en:
         username: Username
         username_or_email: Username or Email
         whole_word: Whole word
+      lifespan:
+        '0': No limit
+        1: 1 day
+        3: 3 days
+        6: 6 days
+        7: 1 week
+        14: 2 weeks
+        30: 6 weeks
+        60: 2 months
+        90: 3 months
+        180: 6 months
+        365: 1 year
+        730: 2 years
+        1095: 3 years
+        2190: 6 years
       featured_tag:
         name: Hashtag
       interactions:

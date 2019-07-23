@@ -59,6 +59,9 @@ export default class StatusIcons extends React.PureComponent {
             aria-hidden='true'
           />
         ) : null}
+        {status.get('delete_after') ? (
+          <i className='fa fa-clock-o' title={new Date(status.get('delete_after'))} aria-hidden='true' />
+        ) : null}
         {(
           <VisibilityIcon visibility={status.get('visibility')} />
         )}

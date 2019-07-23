@@ -17,6 +17,15 @@ import classNames from 'classnames';
 import PollContainer from 'flavours/glitch/containers/poll_container';
 import { me } from 'flavours/glitch/util/initial_state';
 
+const dateFormatOptions = {
+  month: 'numeric',
+  day: 'numeric',
+  year: 'numeric',
+  hour12: false,
+  hour: '2-digit',
+  minute: '2-digit',
+};
+
 export default class DetailedStatus extends ImmutablePureComponent {
 
   static contextTypes = {
@@ -119,6 +128,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
     let reblogIcon = 'repeat';
     let favouriteLink = '';
     let sharekeyLinks = '';
+    let destructIcon = '';
 
     if (this.props.measureHeight) {
       outerStyle.height = `${this.state.height}px`;
@@ -233,6 +243,14 @@ export default class DetailedStatus extends ImmutablePureComponent {
       );
     }
 
+    if (status.get('delete_after')) {
+      destructIcon = (
+        <span>
+          <i className='fa fa-clock-o' title={new Date(status.get('delete_after'))} /> ·
+        </span>
+      )
+    }
+
     return (
       <div style={outerStyle}>
         <div ref={this.setRef} className={classNames('detailed-status', { compact })} data-status-by={status.getIn(['account', 'acct'])}>
@@ -254,7 +272,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
           />
 
           <div className='detailed-status__meta'>
-            {sharekeyLinks} {reblogLink} · {favouriteLink} · <VisibilityIcon visibility={status.get('visibility')} />
+            {sharekeyLinks} {reblogLink} · {favouriteLink} · {destructIcon} <VisibilityIcon visibility={status.get('visibility')} />
             <a className='detailed-status__datetime' href={status.get('url')} target='_blank' rel='noopener'>
               <FormattedDate value={new Date(status.get('created_at'))} hour12={false} year='numeric' month='short' day='2-digit' hour='2-digit' minute='2-digit' />
             </a>

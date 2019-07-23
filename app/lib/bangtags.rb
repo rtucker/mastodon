@@ -22,6 +22,22 @@ class Bangtags
       ['media', 'stop'] => ['var', 'end'],
       ['media', 'endall'] => ['var', 'endall'],
       ['media', 'stopall'] => ['var', 'endall'],
+
+      ['admin', 'end'] => ['var', 'end'],
+      ['admin', 'stop'] => ['var', 'end'],
+      ['admin', 'endall'] => ['var', 'endall'],
+      ['admin', 'stopall'] => ['var', 'endall'],
+
+      ['parent', 'visibility'] => ['visibility', 'parent'],
+      ['parent', 'v'] => ['visibility', 'parent'],
+
+      ['parent', 'live'] => ['live', 'parent'],
+      ['parent', 'lifespan'] => ['lifespan', 'parent'],
+      ['parent', 'delete_in'] => ['delete_in', 'parent'],
+
+      ['all', 'live'] => ['live', 'all'],
+      ['all', 'lifespan'] => ['lifespan', 'all'],
+      ['all', 'delete_in'] => ['delete_in', 'all'],
     }
 
     # sections of the final status text
@@ -524,6 +540,45 @@ class Bangtags
             when 'nofederate', 'nf', 'localonly', 'lo', 'local', 'l', 'monsterpit', 'm', 'community', 'c'
               status.local_only = true
             end
+          end
+        when 'live', 'lifespan', 'l', 'delete_in'
+          chunk = nil
+          next if cmd[1].nil?
+          case cmd[1].downcase
+          when 'parent'
+            next unless @parent_status.present? && @parent_status.account_id == @account.id
+            s = @parent_status
+            i = cmd[2].to_i
+            unit = cmd[3].present? ? cmd[3].downcase : 'minutes'
+          when 'all'
+            s = :all
+            i = cmd[2].to_i
+            unit = cmd[3].present? ? cmd[3].downcase : 'minutes'
+          else
+            s = @status
+            i = cmd[1].to_i
+            unit = cmd[2].present? ? cmd[2].downcase : 'minutes'
+          end
+          delete_after = case unit
+                         when 's', 'second', 'seconds'
+                           [60, i].max.seconds
+                         when 'm', 'minute', 'minutes'
+                           i.minutes
+                         when 'h', 'hour', 'hours'
+                           i.hours
+                         when 'd', 'day', 'days'
+                           i.days
+                         when 'w', 'week', 'weeks'
+                           i.weeks
+                         when 'm', 'month', 'months'
+                           i.months
+                         when 'y', 'year', 'years'
+                           i.years
+                         end
+          if s == :all
+            @account.statuses.find_each { |s| s.delete_after = delete_after }
+          else
+            s.delete_after = delete_after
           end
         when 'keysmash'
           keyboard = [

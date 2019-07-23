@@ -53,6 +53,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_hide_public_profile,
       :setting_hide_public_outbox,
       :setting_max_public_history,
+      :setting_roar_lifespan,
 
       :setting_default_privacy,
       :setting_default_sensitive,

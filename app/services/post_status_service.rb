@@ -4,6 +4,8 @@ class PostStatusService < BaseService
   include Redisable
 
   MIN_SCHEDULE_OFFSET = 5.minutes.freeze
+  MIN_DESTRUCT_OFFSET = 30.seconds.freeze
+
   VISIBILITY_RANK = {
     'public'    => 0,
     'unlisted'  => 1,
@@ -28,6 +30,7 @@ class PostStatusService < BaseService
   # @option [String] :spoiler_text
   # @option [String] :language
   # @option [String] :scheduled_at
+  # @option [String] :delete_after
   # @option [Hash] :poll Optional poll to attach
   # @option [Enumerable] :media_ids Optional array of media IDs to attach
   # @option [Doorkeeper::Application] :application
@@ -134,6 +137,19 @@ class PostStatusService < BaseService
 
     @scheduled_at = @options[:scheduled_at]&.to_datetime
     @scheduled_at = nil if scheduled_in_the_past?
+
+    case @options[:delete_after].class
+    when NilClass
+      @delete_after = @account.user.setting_roar_lifespan.to_i.days
+    when ActiveSupport::Duration
+      @delete_after = @options[:delete_after]
+    when Integer
+      @delete_after = @options[:delete_after].minutes
+    when Float
+      @delete_after = @options[:delete_after].minutes
+    end
+    @delete_after = nil if @delete_after.present? && (@delete_after < MIN_DESTRUCT_OFFSET)
+
   rescue ArgumentError
     raise ActiveRecord::RecordInvalid
   end
@@ -179,6 +195,8 @@ class PostStatusService < BaseService
     end
 
     PollExpirationNotifyWorker.perform_at(@status.poll.expires_at, @status.poll.id) if @status.poll
+
+    @status.delete_after = @delete_after unless @delete_after.nil?
   end
 
   def validate_media!
@@ -250,6 +268,7 @@ class PostStatusService < BaseService
       spoiler_text: @options[:spoiler_text] || '',
       visibility: @visibility,
       local_only: @local_only,
+      delete_after: @delete_after,
       sharekey: @sharekey,
       language: language_from_option(@options[:language]) || @account.user_default_language&.presence || 'en',
       application: @options[:application],

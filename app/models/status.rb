@@ -79,6 +79,7 @@ class Status < ApplicationRecord
   has_one :stream_entry, as: :activity, inverse_of: :status
   has_one :status_stat, inverse_of: :status
   has_one :poll, inverse_of: :status, dependent: :destroy
+  has_one :destructing_status, inverse_of: :status, dependent: :destroy
 
   validates :uri, uniqueness: true, presence: true, unless: :local?
   validates :text, presence: true, unless: -> { with_media? || reblog? }
@@ -264,6 +265,18 @@ class Status < ApplicationRecord
   def chat_tags
     return @chat_tags if defined?(@chat_tags)
     @chat_tags = tags.only_chat
+  end
+
+  def delete_after
+    destructing_status&.delete_after
+  end
+
+  def delete_after=(value)
+    if destructing_status.nil?
+      DestructingStatus.create!(status_id: id, delete_after: Time.now.utc + value)
+    else
+      destructing_status.delete_after = Time.now.utc + value
+    end
   end
 
   def mark_for_mass_destruction!

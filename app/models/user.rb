@@ -125,6 +125,7 @@ class User < ApplicationRecord
     :hide_public_profile,
     :hide_public_outbox,
     :max_public_history,
+    :roar_lifespan,
 
     :auto_play_gif,
     :default_sensitive,
@@ -297,6 +298,10 @@ class User < ApplicationRecord
 
   def max_public_history
     @_max_public_history ||= (settings.max_public_history || 6)
+  end
+
+  def roar_lifespan
+    @_roar_lifespan ||= (settings.roar_lifespan || 0)
   end
 
   def defaults_to_local_only?

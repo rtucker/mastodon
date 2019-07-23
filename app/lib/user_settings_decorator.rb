@@ -37,6 +37,7 @@ class UserSettingsDecorator
     user.settings['hide_public_outbox']  = hide_public_outbox_preference if change?('setting_hide_public_outbox')
     user.settings['larger_emoji']        = larger_emoji_preference if change?('setting_larger_emoji')
     user.settings['max_public_history']  = max_public_history_preference if change?('setting_max_public_history')
+    user.settings['roar_lifespan']       = roar_lifespan_preference if change?('setting_roar_lifespan')
 
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
@@ -128,6 +129,10 @@ class UserSettingsDecorator
 
   def max_public_history_preference
     settings['setting_max_public_history']
+  end
+
+  def roar_lifespan_preference
+    settings['setting_roar_lifespan']
   end
 
   def merged_notification_emails
