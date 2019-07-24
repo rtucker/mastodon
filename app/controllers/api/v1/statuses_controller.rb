@@ -60,7 +60,7 @@ class Api::V1::StatusesController < Api::BaseController
                                          idempotency: request.headers['Idempotency-Key'])
 
     if @status.nil?
-      raise Mastodon::ValidationError, 'Bangtags processed. No output.'
+      raise Mastodon::ValidationError, 'Bangtags processed successfully.'
     else
       render json: @status, serializer: @status.is_a?(ScheduledStatus) ? REST::ScheduledStatusSerializer : REST::StatusSerializer
     end
