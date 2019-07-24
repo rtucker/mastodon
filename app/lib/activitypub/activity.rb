@@ -184,6 +184,7 @@ class ActivityPub::Activity
 
   def reject_payload!
     Rails.logger.info("Rejected #{@json['type']} activity #{@json['id']} from #{@account.uri}#{@options[:relayed_through_account] && "via #{@options[:relayed_through_account].uri}"}")
+    LogWorker.perform_async("Auto-rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']} by #{@account.uri}#{@options[:relayed_through_account] && " via #{@options[:relayed_through_account].uri}"}.")
     nil
   end
 end

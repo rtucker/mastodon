@@ -212,6 +212,7 @@ class Account < ApplicationRecord
   end
 
   def force_unlisted!
+    LogWorker.perform_async("\xf0\x9f\x93\xb5 Forced the media of account '#{@account.acct}' to be unlisted.")
     transaction do
       update!(force_unlisted: true)
       Status.where(account_id: id, visibility: :public).in_batches.update_all(visibility: :unlisted)
@@ -219,6 +220,7 @@ class Account < ApplicationRecord
   end
 
   def force_sensitive!
+    LogWorker.perform_async("\xf0\x9f\x94\x9e Forced the media of account '#{@account.acct}' to be marked sensitive.")
     transaction do
       update!(force_sensitive: true)
       Status.where(account_id: id, sensitive: false).in_batches.update_all(sensitive: true)
@@ -226,6 +228,7 @@ class Account < ApplicationRecord
   end
 
   def allow_public!
+    LogWorker.perform_async("\xf0\x9f\x86\x97 No longer forcing the media of account '#{@account.acct}' to be marked sensitive.")
     update!(force_unlisted: false)
   end
 
@@ -240,10 +243,12 @@ class Account < ApplicationRecord
   def silence!(date = nil)
     date ||= Time.now.utc
     update!(silenced_at: date)
+    LogWorker.perform_async("\xf0\x9f\x94\x87 Silenced account '#{@account.acct}'.")
   end
 
   def unsilence!
     update!(silenced_at: nil)
+    LogWorker.perform_async("\xf0\x9f\x94\x8a Unsilenced account '#{@account.acct}'.")
   end
 
   def suspended?

@@ -40,6 +40,8 @@ class SuspendAccountService < BaseService
     @account = account
     @options = options
 
+    LogWorker.perform_async("\xf0\x9f\x97\x91\xef\xb8\x8f Suspending account '#{@account.acct}'.")
+
     reject_follows!
     purge_user!
     purge_profile!
