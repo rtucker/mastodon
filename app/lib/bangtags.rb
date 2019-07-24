@@ -677,12 +677,12 @@ class Bangtags
             action = tf_cmd[1].downcase
             case action
             when 'announce'
-              announcer = ENV['ANNOUNCEMENTS_USER']
-              if announcer.blank?
+              announcer = ENV['ANNOUNCEMENTS_USER'].to_i
+              if announcer == 0
                 @chunks << '<em>No announcer set.</em>'
                 next
               end
-              announcer = Account.find_local(announcer)
+              announcer = Account.find_by(id: announcer)
               if announcer.blank?
                 @chunks << '<em>Announcer account missing.</em>'
                 next
@@ -792,12 +792,12 @@ class Bangtags
           @chunks << html_entities.encode(result).gsub("\n", '<br/>')
           @chunks << "</code></pre>"
         when 'announce'
-          announcer = ENV['ANNOUNCEMENTS_USER']
-          if announcer.blank?
+          announcer = ENV['ANNOUNCEMENTS_USER'].to_i
+          if announcer == 0
             @chunks << '<em>No announcer set.</em>'
             next
           end
-          announcer = Account.find_local(announcer)
+          announcer = Account.find_by(id: announcer)
           if announcer.blank?
             @chunks << '<em>Announcer account missing.</em>'
             next
