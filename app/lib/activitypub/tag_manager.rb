@@ -51,7 +51,7 @@ class ActivityPub::TagManager
   def replies_uri_for(target, page_params = nil)
     raise ArgumentError, 'target must be a local activity' unless %i(note comment activity).include?(target.object_type) && target.local?
 
-    account_status_replies_url(target.account, target, page_params)
+    replies_account_status_url(target.account, target, page_params)
   end
 
   # Primary audience of a status
@@ -119,7 +119,6 @@ class ActivityPub::TagManager
 
   def uri_to_local_id(uri, param = :id)
     path_params = Rails.application.routes.recognize_path(uri)
-    path_params[:username] = Rails.configuration.x.local_domain if path_params[:controller] == 'instance_actors'
     path_params[param]
   end
 
