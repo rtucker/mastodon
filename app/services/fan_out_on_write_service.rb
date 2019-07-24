@@ -6,7 +6,7 @@ class FanOutOnWriteService < BaseService
   def call(status)
     raise Mastodon::RaceConditionError if status.visibility.nil?
 
-    deliver_to_self(status) if status.account.local? && !status.chat_visibility?
+    deliver_to_self(status) if status.account.local?
 
     render_anonymous_payload(status)
 
@@ -16,9 +16,6 @@ class FanOutOnWriteService < BaseService
       deliver_to_own_conversation(status)
     elsif status.limited_visibility?
       deliver_to_mentioned_followers(status)
-    elsif status.chat_visibility?
-      deliver_to_mentioned_followers(status)
-      deliver_to_hashtags(status)
     elsif status.local_visibility?
       deliver_to_followers(status)
       return if status.reblog? && !Setting.show_reblogs_in_public_timelines

@@ -13,19 +13,12 @@ class ProcessHashtagsService < BaseService
       name.gsub!(/[:.]+/, '.')
       next if name.blank? || name == '.'
 
-      chat = name.starts_with?('chat.', '.chat.')
-      if chat
-        component_indices = [name.size - 1]
-      else
-        component_indices = 1.upto(name.size).select { |i| name[i] == '.' }
-        component_indices << name.size - 1
-      end
+      component_indices = 1.upto(name.size).select { |i| name[i] == '.' }
+      component_indices << name.size - 1
 
       component_indices.take(6).each_with_index do |i, nest|
         frag = (nest != 5) ? name[0..i] : name
         tag = Tag.where(name: frag).first_or_create(name: frag)
-
-        tag.chatters.find_or_create_by(id: status.account_id) if chat
 
         next if status.tags.include?(tag)
         status.tags << tag

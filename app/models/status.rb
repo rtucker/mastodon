@@ -52,7 +52,7 @@ class Status < ApplicationRecord
 
   update_index('statuses#status', :proper) if Chewy.enabled?
 
-  enum visibility: [:public, :unlisted, :private, :direct, :limited, :local, :chat], _suffix: :visibility
+  enum visibility: [:public, :unlisted, :private, :direct, :limited, :local], _suffix: :visibility
 
   belongs_to :application, class_name: 'Doorkeeper::Application', optional: true
 
@@ -104,7 +104,7 @@ class Status < ApplicationRecord
   scope :reblogs, -> { where('statuses.reblog_of_id IS NOT NULL') } # all reblogs
   scope :with_public_visibility, -> { where(visibility: :public) }
   scope :public_local_visibility, -> { where(visibility: [:public, :local]) }
-  scope :public_browsable, -> { where(visibility: [:public, :unlisted, :local, :chat]) }
+  scope :public_browsable, -> { where(visibility: [:public, :unlisted, :local]) }
   scope :tagged_with, ->(tag) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag }) }
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced_at: nil }) }
   scope :including_silenced_accounts, -> { left_outer_joins(:account).where.not(accounts: { silenced_at: nil }) }
@@ -260,11 +260,6 @@ class Status < ApplicationRecord
     fields << footer unless footer.nil?
 
     @emojis = CustomEmoji.from_text(fields.join(' '), account.domain)
-  end
-
-  def chat_tags
-    return @chat_tags if defined?(@chat_tags)
-    @chat_tags = tags.only_chat
   end
 
   def delete_after

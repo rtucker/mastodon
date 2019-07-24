@@ -159,9 +159,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   def attach_tags(status)
     @tags.each do |tag|
       status.tags << tag
-      tag.chatters.find_or_create_by(account_id: status.account) if tag.chat?
-      next unless status.distributable? && !tag.chat?
-      TrendingTags.record_use!(tag, status.account, status.created_at)
+      TrendingTags.record_use!(tag, status.account, status.created_at) if status.distributable?
     end
 
     @mentions.each do |mention|
@@ -190,14 +188,9 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     hashtag = tag['name'].gsub(/\A#/, '').gsub(':', '.').mb_chars.downcase
 
     return if !@options[:imported] && (
-      hashtag.in?(%w(self .self local .local chat.local .chat.local)) ||
-      hashtag.starts_with?('self.', '.self', 'local.', '.local', 'chat.local.', '.chat.local.')
+      hashtag.in?(%w(self .self local .local)) ||
+      hashtag.starts_with?('self.', '.self', 'local.', '.local')
     )
-
-    if tag['name'].starts_with?('chat.', '.chat.')
-      @params[:visibility] = :chat
-      @params[:thread] = nil
-    end
 
     hashtag = Tag.where(name: hashtag).first_or_create!(name: hashtag)
 

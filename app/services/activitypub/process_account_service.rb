@@ -81,7 +81,6 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.locked                  = @json['manuallyApprovesFollowers'] || false
     @account.froze                   = @json['froze'] || false
     @account.adult_content           = @json['adultContent'] || (@json['suggestedMinAge'].to_i >= 18)
-    @account.supports_chat           = @json['supportsChat'] || false
     @account.gently                  = @json['gently'] || false
     @account.kobold                  = @json['kobold'] || false
     @account.fields                  = property_values || {}

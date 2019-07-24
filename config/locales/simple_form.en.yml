@@ -75,7 +75,6 @@ en:
       defaults:
         hidden: Invisible mode (affects outgoing federation and discovery!)
         adult_content: Contains adult content
-        supports_chat: Allow chat messages
         gently: Gently the kobolds
         kobold: I am a kobold
         unlisted: Exclude from public interaction lists

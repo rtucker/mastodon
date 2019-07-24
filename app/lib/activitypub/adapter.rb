@@ -32,10 +32,6 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
       'mp' => 'https://monsterpit.net/ns#',
       'kobold' => 'mp:kobold'
     },
-    supports_chat: {
-      'mp' => 'https://monsterpit.net/ns#',
-      'supportsChat' => 'mp:supportsChat'
-    },
     froze: {
       'mp' => 'https://monsterpit.net/ns#',
       'froze' => 'mp:froze'

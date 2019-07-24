@@ -58,7 +58,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   def visibility
     if object.limited_visibility?
       'private'
-    elsif object.local_visibility? || object.chat_visibility?
+    elsif object.local_visibility?
       'unlisted'
     else
       object.visibility

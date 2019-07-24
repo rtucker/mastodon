@@ -13,7 +13,6 @@ class PostStatusService < BaseService
     'private'   => 2,
     'direct'    => 3,
     'limited'   => 3,
-    'chat'      => 4
   }
 
   # Post a text status update, fetch and notify remote users mentioned
@@ -92,19 +91,6 @@ class PostStatusService < BaseService
     @local_only = true if @account.user_always_local_only? || @in_reply_to&.local_only
   end
 
-  def set_chat
-    if @in_reply_to.present?
-      unless @in_reply_to.chat_tags.blank?
-        @preloaded_tags |= @in_reply_to.chat_tags
-        @visibility = :chat
-        @in_reply_to = nil
-      end
-    elsif @tags.present? && @tags.any? { |t| t.start_with?('chat.', '.chat.') }
-      @visibility = :chat
-      @local_only = true if @tags.any? { |t| t.in?(%w(chat.local .chat.local)) || t.start_with?('chat.local.', '.chat.local.') }
-    end
-  end
-
   # move tags out of body so we can format them later
   def extract_tags
     @text.gsub!(/^##/, "\uf666")
@@ -124,14 +110,10 @@ class PostStatusService < BaseService
 
     set_footer_from_i_am
     extract_tags
-    set_chat
     set_local_only
-
-    unless @visibility == :chat
-      set_initial_visibility
-      limit_visibility_if_silenced
-      limit_visibility_to_reply
-    end
+    set_initial_visibility
+    limit_visibility_if_silenced
+    limit_visibility_to_reply
 
     @sensitive = (@account.user_defaults_to_sensitive? || @options[:spoiler_text].present?) if @sensitive.nil?
 
@@ -166,6 +148,7 @@ class PostStatusService < BaseService
 
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
     process_mentions_service.call(@status)
+
     return true
   end
 

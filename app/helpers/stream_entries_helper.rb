@@ -207,8 +207,6 @@ module StreamEntriesHelper
       fa_icon 'unlock fw'
     when 'local'
       fa_icon 'users fw'
-    when 'chat'
-      fa_icon 'paper-plane fw'
     when 'private'
       fa_icon 'lock fw'
     when 'direct'

@@ -10,7 +10,6 @@
 #  local      :boolean          default(FALSE), not null
 #  private    :boolean          default(FALSE), not null
 #  unlisted   :boolean          default(FALSE), not null
-#  chat       :boolean          default(FALSE), not null
 #
 
 class Tag < ApplicationRecord
@@ -19,8 +18,6 @@ class Tag < ApplicationRecord
   has_and_belongs_to_many :sample_accounts, -> { searchable.discoverable.popular.limit(3) }, class_name: 'Account'
 
   has_many :featured_tags, dependent: :destroy, inverse_of: :tag
-  has_many :chat_accounts, dependent: :destroy, inverse_of: :tag
-  has_many :chatters, through: :chat_accounts, source: :account
 
   has_one :account_tag_stat, dependent: :destroy
 
@@ -37,7 +34,6 @@ class Tag < ApplicationRecord
   scope :only_global, -> { where(local: false, unlisted: false) }
   scope :only_private, -> { where(private: true) }
   scope :only_unlisted, -> { where(unlisted: true) }
-  scope :only_chat, -> { where(chat: true) }
   scope :only_public, -> { where(unlisted: false) }
 
   delegate :accounts_count,
@@ -109,9 +105,8 @@ class Tag < ApplicationRecord
   def set_scope
     self.private = true if name.in?(%w(self .self)) || name.starts_with?('self.', '.self.')
     self.unlisted = true if self.private || name.starts_with?('.')
-    self.chat = true if name.starts_with?('chat.', '.chat')
     self.local = true if self.private ||
-      name.in?(%w(local .local chat.local .chat.local)) ||
-      name.starts_with?('local.', '.local', 'chat.local.' '.chat.local')
+      name.in?(%w(local .local)) ||
+      name.starts_with?('local.', '.local')
   end
 end

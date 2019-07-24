@@ -116,10 +116,6 @@ function statusToTextMentions(state, status) {
     set = set.add(`@${status.getIn(['account', 'acct'])} `);
   }
 
-  set = set.union(status.get('tags').filter(
-    tag => tag.get('name') && tag.get('name').startsWith("chat.")
-  ).map(tag => `#${tag.get('name')} `));
-
   return set.union(status.get('mentions').filterNot(mention => mention.get('id') === me).map(mention => `@${mention.get('acct')} `)).join('');
 };
 
@@ -129,10 +125,6 @@ function apiStatusToTextMentions (state, status) {
   if (status.account.id !== me) {
     set = set.add(`@${status.account.acct} `);
   }
-
-  set = set.union(status.tags.filter(
-    tag => tag.name && tag.name.startsWith("chat.")
-  ).map(tag => `#${tag.name} `));
 
   return set.union(status.mentions.filter(
     mention => mention.id !== me

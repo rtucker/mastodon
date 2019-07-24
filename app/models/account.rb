@@ -48,7 +48,6 @@
 #  adult_content           :boolean          default(FALSE), not null
 #  silenced_at             :datetime
 #  suspended_at            :datetime
-#  supports_chat           :boolean          default(FALSE), not null
 #  gently                  :boolean          default(FALSE), not null
 #  kobold                  :boolean          default(FALSE), not null
 #  froze                   :boolean
@@ -74,9 +73,6 @@ class Account < ApplicationRecord
   MAX_FIELDS = (ENV['MAX_PROFILE_FIELDS'] || 4).to_i
 
   LOCAL_DOMAINS = ENV.fetch('LOCAL_DOMAINS', '').chomp.split(/\.?\s+/).freeze
-
-  has_many :chat_accounts, dependent: :destroy, inverse_of: :account
-  has_many :chat_tags, through: :chat_accounts, source: :tag
 
   validates :username, presence: true
 
@@ -559,7 +555,6 @@ class Account < ApplicationRecord
 
   before_create :generate_keys
   before_create :set_domain_from_inbox_url
-  before_create :set_chat_support
   before_validation :prepare_contents, if: :local?
   before_validation :prepare_username, on: :create
   before_destroy :clean_feed_manager
@@ -580,11 +575,6 @@ class Account < ApplicationRecord
     self.domain = Addressable::URI.parse(inbox_url).domain
   rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
     nil
-  end
-
-  def set_chat_support
-    return unless local?
-    self.supports_chat = true
   end
 
   def generate_keys

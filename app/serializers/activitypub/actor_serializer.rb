@@ -7,14 +7,14 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
 
   context_extensions :manually_approves_followers, :featured, :also_known_as,
                      :moved_to, :property_value, :hashtag, :emoji, :identity_proof,
-                     :adult_content, :gently, :kobold, :supports_chat, :froze
+                     :adult_content, :gently, :kobold, :froze
 
   attributes :id, :type, :following, :followers,
              :inbox, :outbox, :featured,
              :preferred_username, :name, :summary,
              :url, :manually_approves_followers,
              :gently, :kobold, :adult_content,
-             :supports_chat, :froze
+             :froze
 
   has_one :public_key, serializer: ActivityPub::PublicKeySerializer
 
