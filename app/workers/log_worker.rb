@@ -21,6 +21,8 @@ class LogWorker
       local_only: true,
       content_type: 'text/plain',
       language: 'en',
+      nocrawl: true,
+      nomentions: true,
     )
   rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
     true

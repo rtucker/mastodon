@@ -30,6 +30,8 @@ class PostStatusService < BaseService
   # @option [String] :language
   # @option [String] :scheduled_at
   # @option [String] :delete_after
+  # @option [Boolean] :nocrawl Optional skip link card generation
+  # @option [Boolean] :nomentions Optional skip mention processing
   # @option [Hash] :poll Optional poll to attach
   # @option [Enumerable] :media_ids Optional array of media IDs to attach
   # @option [Doorkeeper::Application] :application
@@ -147,7 +149,7 @@ class PostStatusService < BaseService
     return false if @status.destroyed?
 
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
-    process_mentions_service.call(@status)
+    process_mentions_service.call(@status) unless @options[:nomentions]
 
     return true
   end
@@ -170,7 +172,7 @@ class PostStatusService < BaseService
   end
 
   def postprocess_status!
-    LinkCrawlWorker.perform_async(@status.id) unless @status.spoiler_text?
+    LinkCrawlWorker.perform_async(@status.id) unless @options[:nocrawl] || @status.spoiler_text?
     DistributionWorker.perform_async(@status.id) unless @options[:distribute] == false
 
     unless @status.local_only? || @options[:distribute] == false || @options[:federate] == false
