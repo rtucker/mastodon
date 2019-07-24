@@ -61,10 +61,10 @@ module AutorejectHelper
     if should_reject?(uri)
       if @json
         Rails.logger.info("Auto-rejected #{@json['id']} (#{@json['type']})")
-        LogWorker.perform_async("Auto-rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']}.")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']}.")
       elsif uri
         Rails.logger.info("Auto-rejected #{uri}")
-        LogWorker.perform_async("Auto-rejected a request to #{uri}.")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected a request to #{uri}.")
       end
       return true
     end
