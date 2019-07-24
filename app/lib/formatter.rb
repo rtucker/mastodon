@@ -36,7 +36,7 @@ class Formatter
 			description: '', example: '',
       require_between: true,
       allow_quick_param: true, allow_between_as_param: true,
-      quick_param_format: %r{^((((https?|ftps?|sftp|ircs?|telnets?|dat)://)|/).+)$},
+      quick_param_format: %r{^(\S+://\S+|/\S+)$},
       quick_param_format_description: '',
 			param_tokens: [{token: :url}]
     },
