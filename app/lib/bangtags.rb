@@ -611,7 +611,7 @@ class Bangtags
           next if cmd[1].nil?
           @status.visibility = :local
           @status.local_only = true
-          add_tags(@status, 'monsterpit.admin')
+          add_tags(@status, 'monsterpit.admin.log')
           @status.content_type = 'text/markdown'
           @chunks << "\n# <code>#!</code><code>admin:#{cmd[1].downcase}</code>:\n<hr />\n"
           case cmd[1].downcase
