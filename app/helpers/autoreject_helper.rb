@@ -12,7 +12,7 @@ module AutorejectHelper
 
     domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
     blocks = DomainBlock.suspend
-    reason = ((@object && @object['type'] == 'Announce') ? :domain_boosted : :domain)
+    reason = ((@json && @json['type'] == 'Announce') ? :domain_boost : :domain)
     return reason if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
 
     return unless @json || @object
