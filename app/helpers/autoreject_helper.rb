@@ -12,7 +12,7 @@ module AutorejectHelper
 
     domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
     blocks = DomainBlock.suspend
-    return true if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
+    return :domain if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
 
     return unless @json || @object
 
@@ -21,8 +21,8 @@ module AutorejectHelper
     if @json
       oid = @json['id']
       if oid
-        return true if ENV.fetch('REJECT_IF_ID_STARTS_WITH', '').split.any? { |r| oid.start_with?(r) }
-        return true if ENV.fetch('REJECT_IF_ID_CONTAINS', '').split.any? { |r| r.in?(oid) }
+        return :id_starts_with if ENV.fetch('REJECT_IF_ID_STARTS_WITH', '').split.any? { |r| oid.start_with?(r) }
+        return :id_contains if ENV.fetch('REJECT_IF_ID_CONTAINS', '').split.any? { |r| r.in?(oid) }
       end
 
       username = @json['preferredUsername'] || @json['username']
@@ -33,9 +33,9 @@ module AutorejectHelper
 
       unless username.blank?
         username.downcase!
-        return true if ENV.fetch('REJECT_IF_USERNAME_EQUALS', '').split.any? { |r| r == username }
-        return true if ENV.fetch('REJECT_IF_USERNAME_STARTS_WITH', '').split.any? { |r| username.start_with?(r) }
-        return true if ENV.fetch('REJECT_IF_USERNAME_CONTAINS', '').split.any? { |r| r.in?(username) }
+        return :username if ENV.fetch('REJECT_IF_USERNAME_EQUALS', '').split.any? { |r| r == username }
+        return :username_starts_with if ENV.fetch('REJECT_IF_USERNAME_STARTS_WITH', '').split.any? { |r| username.start_with?(r) }
+        return :username_contains if ENV.fetch('REJECT_IF_USERNAME_CONTAINS', '').split.any? { |r| r.in?(username) }
       end
 
       context = @json['@context'] unless @object && context
@@ -47,24 +47,51 @@ module AutorejectHelper
       inline_context = context.find { |item| item.is_a?(Hash) }
       if inline_context
         keys = inline_context.keys
-        return true if ENV.fetch('REJECT_IF_CONTEXT_EQUALS', '').split.any? { |r| r.in?(keys) }
-        return true if ENV.fetch('REJECT_IF_CONTEXT_STARTS_WITH', '').split.any? { |r| keys.any? { |k| k.start_with?(r) } }
-        return true if ENV.fetch('REJECT_IF_CONTEXT_CONTAINS', '').split.any? { |r| keys.any? { |k| r.in?(k) } }
+        return :context if ENV.fetch('REJECT_IF_CONTEXT_EQUALS', '').split.any? { |r| r.in?(keys) }
+        return :context_starts_with if ENV.fetch('REJECT_IF_CONTEXT_STARTS_WITH', '').split.any? { |r| keys.any? { |k| k.start_with?(r) } }
+        return :context_contains if ENV.fetch('REJECT_IF_CONTEXT_CONTAINS', '').split.any? { |r| keys.any? { |k| r.in?(k) } }
       end
     end
 
-    false
+    nil
+  end
+
+  def reject_reason(reason)
+    case reason
+    when :domain
+      "the origin domain is blocked"
+    when :id_starts_with
+      "the object's URI starts with a blocked phrase"
+    when :id_contains
+      "the object's URI contains a blocked phrase"
+    when :username
+      "the author's username is blocked"
+    when :username_starts_with
+      "the author's username starts with a blocked phrase"
+    when :username_contains
+      "the author's username contains a blocked phrase"
+    when :context
+      "the object's JSON-LD context has a key matching a blocked phrase"
+    when :context_starts_with
+      "the object's JSON-LD context has a key starting with a blocked phrase"
+    when :context_contains
+      "the object's JSON-LD context has a key containing a blocked phrase"
+    else
+      "of an undefined reason"
+    end
   end
 
   def autoreject?(uri = nil)
     return false if @options && @options[:imported]
-    if should_reject?(uri)
+    reason = should_reject?(uri)
+    if reason
+      reason = reject_reason(reason)
       if @json
         Rails.logger.info("Auto-rejected #{@json['id']} (#{@json['type']})")
-        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']}.")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']} because #{reason}.")
       elsif uri
         Rails.logger.info("Auto-rejected #{uri}")
-        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected a request to #{uri}.")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected a request to #{uri} because #{reason}.")
       end
       return true
     end
