@@ -170,8 +170,10 @@ class Bangtags
           if emoji.id.nil?
             emoji.image = src_img
             emoji.save
+            user_friendly_action_log(@account, :create, emoji)
           end
         when 'emoji'
+          chunk = nil
           next if cmd[1].nil?
           shortcode = cmd[1]
           domain = (cmd[2].blank? ? nil : cmd[2].downcase)
@@ -186,6 +188,7 @@ class Bangtags
             unless theirs.nil?
               ours.image = theirs.image
               ours.save
+              user_friendly_action_log(@account, :create, ours)
             end
           end
         when 'char'
@@ -306,6 +309,7 @@ class Bangtags
                 if ours.id.nil?
                   ours.image = theirs.image
                   ours.save
+                  user_friendly_action_log(@account, :create, ours)
                 end
               end
             end
@@ -332,6 +336,7 @@ class Bangtags
               if ours.id.nil?
                 ours.image = theirs.image
                 ours.save
+                user_friendly_action_log(@account, :create, ours)
               end
             end
           when 'urls'
@@ -643,7 +648,7 @@ class Bangtags
         end
       end
 
-      chunk.gsub!("#\uf666!", '#!') unless chunk.blank?
+      chunk.gsub!("#\uf666!", '#!') unless chunk.blank? || chunk.frozen?
 
       if chunk.present? && @tf_cmds.present?
         @tf_cmds.each do |tf_cmd|

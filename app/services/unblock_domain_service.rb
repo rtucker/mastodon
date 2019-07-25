@@ -5,7 +5,6 @@ class UnblockDomainService < BaseService
 
   def call(domain_block)
     @domain_block = domain_block
-    LogWorker.perform_async("\xf0\x9f\x86\x97 Reset policy on domain '#{@domain_block.domain}'.")
     process_retroactive_updates
     domain_block.destroy
   end

@@ -5,7 +5,6 @@ class BlockDomainService < BaseService
 
   def call(domain_block)
     @domain_block = domain_block
-    LogWorker.perform_async("\xf0\x9f\x9a\xab Applying #{@domain_block.severity}#{@domain_block.force_sensitive? ? " and force sensitive media" : ''}#{@domain_block.reject_media? ? " and reject media" : ''} policy on domain '#{blocked_domain}'.")
     process_domain_block!
   end
 

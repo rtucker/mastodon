@@ -1,4 +1,6 @@
 module BangtagHelper
+  include LogHelper
+
   POLICIES = %w(silence unsilence suspend unsuspend force_unlisted allow_public force_sensitive allow_nonsensitive reset)
   EXCLUDED_DOMAINS = %w(tailma.ws monsterpit.net monsterpit.cloud monsterpit.gallery monsterpit.blog)
 
@@ -15,11 +17,10 @@ module BangtagHelper
 
     if policy == 'reset'
       Admin::ActionLog.create(account: @account, action: unsuspend, target: acct)
-      Admin::ActionLog.create(account: @account, action: unsilence, target: acct)
-      Admin::ActionLog.create(account: @account, action: allow_public, target: acct)
-      Admin::ActionLog.create(account: @account, action: allow_nonsensitive, target: acct)
+      user_friendly_action_log(@account, :unsuspend, acct)
     else
       Admin::ActionLog.create(account: @account, action: policy, target: acct)
+      user_friendly_action_log(@account, policy.to_sym, acct)
     end
 
     case policy
@@ -88,12 +89,14 @@ module BangtagHelper
       domain_block.save
 
       Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
+      user_friendly_action_log(@account, :create, domain_block)
       BlockDomainService.new.call(domain_block)
     else
       domain_block = DomainBlock.find_by(domain: domain)
       return false if domain_block.nil?
 
       Admin::ActionLog.create(account: @account, action: :destroy, target: domain_block)
+      user_friendly_action_log(@account, :destroy, domain_block)
       UnblockDomainService.new.call(domain_block)
     end
 
