@@ -12,7 +12,8 @@ module AutorejectHelper
 
     domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
     blocks = DomainBlock.suspend
-    return :domain if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
+    reason = ((@object && @object['type'] == 'Announce') ? :domain_boosted : :domain)
+    return reason if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
 
     return unless @json || @object
 
@@ -60,6 +61,8 @@ module AutorejectHelper
     case reason
     when :domain
       "the origin domain is blocked"
+    when :domain_boost
+      "the origin domain of the object being boosted is blocked"
     when :id_starts_with
       "the object's URI starts with a blocked phrase"
     when :id_contains
