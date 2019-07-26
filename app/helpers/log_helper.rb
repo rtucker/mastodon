@@ -70,13 +70,13 @@ module LogHelper
       LogWorker.perform_async("\xf0\x9f\x97\x91\xef\xb8\x8f <#{source}> removed the profile header of <#{target.acct}>.", LOG_SCOPE_MODERATION)
 
     when :resolve
-      LogWorker.perform_async("\u2705 <#{source}> resolved report ##{target.id}.", LOG_SCOPE_MODERATION)
+      LogWorker.perform_async("\u2705 <#{source}> resolved report #{target.id}.", LOG_SCOPE_MODERATION)
     when :reopen
-      LogWorker.perform_async("\u2757 <#{source}> reopened report ##{target.id}.", LOG_SCOPE_MODERATION)
+      LogWorker.perform_async("\u2757 <#{source}> reopened report #{target.id}.", LOG_SCOPE_MODERATION)
     when :assigned_to_self
-      LogWorker.perform_async("\xf0\x9f\x91\x80 <#{source}> is resolving report ##{target.id}.", LOG_SCOPE_MODERATION)
+      LogWorker.perform_async("\xf0\x9f\x91\x80 <#{source}> is resolving report #{target.id}.", LOG_SCOPE_MODERATION)
     when :unassigned
-      LogWorker.perform_async("\u274c <#{source}> is no longer assigned to report ##{target.id}.", LOG_SCOPE_MODERATION)
+      LogWorker.perform_async("\u274c <#{source}> is no longer assigned to report #{target.id}.", LOG_SCOPE_MODERATION)
 
     when :promote
       LogWorker.perform_async("\xf0\x9f\x94\xba <#{source}> upgraded a local account from #{target.role}.", LOG_SCOPE_MODERATION)
