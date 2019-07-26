@@ -561,7 +561,7 @@ class Bangtags
             s = cmd[1].downcase.to_sym
             s = @parent_status if s == :parent
             next unless @parent_status.present?
-            next unless s != :thread && @parent_status.account_id == @account.id
+            next unless s == :thread || @parent_status.account_id == @account.id
             i = cmd[2].to_i
             unit = cmd[3].present? ? cmd[3].downcase : 'minutes'
           else
