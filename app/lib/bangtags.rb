@@ -36,6 +36,11 @@ class Bangtags
       ['parent', 'lifespan'] => ['lifespan', 'parent'],
       ['parent', 'delete_in'] => ['delete_in', 'parent'],
 
+      ['thread', 'l'] => ['l', 'thread'],
+      ['thread', 'live'] => ['live', 'thread'],
+      ['thread', 'lifespan'] => ['lifespan', 'thread'],
+      ['thread', 'delete_in'] => ['delete_in', 'thread'],
+
       ['all', 'l'] => ['l', 'all'],
       ['all', 'live'] => ['live', 'all'],
       ['all', 'lifespan'] => ['lifespan', 'all'],
@@ -552,13 +557,11 @@ class Bangtags
           chunk = nil
           next if cmd[1].nil?
           case cmd[1].downcase
-          when 'parent'
-            next unless @parent_status.present? && @parent_status.account_id == @account.id
-            s = @parent_status
-            i = cmd[2].to_i
-            unit = cmd[3].present? ? cmd[3].downcase : 'minutes'
-          when 'all'
-            s = :all
+          when 'parent', 'thread', 'all'
+            s = cmd[1].downcase.to_sym
+            s = @parent_status if s == :parent
+            next unless @parent_status.present?
+            next unless s != :thread && @parent_status.account_id == @account.id
             i = cmd[2].to_i
             unit = cmd[3].present? ? cmd[3].downcase : 'minutes'
           else
@@ -567,22 +570,25 @@ class Bangtags
             unit = cmd[2].present? ? cmd[2].downcase : 'minutes'
           end
           delete_after = case unit
-                         when 's', 'second', 'seconds'
-                           [60, i].max.seconds
-                         when 'm', 'minute', 'minutes'
+                         when 'min', 'mins', 'minute', 'minutes'
                            i.minutes
-                         when 'h', 'hour', 'hours'
+                         when 'h', 'hr', 'hrs', 'hour', 'hours'
                            i.hours
-                         when 'd', 'day', 'days'
+                         when 'd', 'dy', 'dys', 'day', 'days'
                            i.days
-                         when 'w', 'week', 'weeks'
+                         when 'w', 'wk', 'wks', 'week', 'weeks'
                            i.weeks
-                         when 'm', 'month', 'months'
+                         when 'm', 'mn', 'mns', 'month', 'months'
                            i.months
-                         when 'y', 'year', 'years'
+                         when 'y', 'yr', 'yrs', 'year', 'years'
                            i.years
                          end
-          if s == :all
+          if s == :thread
+            @parent_status.conversation.statuses.where(account_id: @account.id).find_each do |s|
+              s.delete_after = delete_after
+              Rails.cache.delete("statuses/#{s.id}")
+            end
+          elsif s == :all
             @account.statuses.find_each do |s|
               s.delete_after = delete_after
               Rails.cache.delete("statuses/#{s.id}")
