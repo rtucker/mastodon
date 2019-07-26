@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class PollValidator < ActiveModel::Validator
-  MAX_OPTIONS      = 6
-  MAX_OPTION_CHARS = 111
+  MAX_OPTIONS      = 33
+  MAX_OPTION_CHARS = 202
   MAX_EXPIRATION   = 6.months.freeze
   MIN_EXPIRATION   = 1.minute.freeze
 

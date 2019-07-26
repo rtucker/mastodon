@@ -77,7 +77,7 @@ class Option extends React.PureComponent {
 
           <AutosuggestInput
             placeholder={intl.formatMessage(messages.option_placeholder, { number: index + 1 })}
-            maxlength={111}
+            maxlength={202}
             value={title}
             onChange={this.handleOptionTitleChange}
             suggestions={this.props.suggestions}
@@ -142,7 +142,7 @@ class PollForm extends ImmutablePureComponent {
         </ul>
 
         <div className='poll__footer'>
-          {options.size < 6 && (
+          {options.size < 33 && (
             <button className='button button-secondary' onClick={this.handleAddOption}><Icon id='plus' /> <FormattedMessage {...messages.add_option} /></button>
           )}
 
