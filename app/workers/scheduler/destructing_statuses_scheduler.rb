@@ -7,13 +7,13 @@ class Scheduler::DestructingStatusesScheduler
 
   def perform
     due_statuses.find_each do |destructing_status|
-      DestructStatusWorker.perform_at(destructing_status.delete_after, destructing_status.id)
+      DestructStatusWorker.perform_async(destructing_status.id)
     end
   end
 
   private
 
   def due_statuses
-    DestructingStatus.where('delete_after <= ?', Time.now.utc + PostStatusService::MIN_DESTRUCT_OFFSET)
+    DestructingStatus.where('delete_after <= ?', Time.now.utc)
   end
 end
