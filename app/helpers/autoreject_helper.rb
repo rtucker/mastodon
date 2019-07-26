@@ -1,4 +1,6 @@
 module AutorejectHelper
+  LOG_SCOPE_FEDERATION = ENV.fetch('LOG_SCOPE_FEDERATION', 'federation')
+
 	def should_reject?(uri = nil)
     if uri.nil?
       if @object
@@ -91,10 +93,10 @@ module AutorejectHelper
       reason = reject_reason(reason)
       if @json
         Rails.logger.info("Auto-rejected #{@json['id']} (#{@json['type']})")
-        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']} because #{reason}.")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']} because #{reason}.", LOG_SCOPE_FEDERATION)
       elsif uri
         Rails.logger.info("Auto-rejected #{uri}")
-        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected a request to #{uri} because #{reason}.")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected a request to #{uri} because #{reason}.", LOG_SCOPE_FEDERATION)
       end
       return true
     end

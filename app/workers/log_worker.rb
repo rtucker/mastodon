@@ -5,18 +5,21 @@ class LogWorker
 
   sidekiq_options unique: :until_executed
 
-  def perform(log_text)
+  def perform(log_text, scope = nil)
     logger_id = ENV['LOG_USER'].to_i
     return true if logger_id == 0
 
     logger = Account.find_by(id: logger_id)
     return true if logger.nil?
 
+    scope_prefix = ENV.fetch('LOG_SCOPE_PREFIX', 'admin.log')
+    tag = scope.nil? ? scope_prefix : "#{scope_prefix}.#{scope}"
+
     PostStatusService.new.call(
       logger,
       created_at: Time.now.utc,
       text: log_text.strip,
-      tags: ['monsterpit.admin.log'],
+      tags: [tag],
       visibility: :unlisted,
       local_only: true,
       content_type: 'text/plain',
