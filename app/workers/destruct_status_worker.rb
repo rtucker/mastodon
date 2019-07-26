@@ -10,6 +10,7 @@ class DestructStatusWorker
     destructing_status.destroy!
 
     RemoveStatusService.new.call(destructing_status.status)
+    true
   rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
     true
   end
