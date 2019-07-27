@@ -422,42 +422,60 @@ class Bangtags
           end
         when 'i', 'we'
           chunk = nil
-          next if cmd[1].nil?
-          case cmd[1].downcase
+          cmd.shift
+          c = cmd.shift
+          next if c.nil?
+          case c.downcase
           when 'am', 'are'
-            who = cmd[2]
-            if who.blank?
+            if cmd[0].blank?
               @vars.delete('_they:are')
               status.footer = nil
               next
-            elsif who == 'not'
-              who = cmd[3]
-              next if who.blank?
-              name = who.downcase.gsub(/\s+/, '')
-              @vars.delete("_they:are:#{name}")
-              next unless @vars['_they:are'] == name
-              @vars.delete('_they:are')
-              status.footer = nil
+            elsif cmd[0] == 'not'
+              cmd.each do |name|
+                name = who.downcase.gsub(/\s+/, '')
+                @vars.delete("_they:are:#{name}")
+                next unless @vars['_they:are'] == name
+                @vars.delete('_they:are')
+                status.footer = nil
+              end
               next
-            elsif who == 'list'
+            elsif cmd[0] == 'list'
               @status.visibility = :direct
               @status.local_only = true
               @status.content_type = 'text/markdown'
               names = @vars.keys.select { |k| k.start_with?('_they:are:') }
+              names.delete('_they:are:_several')
               names.map! { |k| "<code>#{k[10..-1]}</code> is <em>#{@vars[k]}</em>" }
               @chunks << (["\n# <code>#!</code><code>i:am:list</code>:\n<hr />\n"] + names).join("\n") + "\n"
               next
             end
-            name = who.downcase.gsub(/\s+/, '').strip
-            description = cmd[3..-1].join(':').strip
-            if description.blank?
-              if @vars["_they:are:#{name}"].nil?
-                @vars["_they:are:#{name}"] = who.strip
+            if cmd.include?('and')
+              name = '_several'
+              cmd.delete('and')
+              cmd.map! { |who| @vars["_they:are:#{who.downcase.gsub(/\s+/, '').strip}"] }
+              cmd.delete(nil)
+              if cmd.count == 1
+                name = who.downcase.gsub(/\s+/, '').strip
+                @vars["_they:are:#{name}"] = cmd[0]
+              else
+                last = cmd.pop
+                @vars["_they:are:#{name}"] = "#{cmd.join(', ')} and #{last}"
               end
             else
-              @vars["_they:are:#{name}"] = description
+              who = cmd[0]
+              name = who.downcase.gsub(/\s+/, '').strip
+              description = cmd[1..-1].join(':').strip
+              if description.blank?
+                if @vars["_they:are:#{name}"].nil?
+                  @vars["_they:are:#{name}"] = who.strip
+                end
+              else
+                @vars["_they:are:#{name}"] = description
+              end
             end
-            @vars['_they:are'] = name
+
+            @vars['_they:are'] = name unless @once
             status.footer = @vars["_they:are:#{name}"]
           end
         when 'sharekey'
