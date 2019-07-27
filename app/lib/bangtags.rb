@@ -10,6 +10,7 @@ class Bangtags
     @parent_status = Status.find(status.in_reply_to_id) if status.in_reply_to_id
 
     @crunch_newlines = false
+    @once = false
 
     @prefix_ns = {
       'permalink' => ['link'],
@@ -98,6 +99,12 @@ class Bangtags
         end
 
         next if cmd[0].nil?
+        if cmd[0].downcase == 'once'
+          @once = true
+          cmd.shift
+          next if cmd[0].nil?
+        end
+
         case cmd[0].downcase
         when 'var'
           chunk = nil
