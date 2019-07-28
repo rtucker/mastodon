@@ -433,7 +433,7 @@ class Bangtags
               next
             elsif cmd[0] == 'not'
               cmd.each do |name|
-                name = who.downcase.gsub(/\s+/, '')
+                name = name.downcase.gsub(/\s+/, '')
                 @vars.delete("_they:are:#{name}")
                 next unless @vars['_they:are'] == name
                 @vars.delete('_they:are')
