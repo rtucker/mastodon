@@ -32,6 +32,7 @@ class PostStatusService < BaseService
   # @option [String] :delete_after
   # @option [Boolean] :nocrawl Optional skip link card generation
   # @option [Boolean] :nomentions Optional skip mention processing
+  # @option [Boolean] :delayed Optional publishing delay of 30 secs
   # @option [Hash] :poll Optional poll to attach
   # @option [Enumerable] :media_ids Optional array of media IDs to attach
   # @option [Doorkeeper::Application] :application
@@ -57,8 +58,23 @@ class PostStatusService < BaseService
       schedule_status!
     else
       return unless process_status!
-      postprocess_status!
-      bump_potential_friendship!
+      if @options[:delayed] || @account&.user&.delayed_roars?
+        delay_until = Time.now.utc + 30.seconds
+        opts = {
+          visibility: @visibility,
+          federate: @options[:federate],
+          distribute: @options[:distribute],
+          nocrawl: @options[:nocrawl],
+          nomentions: @options[:nomentions],
+          delete_after: @delete_after.nil? ? nil : @delete_after + 30.seconds,
+        }.compact
+
+        PostStatusWorker.perform_at(delay_until, @status.id, opts)
+        DistributionWorker.perform_async(@status.id, delayed = true) unless @options[:distribute] == false
+      else
+        postprocess_status!
+        bump_potential_friendship!
+      end
     end
 
     redis.setex(idempotency_key, 3_600, @status.id) if idempotency_given?
@@ -149,7 +165,7 @@ class PostStatusService < BaseService
     return false if @status.destroyed?
 
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
-    process_mentions_service.call(@status) unless @options[:nomentions]
+    process_mentions_service.call(@status) unless @delayed || @options[:nomentions]
 
     return true
   end

@@ -3,10 +3,11 @@
 class FanOutOnWriteService < BaseService
   # Push a status into home and mentions feeds
   # @param [Status] status
-  def call(status)
+  def call(status, delayed = false)
     raise Mastodon::RaceConditionError if status.visibility.nil?
 
     deliver_to_self(status) if status.account.local?
+    return if delayed
 
     render_anonymous_payload(status)
 

@@ -118,6 +118,7 @@ en:
         setting_default_language: Posting language
         setting_default_privacy: Post privacy
         setting_roar_lifespan: Auto-delete new roars after
+        setting_delayed_roars: Delayed publishing of roars for proofreading (30 secs)
         setting_default_local: Default to Monsterpit-only roars (in Glitch flavour)
         setting_always_local: Don't send your roars outside Monsterpit
         setting_rawr_federated: Show raw world timeline (may contain offensive content!)

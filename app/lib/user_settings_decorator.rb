@@ -38,6 +38,7 @@ class UserSettingsDecorator
     user.settings['larger_emoji']        = larger_emoji_preference if change?('setting_larger_emoji')
     user.settings['max_public_history']  = max_public_history_preference if change?('setting_max_public_history')
     user.settings['roar_lifespan']       = roar_lifespan_preference if change?('setting_roar_lifespan')
+    user.settings['delayed_roars']       = delayed_roars_preference if change?('setting_delayed_roars')
 
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
@@ -133,6 +134,10 @@ class UserSettingsDecorator
 
   def roar_lifespan_preference
     settings['setting_roar_lifespan']
+  end
+
+  def delayed_roars_preference
+    settings['setting_delayed_roars']
   end
 
   def merged_notification_emails

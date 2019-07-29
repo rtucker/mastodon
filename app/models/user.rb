@@ -126,6 +126,7 @@ class User < ApplicationRecord
     :hide_public_outbox,
     :max_public_history,
     :roar_lifespan,
+    :delayed_roars,
 
     :auto_play_gif,
     :default_sensitive,
@@ -302,6 +303,10 @@ class User < ApplicationRecord
 
   def roar_lifespan
     @_roar_lifespan ||= (settings.roar_lifespan || 0)
+  end
+
+  def delayed_roars?
+    @delayed_roars ||= (settings.delayed_roars || false)
   end
 
   def defaults_to_local_only?
