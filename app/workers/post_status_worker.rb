@@ -9,10 +9,9 @@ class PostStatusWorker
     status = Status.find(status_id)
     return false if status.destroyed?
 
-    if options[:visibility]
-      status.visibility = options[:visibility]
-      status.save!
-    end
+    status.visibility = options[:visibility] if options[:visibility]
+    status.local_only = options[:local_only] if options[:local_only]
+    status.save!
 
     process_mentions_service.call(status) unless options[:nomentions]
 

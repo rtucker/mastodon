@@ -59,14 +59,15 @@ class PostStatusService < BaseService
     else
       return unless process_status!
       if @options[:delayed] || @account&.user&.delayed_roars?
-        delay_until = Time.now.utc + 30.seconds
+        delay_until = Time.now.utc + 1.minute
         opts = {
           visibility: @visibility,
+          local_only: @local_only,
           federate: @options[:federate],
           distribute: @options[:distribute],
           nocrawl: @options[:nocrawl],
           nomentions: @options[:nomentions],
-          delete_after: @delete_after.nil? ? nil : @delete_after + 30.seconds,
+          delete_after: @delete_after.nil? ? nil : @delete_after + 1.minute,
         }.compact
 
         PostStatusWorker.perform_at(delay_until, @status.id, opts)
@@ -165,7 +166,7 @@ class PostStatusService < BaseService
     return false if @status.destroyed?
 
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
-    process_mentions_service.call(@status) unless @delayed || @options[:nomentions]
+    process_mentions_service.call(@status) unless @options[:delayed] || @options[:nomentions]
 
     return true
   end
