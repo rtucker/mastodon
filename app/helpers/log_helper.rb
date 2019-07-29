@@ -23,12 +23,12 @@ module LogHelper
       elsif target.is_a? CustomEmoji
         LogWorker.perform_async("\xf0\x9f\x97\x91\xef\xb8\x8f <#{source}> removed the '#{target.shortcode}' emoji.", LOG_SCOPE_MODERATION)
       elsif target.is_a? Status
-        LogWorker.perform_async("\xf0\x9f\x97\x91\xef\xb8\x8f <#{source}> removed post #{TagManager.instance.url_for(target, LOG_SCOPE_MODERATION)}\u200b.")
+        LogWorker.perform_async("\xf0\x9f\x97\x91\xef\xb8\x8f <#{source}> removed post #{TagManager.instance.url_for(target)}\u200b.")
       end
 
     when :update
       if target.is_a? Status
-        LogWorker.perform_async("\xf0\x9f\x91\x81\xef\xb8\x8f <#{source}> changed visibility flags of post #{TagManager.instance.url_for(target, LOG_SCOPE_MODERATION)}\u200b.")
+        LogWorker.perform_async("\xf0\x9f\x91\x81\xef\xb8\x8f <#{source}> changed visibility flags of post #{TagManager.instance.url_for(target)}\u200b.")
       elsif target.is_a? CustomEmoji
         LogWorker.perform_async("\xf0\x9f\x94\x81 <#{source}> replaced the '#{target.shortcode}' emoji. :#{target.shortcode}:", LOG_SCOPE_MODERATION)
       end
