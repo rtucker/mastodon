@@ -127,6 +127,7 @@ class User < ApplicationRecord
     :max_public_history,
     :roar_lifespan,
     :delayed_roars,
+    :delayed_for,
 
     :auto_play_gif,
     :default_sensitive,
@@ -307,6 +308,10 @@ class User < ApplicationRecord
 
   def delayed_roars?
     @delayed_roars ||= (settings.delayed_roars || false)
+  end
+
+  def delayed_for
+    @_delayed_for ||= (settings.delayed_for || 60)
   end
 
   def defaults_to_local_only?

@@ -59,7 +59,8 @@ class PostStatusService < BaseService
     else
       return unless process_status!
       if @options[:delayed] || @account&.user&.delayed_roars?
-        delay_until = Time.now.utc + 1.minute
+        delay_for = [5, @account&.user&.delayed_for.to_i].max
+        delay_until = Time.now.utc + delay_for.seconds
         opts = {
           visibility: @visibility,
           local_only: @local_only,

@@ -55,6 +55,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_max_public_history,
       :setting_roar_lifespan,
       :setting_delayed_roars,
+      :setting_delayed_for,
 
       :setting_default_privacy,
       :setting_default_sensitive,
