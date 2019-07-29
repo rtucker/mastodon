@@ -578,6 +578,10 @@
   white-space: nowrap;
   overflow: hidden;
 
+  & > .clear {
+    float: left;
+  }
+
   & > .count {
     display: inline-block;
     margin: 0 16px 0 8px;
