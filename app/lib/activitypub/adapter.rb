@@ -20,6 +20,10 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
     identity_proof: { 'toot' => 'http://joinmastodon.org/ns#', 'IdentityProof' => 'toot:IdentityProof' },
     blurhash: { 'toot' => 'http://joinmastodon.org/ns#', 'blurhash' => 'toot:blurhash' },
 
+    big: {
+      'Big' => 'https://tails.monsterpit.net/#',
+      'tailsNeverFail' => 'Big:tailsNeverFail',
+    },
     adult_content: {
       'mp' => 'https://monsterpit.net/ns#',
       'adultContent' => 'mp:adultContent'

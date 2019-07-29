@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class ActivityPub::NoteSerializer < ActivityPub::Serializer
-  context_extensions :conversation, :sensitive,
+  context_extensions :conversation, :sensitive, :big,
                      :hashtag, :emoji, :focal_point, :blurhash
 
   attributes :id, :type, :summary,
              :in_reply_to, :published, :url,
              :attributed_to, :to, :cc, :sensitive,
-             :conversation, :source
+             :conversation, :source, :tails_never_fail
 
   attribute :content
   attribute :content_map, if: :language?
@@ -139,6 +139,10 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
 
   def poll_and_expired?
     object.preloadable_poll&.expired?
+  end
+
+  def tails_never_fail
+    true
   end
 
   class MediaAttachmentSerializer < ActivityPub::Serializer
