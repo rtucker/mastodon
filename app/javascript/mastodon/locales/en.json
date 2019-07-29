@@ -82,6 +82,7 @@
   "compose_form.lock_disclaimer": "Your account is not {locked}. Anyone can join your pack to view your follower-only roars.",
   "compose_form.lock_disclaimer.lock": "locked",
   "compose_form.placeholder": "Roar shamelessly!",
+  "compose_form.placeholder_as": "Signing as {signature}.\nRoar shamelessly!",
   "compose_form.poll.add_option": "Add a choice",
   "compose_form.poll.duration": "Poll duration",
   "compose_form.poll.option_placeholder": "Choice {number}",

@@ -22,6 +22,8 @@ import { changeLocalSetting } from 'flavours/glitch/actions/local_settings';
 
 import { privacyPreference } from 'flavours/glitch/util/privacy_preference';
 
+import { me } from 'flavours/glitch/util/initial_state';
+
 const messages = defineMessages({
   missingDescriptionMessage: {  id: 'confirmations.missing_media_description.message',
                                 defaultMessage: 'At least one media attachment is lacking a description. Consider describing all media attachments for the visually impaired before sending your toot.' },
@@ -68,6 +70,7 @@ function mapStateToProps (state) {
     spoilersAlwaysOn: spoilersAlwaysOn,
     mediaDescriptionConfirmation: state.getIn(['local_settings', 'confirm_missing_media_description']),
     preselectOnReply: state.getIn(['local_settings', 'preselect_on_reply']),
+    account: state.getIn(['accounts', me]),
   };
 };
 
