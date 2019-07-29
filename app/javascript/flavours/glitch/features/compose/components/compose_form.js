@@ -52,6 +52,7 @@ class ComposeForm extends ImmutablePureComponent {
     isUploading: PropTypes.bool,
     onChange: PropTypes.func,
     onSubmit: PropTypes.func,
+    onClearAll: PropTypes.func,
     onClearSuggestions: PropTypes.func,
     onFetchSuggestions: PropTypes.func,
     onSuggestionSelected: PropTypes.func,
@@ -111,6 +112,7 @@ class ComposeForm extends ImmutablePureComponent {
       text,
       mediaDescriptionConfirmation,
       onMediaDescriptionConfirm,
+      onClearAll,
     } = this.props;
 
     //  If something changes inside the textarea, then we update the
@@ -166,6 +168,10 @@ class ComposeForm extends ImmutablePureComponent {
       onChangeVisibility(sideArm);
     }
     this.handleSubmit();
+  }
+
+  handleClearAll = () => {
+    this.props.onClearAll();
   }
 
   //  Selects a suggestion from the autofill.
@@ -279,6 +285,7 @@ class ComposeForm extends ImmutablePureComponent {
       handleSelect,
       handleSubmit,
       handleRefTextarea,
+      handleClearAll,
     } = this;
     const {
       advancedOptions,
@@ -376,6 +383,7 @@ class ComposeForm extends ImmutablePureComponent {
           disabled={disabledButton}
           onSecondarySubmit={handleSecondarySubmit}
           onSubmit={handleSubmit}
+          onClearAll={handleClearAll}
           privacy={privacy}
           sideArm={sideArm}
         />

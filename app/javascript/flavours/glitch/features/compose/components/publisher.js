@@ -23,6 +23,10 @@ const messages = defineMessages({
     defaultMessage: '{publish}!',
     id: 'compose_form.publish_loud',
   },
+  clear: {
+    defaultMessage: 'Clear',
+    id: 'compose_form.clear',
+  },
 });
 
 export default @injectIntl
@@ -34,12 +38,13 @@ class Publisher extends ImmutablePureComponent {
     intl: PropTypes.object.isRequired,
     onSecondarySubmit: PropTypes.func,
     onSubmit: PropTypes.func,
-    privacy: PropTypes.oneOf(['direct', 'private', 'unlisted', 'public']),
-    sideArm: PropTypes.oneOf(['none', 'direct', 'private', 'unlisted', 'public']),
+    onClearAll: PropTypes.func,
+    privacy: PropTypes.oneOf(['direct', 'private', 'unlisted', 'local', 'public']),
+    sideArm: PropTypes.oneOf(['none', 'direct', 'private', 'unlisted', 'local', 'public']),
   };
 
   render () {
-    const { countText, disabled, intl, onSecondarySubmit, onSubmit, privacy, sideArm } = this.props;
+    const { countText, disabled, intl, onSecondarySubmit, onSubmit, onClearAll, privacy, sideArm } = this.props;
 
     const diff = maxChars - length(countText || '');
     const computedClass = classNames('composer--publisher', {
@@ -49,6 +54,17 @@ class Publisher extends ImmutablePureComponent {
 
     return (
       <div className={computedClass}>
+        <Button
+          className='clear'
+          onClick={onClearAll}
+          text={
+            <span>
+              <Icon icon='trash-o' />
+              {' '}
+              <FormattedMessage {...messages.clear} />
+            </span>
+          }
+        />
         <span className='count'>{diff}</span>
         {sideArm && sideArm !== 'none' ? (
           <Button
@@ -61,6 +77,7 @@ class Publisher extends ImmutablePureComponent {
                 <Icon
                   icon={{
                     public: 'globe',
+                    local: 'users',
                     unlisted: 'unlock',
                     private: 'lock',
                     direct: 'envelope',
@@ -86,6 +103,7 @@ class Publisher extends ImmutablePureComponent {
                       private: 'lock',
                       public: 'globe',
                       unlisted: 'unlock',
+                      local: 'users',
                     }[privacy]}
                   />
                   {' '}

@@ -14,6 +14,7 @@ import {
   submitCompose,
   unmountCompose,
   uploadCompose,
+  resetCompose,
 } from 'flavours/glitch/actions/compose';
 import {
   openModal,
@@ -133,6 +134,10 @@ const mapDispatchToProps = (dispatch, { intl }) => ({
       onDoNotAsk: () => dispatch(changeLocalSetting(['confirm_missing_media_description'], false)),
     }));
   },
+
+  onClearAll() {
+    dispatch(resetCompose());
+  }
 
 });
 
