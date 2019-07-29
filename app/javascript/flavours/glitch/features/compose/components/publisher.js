@@ -57,11 +57,10 @@ class Publisher extends ImmutablePureComponent {
         <Button
           className='clear'
           onClick={onClearAll}
+          title={intl.formatMessage(messages.clear)}
           text={
             <span>
               <Icon icon='trash-o' />
-              {' '}
-              <FormattedMessage {...messages.clear} />
             </span>
           }
         />
