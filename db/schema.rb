@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_24_175247) do
+ActiveRecord::Schema.define(version: 2019_07_28_201832) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -663,6 +663,7 @@ ActiveRecord::Schema.define(version: 2019_07_24_175247) do
     t.boolean "imported"
     t.string "origin"
     t.tsvector "tsv"
+    t.boolean "boostable"
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20180106", order: { id: :desc }
     t.index ["account_id", "id", "visibility"], name: "index_statuses_on_account_id_and_id_and_visibility", order: { id: :desc }, where: "(visibility = ANY (ARRAY[0, 1, 2, 4]))"
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id"
