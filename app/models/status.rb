@@ -31,6 +31,7 @@
 #  edited                 :boolean
 #  imported               :boolean
 #  origin                 :string
+#  boostable              :boolean
 #
 
 class Status < ApplicationRecord
