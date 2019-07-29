@@ -20,8 +20,8 @@ const messages = defineMessages({
   placeholder: { id: 'compose_form.placeholder', defaultMessage: 'Roar shamelessly!' },
   placeholder_as: {
     id: 'compose_form.placeholder_as',
-    defaultMessage: "Signing as {signature}.\nRoar shamelessly!",
-    values: {signature: 'yourself'}
+    defaultMessage: "Signing as {nickname}.\nRoar shamelessly!",
+    values: {nickname: 'yourself'}
   },
   missingDescriptionMessage: {  id: 'confirmations.missing_media_description.message',
                                 defaultMessage: 'At least one media attachment is lacking a description. Consider describing all media attachments for the visually impaired before sending your toot.' },
@@ -307,7 +307,7 @@ class ComposeForm extends ImmutablePureComponent {
     } = this.props;
 
     let disabledButton = isSubmitting || isUploading || isChangingUpload || (!text.trim().length && !anyMedia);
-    let signature = this.props.account.get('signature');
+    let nickname = this.props.account.get('identity');
 
     return (
       <div className='composer'>
@@ -339,7 +339,7 @@ class ComposeForm extends ImmutablePureComponent {
 
           <AutosuggestTextarea
             ref={this.setAutosuggestTextarea}
-            placeholder={signature ? intl.formatMessage(messages.placeholder_as, {signature: signature}) : intl.formatMessage(messages.placeholder)}
+            placeholder={nickname ? intl.formatMessage(messages.placeholder_as, {nickname: nickname}) : intl.formatMessage(messages.placeholder)}
             disabled={isSubmitting}
             value={this.props.text}
             onChange={this.handleChange}
