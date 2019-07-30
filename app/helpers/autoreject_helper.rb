@@ -1,6 +1,4 @@
 module AutorejectHelper
-  LOG_SCOPE_FEDERATION = ENV.fetch('LOG_SCOPE_FEDERATION', 'federation')
-
 	def should_reject?(uri = nil)
     if uri.nil?
       if @object
@@ -14,8 +12,7 @@ module AutorejectHelper
 
     domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
     blocks = DomainBlock.suspend
-    reason = ((@json && @json['type'] == 'Announce') ? :domain_boost : :domain)
-    return reason if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
+    return :domain if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
 
     return unless @json || @object
 
@@ -63,8 +60,6 @@ module AutorejectHelper
     case reason
     when :domain
       "the origin domain is blocked"
-    when :domain_boost
-      "the origin domain of the object being boosted is blocked"
     when :id_starts_with
       "the object's URI starts with a blocked phrase"
     when :id_contains
@@ -92,11 +87,9 @@ module AutorejectHelper
     if reason
       reason = reject_reason(reason)
       if @json
-        Rails.logger.info("Auto-rejected #{@json['id']} (#{@json['type']})")
-        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']} because #{reason}.", LOG_SCOPE_FEDERATION)
+        Rails.logger.info("Rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']} because #{reason}.")
       elsif uri
-        Rails.logger.info("Auto-rejected #{uri}")
-        LogWorker.perform_async("\xf0\x9f\x9a\xab Auto-rejected a request to #{uri} because #{reason}.", LOG_SCOPE_FEDERATION)
+        Rails.logger.info("Rejected an outgoing request to #{uri} because #{reason}.")
       end
       return true
     end
