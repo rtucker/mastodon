@@ -229,6 +229,7 @@ class Formatter
     else
       html = simple_format(html, {}, sanitize: false)
       html = html.delete("\n")
+      html = format_console(html) if status.content_type == 'text/console'
     end
 
     unless status.footer.blank?
@@ -247,13 +248,17 @@ class Formatter
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
 
+  def format_console(html)
+    "<pre><code>#{html}</code></pre>"
+  end
+
   def format_markdown(html)
     html = markdown_formatter.render(html)
   end
 
   def format_bbcode(html)
     html = bbcode_formatter(html)
-    html = html.gsub(/<hr>.*<\/hr>/im, '<hr />')
+    html.gsub(/<hr>.*<\/hr>/im, '<hr />')
   end
 
   def format_bbdown(html)

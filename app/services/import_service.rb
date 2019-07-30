@@ -7,7 +7,7 @@ class ImportService < BaseService
   include JsonLdHelper
 
   ROWS_PROCESSING_LIMIT = 20_000
-  CONTENT_TYPES = %w(text/bbcode+markdown text/markdown text/bbcode text/html text/plain).freeze
+  CONTENT_TYPES = %w(text/bbcode+markdown text/markdown text/bbcode text/html text/plain text/console).freeze
   VISIBILITIES = [:public, :unlisted, :private, :direct, :limited].freeze
   IMPORT_STATUS_ATTRIBUTES = [
     'id',

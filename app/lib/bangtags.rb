@@ -504,6 +504,11 @@ class Bangtags
             'plain'       => 'text/plain',
             'plaintext'   => 'text/plain',
 
+            'c'           => 'text/console',
+            'console'     => 'text/console',
+            'terminal'    => 'text/console',
+            'monospace'   => 'text/console',
+
             'm'           => 'text/markdown',
             'md'          => 'text/markdown',
             'markdown'    => 'text/markdown',

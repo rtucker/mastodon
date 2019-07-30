@@ -31,6 +31,7 @@ en:
         setting_default_content_type_html_html: "<strong>&lt;strong&gt;Bold&lt;/strong&gt;</strong>, <u>&lt;u&gt;Underline&lt;/u&gt;</u>, <em>&lt;em&gt;Italic&lt;/em&gt;</em>, <code>&lt;code&gt;Console&lt;/code&gt;</code>, ..."
         setting_default_content_type_markdown_html: "<strong>**Bold**</strong>, <u>_Underline_</u>, <em>*Italic*</em>, <code>`Console`</code>, ..."
         setting_default_content_type_plain_html: No formatting.
+        setting_default_content_type_console_html: <code>Plain-text console formatting.<code>
         setting_default_content_type_x_bbcode_html: "<strong>[b]Bold[/b]</strong>, <u>[u]Underline[/u]</u>, <em>[i]Italic[/i]</em>, <code>[code]Console[/code]</code>, ..."
         setting_default_content_type_x_bbcode_markdown_html: "<strong>**Bold**</strong>, <u>[u]Underline[/u]</u>, <em>*Italic*</em>, <code>[code]Console[/code]</code>, ..."
         setting_default_language: The language of your roars can be detected automatically, but it's not always accurate
@@ -113,6 +114,7 @@ en:
         setting_default_content_type_html: HTML
         setting_default_content_type_markdown: Markdown
         setting_default_content_type_plain: Plain text
+        setting_default_content_type_console: Console
         setting_default_content_type_x_bbcode: BBCode
         setting_default_content_type_x_bbcode_markdown: BBdown
         setting_default_language: Posting language

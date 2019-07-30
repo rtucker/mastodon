@@ -22,7 +22,7 @@ class LogWorker
       tags: [tag],
       visibility: :unlisted,
       local_only: true,
-      content_type: 'text/plain',
+      content_type: 'text/console',
       language: 'en',
       nocrawl: true,
       nomentions: true,

@@ -40,7 +40,9 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
   end
 
   def source
-    { 'source' => object.proper.text, 'mediaType' => object.proper.content_type || 'text/plain' }
+    content_type = object.proper.content_type || 'text/plain'
+    content_type = 'text/plain+console' if content_type == 'text/console'
+    { 'source' => object.proper.text, 'mediaType' => content_type }
   end
 
   def content_map

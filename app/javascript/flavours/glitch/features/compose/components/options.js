@@ -77,6 +77,10 @@ const messages = defineMessages({
     defaultMessage: 'Markdown',
     id: 'compose.content-type.markdown',
   },
+  console: {
+    defaultMessage: 'Console',
+    id: 'compose.content-type.console',
+  },
   plain: {
     defaultMessage: 'Plain text',
     id: 'compose.content-type.plain',
@@ -258,6 +262,11 @@ class ComposerOptions extends ImmutablePureComponent {
         name: 'text/plain',
         text: <FormattedMessage {...messages.plain} />,
       },
+      console: {
+        icon: 'terminal',
+        name: 'text/console',
+        text: <FormattedMessage {...messages.console} />,
+      },
       html: {
         icon: 'code',
         name: 'text/html',
@@ -355,6 +364,7 @@ class ComposerOptions extends ImmutablePureComponent {
               contentTypeItems.xbbcode,
               contentTypeItems.html,
               contentTypeItems.plain,
+              contentTypeItems.console,
             ]}
             onChange={onChangeContentType}
             onModalClose={onModalClose}
