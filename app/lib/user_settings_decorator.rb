@@ -143,11 +143,11 @@ class UserSettingsDecorator
   end
 
   def show_cursor_preference
-    settings['setting_show_cursor']
+    boolean_cast_setting 'setting_show_cursor'
   end
 
   def delayed_roars_preference
-    settings['setting_delayed_roars']
+    boolean_cast_setting 'setting_delayed_roars'
   end
 
   def merged_notification_emails
