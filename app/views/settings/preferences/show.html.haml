@@ -27,6 +27,8 @@
 
     = f.input :setting_default_content_type, collection: ['text/x-bbcode+markdown', 'text/markdown', 'text/x-bbcode', 'text/html', 'text/plain', 'text/console'], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.defaults.setting_default_content_type_#{item.split('/')[1].gsub(/[+-]/, '_')}"), content_tag(:span, t("simple_form.hints.defaults.setting_default_content_type_#{item.split('/')[1].gsub(/[+-]/, '_')}_html"), class: 'hint')]) }, required: false, as: :radio_buttons, collection_wrapper_tag: 'ul', item_wrapper_tag: 'li'
 
+
+  .fields-group
     = f.input :setting_default_local, as: :boolean, wrapper: :with_label
     = f.input :setting_always_local, as: :boolean, wrapper: :with_label
     = f.input :setting_default_sensitive, as: :boolean, wrapper: :with_label
@@ -72,6 +74,7 @@
     = f.input :setting_larger_buttons, as: :boolean, wrapper: :with_label
     = f.input :setting_larger_drawer, as: :boolean, wrapper: :with_label
     = f.input :setting_larger_emoji, as: :boolean, wrapper: :with_label
+    = f.input :setting_show_cursor, as: :boolean, wrapper: :with_label
 
   .fields-group
     = f.input :setting_hide_mascot, as: :boolean, wrapper: :with_label

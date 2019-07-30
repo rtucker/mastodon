@@ -249,7 +249,8 @@ class Formatter
   end
 
   def format_console(html)
-    "<pre><code>#{html}</code></pre>"
+    cursor = '<span class="cursor"></span>'
+    "<pre><code>#{html.strip.sub(/<\/p>\Z/, cursor)}</p></code></pre>"
   end
 
   def format_markdown(html)

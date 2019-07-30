@@ -19,6 +19,12 @@
       color: darken($secondary-text-color, 20%);
     }
   }
+  span.cursor {
+    color: lighten($dark-text-color, 20%);
+    font-family: $font-monospace, monospace;
+    /* animation: t_blink 1s linear infinite; */
+  }
+  /* span.cursor::before { content: " █" } */
 }
 
 .composer--reply > .content {
@@ -98,4 +104,9 @@ div.drawer__inner__admin {
       color: lighten($dark-text-color, 10%);
     }
   }
+}
+
+@keyframes t_blink {
+  from { opacity: 1 }
+  to { opacity: 0 }
 }

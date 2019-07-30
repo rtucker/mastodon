@@ -128,6 +128,7 @@ class User < ApplicationRecord
     :roar_lifespan,
     :delayed_roars,
     :delayed_for,
+    :show_cursor,
 
     :auto_play_gif,
     :default_sensitive,
@@ -312,6 +313,10 @@ class User < ApplicationRecord
 
   def delayed_for
     @_delayed_for ||= (settings.delayed_for || 60)
+  end
+
+  def shows_cursor?
+    @show_cursor ||= (settings.show_cursor || false)
   end
 
   def defaults_to_local_only?

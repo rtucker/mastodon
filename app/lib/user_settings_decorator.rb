@@ -40,6 +40,7 @@ class UserSettingsDecorator
     user.settings['roar_lifespan']       = roar_lifespan_preference if change?('setting_roar_lifespan')
     user.settings['delayed_roars']       = delayed_roars_preference if change?('setting_delayed_roars')
     user.settings['delayed_for']         = delayed_for_preference if change?('setting_delayed_for')
+    user.settings['show_cursor']         = show_cursor_preference if change?('setting_show_cursor')
 
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
@@ -139,6 +140,10 @@ class UserSettingsDecorator
 
   def delayed_for_preference
     settings['setting_delayed_for']
+  end
+
+  def show_cursor_preference
+    settings['setting_show_cursor']
   end
 
   def delayed_roars_preference

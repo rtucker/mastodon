@@ -81,5 +81,10 @@
         .status__content .emojione { width: 24px !important; height: 24px !important }
         .status__content .hoverplay:hover { padding-left: 24px !important }
 
+    -if current_account&.user_shows_cursor?
+      :css
+        span.cursor { animation: t_blink 1s linear infinite }
+        span.cursor::before { content: " █" }
+
   %body{ class: body_classes }
     = content_for?(:content) ? yield(:content) : yield

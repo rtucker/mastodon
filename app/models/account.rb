@@ -154,6 +154,7 @@ class Account < ApplicationRecord
            :hides_filtered_gap?,
            :hides_mascot?,
            :hides_captions?,
+           :shows_cursor?,
 
            to: :user,
            prefix: true,

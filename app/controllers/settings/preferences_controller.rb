@@ -56,6 +56,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_roar_lifespan,
       :setting_delayed_roars,
       :setting_delayed_for,
+      :setting_show_cursor,
 
       :setting_default_privacy,
       :setting_default_sensitive,
