@@ -53,6 +53,9 @@ en:
         setting_roar_lifespan_old: "<strong>This is a destructive operation!</strong><br>Back up your account before saving changes!<br>Will deselect after save"
         setting_roar_defederate_old: "<strong>This is an irreversible operation!</strong><br>Will deselect after save"
         allow_unknown_follows: If disabled, packmate requests from accounts you've never interacted with before will be automatically rejected
+        whole_word: When the keyword or phrase is alphanumeric only, it will only be applied if it matches the whole word
+      domain_allow:
+        domain: This domain will be able to fetch data from this server and incoming data from it will be processed and stored
       featured_tag:
         name: 'You might want to use one of these:'
       imports:

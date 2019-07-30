@@ -6,6 +6,8 @@ class MediaProxyController < ApplicationController
   skip_before_action :store_current_location
   skip_before_action :require_functional!
 
+  before_action :authenticate_user!, if: :whitelist_mode?
+
   def show
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?

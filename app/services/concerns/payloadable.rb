@@ -14,6 +14,6 @@ module Payloadable
   end
 
   def signing_enabled?
-    ENV['AUTHORIZED_FETCH'] != 'true' && !Setting.auto_reject_unknown
+    ENV['AUTHORIZED_FETCH'] != 'true' && !Setting.auto_reject_unknown && !Rails.configuration.x.whitelist_mode
   end
 end

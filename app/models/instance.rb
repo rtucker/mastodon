@@ -7,8 +7,9 @@ class Instance
 
   def initialize(resource)
     @domain         = resource.domain
-    @accounts_count = resource.is_a?(DomainBlock) ? nil : resource.accounts_count
-    @domain_block   = resource.is_a?(DomainBlock) ? resource : DomainBlock.find_by(domain: domain)
+    @accounts_count = resource.respond_to?(:accounts_count) ? resource.accounts_count : nil
+    @domain_block   = resource.is_a?(DomainBlock) ? resource : DomainBlock.rule_for(domain)
+    @domain_allow   = resource.is_a?(DomainAllow) ? resource : DomainAllow.rule_for(domain)
     @updated_at     = resource.is_a?(DomainBlock) ? resource.updated_at : 0
   end
 

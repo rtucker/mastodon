@@ -43,7 +43,7 @@ SimpleNavigation::Configuration.run do |navigation|
       s.item :pending, safe_join([fa_icon('clock-o fw'), t('admin.pending_accounts.title', count: User.pending.count)]), admin_pending_accounts_url, highlights_on: %r{/admin/pending_accounts}, if: -> { current_user.can_moderate? && !current_user.defanged? }
       s.item :invites, safe_join([fa_icon('user-plus fw'), t('admin.invites.title')]), admin_invites_path, if: -> { current_user.can_moderate? && !current_user.defanged? }
       s.item :tags, safe_join([fa_icon('tag fw'), t('admin.tags.title')]), admin_tags_path, if: -> { current_user.can_moderate? && !current_user.defanged? }
-      s.item :instances, safe_join([fa_icon('cloud fw'), t('admin.instances.title')]), admin_instances_url(limited: '1'), highlights_on: %r{/admin/instances|/admin/domain_blocks}, if: -> { current_user.staff? && !current_user.defanged? }
+      s.item :instances, safe_join([fa_icon('cloud fw'), t('admin.instances.title')]), admin_instances_url(limited: whitelist_mode? ? nil : '1'), highlights_on: %r{/admin/instances|/admin/domain_blocks|/admin/domain_allows}, if: -> { current_user.staff? && !current_user.defanged? }
       s.item :email_domain_blocks, safe_join([fa_icon('envelope fw'), t('admin.email_domain_blocks.title')]), admin_email_domain_blocks_url, highlights_on: %r{/admin/email_domain_blocks}, if: -> { current_user.staff? && !current_user.defanged? }
     end
 
