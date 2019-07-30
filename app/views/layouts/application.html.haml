@@ -83,8 +83,13 @@
 
     -if current_account&.user_shows_cursor?
       :css
-        span.cursor { animation: t_blink 1s linear infinite }
         span.cursor::before { content: " █" }
+      -if current_account&.user&.setting_auto_play_gif
+        :css
+          span.cursor { animation: t_blink 1s linear infinite }
+      -else
+        :css
+          span.cursor:hover { animation: t_blink 1s linear infinite }
 
   %body{ class: body_classes }
     = content_for?(:content) ? yield(:content) : yield
