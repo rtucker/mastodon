@@ -1,0 +1,14 @@
+%tr
+  %td
+    %samp= domain_block.domain
+  %td= domain_block.severity.gsub('_', ' ').capitalize
+  %td
+    %ul
+      -if domain_block.reject_media?
+        %li= "Rejecting media"
+      -if domain_block.force_sensitive?
+        %li= "Media marked sensitive"
+      -if domain_block.reject_reports?
+        %li= "Rejecting reports"
+  %td= "None"
+

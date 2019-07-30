@@ -1,1 +1,16 @@
 .landing .box-widget { text-align: center; }
+.rich-formatting td {
+  ul {
+    list-style: none;
+    margin: 0;
+
+    li {
+      margin: 0;
+      padding: 0;
+      line-height: 18px;
+    }
+
+    li:after { content: "," }
+    li:last-child:after { content: "" }
+  }
+}

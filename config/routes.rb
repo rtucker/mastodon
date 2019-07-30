@@ -419,6 +419,8 @@ Rails.application.routes.draw do
   get '/about/more', to: 'about#more'
   get '/terms',      to: 'about#terms'
 
+  get '/policies',   to: 'domain_policy#show'
+
   root 'home#index'
 
   match '*unmatched_route',
