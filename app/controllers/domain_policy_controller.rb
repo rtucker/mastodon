@@ -10,7 +10,7 @@ class DomainPolicyController < ApplicationController
 
   def show
     @hide_navbar = true
-    @domain_policies = DomainBlock.all.reorder('updated_at DESC')
+    @domain_policies = DomainBlock.all.reorder('updated_at DESC').page(params[:page])
   end
 
   private

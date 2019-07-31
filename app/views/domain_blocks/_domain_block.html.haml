@@ -1,14 +1,18 @@
-%tr
-  %td
-    %samp= domain_block.domain
-  %td= domain_block.severity.gsub('_', ' ').capitalize
-  %td
-    %ul
-      -if domain_block.reject_media?
-        %li= "Rejecting media"
-      -if domain_block.force_sensitive?
-        %li= "Media marked sensitive"
-      -if domain_block.reject_reports?
-        %li= "Rejecting reports"
-  %td= "None"
-
+%hr/
+%p
+  %strong= "Domain: "
+  %samp= domain_block.domain
+  %br/
+  %strong= "Policies: "
+  %span= ([domain_block.severity.gsub('_', ' ')] + domain_block.additionals).join(', ')
+  %br/
+  %strong= "Added: "
+  %span= domain_block.created_at
+  - if domain_block.updated_at.to_i != domain_block.created_at.to_i
+    %br/
+    %strong= "Updated: "
+    %span= domain_block.updated_at
+  - if domain_block.reason?
+    %br/
+    %strong= "Notes: "
+    = h(domain_block.reason)

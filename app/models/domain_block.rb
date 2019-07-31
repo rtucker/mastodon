@@ -45,4 +45,12 @@ class DomainBlock < ApplicationRecord
     scope = suspend? ? accounts.where(suspended_at: created_at) : accounts.where(silenced_at: created_at)
     scope.count
   end
+
+  def additionals
+    additionals = []
+    additionals << "force sensitive media" if force_sensitive?
+    additionals << "reject media" if reject_media?
+    additionals << "reject reports" if reject_reports?
+    additionals
+  end
 end

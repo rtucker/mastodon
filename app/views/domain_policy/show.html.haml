@@ -46,13 +46,6 @@
       .rich-formatting
         %h1= "#{@instance_presenter.site_title} Domain Policies"
 
-        .table-wrapper
-          %table.table
-            %thead
-              %tr
-                %th= "Domain"
-                %th= "Policy"
-                %th= "Additional"
-                %th= "Reason"
-            %tbody
-              = render @domain_policies
+        = render @domain_policies
+
+= paginate @domain_policies
