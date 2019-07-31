@@ -3,12 +3,13 @@
 class Instance
   include ActiveModel::Model
 
-  attr_accessor :domain, :accounts_count, :domain_block
+  attr_accessor :domain, :accounts_count, :domain_block, :updated_at
 
   def initialize(resource)
     @domain         = resource.domain
     @accounts_count = resource.is_a?(DomainBlock) ? nil : resource.accounts_count
     @domain_block   = resource.is_a?(DomainBlock) ? resource : DomainBlock.find_by(domain: domain)
+    @updated_at     = resource.updated_at
   end
 
   def cached_sample_accounts
