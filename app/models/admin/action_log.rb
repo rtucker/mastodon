@@ -34,7 +34,7 @@ class Admin::ActionLog < ApplicationRecord
     when :destroy, :create
       self.recorded_changes = target.attributes
     when :update, :promote, :demote
-      self.recorded_changes = target.previous_changes
+      self.recorded_changes = target_type != 'DomainBlock' ? target.previous_changes : target.attributes
     when :change_email
       self.recorded_changes = ActiveSupport::HashWithIndifferentAccess.new(
         email: [target.email, nil],

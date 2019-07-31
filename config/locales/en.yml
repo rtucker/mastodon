@@ -204,7 +204,7 @@ en:
         confirm_user: "%{name} confirmed e-mail address of creature %{target}"
         create_account_warning: "%{name} sent a warning to %{target}"
         create_custom_emoji: "%{name} uploaded new emoji %{target}"
-        create_domain_block: "%{name} changed policy for %{target}"
+        create_domain_block: "%{name} added or changed policy for %{target}"
         create_email_domain_block: "%{name} blacklisted e-mail domain %{target}"
         demote_user: "%{name} demoted creature %{target}"
         destroy_custom_emoji: "%{name} destroyed emoji %{target}"
@@ -233,6 +233,7 @@ en:
         unsilence_account: "%{name} unsilenced %{target}'s account"
         unsuspend_account: "%{name} unsuspended %{target}'s account"
         update_custom_emoji: "%{name} updated emoji %{target}"
+        update_domain_block: "%{name} updated policy for %{target}"
         update_status: "%{name} updated roar by %{target}"
       deleted_status: "(deleted roar)"
       title: Audit log
@@ -288,6 +289,7 @@ en:
     domain_blocks:
       add_new: Add new domain policy
       created_msg: Domain policy is now being processed
+      updated_msg: Domain policy change is now being processed
       destroyed_msg: Domain policy has been undone
       domain: Domain
       existing_domain_block_html: You have already imposed stricter limits on %{name}, you need to <a href="%{unblock_url}">remove it</a> first.
@@ -303,6 +305,7 @@ en:
         title: New domain policy
       force_sensitive: Mark media sensitive
       force_sensitive_hint: Forces all media from this domain to be marked sensitive.
+      reason: Add notes here.
       reject_media: Reject media files
       reject_media_hint: Removes locally stored media files and refuses to download any in the future. Irrelevant for suspensions
       reject_reports: Reject reports
@@ -321,9 +324,12 @@ en:
           silence: Unsilence existing affected accounts from this domain
           suspend: Unsuspend existing affected accounts from this domain
           force_unlisted: Allow public roars on all existing accounts from this domain
-        title: Undo domain policy for %{domain}
+        title: Edit domain policy for %{domain}
         undo: Undo
+        edit: Edit
       undo: Undo domain policy
+      edit: Edit domain policy
+      undo_hint: Removes the domain policy, allowing for normal federation
     email_domain_blocks:
       add_new: Add new
       created_msg: Successfully added e-mail domain to blacklist

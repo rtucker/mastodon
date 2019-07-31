@@ -744,12 +744,13 @@ class Bangtags
               end
             when 'silence', 'unsilence', 'suspend', 'unsuspend', 'force_unlisted', 'allow_public', 'force_sensitive', 'allow_nonsensitive', 'reset', 'forgive'
               action = 'reset' if action == 'forgive'
+              reason = tf_cmd[2..-1].join(':')
               chunk.split.each do |c|
                 if c.start_with?('@')
                   account_parts = c.split('@')[1..2]
-                  successful = account_policy(account_parts[0], account_parts[1], action)
+                  successful = account_policy(account_parts[0], account_parts[1], action, reason)
                 else
-                  successful = domain_policy(c, action)
+                  successful = domain_policy(c, action, reason)
                 end
                 if successful
                   output << "\u2705 <code>#{c}</code>"
@@ -757,7 +758,12 @@ class Bangtags
                   output << "\u274c <code>#{c}</code>"
                 end
               end
-              output = ['<em>No action.</em>'] if output.blank?
+              if output.blank?
+                output = ['<em>No action.</em>']
+              elsif !reason.blank?
+                output << ''
+                output << "<strong>Comment:</strong> <em>#{reason}</em>"
+              end
               chunk = output.join("\n") + "\n"
             end
           end

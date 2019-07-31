@@ -11,6 +11,7 @@
 #  reject_media    :boolean          default(FALSE), not null
 #  reject_reports  :boolean          default(FALSE), not null
 #  force_sensitive :boolean          default(FALSE), not null
+#  reason          :text
 #
 
 class DomainBlock < ApplicationRecord
@@ -52,5 +53,10 @@ class DomainBlock < ApplicationRecord
     additionals << "reject media" if reject_media?
     additionals << "reject reports" if reject_reports?
     additionals
+  end
+
+  # workaround for the domain policy editor
+  def undo
+    return false
   end
 end

@@ -7,7 +7,7 @@ module LogHelper
     case action
     when :create
       if target.is_a? DomainBlock
-        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> applied a #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''} policy on https://#{target.domain}\u200b.", LOG_SCOPE_MODERATION)
+        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> applied a #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''} policy on https://#{target.domain}\u200b.\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}", LOG_SCOPE_MODERATION)
       elsif target.is_a? EmailDomainBlock
         LogWorker.perform_async("\u26d4 <#{source}> added a registration block on email domain '#{target.domain}'.", LOG_SCOPE_MODERATION)
       elsif target.is_a? CustomEmoji
@@ -27,7 +27,9 @@ module LogHelper
       end
 
     when :update
-      if target.is_a? Status
+      if target.is_a? DomainBlock
+        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> changed the policy on https://#{target.domain} to #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}.\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}", LOG_SCOPE_MODERATION)
+      elsif target.is_a? Status
         LogWorker.perform_async("\xf0\x9f\x91\x81\xef\xb8\x8f <#{source}> changed visibility flags of post #{TagManager.instance.url_for(target)}\u200b.", LOG_SCOPE_MODERATION)
       elsif target.is_a? CustomEmoji
         LogWorker.perform_async("\xf0\x9f\x94\x81 <#{source}> replaced the '#{target.shortcode}' emoji. :#{target.shortcode}:", LOG_SCOPE_MODERATION)

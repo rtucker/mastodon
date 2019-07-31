@@ -31,6 +31,13 @@
           = fa_icon 'times'
       .dashboard__counters__label= t 'admin.instances.delivery_available'
 
+- if @domain_block
+  %hr.spacer/
+
+  %h3= "Affected by #{@domain_block.severity.gsub('_', ' ')} policy"
+  - if @domain_block.reason
+    = simple_format(h(@domain_block.reason))
+
 %hr.spacer/
 
 %div{ style: 'overflow: hidden' }
@@ -39,6 +46,6 @@
 
   %div{ style: 'float: right' }
     - if @domain_block
-      = link_to t('admin.domain_blocks.undo'), admin_domain_block_path(@domain_block), class: 'button'
+      = link_to t('admin.domain_blocks.edit'), admin_domain_block_path(@domain_block), class: 'button'
     - else
       = link_to t('admin.domain_blocks.add_new'), new_admin_domain_block_path(_domain: @instance.domain), class: 'button'

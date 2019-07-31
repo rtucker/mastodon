@@ -16,4 +16,8 @@ class DomainBlockPolicy < ApplicationPolicy
   def destroy?
     staff?
   end
+
+  def update?
+    staff?
+  end
 end

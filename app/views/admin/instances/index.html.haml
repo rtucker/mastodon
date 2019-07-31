@@ -46,6 +46,9 @@
               &bull;
               = t('admin.domain_blocks.rejecting_reports')
 
+            - if instance.domain_block.reason
+              = simple_format(h("Policy reason: #{instance.domain_block.reason}"))
+
       .avatar-stack
         - instance.cached_sample_accounts.each do |account|
           = image_tag current_account&.user&.setting_auto_play_gif ? account.avatar_original_url : account.avatar_static_url, width: 48, height: 48, alt: '', class: 'account__avatar'

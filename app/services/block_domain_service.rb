@@ -5,10 +5,15 @@ class BlockDomainService < BaseService
 
   def call(domain_block)
     @domain_block = domain_block
+    remove_existing_block!
     process_domain_block!
   end
 
   private
+
+  def remove_existing_block!
+    UnblockDomainService.new.call(@domain_block, false)
+  end
 
   def process_domain_block!
     clear_media! if domain_block.reject_media?

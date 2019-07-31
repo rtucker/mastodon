@@ -1,13 +1,30 @@
 - content_for :page_title do
   = t('admin.domain_blocks.show.title', domain: @domain_block.domain)
 
-= simple_form_for @domain_block, url: admin_domain_block_path(@domain_block), method: :delete do |f|
+= simple_form_for @domain_block, url: admin_domain_block_path(@domain_block) do |f|
+  = render 'shared/error_messages', object: @domain_block
 
-  - unless (@domain_block.noop?)
-    %p= t(".retroactive.#{@domain_block.severity}")
-    %p.hint= t(:affected_accounts,
-      scope: [:admin, :domain_blocks, :show],
-      count: @domain_block.affected_accounts_count)
+  .fields-row
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :domain, wrapper: :with_label, label: t('admin.domain_blocks.domain'), required: true, disabled: true
+
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :severity, collection: DomainBlock.severities.keys, wrapper: :with_label, include_blank: false, label_method: lambda { |type| t(".severity.#{type}") }
+
+  .fields-group
+    = f.input :force_sensitive, as: :boolean, wrapper: :with_label, label: I18n.t('admin.domain_blocks.force_sensitive'), hint: I18n.t('admin.domain_blocks.force_sensitive_hint')
+
+  .fields-group
+    = f.input :reject_media, as: :boolean, wrapper: :with_label, label: I18n.t('admin.domain_blocks.reject_media'), hint: I18n.t('admin.domain_blocks.reject_media_hint')
+
+  .fields-group
+    = f.input :reject_reports, as: :boolean, wrapper: :with_label, label: I18n.t('admin.domain_blocks.reject_reports'), hint: I18n.t('admin.domain_blocks.reject_reports_hint')
+
+  .fields-group
+    = f.input :undo, as: :boolean, wrapper: :with_label, label: I18n.t('admin.domain_blocks.undo'), hint: I18n.t('admin.domain_blocks.undo_hint')
+
+  .fields-group
+    = f.input :reason, placeholder: t('admin.domain_blocks.reason', rows: 6)
 
   .actions
-    = f.button :button, t('.undo'), type: :submit
+    = f.button :button, t('.edit'), type: :submit

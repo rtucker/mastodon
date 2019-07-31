@@ -3,10 +3,10 @@
 class UnblockDomainService < BaseService
   attr_accessor :domain_block
 
-  def call(domain_block)
+  def call(domain_block, destroy_domain_block = true)
     @domain_block = domain_block
     process_retroactive_updates
-    domain_block.destroy
+    domain_block.destroy if destroy_domain_block
   end
 
   def process_retroactive_updates

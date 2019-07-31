@@ -87,7 +87,7 @@ module Admin::ActionLogsHelper
     when 'Report'
       link_to "##{record.id}", admin_report_path(record)
     when 'DomainBlock', 'EmailDomainBlock'
-      link_to record.domain, "https://#{record.domain}"
+      link_to record.domain, admin_instance_path(id: record.domain)
     when 'Status'
       link_to record.account.acct, TagManager.instance.url_for(record)
     when 'AccountWarning'
@@ -100,7 +100,7 @@ module Admin::ActionLogsHelper
     when 'CustomEmoji'
       attributes['shortcode']
     when 'DomainBlock', 'EmailDomainBlock'
-      link_to attributes['domain'], "https://#{attributes['domain']}"
+      link_to attributes['domain'], admin_instance_path(id: attributes['domain'])
     when 'Status'
       tmp_status = Status.new(attributes.except('reblogs_count', 'favourites_count'))
 

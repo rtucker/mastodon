@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_28_201832) do
+ActiveRecord::Schema.define(version: 2019_07_30_213656) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -269,6 +269,7 @@ ActiveRecord::Schema.define(version: 2019_07_28_201832) do
     t.boolean "reject_media", default: false, null: false
     t.boolean "reject_reports", default: false, null: false
     t.boolean "force_sensitive", default: false, null: false
+    t.text "reason"
     t.index ["domain"], name: "index_domain_blocks_on_domain", unique: true
   end
 

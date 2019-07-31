@@ -4,7 +4,7 @@ module BangtagHelper
   POLICIES = %w(silence unsilence suspend unsuspend force_unlisted allow_public force_sensitive allow_nonsensitive reset)
   EXCLUDED_DOMAINS = %w(tailma.ws monsterpit.net monsterpit.cloud monsterpit.gallery monsterpit.blog)
 
-  def account_policy(username, domain = nil, policy)
+  def account_policy(username, domain, policy, reason = nil)
     return if policy.blank?
     policy = policy.to_s
     return false unless policy.in?(POLICIES)
@@ -50,6 +50,14 @@ module BangtagHelper
 
     acct.save
 
+    return true unless reason && !reason.strip.blank?
+
+    AccountModerationNote.create(
+      account_id: @account.id,
+      target_account_id: acct.id,
+      content: reason.strip
+    )
+
     true
   end
 
@@ -63,7 +71,7 @@ module BangtagHelper
     true
   end
 
-  def domain_policy(domain, policy, force_sensitive = false, reject_media = false, reject_reports = false)
+  def domain_policy(domain, policy, reason = nil, force_sensitive = false, reject_media = false, reject_reports = false)
     return if policy.blank?
     policy = policy.to_s
     return false unless policy.in?(POLICIES)
@@ -86,18 +94,19 @@ module BangtagHelper
       domain_block.force_sensitive = force_sensitive
       domain_block.reject_media = reject_media
       domain_block.reject_reports = reject_reports
+      domain_block.reason = reason.strip if reason && !reason.strip.blank?
       domain_block.save
 
       Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
       user_friendly_action_log(@account, :create, domain_block)
-      BlockDomainService.new.call(domain_block)
+      DomainBlockWorker.perform_async(domain_block.id)
     else
       domain_block = DomainBlock.find_by(domain: domain)
       return false if domain_block.nil?
 
       Admin::ActionLog.create(account: @account, action: :destroy, target: domain_block)
       user_friendly_action_log(@account, :destroy, domain_block)
-      UnblockDomainService.new.call(domain_block)
+      DomainUnblockWorker.perform_async(domain_block.id)
     end
 
     true

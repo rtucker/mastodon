@@ -150,7 +150,7 @@ Rails.application.routes.draw do
     get '/dashboard', to: 'dashboard#index'
 
     resources :subscriptions, only: [:index]
-    resources :domain_blocks, only: [:new, :create, :show, :destroy]
+    resources :domain_blocks, only: [:new, :create, :show, :destroy, :update]
     resources :email_domain_blocks, only: [:index, :new, :create, :destroy]
     resources :action_logs, only: [:index]
     resources :warning_presets, except: [:new]

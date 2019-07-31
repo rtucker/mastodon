@@ -20,5 +20,8 @@
   .fields-group
     = f.input :reject_reports, as: :boolean, wrapper: :with_label, label: I18n.t('admin.domain_blocks.reject_reports'), hint: I18n.t('admin.domain_blocks.reject_reports_hint')
 
+  .fields-group
+    = f.input :reason, placeholder: t('admin.domain_blocks.reason', rows: 6)
+
   .actions
     = f.button :button, t('.create'), type: :submit
