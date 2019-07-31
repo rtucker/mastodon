@@ -34,7 +34,7 @@ module Admin
     helper_method :paginated_instances
 
     def ordered_instances
-      paginated_instances.map { |resource| Instance.new(resource) }
+      paginated_instances.map { |resource| Instance.new(resource) }.sort_by(&:updated_at).reverse!
     end
 
     def filter_params
