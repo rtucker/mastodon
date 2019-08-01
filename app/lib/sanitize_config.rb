@@ -84,9 +84,9 @@ class Sanitize
       return if href.start_with?(text)
 
       # split href into parts & grab shortened href
-      uri = Addressable::URI.parse(node['href'])
-      short_href = uri.host + uri.path
-      normalized_short_href = uri.normalized_host + uri.normalized_path
+      uri = Addressable::URI.parse(href)
+      short_href = "#{uri.host}#{uri.path}"
+      normalized_short_href = "#{uri.normalized_host}#{uri.normalized_path}"
 
       # shortened href starts with link text?
       return if short_href.start_with?(text) || normalized_short_href.start_with?(text)
