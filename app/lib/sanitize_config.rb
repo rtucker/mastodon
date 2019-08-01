@@ -38,6 +38,7 @@ class Sanitize
 
       # href matches link text with sanitized query string?
       text = Sanitize::sanitize_query_string(node.text.strip)
+      return if text.blank?
       if href == text
         node.inner_html = "\u2728 #{node.inner_html}"
         return
