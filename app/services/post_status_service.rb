@@ -113,6 +113,8 @@ class PostStatusService < BaseService
 
   # move tags out of body so we can format them later
   def extract_tags
+    return unless '#'.in?(@text)
+    @text = @text.dup if @text.frozen?
     @text.gsub!(/^##/, "\uf666")
     @text.gsub!('##', "\uf669")
     @tags |= Extractor.extract_hashtags(@text)
