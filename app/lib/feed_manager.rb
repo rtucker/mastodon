@@ -5,6 +5,7 @@ require 'singleton'
 class FeedManager
   include Singleton
   include Redisable
+  include FilterHelper
 
   MAX_ITEMS = 1666
 
@@ -156,6 +157,7 @@ class FeedManager
   def filter_from_home?(status, receiver_id)
     return false if receiver_id == status.account_id
     return true  if status.reply? && (status.in_reply_to_id.nil? || status.in_reply_to_account_id.nil?)
+    return true  if filtering_thread?(receiver_id, status.conversation_id)
     return true  if phrase_filtered?(status, receiver_id, :home)
 
     check_for_blocks = status.active_mentions.pluck(:account_id)
@@ -168,12 +170,12 @@ class FeedManager
 
     return true if blocks_or_mutes?(receiver_id, check_for_blocks, :home)
 
-    if status.reply? && !status.in_reply_to_account_id.nil?                                                                      # Filter out if it's a reply
-      should_filter   = !Follow.where(account_id: receiver_id, target_account_id: status.in_reply_to_account_id).exists?         # and I'm not following the person it's a reply to
-      should_filter &&= receiver_id != status.in_reply_to_account_id                                                             # and it's not a reply to me
-      should_filter &&= status.account_id != status.in_reply_to_account_id                                                       # and it's not a self-reply
+    if status.reply? && !status.in_reply_to_account_id.nil? # Filter out if it's a reply
+      should_filter   = !Follow.where(account_id: receiver_id, target_account_id: status.in_reply_to_account_id).exists? # and I'm not following the person it's a reply to
+      should_filter &&= receiver_id != status.in_reply_to_account_id # and it's not a reply to me
+      should_filter &&= status.account_id != status.in_reply_to_account_id # and it's not a self-reply
       return should_filter
-    elsif status.reblog?                                                                                                         # Filter out a reblog
+    elsif status.reblog? # Filter out a reblog
       should_filter   = Follow.where(account_id: receiver_id, target_account_id: status.account_id, show_reblogs: false).exists? # if the reblogger's reblogs are suppressed
       should_filter ||= (status.reblog.account.silenced? && !Follow.where(account_id: receiver_id, target_account_id: status.reblog.account_id).exists?) # or if the account is silenced and I'm not following them
       should_filter ||= Block.where(account_id: status.reblog.account_id, target_account_id: receiver_id).exists?                # or if the author of the reblogged status is blocking me
@@ -186,6 +188,7 @@ class FeedManager
 
   def filter_from_mentions?(status, receiver_id)
     return true if receiver_id == status.account_id
+    return true if filtering_thread?(receiver_id, status.conversation_id)
     return true if phrase_filtered?(status, receiver_id, :notifications)
 
     # This filter is called from NotifyService, but already after the sender of
@@ -198,37 +201,6 @@ class FeedManager
     should_filter ||= (status.account.silenced? && !Follow.where(account_id: receiver_id, target_account_id: status.account_id).exists?) # or if the account is silenced and I'm not following them
 
     should_filter
-  end
-
-  def phrase_filtered?(status, receiver_id, context)
-    active_filters = Rails.cache.fetch("filters:#{receiver_id}") { CustomFilter.where(account_id: receiver_id).active_irreversible.to_a }.to_a
-
-    active_filters.select! { |filter| filter.context.include?(context.to_s) && !filter.expired? }
-
-    if status.media_attachments.any?
-      active_filters.delete_if { |filter| filter.exclude_media }
-    else
-      active_filters.delete_if { |filter| filter.media_only }
-    end
-
-    active_filters.map! do |filter|
-      if filter.whole_word
-        sb = filter.phrase =~ /\A[[:word:]]/ ? '\b' : ''
-        eb = filter.phrase =~ /[[:word:]]\z/ ? '\b' : ''
-
-        /(?mix:#{sb}#{Regexp.escape(filter.phrase)}#{eb})/
-      else
-        /#{Regexp.escape(filter.phrase)}/i
-      end
-    end
-
-    return false if active_filters.empty?
-
-    combined_regex = active_filters.reduce { |memo, obj| Regexp.union(memo, obj) }
-    status         = status.reblog if status.reblog?
-
-    !combined_regex.match(Formatter.instance.plaintext(status)).nil? ||
-      (status.spoiler_text.present? && !combined_regex.match(status.spoiler_text).nil?)
   end
 
   # Adds a status to an account's feed, returning true if a status was

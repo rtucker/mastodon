@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class StatusFilter
+  include FilterHelper
+
   attr_reader :status, :account
 
   def initialize(status, account, preloaded_relations = {})
@@ -21,6 +23,7 @@ class StatusFilter
   end
 
   def filtered_status?
+    return true if filtering_thread?(account.id, status.conversation_id)
     blocking_account? || blocking_domain? || muting_account? || filtered_reference?
   end
 
@@ -29,6 +32,9 @@ class StatusFilter
     return true if account.user_hides_replies_of_blocked? && reply_to_blocked?
     return true if account.user_hides_replies_of_muted? && reply_to_muted?
     return true if account.user_hides_replies_of_blocker? && reply_to_blocker?
+
+    # filtered by user?
+    return true if phrase_filtered?(status, account.id, 'thread')
 
     # kajiht has no filters if status has no mentions
     return false if status&.mentions.blank?
@@ -43,23 +49,23 @@ class StatusFilter
     return true if account.user_hides_mentions_of_blocked? && mentioned_accounts.where.not(suspended_at: nil).exists?
 
     return true if mentioned_account_ids.any? do |mentioned_account_id|
-      return true if @preloaded_relations[:muting] && account.user_hides_mentions_of_muted? && @preloaded_relations[:muting][mentioned_account_id]
-      return true if @preloaded_relations[:blocking] && account.user_hides_mentions_of_blocked? && @preloaded_relations[:blocking][mentioned_account_id]
+      break true if @preloaded_relations[:muting] && account.user_hides_mentions_of_muted? && @preloaded_relations[:muting][mentioned_account_id]
+      break true if @preloaded_relations[:blocking] && account.user_hides_mentions_of_blocked? && @preloaded_relations[:blocking][mentioned_account_id]
 
       if @preloaded_relations[:blocked_by]
-        return true if account.user_hides_mentions_of_blocker? && @preloaded_relations[:blocked_by][mentioned_account_id]
+        break true if account.user_hides_mentions_of_blocker? && @preloaded_relations[:blocked_by][mentioned_account_id]
       else
-        return true if account.user_hides_mentions_of_blocker? && Block.where(account_id: mentioned_account_id, target_account_id: account.id).exists?
+        break true if account.user_hides_mentions_of_blocker? && Block.where(account_id: mentioned_account_id, target_account_id: account.id).exists?
       end
 
-      return false unless status.reply?
-      @preloaded_relations[:following] && account.user_hides_mentions_outside_scope? && status.private_visibility? && !@preloaded_relations[:following][mentioned_account_id]
+      break false unless status.reply? && status.private_visibility? && account.user_hides_mentions_outside_scope?
+      @preloaded_relations[:following] && !@preloaded_relations[:following][mentioned_account_id]
     end
 
     return true if !@preloaded_relations[:muting] && account.user_hides_mentions_of_muted? && account.muting?(mentioned_account_ids)
     return true if !@preloaded_relations[:blocking] && account.user_hides_mentions_of_blocked? && account.blocking?(mentioned_account_ids)
-    return false unless status.reply?
-    !@preloaded_relations[:following] && account.user_hides_mentions_outside_scope? && status.private_visibility? && (mentioned_account_ids - account.following_ids).any?
+    return false unless status.reply? && status.private_visibility? && account.user_hides_mentions_outside_scope?
+    !@preloaded_relations[:following] && (mentioned_account_ids - account.following_ids).any?
   end
 
   def reply_to_blocked?

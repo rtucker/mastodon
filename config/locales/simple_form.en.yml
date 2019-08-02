@@ -97,8 +97,12 @@ en:
         header: Header
         inbox_url: URL of the relay inbox
         irreversible: Drop instead of hide
-        exclude_media: Don't filter roars with attachments
-        media_only: Only filter roars with attachments
+        exclude_media: Filter roars WITHOUT attachments
+        status_text: Filter roars with matching body text
+        media_only: Filter roars with attachments
+        thread: Filter the entire thread this match is contained in
+        spoiler: Filter roars with matching content warnings or topics
+        tags: Filter roars with matching tag(s)
         locale: Interface language
         locked: Lock account
         max_uses: Max number of uses
