@@ -107,6 +107,11 @@ class PostStatusService < BaseService
       VISIBILITY_RANK[@visibility] < VISIBILITY_RANK[@in_reply_to.visibility]
   end
 
+  def unfilter_thread_on_reply
+    return if @in_reply_to.nil?
+    Redis.cache.srem("filtered_threads:#{@account.id}", @in_reply_to.conversation_id)
+  end
+
   def set_local_only
     @local_only = true if @account.user_always_local_only? || @in_reply_to&.local_only
   end
@@ -136,6 +141,7 @@ class PostStatusService < BaseService
     set_initial_visibility
     limit_visibility_if_silenced
     limit_visibility_to_reply
+    unfilter_thread_on_reply
 
     @sensitive = (@account.user_defaults_to_sensitive? || @options[:spoiler_text].present?) if @sensitive.nil?
 

@@ -42,6 +42,7 @@ module FilterHelper
   end
 
   def filter_thread(account_id, conversation_id)
+    return if Status.where(account_id: account_id, conversation_id: conversation_id).exists?
     Redis.cache.sadd("filtered_threads:#{account_id}", conversation_id)
   end
 
