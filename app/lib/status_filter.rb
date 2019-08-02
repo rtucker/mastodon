@@ -59,7 +59,7 @@ class StatusFilter
     return true if !@preloaded_relations[:muting] && account.user_hides_mentions_of_muted? && account.muting?(mentioned_account_ids)
     return true if !@preloaded_relations[:blocking] && account.user_hides_mentions_of_blocked? && account.blocking?(mentioned_account_ids)
     return false unless status.reply?
-    return true if !@preloaded_relations[:following] && account.user_hides_mentions_outside_scope? && status.private_visibility? && (mentioned_account_ids - account.following_ids).any?
+    !@preloaded_relations[:following] && account.user_hides_mentions_outside_scope? && status.private_visibility? && (mentioned_account_ids - account.following_ids).any?
   end
 
   def reply_to_blocked?
