@@ -109,7 +109,7 @@ class PostStatusService < BaseService
 
   def unfilter_thread_on_reply
     return if @in_reply_to.nil?
-    Redis.cache.srem("filtered_threads:#{@account.id}", @in_reply_to.conversation_id)
+    Redis.current.srem("filtered_threads:#{@account.id}", @in_reply_to.conversation_id)
   end
 
   def set_local_only
