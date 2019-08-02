@@ -142,7 +142,7 @@ class Formatter
 			description: '', example: '',
     },
 		code: {
-			html_open: '<pre>', html_close: '</pre>',
+			html_open: '<pre><code>', html_close: '</code></pre>',
 			description: '', example: '',
       block_tag: true,
     },
