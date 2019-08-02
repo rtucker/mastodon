@@ -6,14 +6,16 @@ module Admin
 
     def new
       authorize :domain_block, :create?
-      @domain_block = DomainBlock.new(domain: params[:_domain])
+      @domain_block = DomainBlock.new(domain: params[:_domain].present? ? params[:_domain].strip : nil)
     end
 
     def create
       authorize :domain_block, :create?
 
+      resource_params[:domain].strip! if resource_params[:domain].present?
+      resource_params[:reason].strip! if resource_params[:reason].present?
       @domain_block = DomainBlock.new(resource_params)
-      existing_domain_block = resource_params[:domain].present? ? DomainBlock.find_by(domain: resource_params[:domain]) : nil
+      existing_domain_block = resource_params[:domain].present? ? DomainBlock.find_by(domain: resource_params[:domain].strip) : nil
 
       if existing_domain_block.present?
         @domain_block = existing_domain_block
@@ -43,6 +45,7 @@ module Admin
 
     def update
       return destroy unless resource_params[:undo].to_i.zero?
+      resource_params[:reason].strip! if resource_params[:reason].present?
       authorize @domain_block, :update?
       @domain_block.update(resource_params.except(:domain, :undo))
       changed = @domain_block.changed
