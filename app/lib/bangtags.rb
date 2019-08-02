@@ -314,7 +314,7 @@ class Bangtags
             end
           when 'emoji'
             next if status.conversation_id.nil?
-            roars = Status.where(conversation_id: status.conversation_id, account_id: @account.id)
+            roars = Status.where(conversation_id: status.conversation_id)
             roars.each do |roar|
               roar.emojis.each do |theirs|
                 ours = CustomEmoji.find_or_initialize_by(shortcode: theirs.shortcode, domain: nil)
