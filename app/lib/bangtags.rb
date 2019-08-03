@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bangtags
-  include BangtagHelper
+  include ModerationHelper
   attr_reader :status, :account
 
   def initialize(status)

@@ -1,4 +1,4 @@
-module BangtagHelper
+module ModerationHelper
   include LogHelper
 
   POLICIES = %w(silence unsilence suspend unsuspend force_unlisted allow_public force_sensitive allow_nonsensitive reset)

@@ -3,7 +3,7 @@
 class Scheduler::JanitorScheduler
   include Sidekiq::Worker
   include BlocklistHelper
-  include BangtagHelper
+  include ModerationHelper
 
   MIN_POSTS = 6
 
