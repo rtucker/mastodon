@@ -30,7 +30,7 @@ module FilterHelper
       matched = false
       matched = true unless regex.match(status_text).nil?
       matched = true unless spoiler_text.blank? || regex.match(spoiler_text).nil?
-      matched = true unless tags.empty? || tags_regex.match(tags).nil?
+      matched = true unless tags.empty? || regex.match(tags).nil?
 
       if matched
         filter_thread(receiver_id, status.conversation_id) if filter.thread
