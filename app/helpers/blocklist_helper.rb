@@ -43,7 +43,8 @@ module BlocklistHelper
       next if domain.blank?
       severity = entry['severity'].split('/')
       reject_media = 'nomedia'.in?(severity)
-      severity = severity[0] || 'noop'
+      severity = (severity[0].nil? || severity[0] == 'nomedia') ? 'noop' : severity[0]
+
       reason = "(imported from vulpine.club) #{entry['reason']}#{entry['link'].present? ? " (#{entry['link']})" : ''}".rstrip
       {domain: domain, severity: severity.to_sym, reject_media: reject_media, reason: reason}
     end
