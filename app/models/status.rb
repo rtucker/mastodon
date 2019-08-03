@@ -47,7 +47,7 @@ class Status < ApplicationRecord
 
   # match both with and without U+FE0F (the emoji variation selector)
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
-  REJECT_REPLIES_TOKENS = /\b(?:\:ms_dont_at_me\:|no replies|(?:don't|do not) (?:@|at|reply)(?: (?:me|us))?)\b/i
+  REJECT_REPLIES_TOKENS = /\b(?:ms_dont_at_me|no (?:replie|mention)s|(?:don't|do not) (?:@|at|reply|mention)(?: (?:me|us))?)\b/i
 
   # If `override_timestamps` is set at creation time, Snowflake ID creation
   # will be based on current time instead of `created_at`
