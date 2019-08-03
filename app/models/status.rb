@@ -32,6 +32,7 @@
 #  imported               :boolean
 #  origin                 :string
 #  boostable              :boolean
+#  reject_replies         :boolean
 #
 
 class Status < ApplicationRecord
@@ -46,6 +47,7 @@ class Status < ApplicationRecord
 
   # match both with and without U+FE0F (the emoji variation selector)
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
+  REJECT_REPLIES_TOKENS = /\b(?:\:ms_dont_at_me\:|no replies|(?:don't|do not) (?:@|at|reply)(?: (?:me|us))?)\b/i
 
   # If `override_timestamps` is set at creation time, Snowflake ID creation
   # will be based on current time instead of `created_at`
@@ -318,6 +320,7 @@ class Status < ApplicationRecord
   before_validation :set_visibility
   before_validation :set_conversation
   before_validation :set_local
+  before_validation :infer_reject_replies
 
   after_create :set_poll_id
   after_create :process_bangtags, if: :local?
@@ -544,6 +547,13 @@ class Status < ApplicationRecord
     LOCAL_ONLY_TOKENS.match?(content)
   end
 
+  def marked_reject_replies?
+    return true if reject_replies
+    return true if spoiler_text.present? && REJECT_REPLIES_TOKENS.match?(spoiler_text)
+    return true if content.present? && REJECT_REPLIES_TOKENS.match?(content.lines.first)
+    content.present? && REJECT_REPLIES_TOKENS.match?(content.lines.last)
+  end
+
   private
 
   def update_status_stat!(attrs)
@@ -579,6 +589,10 @@ class Status < ApplicationRecord
     if account.domain.nil? && !attribute_changed?(:local_only)
       self.local_only = marked_local_only?
     end
+  end
+
+  def infer_reject_replies
+    self.reject_replies = marked_reject_replies?
   end
 
   def process_bangtags

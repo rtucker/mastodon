@@ -30,6 +30,7 @@ class PostStatusService < BaseService
   # @option [String] :language
   # @option [String] :scheduled_at
   # @option [String] :delete_after
+  # @option [Boolean] :noreplies Author does not accept replies
   # @option [Boolean] :nocrawl Optional skip link card generation
   # @option [Boolean] :nomentions Optional skip mention processing
   # @option [Boolean] :delayed Optional publishing delay of 30 secs
@@ -48,6 +49,8 @@ class PostStatusService < BaseService
     @local_only  = @options[:local_only]
     @sensitive   = (@account.force_sensitive? ? true : @options[:sensitive])
     @preloaded_tags = @options[:preloaded_tags] || []
+
+    raise Mastodon::LengthValidationError, I18n.t('statuses.replies_rejected') if recipient_rejects_replies?
 
     return idempotency_duplicate if idempotency_given? && idempotency_duplicate?
 
@@ -69,6 +72,7 @@ class PostStatusService < BaseService
           nocrawl: @options[:nocrawl],
           nomentions: @options[:nomentions],
           delete_after: @delete_after.nil? ? nil : @delete_after + 1.minute,
+          reject_replies: @options[:noreplies] || false,
         }.compact
 
         PostStatusWorker.perform_at(delay_until, @status.id, opts)
@@ -86,6 +90,10 @@ class PostStatusService < BaseService
 
   private
 
+  def recipient_rejects_replies?
+    @in_reply_to.present? && @in_reply_to.reject_replies && @in_reply_to.account_id != @account.id
+  end
+
   def set_footer_from_i_am
     return if @footer.present? || @options[:no_footer]
     name = @account.user.vars['_they:are']
@@ -102,14 +110,17 @@ class PostStatusService < BaseService
   end
 
   def limit_visibility_to_reply
-    return if @in_reply_to.nil?
     @visibility = @in_reply_to.visibility if @visibility.nil? ||
       VISIBILITY_RANK[@visibility] < VISIBILITY_RANK[@in_reply_to.visibility]
   end
 
   def unfilter_thread_on_reply
-    return if @in_reply_to.nil?
     Redis.current.srem("filtered_threads:#{@account.id}", @in_reply_to.conversation_id)
+  end
+
+  def inherit_reply_rejection
+    return unless @in_reply_to.reject_replies && @in_reply_to.account_id == @account.id
+    @options[:noreplies] = true
   end
 
   def set_local_only
@@ -140,8 +151,12 @@ class PostStatusService < BaseService
     set_local_only
     set_initial_visibility
     limit_visibility_if_silenced
-    limit_visibility_to_reply
-    unfilter_thread_on_reply
+
+    unless @in_reply_to.nil?
+      inherit_reply_rejection
+      limit_visibility_to_reply
+      unfilter_thread_on_reply
+    end
 
     @sensitive = (@account.user_defaults_to_sensitive? || @options[:spoiler_text].present?) if @sensitive.nil?
 
@@ -280,6 +295,7 @@ class PostStatusService < BaseService
       visibility: @visibility,
       local_only: @local_only,
       delete_after: @delete_after,
+      reject_replies: @options[:noreplies] || false,
       sharekey: @sharekey,
       language: language_from_option(@options[:language]) || @account.user_default_language&.presence || 'en',
       application: @options[:application],

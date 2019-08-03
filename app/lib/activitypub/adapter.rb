@@ -40,6 +40,10 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
       'mp' => 'https://monsterpit.net/ns#',
       'froze' => 'mp:froze'
     },
+    reject_replies: {
+      'mp' => 'https://monsterpit.net/ns#',
+      'rejectReplies' => 'mp:rejectReplies',
+    }
   }.freeze
 
   def self.default_key_transform

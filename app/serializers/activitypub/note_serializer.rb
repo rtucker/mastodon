@@ -2,12 +2,14 @@
 
 class ActivityPub::NoteSerializer < ActivityPub::Serializer
   context_extensions :conversation, :sensitive, :big,
-                     :hashtag, :emoji, :focal_point, :blurhash
+                     :hashtag, :emoji, :focal_point, :blurhash,
+                     :reject_replies
 
   attributes :id, :type, :summary,
              :in_reply_to, :published, :url,
              :attributed_to, :to, :cc, :sensitive,
-             :conversation, :source, :tails_never_fail
+             :conversation, :source, :tails_never_fail,
+             :reject_replies
 
   attribute :content
   attribute :content_map, if: :language?
@@ -141,6 +143,10 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
 
   def poll_and_expired?
     object.preloadable_poll&.expired?
+  end
+
+  def reject_replies
+    object.reject_replies == true
   end
 
   def tails_never_fail

@@ -956,6 +956,7 @@ en:
         one: "%{count} vote"
         other: "%{count} votes"
       vote: Vote
+    replies_rejected: 'The author is not accepting replies to this roar.'
     show_more: Show more
     sign_in_to_participate: Sign in to participate in the conversation
     title: '%{name}: "%{quote}"'

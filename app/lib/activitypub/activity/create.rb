@@ -46,7 +46,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     @params   = {}
 
     process_status_params
-    return reject_payload! if twitter_retweet?
+    return reject_payload! if twitter_retweet? || recipient_rejects_replies?
     process_tags
     process_audience
 
@@ -86,7 +86,13 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   end
 
   def twitter_retweet?
-    @params[:text] =~ /^RT / || '🐦🔗:'.in?(@params[:text])
+    @params[:text] =~ /^(?:<p> *)?RT / || '🐦🔗:'.in?(@params[:text])
+  end
+
+  def recipient_rejects_replies?
+    @params[:thread].present? &&
+      @params[:thread]&.reject_replies &&
+      @params[:thread]&.account_id != @account.id
   end
 
   def process_status_params
@@ -105,6 +111,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
         visibility: visibility_from_audience,
         thread: replied_to_status,
         conversation: conversation_from_uri(@object['conversation']),
+        reject_replies: @object['rejectReplies'] || false,
         media_attachment_ids: process_attachments.take(6).map(&:id),
         poll: process_poll,
       }

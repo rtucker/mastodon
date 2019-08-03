@@ -11,6 +11,7 @@ class PostStatusWorker
 
     status.visibility = options[:visibility] if options[:visibility]
     status.local_only = options[:local_only] if options[:local_only]
+    status.reject_replies = options[:reject_replies] if options[:reject_replies]
     status.save!
 
     process_mentions_service.call(status) unless options[:nomentions]

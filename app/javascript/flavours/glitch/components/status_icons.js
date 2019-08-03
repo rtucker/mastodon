@@ -62,6 +62,9 @@ export default class StatusIcons extends React.PureComponent {
         {status.get('delete_after') ? (
           <i className='fa fa-clock-o' title={new Date(status.get('delete_after'))} aria-hidden='true' />
         ) : null}
+        {status.get('reject_replies') ? (
+          <i className='fa fa-microphone-slash' title='Rejecting replies' aria-hidden='true' />
+        ) : null}
         {(
           <VisibilityIcon visibility={status.get('visibility')} />
         )}

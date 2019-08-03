@@ -129,6 +129,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
     let favouriteLink = '';
     let sharekeyLinks = '';
     let destructIcon = '';
+    let rejectIcon = '';
 
     if (this.props.measureHeight) {
       outerStyle.height = `${this.state.height}px`;
@@ -251,6 +252,14 @@ export default class DetailedStatus extends ImmutablePureComponent {
       )
     }
 
+    if (status.get('reject_replies')) {
+      rejectIcon = (
+        <span>
+          <i className='fa fa-microphone-slash' title='Rejecting replies' /> ·
+        </span>
+      )
+    }
+
     return (
       <div style={outerStyle}>
         <div ref={this.setRef} className={classNames('detailed-status', { compact })} data-status-by={status.getIn(['account', 'acct'])}>
@@ -272,7 +281,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
           />
 
           <div className='detailed-status__meta'>
-            {sharekeyLinks} {reblogLink} · {favouriteLink} · {destructIcon} <VisibilityIcon visibility={status.get('visibility')} />
+            {sharekeyLinks} {reblogLink} · {favouriteLink} · {destructIcon} {rejectIcon} <VisibilityIcon visibility={status.get('visibility')} />
             <a className='detailed-status__datetime' href={status.get('url')} target='_blank' rel='noopener'>
               <FormattedDate value={new Date(status.get('created_at'))} hour12={false} year='numeric' month='short' day='2-digit' hour='2-digit' minute='2-digit' />
             </a>
