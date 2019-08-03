@@ -9,7 +9,7 @@ class Instance
     @domain         = resource.domain
     @accounts_count = resource.is_a?(DomainBlock) ? nil : resource.accounts_count
     @domain_block   = resource.is_a?(DomainBlock) ? resource : DomainBlock.find_by(domain: domain)
-    @updated_at     = resource.updated_at
+    @updated_at     = resource.is_a?(DomainBlock) ? resource.updated_at : 0
   end
 
   def cached_sample_accounts
