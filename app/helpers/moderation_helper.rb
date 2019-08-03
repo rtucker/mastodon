@@ -17,10 +17,10 @@ module ModerationHelper
 
     if policy == 'reset'
       Admin::ActionLog.create(account: @account, action: unsuspend, target: acct)
-      user_friendly_action_log(@account, :unsuspend, acct)
+      user_friendly_action_log(@account, :unsuspend, acct, reason)
     else
       Admin::ActionLog.create(account: @account, action: policy, target: acct)
-      user_friendly_action_log(@account, policy.to_sym, acct)
+      user_friendly_action_log(@account, policy.to_sym, acct, reason)
     end
 
     case policy
