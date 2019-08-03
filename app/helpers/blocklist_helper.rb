@@ -21,7 +21,7 @@ module BlocklistHelper
     admin_id = Account.find_remote('guinan', 'tenforward.social')&.id
     return [] if admin_id.nil?
 
-    domains += ActiveRecord::Base.connection.select_values("SELECT unnest(regexp_matches(text, '\\m[\\w\\-]+\\.[\\w\-]+(?:\\.[\\w\\-]+)*', 'g')) FROM statuses WHERE account_id = #{admin_id.to_i} AND NOT reply AND created_at >= (NOW() - INTERVAL '2 days') AND tsv @@ to_tsquery('ten <-> forward <-> moderation <-> announcement') EXCEPT SELECT domain FROM domain_blocks")
+    domains = ActiveRecord::Base.connection.select_values("SELECT unnest(regexp_matches(text, '\\m[\\w\\-]+\\.[\\w\-]+(?:\\.[\\w\\-]+)*', 'g')) FROM statuses WHERE account_id = #{admin_id.to_i} AND NOT reply AND created_at >= (NOW() - INTERVAL '2 days') AND tsv @@ to_tsquery('ten <-> forward <-> moderation <-> announcement') EXCEPT SELECT domain FROM domain_blocks")
 
     domains.map! do |domain|
       {domain: domain, severity: :suspend, reason: '(imported from ten.forward)'}
