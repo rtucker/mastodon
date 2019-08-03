@@ -54,7 +54,7 @@ class Scheduler::JanitorScheduler
   def import_blocklists!
     blocks = merged_blocklist.reject { |entry| entry[:domain].in?(@exclude_domains) }
     blocks.each do |entry|
-      next unless domain_exists(entry[:domain])
+      next unless domain_exists?(entry[:domain])
       block = DomainBlock.create!(entry)
       DomainBlockWorker.perform_async(block)
       Admin::ActionLog.create(account: @account, action: :create, target: block)

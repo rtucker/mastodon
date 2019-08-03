@@ -61,7 +61,7 @@ module ModerationHelper
     true
   end
 
-  def domain_exists(domain)
+  def domain_exists?(domain)
     begin
       code = Request.new(:head, "https://#{domain}").perform(&:code)
     rescue
