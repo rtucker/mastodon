@@ -314,7 +314,7 @@ class ComposeForm extends ImmutablePureComponent {
     } = this.props;
 
     let disabledButton = isSubmitting || isUploading || isChangingUpload || (!text.trim().length && !anyMedia);
-    let nickname = this.props.account.get('identity');
+    let nickname = (this.props.account !== undefined) ? this.props.account.get('identity') : '';
 
     return (
       <div className='composer'>
