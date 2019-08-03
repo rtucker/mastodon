@@ -16,6 +16,9 @@ class Bangtags
       'permalink' => ['link'],
       'cloudroot' => ['link'],
       'blogroot' => ['link'],
+
+      'leave' => ['thread'],
+      'part' => ['thread'],
     }
 
     @aliases = {
@@ -264,6 +267,9 @@ class Bangtags
           chunk = nil
           next if cmd[1].nil?
           case cmd[1].downcase
+          when 'leave', 'part'
+            next if status.conversation_id.nil?
+            @account.mute_conversation!(status.conversation)
           when 'reall'
             if status.conversation_id.present?
               participants = Status.where(conversation_id: status.conversation_id)
