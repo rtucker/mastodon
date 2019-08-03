@@ -331,6 +331,14 @@ class Bangtags
                 end
               end
             end
+          when 'noreplies', 'noats', 'close'
+            next if status.conversation_id.nil?
+            roars = Status.where(conversation_id: status.conversation_id, account_id: @account.id)
+            roars.each do |roar|
+              roar.reject_replies = true
+              roar.save
+              Rails.cache.delete("statuses/#{roar.id}")
+            end
           end
         when 'parent'
           chunk = nil
@@ -367,6 +375,10 @@ class Bangtags
             plain = ActionController::Base.helpers.strip_tags(plain)
             plain.gsub!(/ dot /i, '.')
             chunk = plain.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).uniq.join(' ')
+          when 'noreplies', 'noats', 'close'
+            @parent_status.reject_replies = true
+            @parent_status.save
+            Rails.cache.delete("statuses/#{@parent_status.id}")
           end
         when 'media'
           chunk = nil
@@ -589,6 +601,9 @@ class Bangtags
               status.local_only = true
             end
           end
+        when 'noreplies', 'noats'
+          chunk = nil
+          @status.reject_replies = true
         when 'live', 'lifespan', 'l', 'delete_in'
           chunk = nil
           next if cmd[1].nil?
