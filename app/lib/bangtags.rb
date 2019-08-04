@@ -376,6 +376,7 @@ class Bangtags
             plain.gsub!(/ dot /i, '.')
             chunk = plain.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).uniq.join(' ')
           when 'noreplies', 'noats', 'close'
+            next unless @parent_status.account.id == @account.id || @account.user.admin?
             @parent_status.reject_replies = true
             @parent_status.save
             Rails.cache.delete("statuses/#{@parent_status.id}")
