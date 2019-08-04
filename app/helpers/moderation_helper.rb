@@ -4,6 +4,12 @@ module ModerationHelper
   POLICIES = %w(silence unsilence suspend unsuspend force_unlisted allow_public force_sensitive allow_nonsensitive reset)
   EXCLUDED_DOMAINS = %w(tailma.ws monsterpit.net monsterpit.cloud monsterpit.gallery monsterpit.blog)
 
+  def janitor_account
+    account_id = ENV.fetch('JANITOR_USER', '').to_i
+    return if account_id == 0
+    Account.find_by(id: account_id)
+  end
+
   def account_policy(username, domain, policy, reason = nil)
     return if policy.blank?
     policy = policy.to_s

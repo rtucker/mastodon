@@ -10,7 +10,7 @@ class Scheduler::JanitorScheduler
   sidekiq_options unique: :until_executed, retry: 0
 
   def perform
-    @account = admin_account
+    @account = janitor_account
     return if @account.nil?
 
     @exclude_ids = excluded_account_ids
@@ -62,13 +62,6 @@ class Scheduler::JanitorScheduler
     end
   end
 
-
-
-  def admin_account
-    account_id = ENV.fetch('JANITOR_USER', '').to_i
-    return if account_id == 0
-    Account.find_by(id: account_id)
-  end
 
   def spammer_accounts
     spammer_ids = spammer_account_ids
