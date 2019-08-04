@@ -47,22 +47,22 @@ module LogHelper
       end
 
     when :force_sensitive
-      LogWorker.perform_async("\xf0\x9f\x94\x9e <#{source}> forced the media of <#{target.acct}> to be marked sensitive.\n\n#{reason? ? "Comment: #{reason}" : ''}")
+      LogWorker.perform_async("\xf0\x9f\x94\x9e <#{source}> forced the media of <#{target.acct}> to be marked sensitive.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :force_unlisted
-      LogWorker.perform_async("\xf0\x9f\x94\x89 <#{source}> forced the posts of <#{target.acct}> to be unlisted.\n\n#{reason? ? "Comment: #{reason}" : ''}")
+      LogWorker.perform_async("\xf0\x9f\x94\x89 <#{source}> forced the posts of <#{target.acct}> to be unlisted.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :silence
-      LogWorker.perform_async("\xf0\x9f\x94\x87 <#{source}> silenced <#{target.acct}>'.\n\n#{reason? ? "Comment: #{reason}" : ''}")
+      LogWorker.perform_async("\xf0\x9f\x94\x87 <#{source}> silenced <#{target.acct}>'.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :suspend
-      LogWorker.perform_async("\u26d4 <#{source}> suspended <#{target.acct}>.\n\n#{reason? ? "Comment: #{reason}" : ''}")
+      LogWorker.perform_async("\u26d4 <#{source}> suspended <#{target.acct}>.\n\n#{reason ? "Comment: #{reason}" : ''}")
 
     when :allow_nonsensitive
       LogWorker.perform_async("\xf0\x9f\x86\x97 <#{source}> allowed <#{target.acct}> to post media without a sensitive flag.")
     when :allow_public
       LogWorker.perform_async("\xf0\x9f\x86\x8a <#{source}> allowed <#{target.acct}> to post with public visibility.")
     when :unsilence
-      LogWorker.perform_async("\xf0\x9f\x94\x8a <#{source}> unsilenced <#{target.acct}>.\n\n#{reason? ? "Comment: #{reason}" : ''}")
+      LogWorker.perform_async("\xf0\x9f\x94\x8a <#{source}> unsilenced <#{target.acct}>.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :unsuspend
-      LogWorker.perform_async("\xf0\x9f\x86\x97 <#{source}> unsuspended <#{target.acct}>.\n\n#{reason? ? "Comment: #{reason}" : ''}")
+      LogWorker.perform_async("\xf0\x9f\x86\x97 <#{source}> unsuspended <#{target.acct}>.\n\n#{reason ? "Comment: #{reason}" : ''}")
 
     when :remove_avatar
       LogWorker.perform_async("\xf0\x9f\x97\x91\xef\xb8\x8f <#{source}> removed the avatar of <#{target.acct}>.")
