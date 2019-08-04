@@ -1,4 +1,8 @@
 module AutorejectHelper
+  include ModerationHelper
+
+  AUTOBLOCK_TRIGGERS = [:context, :context_starts_with, :context_contains]
+
 	def should_reject?(uri = nil)
     if uri.nil?
       if @object
@@ -12,7 +16,7 @@ module AutorejectHelper
 
     domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
     blocks = DomainBlock.suspend
-    return :domain if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
+    return [:domain, uri] if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
 
     return unless @json || @object
 
@@ -21,8 +25,8 @@ module AutorejectHelper
     if @json
       oid = @json['id']
       if oid
-        return :id_starts_with if ENV.fetch('REJECT_IF_ID_STARTS_WITH', '').split.any? { |r| oid.start_with?(r) }
-        return :id_contains if ENV.fetch('REJECT_IF_ID_CONTAINS', '').split.any? { |r| r.in?(oid) }
+        return [:id_starts_with, uri] if ENV.fetch('REJECT_IF_ID_STARTS_WITH', '').split.any? { |r| oid.start_with?(r) }
+        return [:id_contains, uri] if ENV.fetch('REJECT_IF_ID_CONTAINS', '').split.any? { |r| r.in?(oid) }
       end
 
       username = @json['preferredUsername'] || @json['username']
@@ -33,9 +37,9 @@ module AutorejectHelper
 
       unless username.blank?
         username.downcase!
-        return :username if ENV.fetch('REJECT_IF_USERNAME_EQUALS', '').split.any? { |r| r == username }
-        return :username_starts_with if ENV.fetch('REJECT_IF_USERNAME_STARTS_WITH', '').split.any? { |r| username.start_with?(r) }
-        return :username_contains if ENV.fetch('REJECT_IF_USERNAME_CONTAINS', '').split.any? { |r| r.in?(username) }
+        return [:username, uri] if ENV.fetch('REJECT_IF_USERNAME_EQUALS', '').split.any? { |r| r == username }
+        return [:username_starts_with, uri] if ENV.fetch('REJECT_IF_USERNAME_STARTS_WITH', '').split.any? { |r| username.start_with?(r) }
+        return [:username_contains, uri] if ENV.fetch('REJECT_IF_USERNAME_CONTAINS', '').split.any? { |r| r.in?(username) }
       end
 
       context = @json['@context'] unless @object && context
@@ -47,9 +51,9 @@ module AutorejectHelper
       inline_context = context.find { |item| item.is_a?(Hash) }
       if inline_context
         keys = inline_context.keys
-        return :context if ENV.fetch('REJECT_IF_CONTEXT_EQUALS', '').split.any? { |r| r.in?(keys) }
-        return :context_starts_with if ENV.fetch('REJECT_IF_CONTEXT_STARTS_WITH', '').split.any? { |r| keys.any? { |k| k.start_with?(r) } }
-        return :context_contains if ENV.fetch('REJECT_IF_CONTEXT_CONTAINS', '').split.any? { |r| keys.any? { |k| r.in?(k) } }
+        return [:context, uri] if ENV.fetch('REJECT_IF_CONTEXT_EQUALS', '').split.any? { |r| r.in?(keys) }
+        return [:context_starts_with, uri] if ENV.fetch('REJECT_IF_CONTEXT_STARTS_WITH', '').split.any? { |r| keys.any? { |k| k.start_with?(r) } }
+        return [:context_contains, uri] if ENV.fetch('REJECT_IF_CONTEXT_CONTAINS', '').split.any? { |r| keys.any? { |k| r.in?(k) } }
       end
     end
 
@@ -81,12 +85,23 @@ module AutorejectHelper
     end
   end
 
+  def should_autoblock?(reason)
+    @json['type'] == 'Create' && reason.in?(AUTOBLOCK_TRIGGERS)
+  end
+
+  def autoblock!(uri, reason)
+    return if uri.nil?
+    domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
+    domain_policy(uri, :suspend, "Sent an ActivityPub payload (#{uri}) where #{reason}.")
+  end
+
   def autoreject?(uri = nil)
     return false if @options && @options[:imported]
-    reason = should_reject?(uri)
+    reason, uri = should_reject?(uri)
     if reason
       reason = reject_reason(reason)
       if @json
+        autoblock!(uri, reason) if should_autoblock?(reason)
         Rails.logger.info("Rejected an incoming '#{@json['type']}#{@object && " #{@object['type']}".rstrip}' from #{@json['id']} because #{reason}.")
       elsif uri
         Rails.logger.info("Rejected an outgoing request to #{uri} because #{reason}.")
