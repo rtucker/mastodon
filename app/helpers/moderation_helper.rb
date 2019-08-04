@@ -87,7 +87,7 @@ module ModerationHelper
     end
 
     if policy.in? %w(silence suspend force_unlisted)
-      return false unless domain_exists(domain)
+      return false unless domain_exists?(domain)
 
       domain_block = DomainBlock.find_or_create_by(domain: domain)
       domain_block.severity = policy
