@@ -47,7 +47,8 @@ class Status < ApplicationRecord
 
   # match both with and without U+FE0F (the emoji variation selector)
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
-  REJECT_REPLIES_TOKENS = /\b(?:ms_dont_at_me|no (?:replie|mention)s|(?:don't|do not) (?:@|at|reply|mention)(?: (?:me|us))?)\b/i
+  REJECT_REPLIES_TOKENS = /^(?:please )?(?:ms_dont_at_me|no (?:replie|mention)s|(?:dont|do not) (?:@|at|reply|mention)(?: (?:me|us))?)\b/i
+  SIMPLIFIED = /[^\w\s@_\"\'\-]+/
 
   # If `override_timestamps` is set at creation time, Snowflake ID creation
   # will be based on current time instead of `created_at`
@@ -549,9 +550,9 @@ class Status < ApplicationRecord
 
   def marked_reject_replies?
     return true if reject_replies
-    return true if spoiler_text.present? && REJECT_REPLIES_TOKENS.match?(spoiler_text)
-    return true if content.present? && REJECT_REPLIES_TOKENS.match?(content.lines.first)
-    content.present? && REJECT_REPLIES_TOKENS.match?(content.lines.last)
+    return true if spoiler_text.present? && REJECT_REPLIES_TOKENS.match?(spoiler_text.gsub(SIMPLIFIED, '').strip)
+    return true if content.present? && REJECT_REPLIES_TOKENS.match?(content.lines.first.gsub(SIMPLIFIED, '').strip)
+    content.present? && REJECT_REPLIES_TOKENS.match?(content.lines.last.gsub(SIMPLIFIED, '').strip)
   end
 
   private
