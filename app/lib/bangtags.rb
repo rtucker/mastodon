@@ -379,6 +379,13 @@ class Bangtags
             @parent_status.reject_replies = true
             @parent_status.save
             Rails.cache.delete("statuses/#{@parent_status.id}")
+          when 'bookmark', 'bm'
+            Bookmark.find_or_create_by!(account: @account, status: @parent_status)
+            next if @parent_status.curated || !@parent_status.distributable?
+            next if @parent_status.reply? && @status.in_reply_to_account_id != @account.id
+            @parent_status.curated = true
+            @parent_status.save
+            FanOutOnWriteService.new.call(@parent_status)
           end
         when 'media'
           chunk = nil
