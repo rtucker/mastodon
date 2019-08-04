@@ -66,6 +66,15 @@ export default class LocalSettingsPage extends React.PureComponent {
         >
           <FormattedMessage id='settings.confirm_boost_missing_media_description' defaultMessage='Show confirmation dialog before boosting toots lacking media descriptions' />
         </LocalSettingsPageItem>
+        <LocalSettingsPageItem
+          settings={settings}
+          item={['tag_misleading_links']}
+          id='mastodon-settings--tag_misleading_links'
+          onChange={onChange}
+        >
+          <FormattedMessage id='settings.tag_misleading_links' defaultMessage='Tag misleading links' />
+          <span className='hint'><FormattedMessage id='settings.tag_misleading_links.hint' defaultMessage="Add a visual indication with the link target host to every link not mentioning it explicitly" /></span>
+        </LocalSettingsPageItem>
         <section>
           <h2><FormattedMessage id='settings.notifications_opts' defaultMessage='Notifications options' /></h2>
           <LocalSettingsPageItem

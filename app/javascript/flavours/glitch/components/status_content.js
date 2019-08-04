@@ -6,6 +6,53 @@ import { FormattedMessage } from 'react-intl';
 import Permalink from './permalink';
 import classnames from 'classnames';
 import { autoPlayGif } from 'flavours/glitch/util/initial_state';
+import { decode as decodeIDNA } from 'flavours/glitch/util/idna';
+
+const textMatchesTarget = (text, origin, host) => {
+  return (text === origin || text === host
+          || text.startsWith(origin + '/') || text.startsWith(host + '/')
+          || 'www.' + text === host || ('www.' + text).startsWith(host + '/'));
+}
+
+const isLinkMisleading = (link) => {
+  let linkTextParts = [];
+
+  // Reconstruct visible text, as we do not have much control over how links
+  // from remote software look, and we can't rely on `innerText` because the
+  // `invisible` class does not set `display` to `none`.
+
+  const walk = (node) => {
+    switch (node.nodeType) {
+    case Node.TEXT_NODE:
+      linkTextParts.push(node.textContent);
+      break;
+    case Node.ELEMENT_NODE:
+      if (node.classList.contains('invisible')) return;
+      const children = node.childNodes;
+      for (let i = 0; i < children.length; i++) {
+        walk(children[i]);
+      }
+      break;
+    }
+  };
+
+  walk(link);
+
+  const linkText = linkTextParts.join('');
+  const targetURL = new URL(link.href);
+
+  // The following may not work with international domain names
+  if (textMatchesTarget(linkText, targetURL.origin, targetURL.host) || textMatchesTarget(linkText.toLowerCase(), targetURL.origin, targetURL.host)) {
+    return false;
+  }
+
+  // The link hasn't been recognized, maybe it features an international domain name
+  const hostname = decodeIDNA(targetURL.hostname).normalize('NFKC');
+  const host = targetURL.host.replace(targetURL.hostname, hostname);
+  const origin = targetURL.origin.replace(targetURL.host, host);
+  const text = linkText.normalize('NFKC');
+  return !(textMatchesTarget(text, origin, host) || textMatchesTarget(text.toLowerCase(), origin, host));
+};
 
 export default class StatusContent extends React.PureComponent {
 
@@ -19,6 +66,11 @@ export default class StatusContent extends React.PureComponent {
     parseClick: PropTypes.func,
     disabled: PropTypes.bool,
     onUpdate: PropTypes.func,
+    tagLinks: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    tagLinks: true,
   };
 
   state = {
@@ -27,6 +79,7 @@ export default class StatusContent extends React.PureComponent {
 
   _updateStatusLinks () {
     const node = this.contentsNode;
+    const { tagLinks } = this.props;
 
     if (!node) {
       return;
@@ -52,6 +105,16 @@ export default class StatusContent extends React.PureComponent {
         link.addEventListener('click', this.onLinkClick.bind(this), false);
         link.setAttribute('title', link.href);
         link.classList.add('unhandled-link');
+
+        if (tagLinks && isLinkMisleading(link)) {
+          // Add a tag besides the link to display its origin
+
+          const tag = document.createElement('span');
+          tag.classList.add('link-origin-tag');
+          tag.textContent = `[${new URL(link.href).host}]`;
+          link.insertAdjacentText('beforeend', ' ');
+          link.insertAdjacentElement('beforeend', tag);
+        }
       }
 
       link.setAttribute('target', '_blank');
@@ -173,6 +236,7 @@ export default class StatusContent extends React.PureComponent {
       mediaIcon,
       parseClick,
       disabled,
+      tagLinks,
     } = this.props;
 
     const hidden = this.props.onExpandedToggle ? !this.props.expanded : this.state.hidden;
@@ -247,6 +311,7 @@ export default class StatusContent extends React.PureComponent {
           <div className={`status__content__spoiler ${!hidden ? 'status__content__spoiler--visible' : ''}`}>
             <div
               ref={this.setContentsRef}
+              key={`contents-${tagLinks}`}
               style={directionStyle}
               tabIndex={!hidden ? 0 : null}
               dangerouslySetInnerHTML={content}
@@ -270,6 +335,7 @@ export default class StatusContent extends React.PureComponent {
         >
           <div
             ref={this.setContentsRef}
+            key={`contents-${tagLinks}`}
             dangerouslySetInnerHTML={content}
             lang={status.get('language')}
             className='status__content__text'
@@ -286,7 +352,7 @@ export default class StatusContent extends React.PureComponent {
           tabIndex='0'
           ref={this.setRef}
         >
-          <div ref={this.setContentsRef} className='status__content__text' dangerouslySetInnerHTML={content} lang={status.get('language')} tabIndex='0' />
+          <div ref={this.setContentsRef} key={`contents-${tagLinks}`} className='status__content__text' dangerouslySetInnerHTML={content} lang={status.get('language')} tabIndex='0' />
           {media}
         </div>
       );
