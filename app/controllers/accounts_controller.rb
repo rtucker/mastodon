@@ -29,7 +29,7 @@ class AccountsController < ApplicationController
         end
 
 
-        @pinned_statuses = cache_collection(@account.pinned_statuses, Status) if show_pinned_statuses?
+        @pinned_statuses = cache_collection(pinned_statuses, Status) if show_pinned_statuses?
         @statuses        = filtered_status_page(params)
         @statuses        = cache_collection(@statuses, Status)
 
@@ -50,6 +50,14 @@ class AccountsController < ApplicationController
   end
 
   private
+
+  def pinned_statuses
+    if user_signed_in? && current_account.following?(@account)
+      @account.pinned_statuses
+    else
+      @account.pinned_statuses.where.not(visibility: :private)
+    end
+  end
 
   def show_pinned_statuses?
     [reblogs_requested?, replies_requested?, media_requested?, tag_requested?, params[:max_id].present?, params[:min_id].present?].none?

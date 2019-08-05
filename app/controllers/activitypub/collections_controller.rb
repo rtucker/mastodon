@@ -35,7 +35,7 @@ class ActivityPub::CollectionsController < Api::BaseController
   def set_size
     case params[:id]
     when 'featured'
-      @account.pinned_statuses.count
+      @account.pinned_statuses.where.not(visibility: :private).count
     else
       raise ActiveRecord::RecordNotFound
     end
@@ -45,7 +45,7 @@ class ActivityPub::CollectionsController < Api::BaseController
     case params[:id]
     when 'featured'
       @account.statuses.permitted_for(@account, signed_request_account).tap do |scope|
-        scope.merge!(@account.pinned_statuses)
+        scope.merge!(@account.pinned_statuses.where.not(visibility: :private))
       end
     else
       raise ActiveRecord::RecordNotFound

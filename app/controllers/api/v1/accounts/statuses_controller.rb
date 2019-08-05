@@ -57,7 +57,11 @@ class Api::V1::Accounts::StatusesController < Api::BaseController
   end
 
   def pinned_scope
-    @account.pinned_statuses
+    if user_signed_in? && current_account.following?(@account)
+      @account.pinned_statuses
+    else
+      @account.pinned_statuses.where.not(visibility: :private)
+    end
   end
 
   def no_replies_scope
