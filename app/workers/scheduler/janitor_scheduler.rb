@@ -22,6 +22,7 @@ class Scheduler::JanitorScheduler
     suspend_spammers!
     silence_markov!
     import_blocklists!
+    export_suspensions!
   end
 
   private
@@ -59,6 +60,15 @@ class Scheduler::JanitorScheduler
       DomainBlockWorker.perform_async(block)
       Admin::ActionLog.create(account: @account, action: :create, target: block)
       user_friendly_action_log(@account, :create, block)
+    end
+  end
+
+  def export_suspensions!
+    outfile = ENV.fetch('JANITOR_BLOCKLIST_OUTPUT', '')
+    return if outfile.blank?
+    return unless File.file?(outfile)
+    File.open(outfile, 'w:UTF-8') do |file|
+      file.puts(DomainBlock.suspend.pluck(:domain))
     end
   end
 
