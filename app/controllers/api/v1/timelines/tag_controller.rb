@@ -28,6 +28,8 @@ class Api::V1::Timelines::TagController < Api::BaseController
   def tagged_statuses
     if @tag.nil?
       []
+    elsif @tag.name.in?(['self.bookmarks', '.self.bookmarks'])
+      Status.reorder(nil).joins(:bookmarks).merge(bookmark_results)
     else
       statuses = tag_timeline_statuses.paginate_by_id(
         limit_param(DEFAULT_STATUSES_LIMIT),
@@ -46,6 +48,18 @@ class Api::V1::Timelines::TagController < Api::BaseController
 
   def tag_timeline_statuses
     HashtagQueryService.new.call(@tag, params.slice(:any, :all, :none), current_account, truthy_param?(:local))
+  end
+
+  def bookmark_results
+    @_results ||= account_bookmarks.paginate_by_max_id(
+      limit_param(DEFAULT_STATUSES_LIMIT),
+      params[:max_id],
+      params[:since_id]
+    )
+  end
+
+  def account_bookmarks
+    current_account.bookmarks
   end
 
   def insert_pagination_headers
