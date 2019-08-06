@@ -231,7 +231,7 @@
   "loading_indicator.label": "Loading... /..\\\\≈",
   "media_gallery.toggle_visible": "Toggle visibility",
   "missing_indicator.label": "Not found",
-  "missing_indicator.sublabel": "This resource could not be found. I found (OBJECT PLACEHOLDER), though!",
+  "missing_indicator.sublabel": "This resource could not be found. I found a box of other random things, though!",
   "mute_modal.hide_notifications": "Hide notifications from this user?",
   "navigation_bar.apps": "Mobile apps",
   "navigation_bar.blocks": "Blocked users",
