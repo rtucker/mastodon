@@ -720,6 +720,7 @@ class Bangtags
           @status.visibility = :direct
           @status.local_only = true
           @status.content_type = 'text/markdown'
+          @status.delete_after = 1.hour
           @chunks << "\n# <code>#!</code><code>account:#{c.downcase}</code>:\n<hr />\n"
           output = []
           case c.downcase
