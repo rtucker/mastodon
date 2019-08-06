@@ -22,7 +22,7 @@ module ModerationHelper
     return false if acct.nil?
 
     if policy == 'reset'
-      Admin::ActionLog.create(account: @account, action: unsuspend, target: acct)
+      Admin::ActionLog.create(account: @account, action: 'unsuspend', target: acct)
       user_friendly_action_log(@account, :unsuspend, acct, reason)
     else
       Admin::ActionLog.create(account: @account, action: policy, target: acct)
