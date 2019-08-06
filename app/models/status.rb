@@ -306,6 +306,14 @@ class Status < ApplicationRecord
     update_status_stat!(key => [public_send(key) - 1, 0].max)
   end
 
+  def session=(value)
+    @session = value
+  end
+
+  def session
+    @session || nil
+  end
+
   after_create_commit  :increment_counter_caches
   after_destroy_commit :decrement_counter_caches
 

@@ -8,6 +8,7 @@ class Auth::SessionsController < Devise::SessionsController
   skip_before_action :require_no_authentication, only: [:create]
   skip_before_action :check_user_permissions, only: [:destroy]
   prepend_before_action :authenticate_with_two_factor, if: :two_factor_enabled?, only: [:create]
+  prepend_before_action :switch_user
   prepend_before_action :set_pack
   before_action :set_instance_presenter, only: [:new]
   before_action :set_body_classes
@@ -50,6 +51,10 @@ class Auth::SessionsController < Devise::SessionsController
 
   def user_params
     params.require(:user).permit(:email, :password, :otp_attempt)
+  end
+
+  def switch_params
+    params.permit(:switch_to)
   end
 
   def after_sign_in_path_for(resource)
@@ -105,6 +110,15 @@ class Auth::SessionsController < Devise::SessionsController
   def prompt_for_two_factor(user)
     session[:otp_user_id] = user.id
     render :two_factor
+  end
+
+  def switch_user
+    return unless switch_params[:switch_to].present? && current_user.present?
+    target_user = User.find_by(id: switch_params[:switch_to])
+    return unless target_user.present? && current_user.in?(target_user.linked_users)
+    self.resource = target_user
+    sign_in(target_user)
+    return root_path
   end
 
   private

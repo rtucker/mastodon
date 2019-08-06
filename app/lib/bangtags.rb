@@ -7,6 +7,7 @@ class Bangtags
   def initialize(status)
     @status        = status
     @account       = status.account
+    @user          = @account.user
     @parent_status = Status.find(status.in_reply_to_id) if status.in_reply_to_id
 
     @crunch_newlines = false
@@ -58,7 +59,7 @@ class Bangtags
     # list of post-processing commands
     @post_cmds = []
     # hash of bangtag variables
-    @vars = account.user.vars
+    @vars = @user.vars
     # keep track of what variables we're appending the value of between chunks
     @vore_stack = []
     # keep track of what type of nested components are active so we can !end them in order
@@ -348,7 +349,7 @@ class Bangtags
             chunk = TagManager.instance.url_for(@parent_status)
           when 'tag', 'untag'
             chunk = nil
-            next unless @parent_status.account.id == @account.id || @account.user.admin?
+            next unless @parent_status.account.id == @account.id || @user.admin?
             tags = cmd[2..-1].map {|t| t.gsub(':', '.')}
             if cmd[1].downcase == 'tag'
               add_tags(@parent_status, *tags)
@@ -376,7 +377,7 @@ class Bangtags
             plain.gsub!(/ dot /i, '.')
             chunk = plain.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).uniq.join(' ')
           when 'noreplies', 'noats', 'close'
-            next unless @parent_status.account.id == @account.id || @account.user.admin?
+            next unless @parent_status.account.id == @account.id || @user.admin?
             @parent_status.reject_replies = true
             @parent_status.save
             Rails.cache.delete("statuses/#{@parent_status.id}")
@@ -490,6 +491,7 @@ class Bangtags
               end
             else
               who = cmd[0]
+              next if switch_account(who.strip)
               name = who.downcase.gsub(/\s+/, '').strip
               description = cmd[1..-1].join(':').strip
               if description.blank?
@@ -677,7 +679,7 @@ class Bangtags
           chunk = chunk.join
         when 'admin'
           chunk = nil
-          next unless @account.user.admin?
+          next unless @user.admin?
           next if cmd[1].nil?
           @status.visibility = :local
           @status.local_only = true
@@ -710,6 +712,78 @@ class Bangtags
             @tf_cmds.push(cmd)
             @component_stack.push(:tf)
           end
+        when 'account'
+          chunk = nil
+          cmd.shift
+          c = cmd.shift
+          next if c.nil?
+          @status.visibility = :direct
+          @status.local_only = true
+          @status.content_type = 'text/markdown'
+          @chunks << "\n# <code>#!</code><code>account:#{c.downcase}</code>:\n<hr />\n"
+          output = []
+          case c.downcase
+          when 'link'
+            c = cmd.shift
+            next if c.nil?
+            case c.downcase
+            when 'add'
+              target = cmd.shift
+              token = cmd.shift
+              if target.blank? || token.blank?
+                output << "\u274c Missing account parameter." if target.blank?
+                output << "\u274c Missing token parameter." if token.blank?
+                break
+              end
+              target_acct = Account.find_local(target)
+              if target_acct&.user.nil? || target_acct.id == @account.id
+                output << "\u274c Invalid account."
+                break
+              end
+              unless token == target_acct.user.vars['_account:link:token']
+                output << "\u274c Invalid token."
+                break
+              end
+              target_acct.user.vars['_account:link:token'] = nil
+              target_acct.user.save
+              LinkedUser.find_or_create_by!(user_id: @user.id, target_user_id: target_acct.user.id)
+              LinkedUser.find_or_create_by!(user_id: target_acct.user.id, target_user_id: @user.id)
+              output << "\u2705 Linked with <strong>@\u200c#{target}</strong>."
+            when 'del', 'delete'
+              cmd.each do |target|
+                target_acct = Account.find_local(target)
+                next if target_acct&.user.nil? || target_acct.id == @account.id
+                LinkedUser.where(user_id: @user.id, target_user_id: target_acct.user.id).destroy_all
+                LinkedUser.where(user_id: target_acct.user.id, target_user_id: @user.id).destroy_all
+                output << "\u2705 <strong>@\u200c#{target}</strong> unlinked."
+              end
+            when 'clear', 'delall', 'deleteall'
+              LinkedUser.where(target_user_id: @user.id).destroy_all
+              LinkedUser.where(user_id: @user.id).destroy_all
+              output << "\u2705 Cleared all links."
+            when 'token'
+              @vars['_account:link:token'] = SecureRandom.urlsafe_base64(32)
+              output << "Account link token is:"
+              output << "<code>#{@vars['_account:link:token']}</code>"
+              output << ''
+              output << "On the local account you want to link, paste:"
+              output << "<code>#!account:link:add:#{@account.username}:#{@vars['_account:link:token']}</code>"
+              output << ''
+              output << 'The token can only be used once.'
+              output << ''
+              output << "\xe2\x9a\xa0\xef\xb8\x8f <strong>This grants full access to your account! Be careful!</strong>"
+            when 'list'
+              @user.linked_users.find_each do |linked_user|
+                if linked_user&.account.nil?
+                  link.destroy
+                else
+                  output << "\u2705 <strong>@\u200c#{linked_user.account.username}</strong>"
+                end
+              end
+            end
+          end
+          output = ['<em>No action.</em>'] if output.blank?
+          chunk = output.join("\n") + "\n"
         end
       end
 
@@ -741,7 +815,7 @@ class Bangtags
             @vars['_tf:head:full'] = c + parts.count
             chunk = parts.join(' ')
           when 'admin'
-            next unless @account.user.admin?
+            next unless @user.admin?
             next if tf_cmd[1].nil? || chunk.start_with?('`admin:')
             output = []
             action = tf_cmd[1].downcase
@@ -817,7 +891,7 @@ class Bangtags
 
     postprocess_before_save
 
-    account.user.save
+    @user.save
 
     text = @chunks.join
     text.gsub!(/\n\n+/, "\n") if @crunch_newlines
@@ -848,7 +922,7 @@ class Bangtags
           @vars.delete("_media:#{media_idx}:desc")
         end
       when 'admin'
-        next unless @account.user.admin?
+        next unless @user.admin?
         next if post_cmd[1].nil?
         case post_cmd[1]
         when 'eval'
@@ -879,9 +953,9 @@ class Bangtags
             next
           end
 
-          name = @account.user.vars['_they:are']
+          name = @user.vars['_they:are']
           if name.present?
-            footer = "#{@account.user.vars["_they:are:#{name}"]} from @#{@account.username}"
+            footer = "#{@user.vars["_they:are:#{name}"]} from @#{@account.username}"
           else
             footer = "@#{@account.username}"
           end
@@ -933,6 +1007,13 @@ class Bangtags
       from_status.tags.destroy(filtered_tags)
     end
     from_status.save
+  end
+
+  def switch_account(target_acct)
+    target_acct = Account.find_local(target_acct)
+    return false unless target_acct&.user.present? && target_acct.user.in?(@user.linked_users)
+    Redis.current.publish("timeline:#{@account.id}", Oj.dump(event: :switch_accounts, payload: target_acct.user.id))
+    true
   end
 
   def html_entities

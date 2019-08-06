@@ -9,6 +9,7 @@ import {
 import { updateNotifications, expandNotifications } from './notifications';
 import { fetchFilters } from './filters';
 import { getLocale } from 'mastodon/locales';
+import { resetCompose } from 'flavours/glitch/actions/compose';
 
 const { messages } = getLocale();
 
@@ -39,6 +40,14 @@ export function connectTimelineStream (timelineId, path, pollingRefresh = null, 
           break;
         case 'filters_changed':
           dispatch(fetchFilters());
+          break;
+        case 'switch_accounts':
+          dispatch(resetCompose());
+          window.location.href = `/auth/sign_in?switch_to=${data.payload}`
+          break;
+        case 'refresh':
+          dispatch(resetCompose());
+          window.location.reload();
           break;
         }
       },

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_05_064643) do
+ActiveRecord::Schema.define(version: 2019_08_05_203816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -359,6 +359,16 @@ ActiveRecord::Schema.define(version: 2019_08_05_064643) do
     t.boolean "autofollow", default: false, null: false
     t.index ["code"], name: "index_invites_on_code", unique: true
     t.index ["user_id"], name: "index_invites_on_user_id"
+  end
+
+  create_table "linked_users", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "target_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["target_user_id"], name: "index_linked_users_on_target_user_id"
+    t.index ["user_id", "target_user_id"], name: "index_linked_users_on_user_id_and_target_user_id", unique: true
+    t.index ["user_id"], name: "index_linked_users_on_user_id"
   end
 
   create_table "list_accounts", force: :cascade do |t|
@@ -827,6 +837,8 @@ ActiveRecord::Schema.define(version: 2019_08_05_064643) do
   add_foreign_key "identities", "users", name: "fk_bea040f377", on_delete: :cascade
   add_foreign_key "imports", "accounts", name: "fk_6db1b6e408", on_delete: :cascade
   add_foreign_key "invites", "users", on_delete: :cascade
+  add_foreign_key "linked_users", "users", column: "target_user_id", on_delete: :cascade
+  add_foreign_key "linked_users", "users", on_delete: :cascade
   add_foreign_key "list_accounts", "accounts", on_delete: :cascade
   add_foreign_key "list_accounts", "follows", on_delete: :cascade
   add_foreign_key "list_accounts", "lists", on_delete: :cascade
