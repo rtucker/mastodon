@@ -17,6 +17,7 @@ class RemoveStatusService < BaseService
 
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?
+        remove_from_queued
         remove_from_self if status.account.local?
         remove_from_followers
         remove_from_lists
@@ -45,6 +46,11 @@ class RemoveStatusService < BaseService
   end
 
   private
+
+  def remove_from_queued
+    QueuedBoost.where(account_id: @account.id, status_id: @status.proper.id).destroy_all
+    QueuedBoost.where(status_id: @status.id).destroy_all
+  end
 
   def remove_from_self
     FeedManager.instance.unpush_from_home(@account, @status)

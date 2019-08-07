@@ -56,6 +56,10 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_roar_lifespan,
       :setting_delayed_roars,
       :setting_delayed_for,
+      :setting_boost_interval,
+      :setting_boost_random,
+      :setting_boost_interval_from,
+      :setting_boost_interval_to,
       :setting_show_cursor,
 
       :setting_default_privacy,

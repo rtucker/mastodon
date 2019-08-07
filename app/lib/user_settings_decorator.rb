@@ -40,6 +40,10 @@ class UserSettingsDecorator
     user.settings['roar_lifespan']       = roar_lifespan_preference if change?('setting_roar_lifespan')
     user.settings['delayed_roars']       = delayed_roars_preference if change?('setting_delayed_roars')
     user.settings['delayed_for']         = delayed_for_preference if change?('setting_delayed_for')
+    user.settings['boost_interval']      = boost_interval_preference if change?('setting_boost_interval')
+    user.settings['boost_random']        = boost_random_preference if change?('setting_boost_random')
+    user.settings['boost_interval_from'] = boost_interval_from_preference if change?('setting_boost_interval_from')
+    user.settings['boost_interval_to']   = boost_interval_to_preference if change?('setting_boost_interval_to')
     user.settings['show_cursor']         = show_cursor_preference if change?('setting_show_cursor')
 
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
@@ -148,6 +152,26 @@ class UserSettingsDecorator
 
   def delayed_roars_preference
     boolean_cast_setting 'setting_delayed_roars'
+  end
+
+  def boost_interval_preference
+    boolean_cast_setting 'setting_boost_interval'
+  end
+
+  def boost_random_preference
+    boolean_cast_setting 'setting_boost_random'
+  end
+
+  def boost_interval_from_preference
+    settings['setting_boost_interval_from']
+  end
+
+  def boost_interval_to_preference
+    settings['setting_boost_interval_to']
+  end
+
+  def delayed_for_preference
+    settings['setting_delayed_for']
   end
 
   def merged_notification_emails

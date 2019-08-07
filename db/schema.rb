@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_05_203816) do
+ActiveRecord::Schema.define(version: 2019_08_06_195913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -554,6 +554,16 @@ ActiveRecord::Schema.define(version: 2019_08_05_203816) do
     t.index ["status_id", "preview_card_id"], name: "index_preview_cards_statuses_on_status_id_and_preview_card_id"
   end
 
+  create_table "queued_boosts", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "status_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "status_id"], name: "index_queued_boosts_on_account_id_and_status_id", unique: true
+    t.index ["account_id"], name: "index_queued_boosts_on_account_id"
+    t.index ["status_id"], name: "index_queued_boosts_on_status_id"
+  end
+
   create_table "relays", force: :cascade do |t|
     t.string "inbox_url", default: "", null: false
     t.string "follow_activity_id"
@@ -861,6 +871,8 @@ ActiveRecord::Schema.define(version: 2019_08_05_203816) do
   add_foreign_key "poll_votes", "polls", on_delete: :cascade
   add_foreign_key "polls", "accounts", on_delete: :cascade
   add_foreign_key "polls", "statuses", on_delete: :cascade
+  add_foreign_key "queued_boosts", "accounts", on_delete: :cascade
+  add_foreign_key "queued_boosts", "statuses", on_delete: :cascade
   add_foreign_key "report_notes", "accounts", on_delete: :cascade
   add_foreign_key "report_notes", "reports", on_delete: :cascade
   add_foreign_key "reports", "accounts", column: "action_taken_by_account_id", name: "fk_bca45b75fd", on_delete: :nullify

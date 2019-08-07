@@ -14,22 +14,30 @@ class ReblogService < BaseService
     authorize_with account, reblogged_status, :reblog?
 
     reblog = account.statuses.find_by(reblog: reblogged_status)
+    new_reblog = reblog.nil?
 
-    return reblog unless reblog.nil?
-
-    visibility = options[:visibility] || account.user&.setting_default_privacy
-    visibility = reblogged_status.visibility if reblogged_status.hidden?
-    reblog = account.statuses.create!(reblog: reblogged_status, text: '', visibility: visibility)
-
-    DistributionWorker.perform_async(reblog.id)
-
-    unless reblogged_status.local_only?
-      ActivityPub::DistributionWorker.perform_async(reblog.id)
+    if new_reblog
+      visibility = options[:visibility] || account.user&.setting_default_privacy
+      visibility = reblogged_status.visibility if reblogged_status.hidden?
+      reblog = account.statuses.create!(reblog: reblogged_status, text: '', visibility: visibility)
     end
 
-    curate_status(reblogged_status)
-    create_notification(reblog) unless options[:skip_notify]
-    bump_potential_friendship(account, reblog)
+    if !options[:distribute] && account&.user&.boost_interval?
+      QueuedBoost.find_or_create_by!(account_id: account.id, status_id: reblogged_status.id) if account&.user&.boost_interval?
+    elsif !options[:nodistribute]
+      return reblog unless options[:distribute] || new_reblog
+
+      DistributionWorker.perform_async(reblog.id)
+
+      unless reblogged_status.local_only?
+        ActivityPub::DistributionWorker.perform_async(reblog.id)
+      end
+
+      curate_status(reblogged_status)
+
+      create_notification(reblog) unless options[:skip_notify]
+      bump_potential_friendship(account, reblog)
+    end
 
     reblog
   end

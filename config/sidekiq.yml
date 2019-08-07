@@ -12,6 +12,9 @@
   destructing_statuses_scheduler:
     every: '1m'
     class: Scheduler::DestructingStatusesScheduler
+  boosts_scheduler:
+    every: '1m'
+    class: Scheduler::BoostsScheduler
   janitor_scheduler:
     every: '1h'
     class: Scheduler::JanitorScheduler

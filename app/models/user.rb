@@ -131,6 +131,10 @@ class User < ApplicationRecord
     :roar_lifespan,
     :delayed_roars,
     :delayed_for,
+    :boost_interval,
+    :boost_random,
+    :boost_interval_from,
+    :boost_interval_to,
     :show_cursor,
 
     :auto_play_gif,
@@ -303,11 +307,11 @@ class User < ApplicationRecord
   end
 
   def max_public_history
-    @_max_public_history ||= (settings.max_public_history || 6)
+    @_max_public_history ||= [1, (settings.max_public_history || 6).to_i].max
   end
 
   def roar_lifespan
-    @_roar_lifespan ||= (settings.roar_lifespan || 0)
+    @_roar_lifespan ||= [0, (settings.roar_lifespan || 0).to_i].max
   end
 
   def delayed_roars?
@@ -315,7 +319,23 @@ class User < ApplicationRecord
   end
 
   def delayed_for
-    @_delayed_for ||= (settings.delayed_for || 60)
+    @_delayed_for ||= [5, (settings.delayed_for || 60).to_i].max
+  end
+
+  def boost_interval?
+    @boost_interval ||= (settings.boost_interval || false)
+  end
+
+  def boost_random?
+    @boost_random ||= (settings.boost_random || false)
+  end
+
+  def boost_interval_from
+    @boost_interval_from ||= [1, (settings.boost_interval_from || 1).to_i].max
+  end
+
+  def boost_interval_to
+    @boost_interval_to ||= [2, (settings.boost_interval_to || 15).to_i].max
   end
 
   def shows_cursor?

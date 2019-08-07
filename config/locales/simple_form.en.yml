@@ -127,6 +127,10 @@ en:
         setting_roar_lifespan: Auto-delete new roars after
         setting_delayed_roars: Delayed publishing of roars for proofreading
         setting_delayed_for: Delay for
+        setting_boost_interval: Automatically space out consecutive boosts
+        setting_boost_random: Boost in random order
+        setting_boost_interval_from: Minimum boost interval
+        setting_boost_interval_to: Maximum boost interval
         setting_default_local: Default to Monsterpit-only roars (in Glitch flavour)
         setting_always_local: Don't send your roars outside Monsterpit
         setting_rawr_federated: Show raw world timeline (may contain offensive content!)
@@ -176,6 +180,23 @@ en:
         username: Username
         username_or_email: Username or Email
         whole_word: Whole word
+      boost_interval:
+        1: 1 minute
+        2: 2 minutes
+        3: 3 minutes
+        4: 4 minutes
+        5: 5 minutes
+        6: 6 minutes
+        10: 10 minutes
+        15: 15 minutes
+        30: 30 minutes
+        60: 1 hour
+        120: 2 hours
+        180: 3 hours
+        300: 5 hours
+        360: 6 hours
+        720: 12 hours
+        1440: 1 day
       delayed_for:
         5: 5 seconds
         10: 10 seconds

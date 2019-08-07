@@ -35,7 +35,13 @@
 
   .fields-group
     = f.input :setting_delayed_roars, as: :boolean, wrapper: :with_label
-    = f.input :setting_delayed_for, collection: [5, 10, 15, 30, 60, 120, 180, 300, 360, 600, 1800, 3600], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.delayed_for.#{item}")]) }, selected: [5, current_user.delayed_for.to_i].max
+    = f.input :setting_delayed_for, collection: [5, 10, 15, 30, 60, 120, 180, 300, 360, 600, 1800, 3600], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.delayed_for.#{item}")]) }, selected: current_user.delayed_for
+
+  .fields-group
+    = f.input :setting_boost_interval, as: :boolean, wrapper: :with_label
+    = f.input :setting_boost_random, as: :boolean, wrapper: :with_label
+    = f.input :setting_boost_interval_from, collection: [1, 2, 3, 4, 5, 6, 10, 15, 30, 60, 120, 180, 300, 360, 720, 1440], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.boost_interval.#{item}")]) }, selected: current_user.boost_interval_from
+    = f.input :setting_boost_interval_to, collection: [1, 2, 3, 4, 5, 6, 10, 15, 30, 60, 120, 180, 300, 360, 720, 1440], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.boost_interval.#{item}")]) }, selected: current_user.boost_interval_to
 
   %hr#settings_other/
 
@@ -54,8 +60,8 @@
   %hr/
 
   .fields-group
-    = f.input :setting_max_public_history, collection: [1, 3, 6, 7, 14, 30, 60, 90, 180, 365, 730, 1095, 2190], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.lifespan.#{item}")]) }, selected: current_user.max_public_history.to_i
-    = f.input :setting_roar_lifespan, collection: [0, 1, 3, 6, 7, 14, 30, 60, 90, 180, 365, 730, 1095, 2190], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.lifespan.#{item}")]) }, selected: current_user.roar_lifespan.to_i
+    = f.input :setting_max_public_history, collection: [1, 3, 6, 7, 14, 30, 60, 90, 180, 365, 730, 1095, 2190], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.lifespan.#{item}")]) }, selected: current_user.max_public_history
+    = f.input :setting_roar_lifespan, collection: [0, 1, 3, 6, 7, 14, 30, 60, 90, 180, 365, 730, 1095, 2190], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.lifespan.#{item}")]) }, selected: current_user.roar_lifespan
     = f.input :setting_hide_public_profile, as: :boolean, wrapper: :with_label
     = f.input :setting_hide_public_outbox, as: :boolean, wrapper: :with_label
 
