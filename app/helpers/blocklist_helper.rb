@@ -5,7 +5,7 @@ module BlocklistHelper
   def merged_blocklist
     # ordered by preference
     # prefer vulpine b/c they have easy-to-parse reason text
-    blocklist = vulpine_club_blocks | dialup_express_blocks | ten_forward_blocks | fediverse_space_blocks
+    blocklist = vulpine_club_blocks | fediverse_space_blocks
     blocklist.uniq { |entry| entry[:domain] }
   end
 
@@ -13,24 +13,6 @@ module BlocklistHelper
     domains.map! do |domain|
       {domain: domain, severity: :suspend, reason: reason}
     end
-  end
-
-  def dialup_express_blocks
-    admin_id = Account.find_remote('xenon', 'sleeping.town')&.id
-    return [] if admin_id.nil?
-
-    domains = ActiveRecord::Base.connection.select_values("SELECT unnest(regexp_matches(text, '\\m[\\w\\-]+\\.[\\w\-]+(?:\\.[\\w\\-]+)*', 'g')) FROM statuses WHERE account_id = #{admin_id.to_i} AND NOT reply AND created_at >= (NOW() - INTERVAL '2 days') AND tsv @@ to_tsquery('new <-> dialup <-> express <2> block') EXCEPT SELECT domain FROM domain_blocks")
-
-    domain_map(domains, "Imported from <https://dialup.express>.")
-  end
-
-  def ten_forward_blocks
-    admin_id = Account.find_remote('guinan', 'tenforward.social')&.id
-    return [] if admin_id.nil?
-
-    domains = ActiveRecord::Base.connection.select_values("SELECT unnest(regexp_matches(text, '\\m[\\w\\-]+\\.[\\w\-]+(?:\\.[\\w\\-]+)*', 'g')) FROM statuses WHERE account_id = #{admin_id.to_i} AND NOT reply AND created_at >= (NOW() - INTERVAL '2 days') AND tsv @@ to_tsquery('ten <-> forward <-> moderation <-> announcement') EXCEPT SELECT domain FROM domain_blocks")
-
-    domain_map(domains, "Imported from <https://ten.forward>.")
   end
 
   def vulpine_club_blocks
