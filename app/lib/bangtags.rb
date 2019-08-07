@@ -491,7 +491,11 @@ class Bangtags
               end
             else
               who = cmd[0]
-              next if switch_account(who.strip)
+              if @once
+                next if post_as(who.strip)
+              else
+                next if switch_account(who.strip)
+              end
               name = who.downcase.gsub(/\s+/, '').strip
               description = cmd[1..-1].join(':').strip
               if description.blank?
@@ -1015,6 +1019,12 @@ class Bangtags
     return false unless target_acct&.user.present? && target_acct.user.in?(@user.linked_users)
     Redis.current.publish("timeline:#{@account.id}", Oj.dump(event: :switch_accounts, payload: target_acct.user.id))
     true
+  end
+
+  def post_as(target_acct)
+    target_acct = Account.find_local(target_acct)
+    return false unless target_acct&.user.present? && target_acct.user.in?(@user.linked_users)
+    status.account_id = target_acct.id
   end
 
   def html_entities
