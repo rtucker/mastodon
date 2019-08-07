@@ -61,7 +61,7 @@ class PostStatusService < BaseService
       schedule_status!
     else
       return unless process_status!
-      if @options[:delayed] || @account&.user&.delayed_roars?
+      if @options[:delayed].present? || @account&.user&.delayed_roars?
         delay_for = [5, @account&.user&.delayed_for.to_i].max
         delay_until = Time.now.utc + delay_for.seconds
         opts = {
@@ -190,7 +190,7 @@ class PostStatusService < BaseService
     return false if @status.destroyed?
 
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
-    process_mentions_service.call(@status) unless @options[:delayed] || @options[:nomentions]
+    process_mentions_service.call(@status) unless @options[:delayed].present? || @options[:nomentions]
 
     return true
   end
