@@ -117,7 +117,11 @@ class Auth::SessionsController < Devise::SessionsController
     target_user = User.find_by(id: switch_params[:switch_to])
     return unless target_user.present? && current_user.in?(target_user.linked_users)
     self.resource = target_user
+    remember_me(target_user)
     sign_in(target_user)
+    flash.delete(:error)
+    flash.delete(:alert)
+    flash.delete(:notice)
     return root_path
   end
 
