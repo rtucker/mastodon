@@ -23,6 +23,7 @@ class Scheduler::JanitorScheduler
     silence_markov!
     import_blocklists!
     export_suspensions!
+    export_activityrelay_config!
   end
 
   private
@@ -72,6 +73,28 @@ class Scheduler::JanitorScheduler
     end
   end
 
+  def export_activityrelay_config!
+    outfile = ENV.fetch('ACTIVITYRELAY_OUTPUT', '')
+    return if outfile.blank?
+    return unless File.file?(outfile)
+    File.open(outfile, 'w:UTF-8') do |file|
+      formatted_allowlist = allowed_domains.uniq.map { |d| "  - '#{d}'" }
+      formatted_blocklist = DomainBlock.suspend.pluck(:domain).map { |d| "  - '#{d}'" }
+
+      file.puts('db: relay.jsonld')
+      file.puts("listen: #{ENV.fetch('ACTIVITYRELAY_LISTEN', '127.0.0.1')}")
+      file.puts("port: #{ENV.fetch('ACTIVITYRELAY_PORT', '9001')}")
+      file.puts("note: \"#{ENV.fetch('ACTIVITYRELAY_NOTE', "#{Setting.site_title} relay")}\"")
+      file.puts('ap:')
+      file.puts("  host: '#{ENV.fetch('ACTIVITYRELAY_HOST', "relay.#{Rails.configuration.x.local_domain}")}'")
+      file.puts('  blocked_instances:')
+      file.puts(formatted_blocklist)
+      file.puts("  whitelist_enabled: #{ENV.fetch('ACTIVITYRELAY_ALLOWLIST', 'true')}")
+      file.puts('  whitelist:')
+      file.puts(formatted_allowlist)
+    end
+  end
+
 
   def spammer_accounts
     spammer_ids = spammer_account_ids
@@ -93,7 +116,11 @@ class Scheduler::JanitorScheduler
   end
 
   def excluded_domains
-    existing_policy_domains | domains_from_account_ids | excluded_from_env('DOMAINS')
+    existing_policy_domains | allowed_domains
+  end
+
+  def allowed_domains
+    domains_from_account_ids | excluded_from_env('DOMAINS')
   end
 
 
