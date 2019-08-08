@@ -50,7 +50,7 @@ module Admin
       @domain_block.update(resource_params.except(:domain, :undo))
       changed = @domain_block.changed
       if @domain_block.save
-        DomainBlockWorker.perform_async(@domain_block.id) if (changed & %w(severity force_sensitive reject_media)).any?
+        DomainBlockWorker.perform_async(@domain_block.id) if (changed & %w(severity force_sensitive reject_media reject_unknown)).any?
         log_action :update, @domain_block
         flash[:notice] = I18n.t('admin.domain_blocks.updated_msg')
       else
@@ -66,7 +66,7 @@ module Admin
     end
 
     def resource_params
-      params.require(:domain_block).permit(:domain, :severity, :force_sensitive, :reject_media, :reject_reports, :reason, :undo)
+      params.require(:domain_block).permit(:domain, :severity, :force_sensitive, :reject_media, :reject_reports, :reject_unknown, :reason, :undo)
     end
   end
 end

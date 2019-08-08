@@ -17,6 +17,8 @@ class ReblogService < BaseService
     new_reblog = reblog.nil?
 
     if new_reblog
+      reblogged_status.account.mark_known! unless reblogged_status.account.known?
+
       visibility = options[:visibility] || account.user&.setting_default_privacy
       visibility = reblogged_status.visibility if reblogged_status.hidden?
       reblog = account.statuses.create!(reblog: reblogged_status, text: '', visibility: visibility)

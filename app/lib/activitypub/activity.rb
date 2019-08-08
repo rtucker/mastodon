@@ -137,7 +137,7 @@ class ActivityPub::Activity
     redis.setex("delete_upon_arrival:#{@account.id}:#{uri}", 6.hours.seconds, uri)
   end
 
-  def status_from_object
+  def status_from_object(announced_by: nil)
     # If the status is already known, return it
     status = status_from_uri(object_uri)
 
@@ -148,19 +148,20 @@ class ActivityPub::Activity
       actor_id = value_or_id(first_of_value(@object['attributedTo'])) || @account.uri
 
       if actor_id == @account.uri
-        return ActivityPub::Activity.factory({ 'type' => 'Create', 'actor' => actor_id, 'object' => @object }, @account).perform
+        return ActivityPub::Activity.factory({ 'type' => 'Create', 'actor' => actor_id, 'object' => @object }, @account, announced_by: announced_by).perform
       end
     end
 
-    fetch_remote_original_status
+    fetch_remote_original_status(announced_by: announced_by)
   end
 
-  def fetch_remote_original_status
+  def fetch_remote_original_status(announced_by: nil)
     if object_uri.start_with?('http')
       return if ActivityPub::TagManager.instance.local_uri?(object_uri)
-      ActivityPub::FetchRemoteStatusService.new.call(object_uri, id: true, on_behalf_of: @account.followers.local.first)
+      ActivityPub::FetchRemoteStatusService.new.call(object_uri, id: true, on_behalf_of: @account.followers.local.first, announced_by: announced_by)
     elsif @object['url'].present?
-      ::FetchRemoteStatusService.new.call(@object['url'])
+      options[:id] = true
+      ::FetchRemoteStatusService.new.call(@object['url'], announced_by: announced_by)
     end
   end
 
@@ -180,6 +181,17 @@ class ActivityPub::Activity
 
   def requested_through_relay?
     @options[:relayed_through_account] && Relay.find_by(inbox_url: @options[:relayed_through_account].inbox_url)&.enabled?
+  end
+
+  def rejecting_unknown?(account = nil)
+    account = @account if account.nil?
+    DomainBlock.where(domain: account.domain, reject_unknown: true).exists?
+  end
+
+  def known?(account = nil)
+    account = @account if account.nil?
+    return true if account.known?
+    account.passive_relationships.exists?
   end
 
   def reject_payload!

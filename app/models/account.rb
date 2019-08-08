@@ -51,6 +51,7 @@
 #  gently                  :boolean          default(FALSE), not null
 #  kobold                  :boolean          default(FALSE), not null
 #  froze                   :boolean
+#  known                   :boolean          default(FALSE), not null
 #
 
 class Account < ApplicationRecord
@@ -211,6 +212,14 @@ class Account < ApplicationRecord
   def refresh!
     return if local?
     ResolveAccountService.new.call(acct)
+  end
+
+  def mark_unknown!
+    update!(known: false)
+  end
+
+  def mark_known!
+    update!(known: true)
   end
 
   def force_unlisted!
@@ -557,6 +566,7 @@ class Account < ApplicationRecord
 
   before_create :generate_keys
   before_create :set_domain_from_inbox_url
+  before_create :set_known, if: :local?
   before_validation :prepare_contents, if: :local?
   before_validation :prepare_username, on: :create
   before_destroy :clean_feed_manager
@@ -577,6 +587,10 @@ class Account < ApplicationRecord
     self.domain = Addressable::URI.parse(inbox_url).domain
   rescue Addressable::URI::InvalidURIError, IDN::Idna::IdnaError
     nil
+  end
+
+  def set_known
+    self.known = true
   end
 
   def generate_keys

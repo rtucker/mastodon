@@ -189,6 +189,8 @@ Rails.application.routes.draw do
         post :subscribe
         post :unsubscribe
         post :enable
+        post :mark_known
+        post :mark_unknown
         post :force_sensitive
         post :force_unlisted
         post :allow_public

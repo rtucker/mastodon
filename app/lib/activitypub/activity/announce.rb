@@ -5,7 +5,7 @@ class ActivityPub::Activity::Announce < ActivityPub::Activity
     return if autoreject?
     return reject_payload! if !@options[:imported] && (delete_arrived_first?(@json['id']) || !related_to_local_activity?)
 
-    original_status = status_from_object
+    original_status = status_from_object(announced_by: @account)
 
     return reject_payload! if original_status.nil? || !announceable?(original_status)
 

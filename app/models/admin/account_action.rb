@@ -12,6 +12,7 @@ class Admin::AccountAction
     force_unlisted
     silence
     suspend
+    mark_unknown
   ).freeze
 
   attr_accessor :target_account,
@@ -66,6 +67,8 @@ class Admin::AccountAction
       handle_silence!
     when 'suspend'
       handle_suspend!
+    when 'mark_unknown'
+      handle_mark_unknown!
     end
   end
 
@@ -126,6 +129,12 @@ class Admin::AccountAction
     log_action(:suspend, target_account)
     target_account.suspend!
     queue_suspension_worker!
+  end
+
+  def handle_mark_unknown!
+    authorize(target_account, :mark_unknown?)
+    log_action(:mark_unknown, target_account.user)
+    target_account.mark_unknown!
   end
 
   def text_for_warning

@@ -21,7 +21,7 @@ class ResolveURLService < BaseService
     if equals_or_includes_any?(type, %w(Application Group Organization Person Service))
       FetchRemoteAccountService.new.call(atom_url, body)
     elsif equals_or_includes_any?(type, %w(Note Article Image Video Page Question))
-      FetchRemoteStatusService.new.call(atom_url, body)
+      FetchRemoteStatusService.new.call(atom_url, body, requested: true)
     end
   end
 

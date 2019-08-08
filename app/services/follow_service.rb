@@ -14,6 +14,8 @@ class FollowService < BaseService
     raise ActiveRecord::RecordNotFound if target_account.nil? || target_account.id == source_account.id || target_account.suspended?
     raise Mastodon::NotPermittedError  if target_account.blocking?(source_account) || source_account.blocking?(target_account) || target_account.moved?
 
+    target_account.mark_known! unless target_account.known?
+
     if source_account.following?(target_account)
       # We're already following this account, but we'll call follow! again to
       # make sure the reblogs status is set correctly.

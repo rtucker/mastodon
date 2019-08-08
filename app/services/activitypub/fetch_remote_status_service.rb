@@ -5,7 +5,7 @@ class ActivityPub::FetchRemoteStatusService < BaseService
   include AutorejectHelper
 
   # Should be called when uri has already been checked for locality
-  def call(uri, id: true, prefetched_body: nil, on_behalf_of: nil)
+  def call(uri, id: true, prefetched_body: nil, on_behalf_of: nil, announced_by: nil, requested: false)
     return if autoreject?(uri)
 
     @json = if prefetched_body.nil?
@@ -24,7 +24,7 @@ class ActivityPub::FetchRemoteStatusService < BaseService
 
     return if actor.nil? || actor.suspended?
 
-    ActivityPub::Activity.factory(activity_json, actor).perform
+    ActivityPub::Activity.factory(activity_json, actor, announced_by: announced_by, requested: requested).perform
   end
 
   private

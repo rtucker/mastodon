@@ -94,6 +94,10 @@ class PostStatusService < BaseService
     @in_reply_to.present? && @in_reply_to.reject_replies && @in_reply_to.account_id != @account.id
   end
 
+  def mark_recipient_known
+    @in_reply_to.account.mark_known! unless @in_reply_to.account.known?
+  end
+
   def set_footer_from_i_am
     return if @footer.present? || @options[:no_footer]
     name = @account.user.vars['_they:are']
@@ -153,6 +157,7 @@ class PostStatusService < BaseService
     limit_visibility_if_silenced
 
     unless @in_reply_to.nil?
+      mark_recipient_known
       inherit_reply_rejection
       limit_visibility_to_reply
       unfilter_thread_on_reply

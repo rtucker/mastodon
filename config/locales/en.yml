@@ -196,6 +196,8 @@ en:
       unsubscribe: Unsubscribe
       username: Username
       warn: Warn
+      known: Mark known
+      unknown: Mark unknown
       web: Web
     action_logs:
       actions:
@@ -235,6 +237,8 @@ en:
         update_custom_emoji: "%{name} updated emoji %{target}"
         update_domain_block: "%{name} updated policy for %{target}"
         update_status: "%{name} updated roar by %{target}"
+        mark_known_account: "%{name} marked %{target}'s account known"
+        mark_unknown_account: "%{name} marked %{target}'s account unknown"
       deleted_status: "(deleted roar)"
       title: Audit log
     custom_emojis:
@@ -305,6 +309,8 @@ en:
         title: New domain policy
       force_sensitive: Mark media sensitive
       force_sensitive_hint: Forces all media from this domain to be marked sensitive.
+      reject_unknown: Reject unknown accounts
+      reject_unknown_hint: Rejects content and requests from accounts that haven't been interacted with by the community or immediate packmates.
       reason: Add notes here.
       reject_media: Reject media files
       reject_media_hint: Removes locally stored media files and refuses to download any in the future. Irrelevant for suspensions

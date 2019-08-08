@@ -12,6 +12,7 @@
 #  reject_reports  :boolean          default(FALSE), not null
 #  force_sensitive :boolean          default(FALSE), not null
 #  reason          :text
+#  reject_unknown  :boolean          default(FALSE), not null
 #
 
 class DomainBlock < ApplicationRecord
@@ -52,6 +53,7 @@ class DomainBlock < ApplicationRecord
     additionals << "force sensitive media" if force_sensitive?
     additionals << "reject media" if reject_media?
     additionals << "reject reports" if reject_reports?
+    additionals << "reject unknown accounts" if reject_unknown?
     additionals
   end
 

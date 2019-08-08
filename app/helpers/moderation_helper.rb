@@ -1,7 +1,7 @@
 module ModerationHelper
   include LogHelper
 
-  POLICIES = %w(silence unsilence suspend unsuspend force_unlisted allow_public force_sensitive allow_nonsensitive reset)
+  POLICIES = %w(silence unsilence suspend unsuspend force_unlisted mark_known mark_unknown reject_unknown allow_public force_sensitive allow_nonsensitive reset)
   EXCLUDED_DOMAINS = %w(tailma.ws monsterpit.net monsterpit.cloud monsterpit.gallery monsterpit.blog)
 
   def janitor_account
@@ -30,6 +30,10 @@ module ModerationHelper
     end
 
     case policy
+    when 'mark_unknown', 'reject_unknown'
+      acct.mark_unknown!
+    when 'mark_known'
+      acct.mark_known!
     when 'silence'
       acct.silence!
     when 'unsilence'
@@ -52,6 +56,7 @@ module ModerationHelper
       acct.unsilence!
       acct.allow_public!
       acct.allow_nonsensitive!
+      acct.mark_known!
     end
 
     acct.save
@@ -77,7 +82,7 @@ module ModerationHelper
     true
   end
 
-  def domain_policy(domain, policy, reason = nil, force_sensitive = false, reject_media = false, reject_reports = false)
+  def domain_policy(domain, policy, reason = nil, force_sensitive: false, reject_unknown: false, reject_media: false, reject_reports: false)
     return if policy.blank?
     policy = policy.to_s
     return false unless policy.in?(POLICIES)
@@ -87,10 +92,9 @@ module ModerationHelper
 
     return false if domain.in?(EXCLUDED_DOMAINS)
 
-    if policy == 'force_sensitive'
-      policy = 'noop'
-      force_sensitive = true
-    end
+    policy = 'noop' if policy == 'force_sensitive' || policy == 'reject_unknown'
+    force_sensitive = true if policy == 'force_sensitive'
+    reject_unknown = true if policy == 'reject_unknown'
 
     if policy.in? %w(silence suspend force_unlisted)
       return false unless domain_exists?(domain)
@@ -98,6 +102,7 @@ module ModerationHelper
       domain_block = DomainBlock.find_or_create_by(domain: domain)
       domain_block.severity = policy
       domain_block.force_sensitive = force_sensitive
+      domain_block.reject_unknown = reject_unknown
       domain_block.reject_media = reject_media
       domain_block.reject_reports = reject_reports
       domain_block.reason = reason.strip if reason && !reason.strip.blank?

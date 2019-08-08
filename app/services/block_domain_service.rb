@@ -5,8 +5,11 @@ class BlockDomainService < BaseService
 
   def call(domain_block)
     @domain_block = domain_block
+    @affected_status_ids = []
+
     remove_existing_block!
     process_domain_block!
+    invalidate_association_caches!
   end
 
   private
@@ -16,8 +19,9 @@ class BlockDomainService < BaseService
   end
 
   def process_domain_block!
-    clear_media! if domain_block.reject_media?
+    clear_media! if domain_block.reject_media? || domain_block.suspend?
     force_accounts_sensitive! if domain_block.force_sensitive?
+    mark_unknown_accounts! if domain_block.reject_unknown?
 
     if domain_block.force_unlisted?
       force_accounts_unlisted!
@@ -39,17 +43,22 @@ class BlockDomainService < BaseService
   def force_accounts_sensitive!
     ApplicationRecord.transaction do
       blocked_domain_accounts.in_batches.update_all(force_sensitive: true)
-      blocked_domain_accounts.reorder(nil).find_each do |account|
+      blocked_domain_accounts.find_each do |account|
+        @affected_status_ids |= account.statuses.where(sensitive: false).pluck(:id)
         account.statuses.where(sensitive: false).in_batches.update_all(sensitive: true)
       end
     end
-    invalidate_association_caches! unless @affected_status_ids.blank?
+  end
+
+  def mark_unknown_accounts!
+    unknown_accounts.in_batches.update_all(known: false)
   end
 
   def force_accounts_unlisted!
     ApplicationRecord.transaction do
       blocked_domain_accounts.in_batches.update_all(force_unlisted: true)
-      blocked_domain_accounts.reorder(nil).find_each do |account|
+      blocked_domain_accounts.find_each do |account|
+        @affected_status_ids |= account.statuses.with_public_visibility.pluck(:id)
         account.statuses.with_public_visibility.in_batches.update_all(visibility: :unlisted)
       end
     end
@@ -60,23 +69,21 @@ class BlockDomainService < BaseService
   end
 
   def clear_media!
-    @affected_status_ids = []
 
     clear_account_images!
     clear_account_attachments!
     clear_emojos!
 
-    invalidate_association_caches!
   end
 
   def suspend_accounts!
-    blocked_domain_accounts.without_suspended.reorder(nil).find_each do |account|
+    blocked_domain_accounts.without_suspended.find_each do |account|
       SuspendAccountService.new.call(account, suspended_at: @domain_block.created_at)
     end
   end
 
   def clear_account_images!
-    blocked_domain_accounts.reorder(nil).find_each do |account|
+    blocked_domain_accounts.find_each do |account|
       account.avatar.destroy if account.avatar.exists?
       account.header.destroy if account.header.exists?
       account.save
@@ -84,7 +91,7 @@ class BlockDomainService < BaseService
   end
 
   def clear_account_attachments!
-    media_from_blocked_domain.reorder(nil).find_each do |attachment|
+    media_from_blocked_domain.find_each do |attachment|
       @affected_status_ids << attachment.status_id if attachment.status_id.present?
 
       attachment.file.destroy if attachment.file.exists?
@@ -102,7 +109,7 @@ class BlockDomainService < BaseService
   end
 
   def blocked_domain_accounts
-    Account.where(domain: blocked_domain)
+    Account.where(domain: blocked_domain).reorder(nil)
   end
 
   def media_from_blocked_domain
@@ -111,5 +118,29 @@ class BlockDomainService < BaseService
 
   def emojis_from_blocked_domains
     CustomEmoji.where(domain: blocked_domain)
+  end
+
+  def unknown_accounts
+    Account.where(id: blocked_domain_accounts.pluck(:id) - known_account_ids).reorder(nil)
+  end
+
+  def known_account_ids
+    local_accounts | packmates | boosted_authors | faved_authors
+  end
+
+  def boosted_authors
+    Status.where(id: Status.local.reblogs.reorder(nil).select(:reblog_of_id)).reorder(nil).pluck(:account_id)
+  end
+
+  def faved_authors
+    Status.where(id: Favourite.select(:status_id)).reorder(nil).pluck(:account_id)
+  end
+
+  def local_accounts
+    Account.local.pluck(:id)
+  end
+
+  def packmates
+    Account.local.flat_map { |account| account.following_ids | account.follower_ids }
   end
 end

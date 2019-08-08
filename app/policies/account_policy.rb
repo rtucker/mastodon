@@ -13,6 +13,14 @@ class AccountPolicy < ApplicationPolicy
     staff? && !record.user&.staff?
   end
 
+  def mark_known?
+    staff?
+  end
+
+  def mark_unknown?
+    staff?
+  end
+
   def suspend?
     staff? && !record.user&.staff?
   end

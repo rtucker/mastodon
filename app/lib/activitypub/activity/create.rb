@@ -5,6 +5,14 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     return if autoreject?
     return reject_payload! if unsupported_object_type? || !@options[:imported] && (invalid_origin?(@object['id']) || Tombstone.exists?(uri: @object['id']) || !related_to_local_activity?)
 
+    unless known?
+      if @options[:announced_by].nil?
+        return reject_payload! if !@options[:requested] && rejecting_unknown?
+      else
+        @account.mark_known! if known?(@options[:announced_by])
+      end
+    end
+
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?
         return if !@options[:imported] && (delete_arrived_first?(object_uri) || poll_vote?)

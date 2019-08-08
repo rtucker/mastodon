@@ -2,7 +2,7 @@
 
 module Admin
   class AccountsController < BaseController
-    before_action :set_account, only: [:show, :redownload, :remove_avatar, :remove_header, :enable, :allow_public, :allow_nonsensitive, :unsilence, :unsuspend, :memorialize, :approve, :reject]
+    before_action :set_account, only: [:show, :redownload, :remove_avatar, :remove_header, :enable, :mark_known, :mark_unknown, :allow_public, :allow_nonsensitive, :unsilence, :unsuspend, :memorialize, :approve, :reject]
     before_action :require_remote_account!, only: [:redownload]
     before_action :require_local_account!, only: [:enable, :memorialize, :approve, :reject]
 
@@ -43,6 +43,20 @@ module Admin
       authorize @account.user, :reject?
       SuspendAccountService.new.call(@account, including_user: true, destroy: true, skip_distribution: true)
       redirect_to admin_accounts_path(pending: '1')
+    end
+
+    def mark_unknown
+      authorize @account, :mark_unknown?
+      @account.mark_unknown!
+      log_action :mark_unknown, @account
+      redirect_to admin_account_path(@account.id)
+    end
+
+    def mark_known
+      authorize @account, :mark_known?
+      @account.mark_known!
+      log_action :mark_known, @account
+      redirect_to admin_account_path(@account.id)
     end
 
     def force_sensitive

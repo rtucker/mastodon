@@ -5,7 +5,7 @@ module LogHelper
     case action
     when :create
       if target.is_a? DomainBlock
-        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> applied a #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''} policy on https://#{target.domain}\u200b.\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> applied a #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''} policy on https://#{target.domain}\u200b.\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
       elsif target.is_a? EmailDomainBlock
         LogWorker.perform_async("\u26d4 <#{source}> added a registration block on email domain '#{target.domain}'.")
       elsif target.is_a? CustomEmoji
@@ -26,7 +26,7 @@ module LogHelper
 
     when :update
       if target.is_a? DomainBlock
-        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> changed the policy on https://#{target.domain} to #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}.\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> changed the policy on https://#{target.domain} to #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''}.\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
       elsif target.is_a? Status
         LogWorker.perform_async("\xf0\x9f\x91\x81\xef\xb8\x8f <#{source}> changed visibility flags of post #{TagManager.instance.url_for(target)}\u200b.")
       elsif target.is_a? CustomEmoji
@@ -46,17 +46,21 @@ module LogHelper
         LogWorker.perform_async("\u26d4 <#{source}> disabled the '#{target.shortcode}' emoji.")
       end
 
+    when :mark_unknown
+      LogWorker.perform_async("\u2753 <#{source}> marked <#{target.acct}> as an unknown account.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :force_sensitive
       LogWorker.perform_async("\xf0\x9f\x94\x9e <#{source}> forced the media of <#{target.acct}> to be marked sensitive.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :force_unlisted
       LogWorker.perform_async("\xf0\x9f\x94\x89 <#{source}> forced the posts of <#{target.acct}> to be unlisted.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :silence
-      LogWorker.perform_async("\xf0\x9f\x94\x87 <#{source}> silenced <#{target.acct}>'.\n\n#{reason ? "Comment: #{reason}" : ''}")
+      LogWorker.perform_async("\xf0\x9f\x94\x87 <#{source}> silenced <#{target.acct}>.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :suspend
       LogWorker.perform_async("\u26d4 <#{source}> suspended <#{target.acct}>.\n\n#{reason ? "Comment: #{reason}" : ''}")
 
+    when :mark_known
+      LogWorker.perform_async("\u2705 <#{source}> marked <#{target.acct}> as a known account.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :allow_nonsensitive
-      LogWorker.perform_async("\xf0\x9f\x86\x97 <#{source}> allowed <#{target.acct}> to post media without a sensitive flag.")
+      LogWorker.perform_async("\xf0\x9f\x86\x97 <#{source}> allowed <#{target.acct}> to post media without a sensitive flag.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :allow_public
       LogWorker.perform_async("\xf0\x9f\x86\x8a <#{source}> allowed <#{target.acct}> to post with public visibility.")
     when :unsilence
