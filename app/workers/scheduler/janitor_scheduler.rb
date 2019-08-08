@@ -13,9 +13,9 @@ class Scheduler::JanitorScheduler
     @account = janitor_account
     return if @account.nil?
 
-    @exclude_ids = excluded_account_ids
-    @exclude_domains = excluded_domains
-    @exclude_markov = excluded_accounts_from_env('MARKOV')
+    @exclude_ids = excluded_account_ids.uniq
+    @exclude_domains = excluded_domains.uniq
+    @exclude_markov = excluded_accounts_from_env('MARKOV').uniq
 
     prune_deleted_accounts!
     suspend_abandoned_accounts!
