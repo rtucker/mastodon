@@ -5,7 +5,7 @@ class LogWorker
 
   sidekiq_options unique: :until_executed
 
-  def perform(log_text, scope = nil)
+  def perform(log_text, scope: nil, markdown: false)
     logger_id = ENV['LOG_USER'].to_i
     return true if logger_id == 0
 
@@ -22,7 +22,7 @@ class LogWorker
       tags: [tag],
       visibility: :unlisted,
       local_only: true,
-      content_type: 'text/plain',
+      content_type: markdown ? 'text/markdown' : 'text/plain',
       language: 'en',
       nocrawl: true,
       nomentions: true,
