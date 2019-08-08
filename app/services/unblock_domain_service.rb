@@ -11,6 +11,9 @@ class UnblockDomainService < BaseService
 
   def process_retroactive_updates
     blocked_accounts.in_batches.update_all(update_options) unless domain_block.noop?
+    if @domain_block.force_sensitive?
+      blocked_accounts.where(force_sensitive: true).in_batches.update_all(force_sensitive: false)
+    end
   end
 
   def blocked_accounts
