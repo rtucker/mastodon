@@ -1,13 +1,14 @@
 module LogHelper
   def user_friendly_action_log(source, action, target, reason = nil)
     source = source.username if source.is_a?(Account)
+    web_domain = Rails.configuration.x.web_domain || Rails.configuration.x.local_domain
 
     case action
     when :create
       if target.is_a? DomainBlock
-        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> applied a #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''} policy on https://#{target.domain}\u200b.\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> applied a #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''} policy on https://#{target.domain}\u200b.\n\nReview (moderators only): https://#{web_domain}/admin/instances/#{target.domain}\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
       elsif target.is_a? EmailDomainBlock
-        LogWorker.perform_async("\u26d4 <#{source}> added a registration block on email domain '#{target.domain}'.")
+        LogWorker.perform_async("\u26d4 <#{source}> added a registration block on email domain '#{target.domain}'.\n\nReview (moderators only): https://#{web_domain}/admin/email_domain_blocks")
       elsif target.is_a? CustomEmoji
         LogWorker.perform_async("\xf0\x9f\x98\xba <#{source}> added the '#{target.shortcode}' emoji. :#{target.shortcode}:")
       elsif target.is_a? AccountWarning
@@ -15,7 +16,7 @@ module LogHelper
       end
     when :destroy
       if target.is_a? DomainBlock
-        LogWorker.perform_async("\xf0\x9f\x86\x97 <#{source}> reset the policy on https://#{target.domain}\u200b.")
+        LogWorker.perform_async("\xf0\x9f\x86\x97 <#{source}> reset the policy on https://#{target.domain}\u200b.\n\nReview (moderators only): https://#{web_domain}/admin/instances/#{target.domain}")
       elsif target.is_a? EmailDomainBlock
         LogWorker.perform_async("\xf0\x9f\x86\x97 <#{source}> removed the registration block on email domain '#{target.domain}'.")
       elsif target.is_a? CustomEmoji
@@ -26,7 +27,7 @@ module LogHelper
 
     when :update
       if target.is_a? DomainBlock
-        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> changed the policy on https://#{target.domain} to #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''}.\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
+        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> changed the policy on https://#{target.domain} to #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''}.\n\nReview (moderators only): https://#{web_domain}/admin/instances/#{target.domain}\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
       elsif target.is_a? Status
         LogWorker.perform_async("\xf0\x9f\x91\x81\xef\xb8\x8f <#{source}> changed visibility flags of post #{TagManager.instance.url_for(target)}\u200b.")
       elsif target.is_a? CustomEmoji
@@ -47,7 +48,11 @@ module LogHelper
       end
 
     when :mark_unknown
-      LogWorker.perform_async("\u2753 <#{source}> marked <#{target.acct}> as an unknown account.\n\n#{reason ? "Comment: #{reason}" : ''}")
+      if source.nil?
+        LogWorker.perform_async("\xf0\x9f\x86\x95 Federating with a new server at https://#{target}. Automatic reject unknown policy set.\n\nReview (moderators only): https://#{web_domain}/admin/instances/#{target}")
+      else
+        LogWorker.perform_async("\u2753 <#{source}> marked <#{target.acct}> as an unknown account.\n\n#{reason ? "Comment: #{reason}" : ''}")
+      end
     when :force_sensitive
       LogWorker.perform_async("\xf0\x9f\x94\x9e <#{source}> forced the media of <#{target.acct}> to be marked sensitive.\n\n#{reason ? "Comment: #{reason}" : ''}")
     when :force_unlisted
