@@ -2,6 +2,7 @@
 
 class ActivityPub::ProcessAccountService < BaseService
   include JsonLdHelper
+  include LogHelper
 
   # Should be called with confirmed valid JSON
   # and WebFinger-resolved username and domain
@@ -21,7 +22,10 @@ class ActivityPub::ProcessAccountService < BaseService
         @old_public_key = @account&.public_key
 
         is_new_account = @account.nil?
-        create_account if is_new_account
+        if is_new_account
+          set_reject_unknown_policy
+          create_account
+        end
         update_account
         update_account_domain_blocks if is_new_account
         process_tags
@@ -96,6 +100,13 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.following_count   = following_total_items if following_total_items.present?
     @account.followers_count   = followers_total_items if followers_total_items.present?
     @account.moved_to_account  = @json['movedTo'].present? ? moved_account : nil
+  end
+
+  def set_reject_unknown_policy
+    unless Account.where(domain: @domain).exists? || DomainBlock.where(domain: @domain).exists?
+      policy = DomainBlock.create!(domain: @domain, severity: :noop, reject_unknown: true)
+      user_friendly_action_log(nil, :mark_unknown, @domain)
+    end
   end
 
   def after_key_change!
