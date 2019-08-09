@@ -52,11 +52,14 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     @tags     = []
     @mentions = []
     @params   = {}
+    @potential_scope_leak = false
 
     process_status_params
     return reject_payload! if twitter_retweet? || recipient_rejects_replies?
     process_tags
     process_audience
+
+    return reject_payload! if potential_scope_leak?
 
     @params[:visibility] = :unlisted if @params[:visibility] == :public && @account.force_unlisted?
     @params[:sensitive] = true if @account.force_sensitive?
@@ -197,6 +200,10 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     end
   end
 
+  def potential_scope_leak?
+    @potential_scope_leak && @mentions.blank?
+  end
+
   def process_hashtag(tag)
     return if tag['name'].blank?
 
@@ -222,7 +229,10 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     account = account_from_uri(tag['href'])
     account = ::FetchRemoteAccountService.new.call(tag['href']) if account.nil?
 
-    return if account.nil?
+    if account.nil?
+      @potential_scope_leak = true
+      return
+    end
 
     @mentions << Mention.new(account: account, silent: false)
   end
