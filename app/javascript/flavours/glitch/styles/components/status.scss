@@ -605,6 +605,15 @@
 .detailed-status__link {
   color: inherit;
   text-decoration: none;
+
+}
+
+.detailed-status__star-icon {
+  color: $gold-star;
+}
+
+.detailed-status__boost-icon {
+  color: $red-bookmark;
 }
 
 .detailed-status__favorites,

@@ -5,24 +5,34 @@ class RemoteInteractionController < ApplicationController
 
   layout 'modal'
 
-  before_action :set_interaction_type
-  before_action :set_status
   before_action :set_body_classes
   before_action :set_pack
+  before_action :set_status
 
   def new
-    @remote_follow = RemoteFollow.new(session_params)
-  end
+    raise Mastodon::NotPermittedError unless user_signed_in?
 
-  def create
-    @remote_follow = RemoteFollow.new(resource_params)
-
-    if @remote_follow.valid?
-      session[:remote_follow] = @remote_follow.acct
-      redirect_to @remote_follow.interact_address_for(@status)
-    else
-      render :new
+    case params[:type]
+    when 'reblog'
+      if current_account.statuses.where(reblog: @status).exists?
+        status = current_account.statuses.find_by(reblog: @status)
+        RemoveStatusService.new.call(status)
+      else
+        ReblogService.new.call(current_account, @status)
+      end
+    when 'favourite'
+      if Favourite.where(account: current_account, status: @status).exists?
+        UnfavouriteService.new.call(current_account, @status)
+      else
+        FavouriteService.new.call(current_account, @status)
+      end
+    when 'follow'
+      FollowService.new.call(current_account, @status.account)
+    when 'unfollow'
+      UnfollowService.new.call(current_account, @status.account)
     end
+
+    redirect_to TagManager.instance.url_for(@status)
   end
 
   private
@@ -50,9 +60,5 @@ class RemoteInteractionController < ApplicationController
 
   def set_pack
     use_pack 'modal'
-  end
-
-  def set_interaction_type
-    @interaction_type = %w(reply reblog favourite).include?(params[:type]) ? params[:type] : 'reply'
   end
 end

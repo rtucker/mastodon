@@ -9,18 +9,10 @@ class RemoteFollowController < ApplicationController
   before_action :set_body_classes
 
   def new
-    @remote_follow = RemoteFollow.new(session_params)
-  end
+    raise Mastodon::NotPermittedError unless user_signed_in?
 
-  def create
-    @remote_follow = RemoteFollow.new(resource_params)
-
-    if @remote_follow.valid?
-      session[:remote_follow] = @remote_follow.acct
-      redirect_to @remote_follow.subscribe_address_for(@account)
-    else
-      render :new
-    end
+    FollowService.new.call(current_account, @account)
+    redirect_to TagManager.instance.url_for(@account)
   end
 
   private
