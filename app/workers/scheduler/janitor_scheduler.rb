@@ -4,6 +4,7 @@ class Scheduler::JanitorScheduler
   include Sidekiq::Worker
   include BlocklistHelper
   include ModerationHelper
+  include Redisable
 
   MIN_POSTS = 6
 
@@ -24,12 +25,51 @@ class Scheduler::JanitorScheduler
     import_blocklists!
     export_suspensions!
     export_activityrelay_config!
+    prune_database! unless redis.exists('janitor:pune_database')
   end
 
   private
 
   def prune_deleted_accounts!
     Account.local.where.not(suspended_at: nil).destroy_all
+  end
+
+  def prune_database!
+    suspended_accounts = Account.where.not(suspended_at: nil).select(:id)
+    suspended_domains = DomainBlock.suspend.select(:domain)
+
+    # remove statuses from suspended accounts missed by SuspendStatusService
+    # if its sidekiq job crashed
+    Status.where(account_id: suspended_accounts).in_batches do |status|
+      BatchedRemoveStatusService.new.call(status)
+    end
+
+    # prune leaves of threads that lost their context after a suspension
+    # keeping these around eats a pretty good amount of storage
+    deleted_mentions = Mention.where(account_id: suspended_accounts).select(:status_id)
+    Status.remote.where(account_id: deleted_mentions).in_batches do |status|
+      BatchedRemoveStatusService.new.call(status)
+    end
+
+    # remove mention entries that have no status or account attached to them
+    Mention.where(account_id: nil).in_batches.destroy_all
+    Mention.where(status_id: nil).in_batches.destroy_all
+
+    # remove media attachments that don't belong to any status
+    MediaAttachment.where(status_id: nil).in_batches.destroy_all
+
+    # remove custom emoji from suspended domains missed by SuspendAccountService
+    CustomEmoji.where(domain: suspended_domains).in_batches.destroy_all
+
+    # prune empty tags
+    Tag.all.find_each { |tag| tag.destroy unless tag.statuses.exists? }
+
+    # remove audit log entries with missing context
+    # we already use LOG_USER to avoid that problem
+    Admin::ActionLog.where.not(target_id: Account.select(:id)).in_batches.destroy_all
+    Admin::ActionLog.where.not(account_id: Account.local.select(:id)).in_batches.destroy_all
+
+    redis.setex('janitor:prune_database', 1.day, 1)
   end
 
   def suspend_abandoned_accounts!
