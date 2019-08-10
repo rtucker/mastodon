@@ -17,7 +17,7 @@ module Mastodon
     end
 
     def pre
-      nil
+      666
     end
 
     def flags
@@ -29,7 +29,7 @@ module Mastodon
     end
 
     def suffix
-      '+glitch'
+      '+monsterfork'
     end
 
     def to_s
@@ -37,11 +37,11 @@ module Mastodon
     end
 
     def repository
-      ENV.fetch('GITHUB_REPOSITORY') { 'glitch-soc/mastodon' }
+      ENV.fetch('GITHUB_REPOSITORY') { 'monsterpit/mastodon' }
     end
 
     def source_base_url
-      ENV.fetch('SOURCE_BASE_URL') { "https://github.com/#{repository}" }
+      ENV.fetch('SOURCE_BASE_URL') { "https://git.multiple-creature.party/#{repository}" }
     end
 
     # specify git tag or commit hash here
