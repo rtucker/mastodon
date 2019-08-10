@@ -1,9 +1,9 @@
 # Monsterfork
 
-> *[Monsterpit](https://monsterpit.net/about/more) is a community of creatures and critters*
-> *For those who love monsters to be monsters they love.*
-> *Whether fur, scale, or skin; whether plural or ‘kin–*
-> *If you don’t feel quite human, come!*
+> *[Monsterpit](https://monsterpit.net/about/more) is a community of creatures and critters* /
+> *For those who love monsters to be monsters they love.* /
+> *Whether fur, scale, or skin; whether plural or ‘kin–* /
+> *If you don’t feel quite human, come!* /
 > *You’ll fit right on in.*
 
 Monsterfork is a... well... fork of [Glitch-Soc](https://glitch-soc.github.io) used on [Monsterpit](https://monsterpit.net/about).  It focuses on adding a *monstrous* number of community features with wild abandon along with improved accessibility, better moderation tools, and more user privacy options.
