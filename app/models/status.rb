@@ -339,9 +339,15 @@ class Status < ApplicationRecord
   class << self
     def search_for(term, limit = 33, account = nil)
       return none if account.nil?
+      if term.start_with?('me:')
+        term = term.split(nil, 2)[1]
+        scope = account.statuses
+      else
+        scope = Status
+      end
       pattern = sanitize_sql_like(term)
       pattern = "#{pattern}"
-      scope = Status.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern)
+      scope = scope.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern)
       query = scope.where(account: account)
         .or(scope.where(account: account.following, visibility: [:private, :local, :unlisted]))
         .or(scope.where(id: account.mentions.select(:status_id)))
