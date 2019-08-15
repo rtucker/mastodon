@@ -212,17 +212,19 @@
 		color: white;
 	}
 
-	.status__prepend
+	.status__prepend,
+  .notification__message
   {
 		margin-top: 0;
 		margin-bottom: 0;
 	}
-	.status__prepend span
+	.status__prepend span,
+  .notification__message span
   {
-		font-size: 0 !important;
-		color: transparent !important;
+		color: #332233 !important;
 	}
-	.status__prepend span a *
+	.status__prepend span a *,
+  .notification__message span a *
   {
 		color:#fff
 	}
