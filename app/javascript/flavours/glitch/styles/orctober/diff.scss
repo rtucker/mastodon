@@ -216,12 +216,15 @@
 	}
 
 	.status__display-name strong { display: inherit !important }
-	.status__prepend span { color: #fff }
+	.status__prepend span, .notification__message span {
+    color: #333322;
+  }
 
 	.notification__display-name,
 	.status__display-name.muted,
 	.status__display-name.muted strong,
-	.status__prepend .status__display-name {
+	.status__prepend .status__display-name,
+  .notification__message .status__display-name {
 		color: #774 !important;
 		font-size: 14px !important;
 	}
@@ -292,7 +295,7 @@
 	.account__action-bar,
 	.account__disclaimer { background: #001611 !important }
 
-	.icon-button { color: #664 }
+	.icon-button { color: #692 }
 
 	.account__header__display-name,
 	.account__header__username { font-variant: small-caps !important }
