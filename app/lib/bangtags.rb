@@ -692,6 +692,7 @@ class Bangtags
           @chunks << "\n# <code>#!</code><code>admin:#{cmd[1].downcase}</code>:\n<hr />\n"
           case cmd[1].downcase
           when 'silence', 'unsilence', 'suspend', 'unsuspend', 'force_unlisted', 'allow_public', 'force_sensitive', 'allow_nonsensitive', 'reset', 'forgive'
+            @status.spoiler_text = "admin #{cmd[1].downcase}" if @status.spoiler_text.blank?
             @tf_cmds.push(cmd)
             @component_stack.push(:tf)
           when 'exec', 'eval'
