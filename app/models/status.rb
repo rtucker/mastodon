@@ -345,6 +345,7 @@ class Status < ApplicationRecord
       else
         scope = Status
       end
+      return none if term.blank?
       pattern = sanitize_sql_like(term)
       pattern = "#{pattern}"
       scope = scope.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern)
