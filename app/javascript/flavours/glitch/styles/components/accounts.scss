@@ -179,12 +179,10 @@
 }
 
 .notification__message {
-  margin-left: 42px;
-  padding: 8px 0 0 26px;
+  margin-left: 25px;
   cursor: default;
   color: $darker-text-color;
   font-size: 15px;
-  position: relative;
 
   .fa {
     color: $highlight-text-color;
