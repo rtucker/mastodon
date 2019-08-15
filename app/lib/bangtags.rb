@@ -20,6 +20,7 @@ class Bangtags
 
       'leave' => ['thread'],
       'part' => ['thread'],
+      'quit' => ['thread'],
     }
 
     @aliases = {
@@ -268,9 +269,14 @@ class Bangtags
           chunk = nil
           next if cmd[1].nil?
           case cmd[1].downcase
-          when 'leave', 'part'
+          when 'leave', 'part', 'quit'
             next if status.conversation_id.nil?
             @account.mute_conversation!(status.conversation)
+            if %w(replyguy reply-guy reply-guy-mode).include?(cmd[2])
+              rum = Account.find_remote('RumPartov', 'weirder.earth')
+              next unless rum.present?
+              rum.mentions.where(status: status).first_or_create(status: status)
+            end
           when 'reall'
             if status.conversation_id.present?
               participants = Status.where(conversation_id: status.conversation_id)
