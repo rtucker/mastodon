@@ -108,13 +108,13 @@ class Admin::AccountAction
 
   def handle_force_sensitive!
     authorize(target_account, :force_sensitive?)
-    log_action(:force_sensitive, target_account.user)
+    log_action(:force_sensitive, target_account)
     target_account.force_sensitive!
   end
 
   def handle_force_unlisted!
     authorize(target_account, :force_unlisted?)
-    log_action(:force_unlisted, target_account.user)
+    log_action(:force_unlisted, target_account)
     target_account.force_unlisted!
   end
 
@@ -133,7 +133,7 @@ class Admin::AccountAction
 
   def handle_mark_unknown!
     authorize(target_account, :mark_unknown?)
-    log_action(:mark_unknown, target_account.user)
+    log_action(:mark_unknown, target_account)
     target_account.mark_unknown!
   end
 
