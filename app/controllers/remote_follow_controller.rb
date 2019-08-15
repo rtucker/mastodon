@@ -11,7 +11,7 @@ class RemoteFollowController < ApplicationController
   def new
     raise Mastodon::NotPermittedError unless user_signed_in?
 
-    FollowService.new.call(current_account, @account)
+    FollowService.new.call(current_account, @account) unless current_account.following?(@account)
     redirect_to TagManager.instance.url_for(@account)
   end
 
