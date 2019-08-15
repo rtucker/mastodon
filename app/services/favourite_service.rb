@@ -7,8 +7,8 @@ class FavouriteService < BaseService
   # @param [Account] account
   # @param [Status] status
   # @return [Favourite]
-  def call(account, status, skip_notify = false)
-    authorize_with account, status, :favourite?
+  def call(account, status, skip_notify: false, skip_authorize: false)
+    authorize_with account, status, :favourite? unless skip_authorize
 
     favourite = Favourite.find_by(account: account, status: status)
 

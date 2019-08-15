@@ -24,7 +24,7 @@ class RemoteInteractionController < ApplicationController
       if Favourite.where(account: current_account, status: @status).exists?
         UnfavouriteService.new.call(current_account, @status)
       else
-        FavouriteService.new.call(current_account, @status)
+        FavouriteService.new.call(current_account, @status, skip_authorize: true)
       end
     when 'follow'
       FollowService.new.call(current_account, @status.account)
@@ -32,7 +32,7 @@ class RemoteInteractionController < ApplicationController
       UnfollowService.new.call(current_account, @status.account)
     end
 
-    redirect_to TagManager.instance.url_for(@status)
+    redirect_to short_account_status_url(@status.account.username, @status.id, key: @sharekey)
   end
 
   private
@@ -47,7 +47,13 @@ class RemoteInteractionController < ApplicationController
 
   def set_status
     @status = Status.find(params[:id])
-    authorize @status, :show?
+    @sharekey = params[:key]
+
+    if @status.sharekey.present? && @sharekey == @status.sharekey
+      skip_authorization
+    else
+      authorize @status, :show?
+    end
   rescue Mastodon::NotPermittedError
     # Reraise in order to get a 404
     raise ActiveRecord::RecordNotFound

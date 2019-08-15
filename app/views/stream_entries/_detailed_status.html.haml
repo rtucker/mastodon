@@ -50,7 +50,7 @@
         = link_to "#{TagManager.instance.url_for(status)}?rekey=0", class: 'detailed-status__link', title: 'Revoke share key', target: stream_link_target, rel: 'noopener' do
           = fa_icon('user-times')
         ·
-    = link_to remote_interaction_path(status, type: :reply), class: 'modal-button detailed-status__link' do
+    = link_to remote_interaction_path(status, key: @sharekey, type: :reply), class: 'modal-button detailed-status__link' do
       - if status.in_reply_to_id.nil?
         = fa_icon('reply')
       - else
@@ -67,13 +67,13 @@
         = fa_icon('lock')
     - elsif user_signed_in? && !@account.user_hides_stats?
       ·
-      = link_to remote_interaction_path(status, type: :reblog), class: "detailed-status__link #{user_signed_in? && @account.statuses.where(reblog: status).exists? ? 'detailed-status__boost-icon' : nil}", title: number_to_human(status.reblogs_count, strip_insignificant_zeros: true) do
+      = link_to remote_interaction_path(status, key: @sharekey, type: :reblog), class: "detailed-status__link #{user_signed_in? && @account.statuses.where(reblog: status).exists? ? 'detailed-status__boost-icon' : nil}", title: number_to_human(status.reblogs_count, strip_insignificant_zeros: true) do
         = fa_icon('repeat')
         = " "
 
     - if user_signed_in? && !@account.user_hides_stats?
       ·
-      = link_to remote_interaction_path(status, type: :favourite), class: "detailed-status__link  #{user_signed_in? && Favourite.where(account: @account, status: status).exists? ? 'detailed-status__star-icon' : nil}", title: number_to_human(status.favourites_count, strip_insignificant_zeros: true) do
+      = link_to remote_interaction_path(status, key: @sharekey, type: :favourite), class: "detailed-status__link  #{user_signed_in? && Favourite.where(account: @account, status: status).exists? ? 'detailed-status__star-icon' : nil}", title: number_to_human(status.favourites_count, strip_insignificant_zeros: true) do
         = fa_icon('star')
         = " "
 

@@ -190,8 +190,9 @@ class StatusesController < ApplicationController
     @status       = @account.statuses.find(params[:id])
     @stream_entry = @status.stream_entry
     @type         = @stream_entry.activity_type.downcase
+    @sharekey     = params[:key]
 
-    if @status.sharekey.present? && params[:key] == @status.sharekey
+    if @status.sharekey.present? && @sharekey == @status.sharekey
       skip_authorization
     else
       authorize @status, :show?
