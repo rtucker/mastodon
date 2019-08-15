@@ -88,10 +88,9 @@
 		font-weight: 700 !important;
 	}
 
-	.notification__favourite-icon-wrapper,
-	.status__prepend-icon-wrapper { left: -25px !important }
-
 	.media-spoiler { background: #000 !important }
+
+  .media-gallery.full-width { margin-left: 0; margin-right: 0 }
 
 	#mastodon-timeline,
 	.about-mastodon,

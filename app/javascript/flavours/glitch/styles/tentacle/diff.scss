@@ -109,10 +109,6 @@
 		font-weight: 700;
 	}
 
-	.notification__favourite-icon-wrapper,
-	.status__prepend-icon-wrapper
-  { left: -25px }
-
 	#mastodon-timeline,
 	.about-mastodon,
 	.about-short,
@@ -187,6 +183,12 @@
 		background: $cw_bg;
 		color: $cw_text;
 	}
+
+  .media-gallery.full-width
+  {
+    margin-left: 0;
+    margin-right: 0;
+  }
 
 	.column-header__back-button
   {
