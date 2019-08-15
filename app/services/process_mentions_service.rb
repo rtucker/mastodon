@@ -8,7 +8,7 @@ class ProcessMentionsService < BaseService
     return unless status.local? && !status.draft?
 
     @status  = status
-    mentions = []
+    mentions = Mention.where(status: status).to_a
 
     status.text = status.text.gsub(Account::MENTION_RE) do |match|
       username, domain  = Regexp.last_match(1).split('@')
@@ -32,7 +32,7 @@ class ProcessMentionsService < BaseService
     status.save!
 
     return if skip_notify
-    mentions.each { |mention| create_notification(mention) }
+    mentions.uniq.each { |mention| create_notification(mention) }
   end
 
   private
