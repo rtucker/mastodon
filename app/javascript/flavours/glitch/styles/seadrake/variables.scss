@@ -1,10 +1,29 @@
 $classic-base-color: #001611;
-$classic-primary-color: #fff;
+$classic-primary-color: #096;
 $classic-secondary-color: #096;
 $classic-highlight-color: #0c8;
 
-$ui-base-color: $classic-base-color;
-$ui-primary-color: $classic-primary-color;
-$ui-secondary-color: $classic-secondary-color;
+$base-shadow-color: $black;
+$base-overlay-background: $black;
+$base-border-color: $white;
+
+$simple-background-color: $black;
+$valid-value-color: $success-green;
+$error-value-color: $error-red;
+
+$ui-base-color: $classic-base-color;                  // Darkest
+$ui-base-lighter-color: lighten($ui-base-color, 26%); // Lighter darkest
+$ui-primary-color: $classic-primary-color;            // Lighter
+$ui-secondary-color: $classic-secondary-color;        // Lightest
 $ui-highlight-color: $classic-highlight-color;
-$primary-text-color: #fff;
+
+$primary-text-color: $white;
+$darker-text-color: $ui-primary-color;
+$dark-text-color: $ui-base-lighter-color;
+$secondary-text-color: $ui-secondary-color;
+$highlight-text-color: $ui-highlight-color;
+$action-button-color: $ui-base-lighter-color;
+
+$inverted-text-color: $ui-base-color;
+$lighter-text-color: $ui-base-lighter-color;
+$light-text-color: $ui-primary-color;
