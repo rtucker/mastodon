@@ -2,7 +2,9 @@ module FilterHelper
   include Redisable
 
 	def phrase_filtered?(status, receiver_id, context)
-    return true if redis.sismember("filtered_statuses:#{receiver_id}", status.id)
+    if redis.sismember("filtered_statuses:#{receiver_id}", status.id)
+      return redis.hexists("custom_cw:#{receiver_id}", status.id)
+    end
 
     filters = cached_filters(receiver_id)
     filters.select! { |filter| filter.context.include?(context.to_s) && !filter.expired? }
@@ -38,7 +40,7 @@ module FilterHelper
       if matched
         filter_thread(receiver_id, status.conversation_id) if filter.thread
 
-        unless filter.custom_cw.nil?
+        unless filter.custom_cw.blank?
           cw = if filter.override_cw || status.spoiler_text.blank?
                  filter.custom_cw
                else
@@ -48,7 +50,7 @@ module FilterHelper
         end
 
         redis.sadd("filtered_statuses:#{receiver_id}", status.id)
-        return true
+        return filter.custom_cw.blank?
       end
     end
 
