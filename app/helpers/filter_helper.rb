@@ -1,7 +1,10 @@
 module FilterHelper
-	def phrase_filtered?(status, receiver_id, context)
-    filters = Rails.cache.fetch("filters:#{receiver_id}") { CustomFilter.where(account_id: receiver_id).active_irreversible.to_a }.to_a
+  include Redisable
 
+	def phrase_filtered?(status, receiver_id, context)
+    return true if redis.sismember("filtered_statuses:#{receiver_id}", status.id)
+
+    filters = cached_filters(receiver_id)
     filters.select! { |filter| filter.context.include?(context.to_s) && !filter.expired? }
 
     if status.media_attachments.any?
@@ -34,6 +37,17 @@ module FilterHelper
 
       if matched
         filter_thread(receiver_id, status.conversation_id) if filter.thread
+
+        unless filter.custom_cw.nil?
+          cw = if filter.override_cw || status.spoiler_text.blank?
+                 filter.custom_cw
+               else
+                 "[#{filter.custom_cw}] #{status.spoiler_text}".rstrip
+               end
+          redis.hset("custom_cw:#{receiver_id}", status.id, cw)
+        end
+
+        redis.sadd("filtered_statuses:#{receiver_id}", status.id)
         return true
       end
     end
@@ -43,10 +57,14 @@ module FilterHelper
 
   def filter_thread(account_id, conversation_id)
     return if Status.where(account_id: account_id, conversation_id: conversation_id).exists?
-    Redis.current.sadd("filtered_threads:#{account_id}", conversation_id)
+    redis.sadd("filtered_threads:#{account_id}", conversation_id)
   end
 
   def filtering_thread?(account_id, conversation_id)
-    Redis.current.sismember("filtered_threads:#{account_id}", conversation_id)
+    redis.sismember("filtered_threads:#{account_id}", conversation_id)
+  end
+
+  def cached_filters(account_id)
+    Rails.cache.fetch("filters:#{account_id}") { CustomFilter.where(account_id: account_id).to_a }.to_a
   end
 end

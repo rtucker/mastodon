@@ -18,6 +18,8 @@
 #  spoiler       :boolean          default(FALSE), not null
 #  tags          :boolean          default(FALSE), not null
 #  status_text   :boolean          default(FALSE), not null
+#  custom_cw     :text
+#  override_cw   :boolean          default(FALSE), not null
 #
 
 class CustomFilter < ApplicationRecord
@@ -29,6 +31,7 @@ class CustomFilter < ApplicationRecord
   ).freeze
 
   include Expireable
+  include Redisable
 
   belongs_to :account
 
@@ -38,6 +41,7 @@ class CustomFilter < ApplicationRecord
 
   scope :active_irreversible, -> { where(irreversible: true).where(Arel.sql('expires_at IS NULL OR expires_at > NOW()')) }
 
+  before_validation :prepare_custom_cw
   before_validation :clean_up_contexts
   after_commit :remove_cache
 
@@ -47,9 +51,15 @@ class CustomFilter < ApplicationRecord
     self.context = Array(context).map(&:strip).map(&:presence).compact
   end
 
+  def prepare_custom_cw
+    custom_cw&.strip!
+  end
+
   def remove_cache
     Rails.cache.delete("filters:#{account_id}")
-    Rails.cache.delete("filtered_threads:#{account_id}")
+    redis.del("custom_cw:#{account_id}")
+    redis.del("filtered_threads:#{account_id}")
+    redis.del("filtered_statuses:#{account_id}")
     Redis.current.publish("timeline:#{account_id}", Oj.dump(event: :filters_changed))
   end
 

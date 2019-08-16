@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class REST::StatusSerializer < ActiveModel::Serializer
+  include Redisable
+
   attributes :id, :created_at, :in_reply_to_id, :in_reply_to_account_id,
              :sensitive, :spoiler_text, :visibility, :language,
              :uri, :url, :replies_count, :reblogs_count,
@@ -53,6 +55,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
 
   def show_application?
     object.account.user_shows_application? || owner?
+  end
+
+  def spoiler_text
+    redis.hget("custom_cw:#{current_user&.account_id}", object.id) || object.spoiler_text
   end
 
   def visibility

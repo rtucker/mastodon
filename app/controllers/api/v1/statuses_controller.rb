@@ -2,6 +2,7 @@
 
 class Api::V1::StatusesController < Api::BaseController
   include Authorization
+  include FilterHelper
 
   before_action -> { authorize_if_got_token! :read, :'read:statuses' }, except: [:create, :destroy]
   before_action -> { doorkeeper_authorize! :write, :'write:statuses' }, only:   [:create, :destroy]
@@ -18,6 +19,8 @@ class Api::V1::StatusesController < Api::BaseController
 
   def show
     @status = cache_collection([@status], Status).first
+    # make sure any custom cws are applied
+    phrase_filtered?(@status, current_account.id, 'thread') unless current_account.nil?
     render json: @status, serializer: REST::StatusSerializer
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_07_221924) do
+ActiveRecord::Schema.define(version: 2019_08_15_232125) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -256,6 +256,8 @@ ActiveRecord::Schema.define(version: 2019_08_07_221924) do
     t.boolean "spoiler", default: false, null: false
     t.boolean "tags", default: false, null: false
     t.boolean "status_text", default: false, null: false
+    t.text "custom_cw"
+    t.boolean "override_cw", default: false, null: false
     t.index ["account_id"], name: "index_custom_filters_on_account_id"
   end
 

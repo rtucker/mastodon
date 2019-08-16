@@ -3,6 +3,7 @@
 class StatusesController < ApplicationController
   include SignatureAuthentication
   include Authorization
+  include FilterHelper
 
   ANCESTORS_LIMIT         = 40
   DESCENDANTS_LIMIT       = 60
@@ -191,6 +192,9 @@ class StatusesController < ApplicationController
     @stream_entry = @status.stream_entry
     @type         = @stream_entry.activity_type.downcase
     @sharekey     = params[:key]
+
+    # make sure any custom cws are applied
+    phrase_filtered?(@status, current_account.id, 'thread') unless current_account.nil?
 
     if @status.sharekey.present? && @sharekey == @status.sharekey
       skip_authorization
