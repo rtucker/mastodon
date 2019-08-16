@@ -3,7 +3,7 @@ module FilterHelper
 
 	def phrase_filtered?(status, receiver_id, context)
     if redis.sismember("filtered_statuses:#{receiver_id}", status.id)
-      return redis.hexists("custom_cw:#{receiver_id}", status.id)
+      return !(redis.hexists("custom_cw:#{receiver_id}", status.id) || redis.hexists("custom_cw:#{receiver_id}", "c#{status.conversation_id}"))
     end
 
     filters = cached_filters(receiver_id)
@@ -38,7 +38,7 @@ module FilterHelper
       matched = true unless tags.empty? || regex.match(tags).nil?
 
       if matched
-        filter_thread(receiver_id, status.conversation_id) if filter.thread
+        filter_thread(receiver_id, status.conversation_id) if filter.thread && filter.custom_cw.blank?
 
         unless filter.custom_cw.blank?
           cw = if filter.override_cw || status.spoiler_text.blank?
@@ -46,7 +46,12 @@ module FilterHelper
                else
                  "[#{filter.custom_cw}] #{status.spoiler_text}".rstrip
                end
-          redis.hset("custom_cw:#{receiver_id}", status.id, cw)
+
+          if filter.thread
+            redis.hset("custom_cw:#{receiver_id}", "c#{status.conversation_id}", cw)
+          else
+            redis.hset("custom_cw:#{receiver_id}", status.id, cw)
+          end
         end
 
         redis.sadd("filtered_statuses:#{receiver_id}", status.id)

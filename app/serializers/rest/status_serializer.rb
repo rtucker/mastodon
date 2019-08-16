@@ -58,7 +58,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   end
 
   def spoiler_text
-    redis.hget("custom_cw:#{current_user&.account_id}", object.id) || object.spoiler_text
+    redis.hget("custom_cw:#{current_user&.account_id}", object.id) || redis.hget("custom_cw:#{current_user&.account_id}", "c#{object.conversation_id}") || object.spoiler_text
   end
 
   def visibility
