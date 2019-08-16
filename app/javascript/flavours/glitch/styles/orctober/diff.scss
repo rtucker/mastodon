@@ -60,6 +60,10 @@
 		margin: 1em 1.5em 2em 1em;
 	}
 
+	.status.collapsed .status__content:after {
+		background: linear-gradient(transparentize(#563, 1), #563) !important;
+	}
+
 	.detailed-status__action-bar {
 		background: #674 !important;
 		margin: -2.5em 3.5em 2em 3em;

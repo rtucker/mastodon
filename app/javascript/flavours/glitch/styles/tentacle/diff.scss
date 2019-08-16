@@ -74,6 +74,10 @@
 		margin: 1em 1.5em 2em 1em;
 	}
 
+	.status.collapsed .status__content:after {
+		background: linear-gradient(transparentize($status_bg, 1), $status_bg) !important;
+	}
+
 	.account__header > div
   { background: rgba(0,0,0,.9) }
 
