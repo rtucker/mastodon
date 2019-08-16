@@ -15,12 +15,21 @@ class SearchService < BaseService
       elsif @query.present?
         results[:accounts] = perform_accounts_search! if account_searchable?
         results[:hashtags] = perform_hashtags_search! if hashtag_searchable?
-        results[:statuses] = Status.search_for(query.gsub(/\A#/, ''), limit, account) unless query.start_with?('@') or query.start_with?('#')
+        results[:statuses] = search_for unless @query.start_with?('@', '#')
       end
     end
   end
 
   private
+
+  def search_for
+    results = Status.search_for(@query.gsub(/\A#/, ''), @limit, @account)
+    return results if results.empty?
+    account_ids         = results.pluck(:account_id)
+    account_domains     = results.map(&:account_domain)
+    preloaded_relations = relations_map_for_account(@account, account_ids, account_domains)
+    results.reject { |status| StatusFilter.new(status, @account, preloaded_relations).filtered? }
+  end
 
   def perform_accounts_search!
     AccountSearchService.new.call(
@@ -30,31 +39,6 @@ class SearchService < BaseService
       resolve: @resolve,
       offset: @offset
     )
-  end
-
-  def perform_statuses_search!
-    definition = StatusesIndex.filter(term: { searchable_by: @account.id })
-                              .query(multi_match: { type: 'most_fields', query: @query, operator: 'and', fields: %w(text text.stemmed) })
-
-    if @options[:account_id].present?
-      definition = definition.filter(term: { account_id: @options[:account_id] })
-    end
-
-    if @options[:min_id].present? || @options[:max_id].present?
-      range      = {}
-      range[:gt] = @options[:min_id].to_i if @options[:min_id].present?
-      range[:lt] = @options[:max_id].to_i if @options[:max_id].present?
-      definition = definition.filter(range: { id: range })
-    end
-
-    results             = definition.limit(@limit).offset(@offset).objects.compact
-    account_ids         = results.map(&:account_id)
-    account_domains     = results.map(&:account_domain)
-    preloaded_relations = relations_map_for_account(@account, account_ids, account_domains)
-
-    results.reject { |status| StatusFilter.new(status, @account, preloaded_relations).filtered? }
-  rescue Faraday::ConnectionFailed
-    []
   end
 
   def perform_hashtags_search!
@@ -86,8 +70,6 @@ class SearchService < BaseService
   end
 
   def full_text_searchable?
-    return false unless Chewy.enabled?
-
     statuses_search? && !@account.nil? && !((@query.start_with?('#') || @query.include?('@')) && !@query.include?(' '))
   end
 
