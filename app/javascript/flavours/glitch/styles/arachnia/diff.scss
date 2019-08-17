@@ -2,7 +2,7 @@
 	// Main body
 	body,
 	body.app-body {
-		background: #160011 url(/system/custom-images/monsterpit-bg.png) no-repeat center center fixed !important;
+		background: black url(https://monsterpit.net/extras/pit.png) no-repeat center center fixed !important;
 		background-size: cover !important;
 		font-size: 14px !important;
 	}
@@ -41,6 +41,8 @@
 	.landing-page h2,
 	.landing-page h3,
 	.landing-page h6 { color: #906 !important; }
+
+  .landing-page__call-to-action { background: $ui-base-color }
 
 	.about-body h2 { font-size: 28px !important; }
 
