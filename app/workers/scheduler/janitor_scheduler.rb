@@ -8,15 +8,15 @@ class Scheduler::JanitorScheduler
 
   MIN_POSTS = 6
 
-  sidekiq_options unique: :until_executed, retry: 0
+  sidekiq_options unique: :until_executed
 
   def perform
     @account = janitor_account
     return if @account.nil?
 
-    @exclude_ids = excluded_account_ids.uniq
-    @exclude_domains = excluded_domains.uniq
-    @exclude_markov = excluded_accounts_from_env('MARKOV').uniq
+    @exclude_ids = excluded_account_ids
+    @exclude_domains = excluded_domains
+    @exclude_markov = excluded_accounts_from_env('MARKOV')
 
     prune_deleted_accounts!
     suspend_abandoned_accounts!
@@ -183,7 +183,7 @@ class Scheduler::JanitorScheduler
   end
 
   def domains_from_account_ids
-    Account.reorder(nil).where(id: @account_ids).pluck(:domain).uniq
+    Account.reorder(nil).where(id: @exclude_ids).pluck(:domain).uniq
   end
 
   def local_account_ids
@@ -210,10 +210,10 @@ class Scheduler::JanitorScheduler
 
   def excluded_accounts_from_env(suffix)
     excluded_usernames = ENV.fetch("JANITOR_EXCLUDE_#{suffix.upcase}", '').split
-    Account.reorder(nil).where(username: excluded_usernames).pluck(:id)
+    Account.reorder(nil).where(username: excluded_usernames).pluck(:id).uniq
   end
 
   def excluded_from_env(suffix)
-    ENV.fetch("JANITOR_EXCLUDE_#{suffix.upcase}", '').split
+    ENV.fetch("JANITOR_EXCLUDE_#{suffix.upcase}", '').split.uniq
   end
 end
