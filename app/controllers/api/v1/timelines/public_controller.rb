@@ -13,6 +13,7 @@ class Api::V1::Timelines::PublicController < Api::BaseController
   private
 
   def load_statuses
+    return [] unless user_signed_in?
     cached_public_statuses
   end
 

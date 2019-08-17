@@ -250,10 +250,6 @@ const startWorker = (workerId) => {
   };
 
   const PUBLIC_STREAMS = [
-    'public',
-    'public:media',
-    'public:local',
-    'public:local:media',
     'hashtag',
     'hashtag:local',
   ];
@@ -273,10 +269,7 @@ const startWorker = (workerId) => {
   };
 
   const PUBLIC_ENDPOINTS = [
-    '/api/v1/streaming/public',
-    '/api/v1/streaming/public/local',
     '/api/v1/streaming/hashtag',
-    '/api/v1/streaming/hashtag/local',
   ];
 
   const authenticationMiddleware = (req, res, next) => {
