@@ -3,8 +3,6 @@
 class LogWorker
   include Sidekiq::Worker
 
-  sidekiq_options unique: :until_executed
-
   def perform(log_text, subject: nil, markdown: false, scope: nil)
     logger_id = ENV['LOG_USER'].to_i
     return true if logger_id == 0
