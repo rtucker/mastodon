@@ -164,7 +164,7 @@ class AccountsController < ApplicationController
   end
 
   def tag_requested?
-    request.path.ends_with?(Addressable::URI.parse("/tagged/#{params[:tag]}").normalize)
+    request.path.split('.').first.ends_with?(Addressable::URI.parse("/tagged/#{params[:tag]}").normalize)
   end
 
   def filtered_status_page(params)
