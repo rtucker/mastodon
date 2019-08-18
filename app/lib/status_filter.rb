@@ -34,7 +34,7 @@ class StatusFilter
     return true if account.user_hides_replies_of_blocker? && reply_to_blocker?
 
     # filtered by user?
-    return true if phrase_filtered?(status, account.id, 'thread')
+    return true if phrase_filtered?(status, account.id, nil)
 
     # kajiht has no filters if status has no mentions
     return false if status&.mentions.blank?

@@ -6,8 +6,11 @@ module FilterHelper
       return !(redis.hexists("custom_cw:#{receiver_id}", status.id) || redis.hexists("custom_cw:#{receiver_id}", "c#{status.conversation_id}"))
     end
 
-    filters = cached_filters(receiver_id)
-    filters.select! { |filter| filter.context.include?(context.to_s) && !filter.expired? }
+    filters = cached_filters(receiver_id).select { |filter| !filter.expired? }
+
+    unless context.nil?
+      filters.select! { |filter| filter.context.include?(context.to_s) && !filter.expired? }
+    end
 
     if status.media_attachments.any?
       filters.delete_if { |filter| filter.exclude_media }
@@ -33,9 +36,9 @@ module FilterHelper
       end
 
       matched = false
-      matched = true unless regex.match(status_text).nil?
-      matched = true unless spoiler_text.blank? || regex.match(spoiler_text).nil?
-      matched = true unless tags.empty? || regex.match(tags).nil?
+      matched ||= regex.match(status_text).present? if filter.status_text
+      matched ||= regex.match(spoiler_text).present? if filter.spoiler && spoiler_text.present?
+      matched ||= regex.match(tags).present? if filter.tags && tags.present?
 
       if matched
         filter_thread(receiver_id, status.conversation_id) if filter.thread && filter.custom_cw.blank?
