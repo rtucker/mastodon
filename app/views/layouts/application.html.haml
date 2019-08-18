@@ -70,7 +70,10 @@
 
     - if current_account&.user_hides_filtered_gap?
       :css
-        .status__wrapper--filtered { display: none !important; }
+        .status__wrapper--filtered {
+          height: 1px !important;
+          max-height: 1px !important;
+        }
 
     - if current_account&.user_hides_mascot?
       :css
