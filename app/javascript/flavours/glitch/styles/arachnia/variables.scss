@@ -1,5 +1,5 @@
-$classic-base-color: #302;
-$classic-primary-color: #604;
+$classic-base-color: #201;
+$classic-primary-color: #503;
 $classic-secondary-color: #906;
 $classic-highlight-color: #c08;
 
@@ -18,7 +18,7 @@ $ui-secondary-color: $classic-secondary-color;        // Lightest
 $ui-highlight-color: $classic-highlight-color;
 
 $primary-text-color: $white;
-$darker-text-color: $ui-primary-color;
+$darker-text-color: lighten($ui-primary-color, 20%);
 $dark-text-color: $ui-base-lighter-color;
 $secondary-text-color: $ui-secondary-color;
 $highlight-text-color: $ui-highlight-color;
