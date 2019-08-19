@@ -18,6 +18,9 @@
   janitor_scheduler:
     every: '1h'
     class: Scheduler::JanitorScheduler
+  prune_database_scheduler:
+    every: '1d'
+    class: Scheduler::PruneDatabaseScheduler
   media_cleanup_scheduler:
     cron: '<%= Random.rand(0..59) %> <%= Random.rand(3..5) %> * * *'
     class: Scheduler::MediaCleanupScheduler
