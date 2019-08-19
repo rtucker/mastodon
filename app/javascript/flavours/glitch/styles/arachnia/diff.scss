@@ -173,12 +173,20 @@
 		color: #fff !important;
 	}
 
+  .poll__text input[type="text"], .compose-form__poll-wrapper select {
+    background: $ui-primary-color;
+  }
 
 	// Search box: darken
 	.search__input {
 		background: #302 !important;
 		border: 1px solid #201 !important;
 	}
+
+  .drawer--search--popout {
+    background: #160011;
+    h4, em { color: $lighter-text-color; }
+  }
 
 	// Tootbox
 	.autosuggest-textarea__textarea,
@@ -284,7 +292,6 @@
 	// TL status prefix:  text shouldn't clip icon
 	//.display-name { max-width: calc(100% - 32px) !important; }
 
-
 	// TL status: muted text
 	.muted .status__content p { color: #a9a !important; }
 
@@ -294,6 +301,15 @@
 
 	// Expanded status: action bars
 	.account__disclaimer, .account__action-bar { background: #160011 !important; }
+
+  .boost-modal__action-bar,
+  .doodle-modal__action-bar,
+  .favourite-modal__action-bar,
+  .confirmation-modal__action-bar,
+  .mute-modal__action-bar {
+    background: #805;
+    div { color: $light-text-color; }
+  }
 
 	// Default icon button color
 	.icon-button { color: #604; }
@@ -357,7 +373,7 @@
 
 	.column-header.active>.column-header__icon,
 	.icon-button.active {
-		color: #c08 !important;
+		color: $inverted-text-color !important;
 		transform: scale(1.5);
 
 		-moz-transition: all 1s ease-in-out;
