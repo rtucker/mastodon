@@ -77,6 +77,8 @@ defaults: &defaults
   mark_known_from_mentions: true
   mark_known_from_boosts: true
   mark_known_from_favourites: false
+  show_domain_blocks: 'disabled'
+  show_domain_blocks_rationale: 'disabled'
 
 development:
   <<: *defaults

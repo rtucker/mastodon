@@ -29,6 +29,7 @@ class DomainBlock < ApplicationRecord
 
   scope :matches_domain, ->(value) { where(arel_table[:domain].matches("%#{value}%")) }
   scope :unprocessed, -> { where(processing: true) }
+  scope :with_user_facing_limitations, -> { where(severity: [:silence, :suspend]).or(where(reject_media: true)).or(where(reject_unknown: true).or(where(manual_only: true))) }
 
   before_save :set_processing
 
