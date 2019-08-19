@@ -154,7 +154,7 @@
 	// Column/Drawer headings: solid red bg and border; blank line after
 	.column-back-button,
 	.column-header,
-	.drawer__header,
+	.drawer--header,
 	.search,
 	.search-results,
 	.autosuggest-textarea__suggestions {
@@ -162,6 +162,8 @@
 		margin-bottom: 1em !important;
 		border: 1px solid #c08 !important
 	}
+
+  .drawer--header > * { color: $ui-highlight-color; }
 
 	.search-results, .autosuggest-textarea__suggestions { color: #fff !important; }
 
@@ -310,7 +312,7 @@
   .favourite-modal__action-bar,
   .confirmation-modal__action-bar,
   .mute-modal__action-bar {
-    background: #805;
+    background: #906;
     div { color: $light-text-color; }
   }
 
