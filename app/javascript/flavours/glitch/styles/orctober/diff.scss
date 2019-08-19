@@ -339,7 +339,7 @@
 	.icon-button.disabled {
 		opacity: .75;
 		transition: all 2s ease-in-out;
-		animation: blink-off normal 4s 5 ease-in-out;
+		animation: blink-off normal 4s 1 ease-in-out;
 	}
 
 	@-webkit-keyframes blink-on {
@@ -361,8 +361,8 @@
 		transform: scale(1.5);
 		-webkit-transition: all 1s ease-in-out;
 		transition: all 1s ease-in-out;
-		-webkit-animation: blink-on normal 2s 5 ease-in-out;
-		animation: blink-on normal 2s 5 ease-in-out;
+		-webkit-animation: blink-on normal 2s 1 ease-in-out;
+		animation: blink-on normal 2s 1 ease-in-out;
 	}
 
 	::-webkit-scrollbar-thumb {

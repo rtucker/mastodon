@@ -352,10 +352,10 @@
 		-ms-transition: all 2s ease-in-out;
 		transition: all 2s ease-in-out;
 
-		-moz-animation: blink-off normal 4s 5 ease-in-out;
-		-webkit-animation: blink-off normal 4s 5 ease-in-out;
-		-ms-animation: blink-off normal 4s 5 ease-in-out;
-		animation: blink-off normal 4s 5 ease-in-out;
+		-moz-animation: blink-off normal 4s 1 ease-in-out;
+		-webkit-animation: blink-off normal 4s 1 ease-in-out;
+		-ms-animation: blink-off normal 4s 1 ease-in-out;
+		animation: blink-off normal 4s 1 ease-in-out;
 	}
 
 	// Active item banimation
@@ -382,10 +382,10 @@
 		-ms-transition: all 1s ease-in-out;
 		transition: all 1s ease-in-out;
 
-		-moz-animation: blink-on normal 2s 5 ease-in-out;
-		-webkit-animation: blink-on normal 2s 5 ease-in-out;
-		-ms-animation: blink-on normal 2s 5 ease-in-out;
-		animation: blink-on normal 2s 5 ease-in-out;
+		-moz-animation: blink-on normal 2s 1 ease-in-out;
+		-webkit-animation: blink-on normal 2s 1 ease-in-out;
+		-ms-animation: blink-on normal 2s 1 ease-in-out;
+		animation: blink-on normal 2s 1 ease-in-out;
 	}
 
 	// Scrollbar in Chrome/Webkit browsers
