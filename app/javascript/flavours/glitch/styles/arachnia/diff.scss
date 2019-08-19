@@ -112,7 +112,10 @@
 	.status__prepend-icon-wrapper { left: -25px !important; }
 
 	// Spoilers
-	.media-spoiler { background: #000 !important; }
+	.status__content__spoiler-link {
+    background: #000 !important;
+    border: 1px solid $ui-highlight-color;
+  }
   .media-gallery.full-width { margin-left: 0; margin-right: 0 }
 
 	// UI: remove borders and solid bg colors
