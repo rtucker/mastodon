@@ -218,6 +218,7 @@
 		position: absolute;
 		right: 4px;
 		bottom: 0;
+    z-index: -666;
 	}
 
 	// TL status: color of user address; push down post content
@@ -312,7 +313,7 @@
   .favourite-modal__action-bar,
   .confirmation-modal__action-bar,
   .mute-modal__action-bar {
-    background: #906;
+    background: #201;
     div { color: $light-text-color; }
   }
 
@@ -334,6 +335,10 @@
 	// Make status Emojos bigger
 	.reply-indicator__content .emojione,
 	.status__content .emojione { width: 32px !important; height: 32px !important; padding: 2px; }
+
+  // staff tools
+  div.drawer__inner__admin ul li a { color: $lighter-text-color }
+  div.drawer__inner__admin ul li a:hover { color: $white }
 
 	// Locked posts animation
 	@-webkit-keyframes blink-off {
