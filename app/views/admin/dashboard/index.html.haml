@@ -93,6 +93,10 @@
         %li
           = feature_hint(t('admin.dashboard.single_user_mode'), @single_user_mode)
         %li
+          = feature_hint(t('admin.dashboard.authorized_fetch_mode'), @authorized_fetch)
+        %li
+          = feature_hint(t('admin.dashboard.whitelist_mode'), @whitelist_enabled)
+        %li
           = feature_hint('LDAP', @ldap_enabled)
         %li
           = feature_hint('CAS', @cas_enabled)
