@@ -71,6 +71,7 @@ class Api::V1::StatusesController < Api::BaseController
     @status = Status.where(account_id: current_user.account).find(params[:id])
     authorize @status, :destroy?
 
+    @status.discard
     RemovalWorker.perform_async(@status.id, redraft: true)
 
     render json: @status, serializer: REST::StatusSerializer, source_requested: true, monsterfork_api: monsterfork_api

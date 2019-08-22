@@ -32,11 +32,13 @@
 #  reject_replies         :boolean
 #  tsv                    :tsvector
 #  hidden                 :boolean
+#  deleted_at             :datetime
 #
 
 class Status < ApplicationRecord
   before_destroy :unlink_from_conversations
 
+  include Discard::Model
   include Paginable
   include Cacheable
   include StatusThreadingConcern
@@ -45,6 +47,7 @@ class Status < ApplicationRecord
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
   REJECT_REPLIES_TOKENS = /^(?:please )?(?:ms_dont_at_me|no (?:replie|mention)s|(?:dont|do not) (?:@|at|reply|mention|interact)(?: (?:me|us))?)\b/i
   SIMPLIFIED = /[^\w\s@_\"\'\-]+/
+  self.discard_column = :deleted_at
 
   # If `override_timestamps` is set at creation time, Snowflake ID creation
   # will be based on current time instead of `created_at`
@@ -95,7 +98,7 @@ class Status < ApplicationRecord
 
   accepts_nested_attributes_for :poll
 
-  default_scope { recent }
+  default_scope { recent.kept }
 
   scope :recent, -> { reorder(id: :desc) }
   scope :remote, -> { where(local: false).or(where.not(uri: nil)) }
