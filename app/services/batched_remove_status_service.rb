@@ -6,7 +6,7 @@ class BatchedRemoveStatusService < BaseService
   # Delete given statuses and reblogs of them
   # Remove statuses from home feeds
   # Push delete events to streaming API for home feeds and public feeds
-  # @param [Status] statuses A preferably batched array of statuses
+  # @param [Enumerable<Status>] statuses A preferably batched array of statuses
   # @param [Hash] options
   # @option [Boolean] :skip_side_effects
   def call(statuses, **options)
