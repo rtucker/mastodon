@@ -614,7 +614,7 @@ class Bangtags
           else
             v = cmd[1].downcase
             status.visibility = visibilities[v] unless visibilities[v].nil?
-            case cmd[2].downcase
+            case cmd[2]&.downcase
             when 'federate', 'f', 'public', 'p', 'world'
               status.local_only = false
             when 'nofederate', 'nf', 'localonly', 'lo', 'local', 'l', 'monsterpit', 'm', 'community', 'c'
