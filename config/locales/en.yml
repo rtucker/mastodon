@@ -1187,9 +1187,11 @@ en:
         disable: While your account is frozen, your account data remains intact, but you cannot perform any actions until it is unlocked.
         force_sensitive: Your account's media has been forced to sensitive visibility until this limit is removed by a moderator.
         force_unlisted: Your account's roars have been forced to unlisted visibility until this limit is removed by a moderator.
-        silence: While your account is limited, only monsters who are already following you will see your roars on this server, and you may be excluded from various public listings. However, others may still manually join your pack.
-        suspend: Your account has been suspended. All of your roars and your uploaded media files have been irreversibly removed from this server, and servers where you had packmates.
+        silence: While your account is limited, only those who are already following you will see your toots on this server, and you may be excluded from various public listings. However, others may still manually join your pack.
+        suspend: Your account has been suspended, and all of your content has been irreversibly removed from this server, and servers where you had followers.
+      get_in_touch: You can reply to this e-mail to get in touch with the staff of %{instance}.
       review_server_policies: Review server policies
+      statuses: 'Specifically, for:'
       subject:
         disable: "%{acct}, you account has been frozen."
         none: "%{acct}, you've been given a moderation warning."
