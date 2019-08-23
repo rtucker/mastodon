@@ -65,7 +65,6 @@ class Publisher extends ImmutablePureComponent {
             </span>
           }
         />
-        <span className='count'>{diff}</span>
         {sideArm && sideArm !== 'none' ? (
           <Button
             className='side_arm'
