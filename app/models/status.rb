@@ -335,7 +335,7 @@ class Status < ApplicationRecord
   after_create :process_bangtags, if: :local?
 
   class << self
-    def search_for(term, limit = 33, account = nil)
+    def search_for(term, account = nil, limit = 33, offset = 0)
       return none if account.nil?
       if term.start_with?('me:')
         term = term.split(nil, 2)[1]
@@ -349,7 +349,7 @@ class Status < ApplicationRecord
       return none if term.blank?
       pattern = sanitize_sql_like(term)
       pattern = "#{pattern}"
-      query = query.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern).limit(limit)
+      query = query.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern).offset(offset).limit(limit)
       apply_timeline_filters(query, account, true)
     end
 

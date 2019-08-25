@@ -23,7 +23,7 @@ class SearchService < BaseService
   private
 
   def search_for
-    results = Status.search_for(@query.gsub(/\A#/, ''), @limit, @account)
+    results = Status.search_for(@query.gsub(/\A#/, ''), @account, @limit, @offset)
     return results if results.empty?
     account_ids         = results.pluck(:account_id)
     account_domains     = results.map(&:account_domain)
@@ -35,7 +35,7 @@ class SearchService < BaseService
     AccountSearchService.new.call(
       @query,
       @account,
-      limit: [@limit, 15].min,
+      limit: [@limit, 12].min,
       resolve: @resolve,
       offset: @offset
     )
