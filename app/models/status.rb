@@ -36,8 +36,6 @@
 #
 
 class Status < ApplicationRecord
-  self.ignored_columns = %w(tsv)
-
   before_destroy :unlink_from_conversations
 
   include Paginable
@@ -341,18 +339,17 @@ class Status < ApplicationRecord
       return none if account.nil?
       if term.start_with?('me:')
         term = term.split(nil, 2)[1]
-        scope = account.statuses
+        query = account.statuses
       else
-        scope = Status
+        mutual_account_ids = account.following_ids & account.follower_ids
+        query = Status.where(account_id: account.id)
+          .or(Status.where(account_ids: mutual_account_ids, visibility: [:private, :local, :unlisted]))
+          .or(Status.where(id: account.mentions.select(:status_id)))
       end
       return none if term.blank?
       pattern = sanitize_sql_like(term)
       pattern = "#{pattern}"
-      scope = scope.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern)
-      query = scope.where(account: account)
-        .or(scope.where(account: account.following, visibility: [:private, :local, :unlisted]))
-        .or(scope.where(id: account.mentions.select(:status_id)))
-        .limit(limit)
+      query = query.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern).limit(limit)
       apply_timeline_filters(query, account, true)
     end
 
