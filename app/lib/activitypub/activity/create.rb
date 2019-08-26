@@ -138,7 +138,16 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
       # control anyway
       account = account_from_uri(audience)
 
-      next if account.nil? || @mentions.any? { |mention| mention.account_id == account.id }
+      if account.nil?
+        if @options[:requested]
+          @potential_scope_leak = true unless Account.where(followers_url: audience, suspended_at: nil).exists?
+        else
+          @potential_scope_leak = true unless Account.where(followers_url: audience, known: true, suspended_at: nil).exists?
+        end
+        next
+      end
+
+      next if @mentions.any? { |mention| mention.account_id == account.id }
 
       @mentions << Mention.new(account: account, silent: true)
 
