@@ -56,20 +56,12 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
 
     process_status_params
     return reject_payload! if twitter_retweet? || recipient_rejects_replies?
+
     process_tags
     process_audience
-
     return reject_payload! if potential_scope_leak?
 
-    @params[:visibility] = :unlisted if @params[:visibility] == :public && @account.force_unlisted?
-    @params[:sensitive] = true if @account.force_sensitive?
-
-    if @options[:imported]
-      @params.except!(:uri, :url)
-      @params[:content_type] = 'text/html'
-      @params[:imported] = true
-      @params[:origin] = @origin_hash unless @origin_hash.nil?
-    end
+    postprocess_status_params
 
     ApplicationRecord.transaction do
       @status = Status.create!(@params)
@@ -123,9 +115,24 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
         thread: replied_to_status,
         conversation: conversation_from_uri(@object['conversation']),
         reject_replies: @object['rejectReplies'] || false,
-        media_attachment_ids: process_attachments.take(6).map(&:id),
-        poll: process_poll,
       }
+    end
+  end
+
+  def postprocess_status_params
+    begin
+      @params[:visibility] = :unlisted if @params[:visibility] == :public && @account.force_unlisted?
+      @params[:sensitive] = true if @account.force_sensitive?
+
+      if @options[:imported]
+        @params.except!(:uri, :url)
+        @params[:content_type] = 'text/html'
+        @params[:imported] = true
+        @params[:origin] = @origin_hash unless @origin_hash.nil?
+      end
+
+      @params[:media_attachment_ids] = process_attachments.take(6).map(&:id)
+      @params[:poll] = process_poll
     end
   end
 
