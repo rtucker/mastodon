@@ -139,7 +139,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
       account = account_from_uri(audience)
 
       if account.nil?
-        if @options[:requested]
+        if !rejecting_unknown? || @options[:requested]
           @potential_scope_leak = true unless Account.where(followers_url: audience, suspended_at: nil).exists?
         else
           @potential_scope_leak = true unless Account.where(followers_url: audience, known: true, suspended_at: nil).exists?
