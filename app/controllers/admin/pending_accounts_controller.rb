@@ -9,8 +9,16 @@ module Admin
     end
 
     def batch
+      names = Account.where(id: form_account_batch_params['account_ids'].map(&:to_i)).pluck(:username)
+
       @form = Form::AccountBatch.new(form_account_batch_params.merge(current_account: current_account, action: action_from_button))
       @form.save
+
+      if action_from_button == 'approve'
+        user_friendly_action_log(current_account, :approve_registration, names)
+      else
+        user_friendly_action_log(current_account, :reject_registration, names)
+      end
     rescue ActionController::ParameterMissing
       flash[:alert] = I18n.t('admin.accounts.no_account_selected')
     ensure
@@ -18,12 +26,18 @@ module Admin
     end
 
     def approve_all
-      Form::AccountBatch.new(current_account: current_account, account_ids: User.pending.pluck(:account_id), action: 'approve').save
+      account_ids = User.pending.pluck(:account_id)
+      names = Account.where(id: account_ids).pluck(:username)
+      Form::AccountBatch.new(current_account: current_account, account_ids: account_ids, action: 'approve').save
+      user_friendly_action_log(current_account, :approve_registration, names, "Approved all peneding accounts.")
       redirect_to admin_pending_accounts_path(current_params)
     end
 
     def reject_all
-      Form::AccountBatch.new(current_account: current_account, account_ids: User.pending.pluck(:account_id), action: 'reject').save
+      account_ids = User.pending.pluck(:account_id)
+      names = Account.where(id: account_ids).pluck(:username)
+      Form::AccountBatch.new(current_account: current_account, account_ids: account_ids, action: 'reject').save
+      user_friendly_action_log(current_account, :reject_registration, names, "Rejected all pending accounts.")
       redirect_to admin_pending_accounts_path(current_params)
     end
 

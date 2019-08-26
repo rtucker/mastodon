@@ -103,6 +103,19 @@ module LogHelper
 
     when :memorialize
       LogWorker.perform_async("\xf0\x9f\x8f\x85 <#{source}> memorialized an account.")
+
+    when :approve_registration
+      if target.respond_to?('map')
+        LogWorker.perform_async("\u2705 <#{source}> approved the account of #{target.map { |acct| "<#{acct}>" }.join(', ')}.\n\n#{reason ? "Comment: #{reason}" : ''}")
+      else
+        LogWorker.perform_async("\u2705 <#{source}> approved the account of <#{target}>.\n\n#{reason ? "Comment: #{reason}" : ''}")
+      end
+    when :reject_registration
+      if target.respond_to?('map')
+        LogWorker.perform_async("\u274c <#{source}> rejected the account of #{target.map { |acct| "<#{acct}>" }.join(', ')}.\n\n#{reason ? "Comment: #{reason}" : ''}")
+      else
+        LogWorker.perform_async("\u274c <#{source}> rejected the account of <#{target}>.\n\n#{reason ? "Comment: #{reason}" : ''}")
+      end
     end
   end
 end

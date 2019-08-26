@@ -198,7 +198,7 @@ class User < ApplicationRecord
     if new_user && approved?
       prepare_new_user!
     elsif new_user
-      notify_staff_about_pending_account!
+      RegistrationJanitorWorker.perform_async(id)
     end
   end
 
@@ -240,6 +240,14 @@ class User < ApplicationRecord
     self.otp_required_for_login = false
     otp_backup_codes&.clear
     save!
+  end
+
+  def notify_staff_about_pending_account!
+    LogWorker.perform_async("\xf0\x9f\x86\x95 New account <#{Account.find(account_id).username}> is awaiting admin approval.\n\nReview (moderators only): https://#{Rails.configuration.x.web_domain || Rails.configuration.x.local_domain}/admin/pending_accounts")
+    User.staff.includes(:account).each do |u|
+      next unless u.allows_pending_account_emails?
+      AdminMailer.new_pending_account(u.account, self).deliver_later
+    end
   end
 
   def wants_larger_menus?
@@ -494,13 +502,6 @@ class User < ApplicationRecord
   def prepare_returning_user!
     ActivityTracker.record('activity:logins', id)
     regenerate_feed! if needs_feed_update?
-  end
-
-  def notify_staff_about_pending_account!
-    User.staff.includes(:account).each do |u|
-      next unless u.allows_pending_account_emails?
-      AdminMailer.new_pending_account(u.account, self).deliver_later
-    end
   end
 
   def regenerate_feed!
