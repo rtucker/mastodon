@@ -53,6 +53,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     @mentions = []
     @params   = {}
     @potential_scope_leak = false
+    @mentions_local_account = false
 
     process_status_params
     return reject_payload! if twitter_retweet? || recipient_rejects_replies?
@@ -146,16 +147,19 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
       account = account_from_uri(audience)
 
       if account.nil?
-        if !rejecting_unknown? || @options[:requested]
-          @potential_scope_leak = true unless Account.where(followers_url: audience, suspended_at: nil).exists?
-        else
-          @potential_scope_leak = true unless Account.where(followers_url: audience, known: true, suspended_at: nil).exists?
+        unless @mentions_local_account
+          if !rejecting_unknown? || @options[:requested]
+            @potential_scope_leak = true unless Account.where(followers_url: audience, suspended_at: nil).exists?
+          else
+            @potential_scope_leak = true unless Account.where(followers_url: audience, known: true, suspended_at: nil).exists?
+          end
         end
         next
       end
 
       next if @mentions.any? { |mention| mention.account_id == account.id }
 
+      @mentions_local_account = true if account.local?
       @mentions << Mention.new(account: account, silent: true)
 
       # If there is at least one silent mention, then the status can be considered
@@ -217,7 +221,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   end
 
   def potential_scope_leak?
-    @potential_scope_leak && @mentions.blank?
+    @potential_scope_leak && !@mentions_local_account
   end
 
   def process_hashtag(tag)
@@ -250,6 +254,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
       return
     end
 
+    @mentions_local_account = true if account.local?
     @mentions << Mention.new(account: account, silent: false)
   end
 
