@@ -53,14 +53,19 @@ class Sanitize
         return
       end
 
+      # try to detect pseudomentions
+      if text.start_with?('@') && text.match?(Account::MENTION_RE)
+        username, domain = text[1..-1].split('@', 2)
+        return if href == "https://#{domain}/@#{username}"
+        return if href == "https://#{domain}/#{username}"
+        return if href == "https://#{username}.#{domain}"
+        return if href == "https://#{domain}/users/#{username}"
+        return if href == "https://#{domain}/user/#{username}"
+      end
+
       # try to detect filenames
       href_filename = '/'.in?(href) ? href.rpartition('/')[2] : nil
       unless href_filename.blank? || !('.'.in?(href_filename))
-        if text == href_filename
-          node.inner_html = "\xf0\x9f\x93\x8e #{node.inner_html}"
-          return
-        end
-
         # possibly linked media?
         ext = href_filename.rpartition('.')[2]
         if ext.downcase.in?(MEDIA_EXTENSIONS)
@@ -72,11 +77,7 @@ class Sanitize
       # grab first url from link text
       first_url = text.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*\S*/).first
 
-      # if there's no link in the text mark as custom text
-      if first_url.nil?
-        node.inner_html = "\u270d\ufe0f #{node.inner_html}"
-        return
-      end
+      return if first_url.nil?
 
       # strip trailing punctuation
       text.sub!(/\p{Punct}+\Z/, '')
@@ -93,11 +94,7 @@ class Sanitize
       return if short_href.start_with?(text) || normalized_short_href.start_with?(text)
 
       # first domain in link text (if there is one) matches href domain?
-      if short_href == first_url || normalized_short_href == first_url
-        # link text customized by author
-        node.inner_html = "\u270d\ufe0f #{node.inner_html}"
-        return
-      end
+      return if short_href == first_url || normalized_short_href == first_url
 
       # possibly misleading link text
       node.inner_html = "\u26a0\ufe0f #{node.inner_html}"
