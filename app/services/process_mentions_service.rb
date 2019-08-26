@@ -14,6 +14,8 @@ class ProcessMentionsService < BaseService
       username, domain  = Regexp.last_match(1).split('@')
       mentioned_account = Account.find_remote(username, domain)
 
+      next match unless domain.nil? || '.'.in?(domain)
+
       if mention_undeliverable?(mentioned_account)
         begin
           mentioned_account = resolve_account_service.call(Regexp.last_match(1))

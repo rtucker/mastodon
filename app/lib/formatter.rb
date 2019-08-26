@@ -559,16 +559,21 @@ class Formatter
     return link_to_account(acct) unless linkable_accounts
 
     account = linkable_accounts.find { |item| TagManager.instance.same_acct?(item.acct, acct) }
-    account ? mention_html(account) : "@#{encode(acct)}"
+
+    username, domain = acct.split('@', 2)
+    domain = (Rails.configuration.x.web_domain || Rails.configuration.x.local_domain) if domain.nil?
+
+    account ? mention_html(account) : anchor_html("@#{acct}", "https://#{domain}/@#{username}")
   end
 
   def link_to_account(acct)
-    username, domain = acct.split('@')
+    username, domain = acct.split('@', 2)
 
     domain  = nil if TagManager.instance.local_domain?(domain)
     account = EntityCache.instance.mention(username, domain)
+    domain = (Rails.configuration.x.web_domain || Rails.configuration.x.local_domain) if domain.nil?
 
-    account ? mention_html(account) : "@#{encode(acct)}"
+    account ? mention_html(account) : anchor_html("@#{acct}", "https://#{domain}/@#{username}")
   end
 
   def link_to_hashtag(entity)
@@ -593,96 +598,43 @@ class Formatter
     "<span class=\"h-card\"><a href=\"#{encode(TagManager.instance.url_for(account))}\" class=\"u-url mention\">@<span>#{encode(account.username)}</span></a></span>"
   end
 
+  def anchor_html(text, url)
+    "<a href=\"#{encode(url)}\" rel=\"noopener noreferrer\"><span>#{encode(text)}</span></a>"
+  end
+
   def link_to_pseudo(acct)
-    username, domain = acct.split('@')
-
+    username, domain = acct.split('@', 2)
     case domain
-    when 'twitter.com'
-      return link_to_twitter(username)
-    when 'tumblr.com'
-      return link_to_tumblr(username)
-    when 'weasyl.com'
-      return link_to_weasyl(username)
-    when 'furaffinity.net'
-      return link_to_furaffinity(username)
-    when 'furrynetwork.com', 'beta.furrynetwork.com'
-      return link_to_furrynetwork(username)
-    when 'sofurry.com'
-      return link_to_sofurry(username)
-    when 'inkbunny.net'
-      return link_to_inkbunny(username)
-    when 'e621.net'
-      return link_to_e621(username)
-    when 'e926.net'
-      return link_to_e926(username)
-    when 'f-list.net'
-      return link_to_flist(username)
-    when 'deviantart.com'
-      return link_to_deviantart(username)
-    when 'artstation.com'
-      return link_to_artstation(username)
-    when 'github.com'
-      return link_to_github(username)
-    when 'gitlab.com'
-      return link_to_gitlab(username)
+    when 'twitter', 'twitter.com'
+      anchor_html("@#{username}@twitter.com", "https://twitter.com/#{username}")
+    when 'tumblr', 'tumblr.com'
+      anchor_html("#{username}@tumblr.com", "https://#{username}.tumblr.com")
+    when 'weasyl', 'weasyl.com'
+      anchor_html("#{username}@weasyl.com", "https://weasyl.com/~#{username}")
+    when 'furaffinity', 'fa', 'furaffinity.net'
+      anchor_html("#{username}@furaffinity.net", "https://furaffinity.net/user/#{username}")
+    when 'furrynetwork', 'fn', 'furrynetwork.com', 'beta.furrynetwork.com'
+      anchor_html("#{username}@furrynetwork.com", "https://furrynetwork.com/#{username}")
+    when 'sofurry', 'sf', 'sofurry.com'
+      anchor_html("#{username}@sofurry.com", "https://#{username}.sofurry.com")
+    when 'inkbunny', 'ib', 'inkbunny.net'
+      anchor_html("#{username}@inkbunny.net", "https://inkbunny.net/#{username}")
+    when 'e621', 'e6', 'e621.net'
+      anchor_html("#{username}@e621.net", "https://e621.net/user/show/#{username}")
+    when 'e926', 'e9', 'e926.net'
+      anchor_html("#{username}@e926.net", "https://e926.net/user/show/#{username}")
+    when 'f-list', 'flist', 'fl', 'f-list.net'
+      anchor_html("#{username}@f-list.net", "https://f-list.net/c/#{username}")
+    when 'deviantart', 'da', 'deviantart.com'
+      anchor_html("#{username}@deviantart.com", "https://#{username}.deviantart.com")
+    when 'artstation', 'as', 'artstation.com'
+      anchor_html("#{username}@artstation.com", "https://www.artstation.com/#{username}")
+    when 'github', 'gh', 'github.com'
+      anchor_html("#{username}@github.com", "https://github.com/#{username}")
+    when 'gitlab', 'gl', 'gitlab.com'
+      anchor_html("#{username}@gitlab.com", "https://gitlab.com/#{username}")
     else
-      return nil
+      nil
     end
-  end
-
-  def link_to_twitter(username)
-    "<span class=\"h-card\"><a href=\"https://twitter.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@twitter.com</span></a></span>"
-  end
-
-  def link_to_tumblr(username)
-    "<span class=\"h-card\"><a href=\"https://#{username}.tumblr.com\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@tumblr.com</span></a></span>"
-  end
-
-  def link_to_weasyl(username)
-    "<span class=\"h-card\"><a href=\"https://weasyl.com/~#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@weasyl.com</span></a></span>"
-  end
-
-  def link_to_furaffinity(username)
-    "<span class=\"h-card\"><a href=\"https://furaffinity.net/user/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@furaffinity.net</span></a></span>"
-  end
-
-  def link_to_furrynetwork(username)
-    "<span class=\"h-card\"><a href=\"https://furrynetwork.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@furrynetwork.com</span></a></span>"
-  end
-
-  def link_to_inkbunny(username)
-    "<span class=\"h-card\"><a href=\"https://inkbunny.net/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@inkbunny.net</span></a></span>"
-  end
-
-  def link_to_sofurry(username)
-    "<span class=\"h-card\"><a href=\"https://#{username}.sofurry.com\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@sofurry.com</span></a></span>"
-  end
-
-  def link_to_e621(username)
-      "<span class=\"h-card\"><a href=\"https://e621.net/user/show/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@e621.net</span></a></span>"
-  end
-
-  def link_to_e926(username)
-      "<span class=\"h-card\"><a href=\"https://e926.net/user/show/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@e926.net</span></a></span>"
-  end
-
-  def link_to_flist(username)
-    "<span class=\"h-card\"><a href=\"https://f-list.net/c/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@f-list.net</span></a></span>"
-  end
-
-  def link_to_deviantart(username)
-    "<span class=\"h-card\"><a href=\"https://#{username}.deviantart.com\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@deviantart.com</span></a></span>"
-  end
-
-  def link_to_artstation(username)
-    "<span class=\"h-card\"><a href=\"https://www.artstation.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@artstation.com</span></a></span>"
-  end
-
-  def link_to_github(username)
-    "<span class=\"h-card\"><a href=\"https://github.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@github.com</span></a></span>"
-  end
-
-  def link_to_gitlab(username)
-    "<span class=\"h-card\"><a href=\"https://gitlab.com/#{username}\" target=\"blank\" rel=\"noopener noreferrer\" class=\"u-url mention\">@<span>#{username}@gitlab.com</span></a></span>"
   end
 end
