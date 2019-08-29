@@ -20,7 +20,6 @@ class ApplicationController < ActionController::Base
   helper_method :use_seamless_external_login?
 
   rescue_from ActionController::RoutingError, with: :not_found
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActionController::InvalidAuthenticityToken, with: :unprocessable_entity
   rescue_from ActionController::UnknownFormat, with: :not_acceptable
   rescue_from ActionController::ParameterMissing, with: :bad_request
