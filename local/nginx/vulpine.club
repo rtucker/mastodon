@@ -87,7 +87,6 @@ server {
 	  return 444;
   }
 
-
   # favicon trickery
   if ($http_host = 0.vulpine.club) {
     rewrite /favicon.ico /favicon-0.png;
@@ -219,7 +218,7 @@ server {
   gzip on;
   gzip_types text/plain application/javascript text/css;
 
-  root /srv/mastodon/vulpine.club/public;
+  root /srv/mastodon/vulpine.club/media/vulpine-club-assets;
 
   # block fedichive.tk https://elekk.xyz/@noelle/102629143383192216
   deny 71.234.189.151;
@@ -228,10 +227,8 @@ server {
 	  return 444;
   }
 
-
   add_header Referrer-Policy "strict-origin-when-cross-origin";
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-  #add_header Access-Control-Allow-Origin "https://vulpine.club";
 
   # precompiled static assets
   location ~ ^/(emoji|packs) {
@@ -244,6 +241,11 @@ server {
   }
 
   location / {
+    add_header X-Cache-Status "LOCAL";
+    try_files $uri @proxy;
+  }
+
+  location @proxy {
     proxy_cache CACHE;
     proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
     proxy_cache_lock on;
@@ -275,7 +277,6 @@ server {
   if ($badactor) {
 	  return 444;
   }
-
 
   return 301 https://vulpine.club$request_uri;
 }

@@ -162,6 +162,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
       - /etc/nginx:/etc/nginx
       - /srv/mastodon/vulpine.club/public:/srv/mastodon/vulpine.club/public
+      - /srv/mastodon/vulpine.club/media:/srv/mastodon/vulpine.club/media
       - /srv/mastodon/vulpine.club/nginx_cache:/var/cache/nginx
       - /srv/mastodon/vulpine.club/nginx_logs:/var/log/nginx
 
