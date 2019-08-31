@@ -10,7 +10,6 @@ class AfterBlockDomainFromAccountService < BaseService
 
     reject_existing_followers!
     reject_pending_follow_requests!
-    block_accounts!
   end
 
   private
@@ -24,12 +23,6 @@ class AfterBlockDomainFromAccountService < BaseService
   def reject_pending_follow_requests!
     FollowRequest.where(target_account: @account).where(account: Account.where(domain: @domain)).includes(:account).reorder(nil).find_each do |follow_request|
       reject_follow!(follow_request)
-    end
-  end
-
-  def block_accounts!
-    Account.where(domain: @domain).find_each do |blocked_account|
-      BlockService.new.call(@account, blocked_account)
     end
   end
 

@@ -13,6 +13,7 @@
 #  force_sensitive :boolean          default(FALSE), not null
 #  reason          :text
 #  reject_unknown  :boolean          default(FALSE), not null
+#  processing      :boolean          default(TRUE), not null
 #
 
 class DomainBlock < ApplicationRecord
@@ -26,6 +27,7 @@ class DomainBlock < ApplicationRecord
   delegate :count, to: :accounts, prefix: true
 
   scope :matches_domain, ->(value) { where(arel_table[:domain].matches("%#{value}%")) }
+  scope :unprocessed, -> { where(processing: true) }
 
   def self.blocked?(domain)
     where(domain: domain, severity: :suspend).exists?

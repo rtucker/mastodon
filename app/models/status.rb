@@ -31,6 +31,7 @@
 #  edited                 :boolean
 #  imported               :boolean
 #  origin                 :string
+#  tsv                    :tsvector
 #  boostable              :boolean
 #  reject_replies         :boolean
 #

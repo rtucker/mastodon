@@ -59,7 +59,6 @@ class Scheduler::JanitorScheduler
     blocks.each do |entry|
       next unless domain_exists?(entry[:domain])
       block = DomainBlock.create!(entry)
-      DomainBlockWorker.perform_async(block)
       Admin::ActionLog.create(account: @account, action: :create, target: block)
       user_friendly_action_log(@account, :create, block)
     end

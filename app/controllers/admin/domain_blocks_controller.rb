@@ -14,6 +14,7 @@ module Admin
 
       resource_params[:domain].strip! if resource_params[:domain].present?
       resource_params[:reason].strip! if resource_params[:reason].present?
+      resource_pararms[:processing] = true
       @domain_block = DomainBlock.new(resource_params)
       existing_domain_block = resource_params[:domain].present? ? DomainBlock.find_by(domain: resource_params[:domain].strip) : nil
 
@@ -23,7 +24,6 @@ module Admin
       end
 
       if @domain_block.save
-        DomainBlockWorker.perform_async(@domain_block.id)
         log_action :create, @domain_block
         redirect_to admin_instance_path(id: @domain_block.domain, limited: '1'), notice: I18n.t('admin.domain_blocks.created_msg')
       else
@@ -46,11 +46,10 @@ module Admin
     def update
       return destroy unless resource_params[:undo].to_i.zero?
       resource_params[:reason].strip! if resource_params[:reason].present?
+      resource_pararms[:processing] = true
       authorize @domain_block, :update?
       @domain_block.update(resource_params.except(:domain, :undo))
-      changed = @domain_block.changed
       if @domain_block.save
-        DomainBlockWorker.perform_async(@domain_block.id) if (changed & %w(severity force_sensitive reject_media reject_unknown)).any?
         log_action :update, @domain_block
         flash[:notice] = I18n.t('admin.domain_blocks.updated_msg')
       else

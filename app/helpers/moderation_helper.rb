@@ -110,7 +110,6 @@ module ModerationHelper
 
       Admin::ActionLog.create(account: @account, action: :create, target: domain_block)
       user_friendly_action_log(@account, :create, domain_block)
-      DomainBlockWorker.perform_async(domain_block.id)
     else
       domain_block = DomainBlock.find_by(domain: domain)
       return false if domain_block.nil?

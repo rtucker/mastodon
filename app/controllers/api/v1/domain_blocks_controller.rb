@@ -23,7 +23,6 @@ class Api::V1::DomainBlocksController < Api::BaseController
 
   def destroy
     current_account.unblock_domain!(domain_block_params[:domain])
-    AfterAccountDomainUnblockWorker.perform_async(current_account.id, domain_block_params[:domain])
     render_empty
   end
 

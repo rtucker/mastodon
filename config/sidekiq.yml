@@ -15,6 +15,9 @@
   boosts_scheduler:
     every: '1m'
     class: Scheduler::BoostsScheduler
+  domain_policy_scheduler:
+    every: '15m'
+    class: Scheduler::DomainPolicyScheduler
   janitor_scheduler:
     every: '1h'
     class: Scheduler::JanitorScheduler
