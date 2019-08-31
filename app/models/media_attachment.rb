@@ -161,6 +161,13 @@ class MediaAttachment < ApplicationRecord
     (file.blank? || (Paperclip::Attachment.default_options[:storage] == :filesystem && !File.exist?(file.path))) && remote_url.present?
   end
 
+  def blocked?
+    domains = Set[self.account.domain]
+    domains.add(remote_url.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first) if remote_url.present?
+    blocks = DomainBlock.suspend.or(DomainBlock.where(reject_media: true))
+    domains.any? { |domain| blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists? }
+  end
+
   def video_or_audio?
     video? || gifv? || audio?
   end

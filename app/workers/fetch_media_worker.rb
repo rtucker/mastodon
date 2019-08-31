@@ -5,6 +5,7 @@ class FetchMediaWorker
 
   def perform(media_attachment_id, remote_url = nil)
     object = MediaAttachment.find(media_attachment_id.to_i)
+    return if object.blocked?
     if remote_url.nil?
       return if object.remote_url.nil?
     else
