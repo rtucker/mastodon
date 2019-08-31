@@ -221,6 +221,8 @@ class Formatter
       html = format_bbdown(html)
     end
 
+    html = format_screenreader(html)
+
     html = encode_and_link_urls(html, linkable_accounts, keep_html: %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type))
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
 
@@ -246,6 +248,10 @@ class Formatter
     end
 
     html.html_safe # rubocop:disable Rails/OutputSafety
+  end
+
+  def format_screenreader(html)
+    html.gsub(/\uf333(.*)\uf334/m, '<span aria-hidden="true">\1</span>')
   end
 
   def format_console(html)

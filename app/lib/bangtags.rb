@@ -12,6 +12,7 @@ class Bangtags
 
     @crunch_newlines = false
     @once = false
+    @sroff_open = false
 
     @prefix_ns = {
       'permalink' => ['link'],
@@ -687,6 +688,14 @@ class Bangtags
             keyboard[(keyboard.size * (rand ** 3)).floor].split('').sample
           end
           chunk = chunk.join
+        when 'nosr', 'sroff', 'srskip'
+          next if @sroff_open
+          @sroff_open = true
+          chunk = "\uf333"
+        when 'sr', 'sron', 'srcont'
+          next unless @sroff_open
+          @sroff_open = false
+          chunk = "\uf334"
         when 'admin'
           chunk = nil
           next unless @user.admin?
@@ -911,6 +920,8 @@ class Bangtags
     if text.blank?
       RemoveStatusService.new.call(@status)
     else
+      text.gsub!(/^\uf333\n/m, "\uf333")
+      text.gsub!(/\n\uf334$/m, "\uf334")
       status.text = text
       status.save
       postprocess_after_save
@@ -987,6 +998,8 @@ class Bangtags
         end
       end
     end
+
+    @chunks << "\uf334" if @sroff_open
   end
 
   def postprocess_after_save
