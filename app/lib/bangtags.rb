@@ -13,6 +13,7 @@ class Bangtags
     @crunch_newlines = false
     @once = false
     @sroff_open = false
+    @strip_lines = false
 
     @prefix_ns = {
       'permalink' => ['link'],
@@ -135,6 +136,9 @@ class Bangtags
               @vars[var] = new_value.join(':')
             end
           end
+        when 'strip'
+          chunk = nil
+          @strip_lines = cmd[1]&.downcase.in?(['y', 'yes', '', nil])
         when 'tf'
           chunk = nil
           next if cmd[1].nil?
@@ -916,12 +920,12 @@ class Bangtags
 
     text = @chunks.join
     text.gsub!(/\n\n+/, "\n") if @crunch_newlines
+    text.strip!
+    text = text.split("\n").map { |chunk| chunk.strip }.join("\n") if @strip_lines
 
     if text.blank?
       RemoveStatusService.new.call(@status)
     else
-      text.gsub!(/^\uf333\n/m, "\uf333")
-      text.gsub!(/\n\uf334$/m, "\uf334")
       status.text = text
       status.save
       postprocess_after_save
