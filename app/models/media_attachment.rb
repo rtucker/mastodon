@@ -158,7 +158,7 @@ class MediaAttachment < ApplicationRecord
   end
 
   def needs_redownload?
-    file.blank? && remote_url.present?
+    (file.blank? || (Paperclip::Attachment.default_options[:storage] == :filesystem && !File.exist?(file.path))) && remote_url.present?
   end
 
   def video_or_audio?
