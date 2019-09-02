@@ -23,11 +23,10 @@ class Api::V1::Timelines::PublicController < Api::BaseController
 
   def public_statuses
     ptl = public_timeline_statuses
-    ptl_preload = ptl.paginate_by_id(
-      limit_param(DEFAULT_STATUSES_LIMIT * 2),
+    preload_media(ptl.paginate_by_id(
+      DEFAULT_STATUSES_LIMIT * 2,
       params_slice(:max_id, :since_id, :min_id)
-    )
-    preload_media(ptl_preload)
+    ))
     statuses = ptl.paginate_by_id(
       limit_param(DEFAULT_STATUSES_LIMIT),
       params_slice(:max_id, :since_id, :min_id)

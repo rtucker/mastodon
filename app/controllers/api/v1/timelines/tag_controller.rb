@@ -29,9 +29,16 @@ class Api::V1::Timelines::TagController < Api::BaseController
     if @tag.nil?
       []
     elsif @tag.name.in?(['self.bookmarks', '.self.bookmarks'])
-      Status.reorder(nil).joins(:bookmarks).merge(bookmark_results)
+      bookmarks = Status.reorder(nil).joins(:bookmarks).merge(bookmark_results)
+      preload_media(bookmarks)
+      bookmarks
     else
-      statuses = tag_timeline_statuses.paginate_by_id(
+      tag_timeline = tag_timeline_statuses
+      preload_media(tag_timeline.paginate_by_id(
+        DEFAULT_STATUSES_LIMIT * 2,
+        params_slice(:max_id, :since_id, :min_id)
+      ))
+      statuses = tag_timeline.paginate_by_id(
         limit_param(DEFAULT_STATUSES_LIMIT),
         params_slice(:max_id, :since_id, :min_id)
       )
@@ -51,8 +58,6 @@ class Api::V1::Timelines::TagController < Api::BaseController
   end
 
   def bookmark_results
-    bookmarks = account_bookmarks
-    preload_media(bookmarks)
     @_results ||= bookmarks.paginate_by_max_id(
       limit_param(DEFAULT_STATUSES_LIMIT),
       params[:max_id],
