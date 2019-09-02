@@ -51,7 +51,9 @@ class Api::V1::Timelines::TagController < Api::BaseController
   end
 
   def bookmark_results
-    @_results ||= account_bookmarks.paginate_by_max_id(
+    bookmarks = account_bookmarks
+    preload_media(bookmarks)
+    @_results ||= bookmarks.paginate_by_max_id(
       limit_param(DEFAULT_STATUSES_LIMIT),
       params[:max_id],
       params[:since_id]
@@ -84,5 +86,11 @@ class Api::V1::Timelines::TagController < Api::BaseController
 
   def pagination_since_id
     @statuses.first.id
+  end
+
+  def preload_media(statuses)
+    status_ids = statuses.joins(:media_attachments).distinct(:id).select(:id).reorder(nil)
+    fetch_ids = MediaAttachment.where(status_id: status_ids, file_updated_at: nil).pluck(:id)
+    fetch_ids.each { |m| FetchMediaWorker.perform_async(m) }
   end
 end
