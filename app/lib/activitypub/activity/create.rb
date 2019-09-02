@@ -259,7 +259,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   end
 
   def process_emoji(tag)
-    return if @options[:imported] || skip_download?
+    return if @options[:imported] || skip_download?(tag['icon']['url'])
     return if tag['name'].blank? || tag['icon'].blank? || tag['icon']['url'].blank?
 
     shortcode = tag['name'].delete(':')
@@ -287,7 +287,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
       media_attachment = MediaAttachment.create(account: @account, remote_url: href, description: attachment['name'].presence, focus: attachment['focalPoint'], blurhash: supported_blurhash?(attachment['blurhash']) ? attachment['blurhash'] : nil)
       media_attachments << media_attachment
 
-      next if unsupported_media_type?(attachment['mediaType']) || skip_download?
+      next if unsupported_media_type?(attachment['mediaType']) || skip_download?(href)
 
       media_attachment.file_remote_url = href
       media_attachment.save
@@ -464,9 +464,12 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     components.present? && components.none? { |comp| comp > 5 }
   end
 
-  def skip_download?
+  def skip_download?(remote_url = nil)
     return @skip_download if defined?(@skip_download)
-    @skip_download ||= DomainBlock.find_by(domain: @account.domain)&.reject_media?
+    domains = Set[@account.domain]
+    domains.add(remote_url.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first) if remote_url.present?
+    blocks = DomainBlock.suspend.or(DomainBlock.where(reject_media: true))
+    @skip_download ||= domains.any? { |domain| blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists? }
   end
 
   def reply_to_local?
