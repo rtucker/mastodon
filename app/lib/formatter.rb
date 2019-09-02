@@ -30,6 +30,8 @@ class Formatter
 
   include ActionView::Helpers::TextHelper
 
+  CACHE_TIME = 1.hour
+
 	BBCODE_TAGS = {
     url: {
 			html_open: '<a href="%url%" rel="noopener nofollow" target="_blank">', html_close: '</a>',
@@ -188,6 +190,8 @@ class Formatter
     cached = Rails.cache.fetch("formatted_status:#{status.id}")
     return cached unless cached.nil?
 
+    orig_status = status
+
     if status.reblog?
       prepend_reblog = status.reblog.account.acct
       status         = status.proper
@@ -208,7 +212,7 @@ class Formatter
       html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
       html = html.html_safe # rubocop:disable Rails/OutputSafety
 
-      Rails.cache.write("formatted_status:#{status.id}", html, expires_in: 30.minutes)
+      Rails.cache.write("formatted_status:#{orig_status.id}", html, expires_in: CACHE_TIME)
       return html
     end
 
@@ -254,7 +258,7 @@ class Formatter
     end
 
     html = html.html_safe # rubocop:disable Rails/OutputSafety
-    Rails.cache.write("formatted_status:#{status.id}", html, expires_in: 30.minutes)
+    Rails.cache.write("formatted_status:#{orig_status.id}", html, expires_in: CACHE_TIME)
     html
   end
 
@@ -307,7 +311,7 @@ class Formatter
       html = reformat(account.note)
     end
 
-    Rails.cache.write("formatted_account:#{account.id}", html, expires_in: 30.minutes)
+    Rails.cache.write("formatted_account:#{account.id}", html, expires_in: CACHE_TIME)
     html
   end
 
@@ -323,7 +327,7 @@ class Formatter
     html = encode_custom_emojis(html, status.emojis, options[:autoplay])
     html = html.html_safe # rubocop:disable Rails/OutputSafety
 
-    Rails.cache.write("formatted_spoiler:#{status.id}", html, expires_in: 30.minutes)
+    Rails.cache.write("formatted_spoiler:#{status.id}", html, expires_in: CACHE_TIME)
     html
   end
 
@@ -335,7 +339,7 @@ class Formatter
     html = encode_custom_emojis(html, status.emojis, options[:autoplay])
     html = html.html_safe # rubocop:disable Rails/OutputSafety
 
-    Rails.cache.write("formatted_poll:#{status.id}:#{option.id}", html, expires_in: 30.minutes)
+    Rails.cache.write("formatted_poll:#{status.id}:#{option.id}", html, expires_in: CACHE_TIME)
     html
   end
 
@@ -347,7 +351,7 @@ class Formatter
     html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if options[:custom_emojify]
     html = html.html_safe # rubocop:disable Rails/OutputSafety
 
-    Rails.cache.write("formatted_display_name:#{account.id}", html, expires_in: 30.minutes)
+    Rails.cache.write("formatted_display_name:#{account.id}", html, expires_in: CACHE_TIME)
     html
   end
 
