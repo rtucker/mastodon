@@ -12,7 +12,7 @@ import { showAlertForError } from './alerts';
 import { showAlert } from './alerts';
 import { defineMessages } from 'react-intl';
 
-let cancelFetchComposeSuggestionsAccounts;
+let cancelFetchComposeSuggestionsAccounts, cancelFetchComposeSuggestionsTags;
 
 export const COMPOSE_CHANGE          = 'COMPOSE_CHANGE';
 export const COMPOSE_CYCLE_ELEFRIEND = 'COMPOSE_CYCLE_ELEFRIEND';
@@ -352,10 +352,12 @@ const fetchComposeSuggestionsAccounts = throttle((dispatch, getState, token) => 
   if (cancelFetchComposeSuggestionsAccounts) {
     cancelFetchComposeSuggestionsAccounts();
   }
+
   api(getState).get('/api/v1/accounts/search', {
     cancelToken: new CancelToken(cancel => {
       cancelFetchComposeSuggestionsAccounts = cancel;
     }),
+
     params: {
       q: token.slice(1),
       resolve: false,
@@ -376,9 +378,32 @@ const fetchComposeSuggestionsEmojis = (dispatch, getState, token) => {
   dispatch(readyComposeSuggestionsEmojis(token, results));
 };
 
-const fetchComposeSuggestionsTags = (dispatch, getState, token) => {
+const fetchComposeSuggestionsTags = throttle((dispatch, getState, token) => {
+  if (cancelFetchComposeSuggestionsTags) {
+    cancelFetchComposeSuggestionsTags();
+  }
+
   dispatch(updateSuggestionTags(token));
-};
+
+  api(getState).get('/api/v2/search', {
+    cancelToken: new CancelToken(cancel => {
+      cancelFetchComposeSuggestionsTags = cancel;
+    }),
+
+    params: {
+      type: 'hashtags',
+      q: token.slice(1),
+      resolve: false,
+      limit: 4,
+    },
+  }).then(({ data }) => {
+    dispatch(readyComposeSuggestionsTags(token, data.hashtags));
+  }).catch(error => {
+    if (!isCancel(error)) {
+      dispatch(showAlertForError(error));
+    }
+  });
+}, 200, { leading: true, trailing: true });
 
 export function fetchComposeSuggestions(token) {
   return (dispatch, getState) => {
@@ -412,16 +437,22 @@ export function readyComposeSuggestionsAccounts(token, accounts) {
   };
 };
 
+export const readyComposeSuggestionsTags = (token, tags) => ({
+  type: COMPOSE_SUGGESTIONS_READY,
+  token,
+  tags,
+});
+
 export function selectComposeSuggestion(position, token, suggestion, path) {
   return (dispatch, getState) => {
     let completion;
-    if (typeof suggestion === 'object' && suggestion.id) {
+    if (suggestion.type === 'emoji') {
       dispatch(useEmoji(suggestion));
       completion = suggestion.native || suggestion.colons;
-    } else if (suggestion[0] === '#') {
-      completion = suggestion;
-    } else {
-      completion = '@' + getState().getIn(['accounts', suggestion, 'acct']);
+    } else if (suggestion.type === 'hashtag') {
+      completion = `#${suggestion.name}`;
+    } else if (suggestion.type === 'account') {
+      completion = '@' + getState().getIn(['accounts', suggestion.id, 'acct']);
     }
 
     dispatch({

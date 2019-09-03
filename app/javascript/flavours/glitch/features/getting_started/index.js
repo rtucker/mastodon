@@ -8,14 +8,15 @@ import { openModal } from 'flavours/glitch/actions/modal';
 import PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
-import { me } from 'flavours/glitch/util/initial_state';
+import { me, profile_directory, showTrends } from 'flavours/glitch/util/initial_state';
 import { fetchFollowRequests } from 'flavours/glitch/actions/accounts';
 import { List as ImmutableList } from 'immutable';
 import { createSelector } from 'reselect';
 import { fetchLists } from 'flavours/glitch/actions/lists';
-import { preferencesLink, signOutLink } from 'flavours/glitch/util/backend_links';
+import { preferencesLink } from 'flavours/glitch/util/backend_links';
 import NavigationBar from '../compose/components/navigation_bar';
 import LinkFooter from 'flavours/glitch/features/ui/components/link_footer';
+import TrendsContainer from './containers/trends_container';
 
 const messages = defineMessages({
   heading: { id: 'getting_started.heading', defaultMessage: 'Getting started' },
@@ -30,13 +31,13 @@ const messages = defineMessages({
   preferences: { id: 'navigation_bar.preferences', defaultMessage: 'Preferences' },
   settings: { id: 'navigation_bar.app_settings', defaultMessage: 'App settings' },
   follow_requests: { id: 'navigation_bar.follow_requests', defaultMessage: 'Follow requests' },
-  sign_out: { id: 'navigation_bar.logout', defaultMessage: 'Logout' },
   lists: { id: 'navigation_bar.lists', defaultMessage: 'Lists' },
   keyboard_shortcuts: { id: 'navigation_bar.keyboard_shortcuts', defaultMessage: 'Keyboard shortcuts' },
   lists: { id: 'navigation_bar.lists', defaultMessage: 'Lists' },
   lists_subheading: { id: 'column_subheading.lists', defaultMessage: 'Lists' },
   misc: { id: 'navigation_bar.misc', defaultMessage: 'Misc' },
   menu: { id: 'getting_started.heading', defaultMessage: 'Getting started' },
+  profile_directory: { id: 'getting_started.directory', defaultMessage: 'Profile directory' },
 });
 
 const makeMapStateToProps = () => {
@@ -151,13 +152,17 @@ const NAVIGATION_PANEL_BREAKPOINT = 600 + (285 * 2) + (10 * 2);
       navItems.push(<ColumnLink key='6' icon='user-plus' text={intl.formatMessage(messages.follow_requests)} badge={badgeDisplay(unreadFollowRequests, 40)} to='/follow_requests' />);
     }
 
-    navItems.push(<ColumnLink key='7' icon='ellipsis-h' text={intl.formatMessage(messages.misc)} to='/getting-started-misc' />);
+    if (profile_directory) {
+      navItems.push(<ColumnLink key='7' icon='address-book' text={intl.formatMessage(messages.profile_directory)} to='/directory' />);
+    }
+
+    navItems.push(<ColumnLink key='8' icon='ellipsis-h' text={intl.formatMessage(messages.misc)} to='/getting-started-misc' />);
 
     listItems = listItems.concat([
-      <div key='8'>
-        <ColumnLink key='9' icon='bars' text={intl.formatMessage(messages.lists)} to='/lists' />
+      <div key='9'>
+        <ColumnLink key='10' icon='bars' text={intl.formatMessage(messages.lists)} to='/lists' />
         {lists.map(list =>
-          <ColumnLink key={(9 + Number(list.get('id'))).toString()} to={`/timelines/list/${list.get('id')}`} icon='list-ul' text={list.get('title')} />
+          <ColumnLink key={(11 + Number(list.get('id'))).toString()} to={`/timelines/list/${list.get('id')}`} icon='list-ul' text={list.get('title')} />
         )}
       </div>,
     ]);
@@ -174,11 +179,12 @@ const NAVIGATION_PANEL_BREAKPOINT = 600 + (285 * 2) + (10 * 2);
             <ColumnSubheading text={intl.formatMessage(messages.settings_subheading)} />
             { preferencesLink !== undefined && <ColumnLink icon='cog' text={intl.formatMessage(messages.preferences)} href={preferencesLink} /> }
             <ColumnLink icon='cogs' text={intl.formatMessage(messages.settings)} onClick={openSettings} />
-            <ColumnLink icon='sign-out' text={intl.formatMessage(messages.sign_out)} href={signOutLink} method='delete' />
           </div>
 
           <LinkFooter />
         </div>
+
+        {multiColumn && showTrends && <TrendsContainer />}
       </Column>
     );
   }
