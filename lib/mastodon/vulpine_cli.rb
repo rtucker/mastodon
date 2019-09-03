@@ -126,6 +126,26 @@ module Mastodon
       say("Green domains: #{greens.size}, total job count: #{greens.sum}")
     end
 
+    desc 'orphanmedia', 'List orphaned media files'
+    def orphanmedia
+      l = Array.new
+      mypath = ENV["PAPERCLIP_ROOT_PATH"] + '/media_attachments'
+      getFilesRecursive(mypath) do |item|
+        if MediaAttachment.where.not(file_file_name: File.basename(item))
+          l.push(item)
+          say('x', :red, false)
+        else
+          say('.', :green, false)
+        end
+      end
+
+      say
+
+      l do |item|
+        puts "rm #{item}"
+      end
+    end
+
     private
 
     def color(str)
@@ -135,5 +155,32 @@ module Mastodon
         :red
       end
     end
+
+    def getFilesRecursive(path)
+      # borrowed from stack overflow: https://stackoverflow.com/questions/9618424/best-way-to-recursively-find-all-files-rest-api
+
+      # create our directory object and file list storage
+      d = Dir.new(path)
+      l = Array.new
+
+      # iterate over our given directory
+      d.each do |f|
+        next if f == '.' or f == '..'
+
+        # recurse on a directory
+        if File.directory?(path + '/' + f)
+          l += getFilesRecursive(path + '/' + f)
+        # store on a file
+        else
+          l.push(path + '/' + f)
+        end
+
+      end # Dir.each
+
+      # return our list of files
+      return l
+
+    end # getFilesRecursive()
+
   end
 end
