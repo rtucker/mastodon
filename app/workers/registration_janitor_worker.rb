@@ -8,13 +8,14 @@ class RegistrationJanitorWorker
     user = User.find(user_id)
     janitor = janitor_account || Account.representative
 
-    spam_triggers = ENV.fetch('REGISTRATION_SPAM_TRIGGERS', '').split('|').map { |phrase| phrase.strip }
+    spam_triggers = ENV.fetch('REGISTRATION_SPAM_TRIGGERS', '').split('|').map { |phrase| Regexp.escape(phrase.strip) }
+    spam_triggers = spam_triggers.empty? ? /(?!)/ : /\b#{Regexp.union(spam_triggers)}\b/i
 
     intro = user.invite_request&.text
     # normalize it
     intro = intro.gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '').strip.downcase unless intro.nil?
 
-    return user.notify_staff_about_pending_account! unless intro.blank? || intro.split.count < 5 || spam_triggers.any? { |phrase| phrase.in?(intro) }
+    return user.notify_staff_about_pending_account! unless intro.blank? || intro.split.count < 5 || spam_triggers.match?(intro)
 
     user_friendly_action_log(janitor, :reject_registration, user.account.username, "Registration was spam filtered.")
     Form::AccountBatch.new(current_account: janitor, account_ids: user.account.id, action: 'reject').save
