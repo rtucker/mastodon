@@ -130,18 +130,7 @@ module Mastodon
     def orphanmedia
       l = Array.new
       mypath = ENV["PAPERCLIP_ROOT_PATH"] + '/media_attachments'
-      getFilesRecursive(mypath) do |item|
-        if MediaAttachment.where.not(file_file_name: File.basename(item))
-          l.push(item)
-          say('x', :red, false)
-        else
-          say('.', :green, false)
-        end
-      end
-
-      say
-
-      l do |item|
+      recursiveCleanup(mypath) do |item|
         puts "rm #{item}"
       end
     end
@@ -156,7 +145,7 @@ module Mastodon
       end
     end
 
-    def getFilesRecursive(path)
+    def recursiveCleanup(path)
       # borrowed from stack overflow: https://stackoverflow.com/questions/9618424/best-way-to-recursively-find-all-files-rest-api
 
       # create our directory object and file list storage
@@ -169,18 +158,25 @@ module Mastodon
 
         # recurse on a directory
         if File.directory?(path + '/' + f)
-          l += getFilesRecursive(path + '/' + f)
+          l += recursiveCleanup(path + '/' + f)
         # store on a file
         else
-          l.push(path + '/' + f)
+          if MediaAttachment.where.not(file_file_name: File.basename(item))
+            l.push(item)
+            say('x', :red, false)
+          else
+            say('.', :green, false)
+          end
         end
 
       end # Dir.each
 
+      say
+
       # return our list of files
       return l
 
-    end # getFilesRecursive()
+    end # recursiveCleanup()
 
   end
 end
