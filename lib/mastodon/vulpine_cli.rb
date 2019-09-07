@@ -161,8 +161,8 @@ module Mastodon
           l += recursiveCleanup(path + '/' + f)
         # store on a file
         else
-          if MediaAttachment.where.not(file_file_name: File.basename(item))
-            l.push(item)
+          if MediaAttachment.where.not(file_file_name: f)
+            l.push(f)
             say('x', :red, false)
           else
             say('.', :green, false)
