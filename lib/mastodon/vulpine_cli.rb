@@ -128,10 +128,9 @@ module Mastodon
 
     desc 'orphanmedia', 'List orphaned media files'
     def orphanmedia
-      l = Array.new
       mypath = ENV["PAPERCLIP_ROOT_PATH"] + '/media_attachments'
       recursiveCleanup(mypath) do |item|
-        puts "rm #{item}"
+        say("rm #{item}")
       end
     end
 
@@ -161,17 +160,15 @@ module Mastodon
           l += recursiveCleanup(path + '/' + f)
         # store on a file
         else
-          if MediaAttachment.where.not(file_file_name: f)
+          if MediaAttachment.where(file_file_name: File.basename(f)).exists?
+            say('.', :green, false)
+          else
             l.push(f)
             say('x', :red, false)
-          else
-            say('.', :green, false)
           end
         end
 
       end # Dir.each
-
-      say
 
       # return our list of files
       return l
