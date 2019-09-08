@@ -3,6 +3,8 @@
 class FetchMediaWorker
   include Sidekiq::Worker
 
+  sidekiq_options queue: 'pull', retry: 0
+
   def perform(media_attachment_id, remote_url = nil)
     object = MediaAttachment.find(media_attachment_id.to_i)
     return if object.blocked?
