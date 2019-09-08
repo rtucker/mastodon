@@ -130,7 +130,7 @@ module Mastodon
     def orphanmedia
       mypath = ENV["PAPERCLIP_ROOT_PATH"] + '/media_attachments'
       recursiveCleanup(mypath) do |item|
-        say("rm #{item}")
+        #say("rm #{item}")
       end
     end
 
@@ -160,11 +160,13 @@ module Mastodon
           l += recursiveCleanup(path + '/' + f)
         # store on a file
         else
-          if MediaAttachment.where(file_file_name: File.basename(f)).exists?
-            say('.', :green, false)
-          else
-            l.push(f)
-            say('x', :red, false)
+          # find the ID
+          fname = "#{path}/#{f}"
+          fnames = fname.split('/')
+          idnum = fnames[-5].to_i*1000000 + fnames[-4].to_i*1000 + fnames[-3].to_i
+          if not MediaAttachment.exists?(idnum)
+            say("#{path}/#{f}")
+            l.push("#{path}/#{f}")
           end
         end
 
