@@ -20,8 +20,8 @@ const messages = defineMessages({
   regexp: { id: 'settings.content_warnings.regexp', defaultMessage: 'Regular expression' },
 });
 
-@injectIntl
-export default class LocalSettingsPage extends React.PureComponent {
+export default @injectIntl
+class LocalSettingsPage extends React.PureComponent {
 
   static propTypes = {
     index    : PropTypes.number,

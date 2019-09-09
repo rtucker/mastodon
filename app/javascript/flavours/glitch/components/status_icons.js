@@ -14,8 +14,8 @@ const messages = defineMessages({
   uncollapse: { id: 'status.uncollapse', defaultMessage: 'Uncollapse' },
 });
 
-@injectIntl
-export default class StatusIcons extends React.PureComponent {
+export default @injectIntl
+class StatusIcons extends React.PureComponent {
 
   static propTypes = {
     status: ImmutablePropTypes.map.isRequired,

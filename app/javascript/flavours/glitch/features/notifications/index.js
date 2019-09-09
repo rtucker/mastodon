@@ -65,9 +65,9 @@ const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-@connect(mapStateToProps, mapDispatchToProps)
+export default @connect(mapStateToProps, mapDispatchToProps)
 @injectIntl
-export default class Notifications extends React.PureComponent {
+class Notifications extends React.PureComponent {
 
   static propTypes = {
     columnId: PropTypes.string,
