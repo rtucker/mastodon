@@ -132,7 +132,7 @@ class PollForm extends ImmutablePureComponent {
           {options.size < pollLimits.max_options && (
             <label className='poll__text editable'>
               <span className={classNames('poll__input')} style={{ opacity: 0 }} />
-              <button className='button button-secondary' onClick={this.handleAddOption}><Icon icon='plus' /> <FormattedMessage {...messages.add_option} /></button>
+              <button className='button button-secondary' onClick={this.handleAddOption}><Icon id='plus' /> <FormattedMessage {...messages.add_option} /></button>
             </label>
           )}
         </ul>

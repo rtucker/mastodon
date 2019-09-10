@@ -158,7 +158,7 @@ class Header extends ImmutablePureComponent {
     }
 
     if (account.get('locked')) {
-      lockedIcon = <Icon icon='lock' title={intl.formatMessage(messages.account_locked)} />;
+      lockedIcon = <Icon id='lock' title={intl.formatMessage(messages.account_locked)} />;
     }
 
     if (account.get('id') !== me) {

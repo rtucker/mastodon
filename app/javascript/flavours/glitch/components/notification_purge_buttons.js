@@ -10,6 +10,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
 import ImmutablePureComponent from 'react-immutable-pure-component';
+import Icon from 'flavours/glitch/components/icon';
 
 const messages = defineMessages({
   btnAll : { id: 'notification_purge.btn_all', defaultMessage: 'Select\nall' },
@@ -18,8 +19,8 @@ const messages = defineMessages({
   btnApply : { id: 'notification_purge.btn_apply', defaultMessage: 'Clear\nselected' },
 });
 
-@injectIntl
-export default class NotificationPurgeButtons extends ImmutablePureComponent {
+export default @injectIntl
+class NotificationPurgeButtons extends ImmutablePureComponent {
 
   static propTypes = {
     onDeleteMarked : PropTypes.func.isRequired,
@@ -49,7 +50,7 @@ export default class NotificationPurgeButtons extends ImmutablePureComponent {
         </button>
 
         <button onClick={this.props.onDeleteMarked}>
-          <i className='fa fa-trash' /><br />{intl.formatMessage(messages.btnApply)}
+          <Icon id='trash' /><br />{intl.formatMessage(messages.btnApply)}
         </button>
       </div>
     );

@@ -8,6 +8,7 @@ import Avatar from 'flavours/glitch/components/avatar';
 import RelativeTimestamp from 'flavours/glitch/components/relative_timestamp';
 import DisplayName from 'flavours/glitch/components/display_name';
 import AttachmentList from 'flavours/glitch/components/attachment_list';
+import Icon from 'flavours/glitch/components/icon';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
 const messages = defineMessages({
@@ -15,8 +16,8 @@ const messages = defineMessages({
   reblog: { id: 'status.reblog', defaultMessage: 'Boost' },
 });
 
-@injectIntl
-export default class BoostModal extends ImmutablePureComponent {
+export default @injectIntl
+class BoostModal extends ImmutablePureComponent {
 
   static contextTypes = {
     router: PropTypes.object,
@@ -91,7 +92,7 @@ export default class BoostModal extends ImmutablePureComponent {
             { missingMediaDescription ?
                 <FormattedMessage id='boost_modal.missing_description' defaultMessage='This toot contains some media without description' />
               :
-                <FormattedMessage id='boost_modal.combo' defaultMessage='You can press {combo} to skip this next time' values={{ combo: <span>Shift + <i className='fa fa-retweet' /></span> }} />
+                <FormattedMessage id='boost_modal.combo' defaultMessage='You can press {combo} to skip this next time' values={{ combo: <span>Shift + <Icon id='retweet' /></span> }} />
             }
           </div>
           <Button text={intl.formatMessage(buttonText)} onClick={this.handleReblog} ref={this.setRef} />
