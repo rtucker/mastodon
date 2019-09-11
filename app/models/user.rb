@@ -258,6 +258,10 @@ class User < ApplicationRecord
     confirmed? && approved? && !disabled? && !account.suspended?
   end
 
+  def unconfirmed_or_pending?
+    !(confirmed? && approved?)
+  end
+
   def inactive_message
     !approved? ? :pending : super
   end

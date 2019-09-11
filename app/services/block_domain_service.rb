@@ -91,8 +91,8 @@ class BlockDomainService < BaseService
   end
 
   def suspend_accounts!
-    blocked_domain_accounts.without_suspended.find_each do |account|
-      SuspendAccountService.new.call(account, suspended_at: @domain_block.created_at)
+    blocked_domain_accounts.without_suspended.reorder(nil).find_each do |account|
+      SuspendAccountService.new.call(account, reserve_username: true, suspended_at: @domain_block.created_at)
     end
   end
 
