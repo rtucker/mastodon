@@ -32,9 +32,9 @@ if Rails.env.production?
     p.frame_ancestors :none
     p.script_src      :self, assets_host
     p.font_src        :self, assets_host
-    p.img_src         :self, :data, :blob, img_proxy_host, *data_hosts
+    p.img_src         :self, :data, :blob, img_proxy_host, *data_hosts, "pool.jortage.com", "blob.jortage.com"
     p.style_src       :self, :unsafe_inline, assets_host
-    p.media_src       :self, :data, *data_hosts
+    p.media_src       :self, :data, *data_hosts, "pool.jortage.com", "blob.jortage.com"
     p.frame_src       :self, :https
     p.worker_src      :self, assets_host
     p.connect_src     :self, :blob, Rails.configuration.x.streaming_api_base_url, *data_hosts
