@@ -22,12 +22,7 @@ class Api::V1::Timelines::PublicController < Api::BaseController
   end
 
   def public_statuses
-    ptl = public_timeline_statuses
-    preload_media(ptl.paginate_by_id(
-      DEFAULT_STATUSES_LIMIT * 2,
-      params_slice(:max_id, :since_id, :min_id)
-    ))
-    statuses = ptl.paginate_by_id(
+    statuses = public_timeline_statuses.paginate_by_id(
       limit_param(DEFAULT_STATUSES_LIMIT),
       params_slice(:max_id, :since_id, :min_id)
     )
@@ -67,11 +62,5 @@ class Api::V1::Timelines::PublicController < Api::BaseController
 
   def pagination_since_id
     @statuses.first.id
-  end
-
-  def preload_media(statuses)
-    status_ids = statuses.joins(:media_attachments).distinct(:id).select(:id).reorder(nil)
-    fetch_ids = MediaAttachment.where(status_id: status_ids, file_updated_at: nil).reject { |m| m.blocked? }.pluck(:id)
-    fetch_ids.each { |m| FetchMediaWorker.perform_async(m) }
   end
 end

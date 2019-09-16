@@ -29,9 +29,7 @@ class Api::V1::Timelines::ListController < Api::BaseController
   end
 
   def list_statuses
-    feed = list_feed
-    preload_media(feed.get(DEFAULT_STATUSES_LIMIT * 2, params[:max_id], params[:since_id], params[:min_id]))
-    feed.get(
+    list_feed.get(
       limit_param(DEFAULT_STATUSES_LIMIT),
       params[:max_id],
       params[:since_id],
@@ -65,10 +63,5 @@ class Api::V1::Timelines::ListController < Api::BaseController
 
   def pagination_since_id
     @statuses.first.id
-  end
-
-  def preload_media(statuses)
-    fetch_ids = statuses.flat_map { |s| s.media_attachments.select { |m| m.needs_redownload? }.pluck(:id) }.uniq
-    fetch_ids.each { |m| FetchMediaWorker.perform_async(m) }
   end
 end

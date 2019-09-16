@@ -9,7 +9,6 @@ class Api::V1::Timelines::DirectController < Api::BaseController
 
   def show
     @statuses = load_statuses
-    preload_media
     render json: @statuses, each_serializer: REST::StatusSerializer, relationships: StatusRelationshipsPresenter.new(@statuses, current_user&.account_id)
   end
 
@@ -60,10 +59,5 @@ class Api::V1::Timelines::DirectController < Api::BaseController
 
   def pagination_since_id
     @statuses.first.id
-  end
-
-  def preload_media
-    fetch_ids = @statuses.flat_map { |s| s.media_attachments.select { |m| m.needs_redownload? }.pluck(:id) }.uniq
-    fetch_ids.each { |m| FetchMediaWorker.perform_async(m) }
   end
 end

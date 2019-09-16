@@ -27,9 +27,7 @@ class Api::V1::Timelines::HomeController < Api::BaseController
   end
 
   def home_statuses
-    home_feed = account_home_feed
-    preload_media(home_feed.get(DEFAULT_STATUSES_LIMIT * 2, params[:max_id], params[:since_id], params[:min_id]))
-    home_feed.get(
+    account_home_feed.get(
       limit_param(DEFAULT_STATUSES_LIMIT),
       params[:max_id],
       params[:since_id],
@@ -67,10 +65,5 @@ class Api::V1::Timelines::HomeController < Api::BaseController
 
   def regeneration_in_progress?
     Redis.current.exists("account:#{current_account.id}:regeneration")
-  end
-
-  def preload_media(statuses)
-    fetch_ids = statuses.flat_map { |s| s.media_attachments.select { |m| m.needs_redownload? }.pluck(:id) }.uniq
-    fetch_ids.each { |m| FetchMediaWorker.perform_async(m) }
   end
 end
