@@ -3,7 +3,7 @@
 class FetchMediaWorker
   include Sidekiq::Worker
 
-  sidekiq_options queue: 'pull', retry: 0
+  sidekiq_options queue: 'bulk', retry: 2
 
   def perform(media_attachment_id, remote_url = nil)
     object = MediaAttachment.find(media_attachment_id.to_i)
@@ -16,7 +16,7 @@ class FetchMediaWorker
     object.file_remote_url = object.remote_url
     object.created_at      = Time.now.utc
     object.save!
-  rescue ActiveRecord::RecordNotFound
+  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
     true
   end
 end
