@@ -35,7 +35,7 @@ class Api::V1::Timelines::TagController < Api::BaseController
     else
       tag_timeline = tag_timeline_statuses
       preload_media(tag_timeline.paginate_by_id(
-        DEFAULT_STATUSES_LIMIT * 2,
+        DEFAULT_STATUSES_LIMIT * 4,
         params_slice(:max_id, :since_id, :min_id)
       ))
       statuses = tag_timeline.paginate_by_id(
