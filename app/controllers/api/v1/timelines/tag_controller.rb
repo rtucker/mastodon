@@ -29,9 +29,7 @@ class Api::V1::Timelines::TagController < Api::BaseController
     if @tag.nil?
       []
     elsif @tag.name.in?(['self.bookmarks', '.self.bookmarks'])
-      bookmarks = Status.reorder(nil).joins(:bookmarks).merge(bookmark_results)
-      preload_media(bookmarks)
-      bookmarks
+      Status.reorder(nil).joins(:bookmarks).merge(bookmark_results)
     else
       statuses = tag_timeline_statuses.paginate_by_id(
         limit_param(DEFAULT_STATUSES_LIMIT),
