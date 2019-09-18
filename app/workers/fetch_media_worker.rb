@@ -5,9 +5,10 @@ class FetchMediaWorker
 
   sidekiq_options queue: 'bulk', retry: 2
 
-  def perform(media_attachment_id, remote_url = nil)
+  def perform(media_attachment_id, remote_url: nil, force: false)
     object = MediaAttachment.find(media_attachment_id.to_i)
     return if object.blocked?
+    return unless force || object.needs_redownload?
     if remote_url.nil?
       return if object.remote_url.nil?
     else
