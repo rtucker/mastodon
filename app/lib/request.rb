@@ -125,7 +125,7 @@ class Request
   end
 
   def http_client
-    @http_client ||= HTTP.use(:auto_inflate).timeout(:per_operation, timeout).follow(max_hops: 2)
+    @http_client ||= HTTP.use(:auto_inflate).timeout(:per_operation, timeout).follow(max_hops: 3)
   end
 
   def use_proxy?
