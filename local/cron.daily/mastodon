@@ -16,9 +16,9 @@ TARGET=/srv/mastodon/vulpine.club/pg_dump
 
 ) 9>/var/lock/mastodon.pg_dump
 
-echo "Removing remote media..."
-
-cd /srv/mastodon/vulpine.club/mastodon && \
-docker-compose run --rm web sh -c " \
-    bundle exec bin/tootctl media remove --background --days=365"
+#echo "Removing remote media..."
+#
+#cd /srv/mastodon/vulpine.club/mastodon && \
+#docker-compose run --rm web sh -c " \
+#    bundle exec bin/tootctl media remove --background --days=365"
 

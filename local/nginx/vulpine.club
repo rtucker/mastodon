@@ -98,6 +98,21 @@ server {
     try_files $uri @proxy;
   }
 
+  location /grafana/ {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header Proxy "";
+
+    proxy_pass_header Server;
+
+    proxy_pass http://grafana:3000/;
+    proxy_buffering on;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+  }
+
   location / {
     try_files $uri @proxy;
   }
@@ -290,7 +305,7 @@ server {
   gzip on;
   gzip_types text/plain application/javascript text/css;
 
-  root /srv/mastodon/vulpine.club/media/vulpine-club-assets;
+  #root /srv/mastodon/vulpine.club/media/vulpine-club-assets;
 
   # block fedichive.tk https://elekk.xyz/@noelle/102629143383192216
   deny 71.234.189.151;
@@ -313,13 +328,12 @@ server {
   }
 
   location / {
-    try_files $uri @proxy;
-  }
-
-  location @proxy {
     proxy_cache CACHE;
     proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
     proxy_cache_lock on;
+
+    proxy_cache_valid 200 302 10m;
+    proxy_cache_valid 301      1h;
 
     rewrite /(.+) /vulpineclub/$1 break;
 
@@ -354,5 +368,5 @@ server {
   return 301 https://vulpine.club$request_uri;
 }
 
-proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=7d max_size=10g use_temp_path=off;
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=7d max_size=1g use_temp_path=off;
 
