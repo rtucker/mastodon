@@ -305,7 +305,7 @@ server {
   gzip on;
   gzip_types text/plain application/javascript text/css;
 
-  root /srv/mastodon/vulpine.club/media/vulpine-club-assets;
+  #root /srv/mastodon/vulpine.club/media/vulpine-club-assets;
 
   # block fedichive.tk https://elekk.xyz/@noelle/102629143383192216
   deny 71.234.189.151;
@@ -328,13 +328,12 @@ server {
   }
 
   location / {
-    try_files $uri @proxy;
-  }
-
-  location @proxy {
     proxy_cache CACHE;
     proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
     proxy_cache_lock on;
+
+    proxy_cache_valid 200 302 10m;
+    proxy_cache_valid 301      1h;
 
     rewrite /(.+) /vulpineclub/$1 break;
 
