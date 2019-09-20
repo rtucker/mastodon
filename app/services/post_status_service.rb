@@ -139,7 +139,7 @@ class PostStatusService < BaseService
     @text.gsub!('##', "\uf669")
     @tags |= Extractor.extract_hashtags(@text)
     @text.strip!
-    @text.gsub!(/^(?:#[\w:._·\-]+\s*)+|(?:#[\w:._·\-]+\s*)+\Z/, '')
+    @text.gsub!(/^(?:#[\w:._·\-]+\s*)+$/, '')
     @text.gsub!("\uf669", "##")
     @text.gsub!("\uf666", "#")
   end
