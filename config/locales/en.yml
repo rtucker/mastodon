@@ -77,6 +77,7 @@ en:
       adult: 🔞 Adult content
       locked: 🔒 Locked
       froze: ❄️ Frozen by admin
+      limited: ⏯️ Limited by admin
     unavailable: Profile unavailable
     unfollow: Unfollow
   admin:
