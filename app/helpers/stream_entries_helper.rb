@@ -37,7 +37,10 @@ module StreamEntriesHelper
   def account_badge(account, all: false)
     content_tag(:div, class: 'roles') do
       froze = account.local? ? (account&.user.nil? ? true : account.user.disabled?) : account.froze?
+      limited = account.silenced? || account.force_unlisted? || account.force_sensitive?
+
       roles = []
+      roles << content_tag(:div, t('accounts.roles.limited'), class: 'account-role limited') if limited
       roles << content_tag(:div, t('accounts.roles.froze'), class: 'account-role froze') if froze
       roles << content_tag(:div, t('accounts.roles.locked'), class: 'account-role locked') if account.locked?
       roles << content_tag(:div, t('accounts.roles.bot'), class: 'account-role bot') if account.bot?

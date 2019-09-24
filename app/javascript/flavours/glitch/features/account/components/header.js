@@ -185,6 +185,7 @@ class Header extends ImmutablePureComponent {
     const displayNameHtml = { __html: account.get('display_name_html') };
     const fields          = account.get('fields');
 
+    const badge_limited   = account.get('limited') ? (<div className='account-role limited'><FormattedMessage id='account.badges.limited' defaultMessage='⏯️ Limited by admin' /></div>) : null;
     const badge_locked    = account.get('locked') ? (<div className='account-role locked'><FormattedMessage id='account.badges.locked' defaultMessage='🔒 Locked' /></div>) : null;
     const badge_froze     = account.get('froze') ? (<div className='account-role froze'><FormattedMessage id='account.badges.froze' defaultMessage='❄️ Frozen by admin' /></div>) : null;
     const badge_bot       = account.get('bot') ? (<div className='account-role bot'><FormattedMessage id='account.badges.bot' defaultMessage='Bot' /></div>) : null;
@@ -224,7 +225,7 @@ class Header extends ImmutablePureComponent {
             <h1>
               <span dangerouslySetInnerHTML={displayNameHtml} />
               <small>@{acct}</small>
-              <div className='roles'>{badge_admin}{badge_mod}{badge_froze}{badge_locked}{badge_ac}{badge_bot}{badge_gently}{badge_kobold}</div>
+              <div className='roles'>{badge_admin}{badge_mod}{badge_froze}{badge_locked}{badge_limited}{badge_ac}{badge_bot}{badge_gently}{badge_kobold}</div>
             </h1>
           </div>
 

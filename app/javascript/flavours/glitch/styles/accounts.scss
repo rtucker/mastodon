@@ -246,6 +246,12 @@
     background-color: rgba(lighten($warning-red, 12%), 0.1);
     border-color: rgba(lighten($warning-red, 12%), 0.5);
   }
+
+  &.limited {
+    color: lighten(orange, 12%);
+    background-color: rgba(lighten(orange, 12%), 0.1);
+    border-color: rgba(lighten(orange, 12%), 0.5);
+  }
 }
 
 .account__header__fields {
