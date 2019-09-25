@@ -110,7 +110,7 @@ class PostStatusService < BaseService
   end
 
   def limit_visibility_if_silenced
-    @visibility = :unlisted if @visibility.in?([nil, 'public']) && @account.silenced? || @account.force_unlisted
+    @visibility = :unlisted if @visibility.in?([nil, 'public', 'local']) && @account.silenced? || @account.force_unlisted
   end
 
   def limit_visibility_to_reply
