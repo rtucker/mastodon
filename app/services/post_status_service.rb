@@ -141,7 +141,8 @@ class PostStatusService < BaseService
     @text.strip!
     @text.gsub!(/^(?:#[\w:._·\-]+\s*)+$/, '')
     @text.strip!
-    @text.gsub!("\uf669", "##").gsub!("\uf666", "#")
+    @text.gsub!("\uf669", "##")
+    @text.gsub!("\uf666", "#")
   end
 
   def preprocess_attributes!
