@@ -7,4 +7,8 @@ class REST::FilterSerializer < ActiveModel::Serializer
   def id
     object.id.to_s
   end
+
+  def irreversible
+    true
+  end
 end
