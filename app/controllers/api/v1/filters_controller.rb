@@ -35,7 +35,7 @@ class Api::V1::FiltersController < Api::BaseController
   private
 
   def set_filters
-    @filters = current_account.custom_filters
+    @filters = params['all'].to_i == 1 ? current_account.custom_filters : current_account.custom_filters.where(custom_cw: nil)
   end
 
   def set_filter
@@ -43,6 +43,6 @@ class Api::V1::FiltersController < Api::BaseController
   end
 
   def resource_params
-    params.permit(:phrase, :expires_in, :irreversible, :whole_word, :exclude_media, :media_only, :status_text, :spoiler, :tags, :custom_cw, :override_cw, context: [])
+    params.permit(:phrase, :expires_in, :whole_word, :exclude_media, :media_only, :status_text, :spoiler, :tags, :custom_cw, :override_cw, context: [])
   end
 end
