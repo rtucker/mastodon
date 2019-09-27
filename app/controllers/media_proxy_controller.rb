@@ -4,6 +4,7 @@ class MediaProxyController < ApplicationController
   include RoutingHelper
 
   skip_before_action :store_current_location
+  skip_before_action :require_functional!
 
   def show
     RedisLock.acquire(lock_options) do |lock|

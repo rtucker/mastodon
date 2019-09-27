@@ -9,6 +9,8 @@ class RemoteInteractionController < ApplicationController
   before_action :set_pack
   before_action :set_status
 
+  skip_before_action :require_functional!
+
   def new
     raise Mastodon::NotPermittedError unless user_signed_in?
 
