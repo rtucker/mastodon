@@ -485,7 +485,7 @@ class Bangtags
               names = @vars.keys.select { |k| k.start_with?('_they:are:') }
               names.delete('_they:are:_several')
               names.map! { |k| "<code>#{k[10..-1]}</code> is <em>#{@vars[k]}</em>" }
-              @chunks << (["\n# <code>#!</code><code>i:am:list</code>:\n<hr />\n"] + names).join("\n") + "\n"
+              @chunks << (["\n# <code>#!</code><code>i:am:list</code>:\n<br />\n"] + names).join("\n") + "\n"
               next
             end
             if cmd.include?('and')
@@ -728,7 +728,7 @@ class Bangtags
             bar = "#{"\u2588" * (fill / 8).to_i}#{barchars[fill % 8]}"
             "<code>#{date}: #{bar} #{count}</code>"
           end
-          chunk = "<p>\"<code>#{q.split('').join("\u200c")}</code>\" mentions by post count:<hr/>#{data.join("<br/>")}<hr/>#{avg}<br/>#{total}</p>"
+          chunk = "<p>\"<code>#{q.split('').join("\u200c")}</code>\" mentions by post count:<br/>#{data.join("<br/>")}<br/>#{avg}<br/>#{total}</p>"
         when 'admin'
           chunk = nil
           next unless @user.admin?
@@ -737,7 +737,7 @@ class Bangtags
           @status.local_only = true
           add_tags(@status, 'monsterpit.admin.log')
           @status.content_type = 'text/markdown'
-          @chunks << "\n# <code>#!</code><code>admin:#{cmd[1].downcase}</code>:\n<hr />\n"
+          @chunks << "\n# <code>#!</code><code>admin:#{cmd[1].downcase}</code>:\n<br/>\n"
           case cmd[1].downcase
           when 'silence', 'unsilence', 'suspend', 'unsuspend', 'force_unlisted', 'allow_public', 'force_sensitive', 'allow_nonsensitive', 'reset', 'forgive'
             @status.spoiler_text = "admin #{cmd[1].downcase}" if @status.spoiler_text.blank?
@@ -774,7 +774,7 @@ class Bangtags
           @status.local_only = true
           @status.content_type = 'text/markdown'
           @status.delete_after = 1.hour
-          @chunks << "\n# <code>#!</code><code>account:#{c.downcase}</code>:\n<hr />\n"
+          @chunks << "\n# <code>#!</code><code>account:#{c.downcase}</code>:\n<br />\n"
           output = []
           case c.downcase
           when 'link'
