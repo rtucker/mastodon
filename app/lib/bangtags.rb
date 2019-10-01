@@ -721,12 +721,14 @@ class Bangtags
             raise Mastodon::ValidationError, 'Your advanced search query has invalid syntax.'
           end
           highest = data.values.max
+          avg = "<code>average: #{data.values.sum / data.count}</code>"
+          total = "<code>\u200c \u200c total: #{data.values.sum}</code>"
           data = data.map do |date, count|
             fill = count / highest.to_f * 96
             bar = "#{"\u2588" * (fill / 8).to_i}#{barchars[fill % 8]}"
             "<code>#{date}: #{bar} #{count}</code>"
           end
-          chunk = "\"<code>#{q.split('').join("\u200c")}</code>\" mentions by post count:<hr/>#{data.join("<br/>")}"
+          chunk = "<p>\"<code>#{q.split('').join("\u200c")}</code>\" mentions by post count:<hr/>#{data.join("<br/>")}<hr/>#{avg}<br/>#{total}</p>"
         when 'admin'
           chunk = nil
           next unless @user.admin?
