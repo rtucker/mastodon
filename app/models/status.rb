@@ -347,11 +347,18 @@ class Status < ApplicationRecord
           .or(Status.where(account_id: mutual_account_ids, visibility: [:private, :local, :unlisted]))
           .or(Status.where(id: account.mentions.select(:status_id)))
       end
+      sql = 'tsv @@ plainto_tsquery(?)'
+      if term.start_with?('@@')
+        sql = 'tsv @@ to_tsquery(?)'
+        term = term[2..-1].lstrip
+      end
       return none if term.blank?
       pattern = sanitize_sql_like(term)
       pattern = "#{pattern}"
-      query = query.without_reblogs.where("tsv @@ plainto_tsquery('english', ?)", pattern).offset(offset).limit(limit)
+      query = query.without_reblogs.where(sql, pattern).offset(offset).limit(limit)
       apply_timeline_filters(query, account, true)
+    rescue ActiveRecord::StatementInvalid
+      raise Mastodon::ValidationError, 'Your advanced search query has invalid syntax.'
     end
 
     def selectable_visibilities
