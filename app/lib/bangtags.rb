@@ -700,6 +700,33 @@ class Bangtags
           next unless @sroff_open
           @sroff_open = false
           chunk = "\uf334"
+        when 'histogram'
+          @status.content_type = 'text/html'
+          barchars = " #{(0x2588..0x258F).to_a.reverse.pack('U*')}"
+          q = cmd[1..-1].join.strip
+          if q.start_with?('@@')
+            sql = 'tsv @@ to_tsquery(?)'
+            q = q[2..-1].lstrip
+          else
+            sql = 'tsv @@ plainto_tsquery(?)'
+          end
+          next if q.blank?
+          begin
+            data = @account.statuses.where(sql, q)
+              .reorder(:created_at)
+              .pluck(:created_at)
+              .map { |d| d.strftime('%Y-%m') }
+              .reduce(Hash.new(0)) { |h, v| h.store(v, h[v] + 1); h }
+          rescue ActiveRecord::StatementInvalid
+            raise Mastodon::ValidationError, 'Your advanced search query has invalid syntax.'
+          end
+          highest = data.values.max
+          data = data.map do |date, count|
+            fill = count / highest.to_f * 96
+            bar = "#{"\u2588" * (fill / 8).to_i}#{barchars[fill % 8]}"
+            "<code>#{date}: #{bar} #{count}</code>"
+          end
+          chunk = "\"<code>#{q.split('').join("\u200c")}</code>\" mentions by post count:<hr/>#{data.join("<br/>")}"
         when 'admin'
           chunk = nil
           next unless @user.admin?
