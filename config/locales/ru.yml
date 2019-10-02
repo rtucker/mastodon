@@ -17,9 +17,6 @@ ru:
     contact_unavailable: неизв.
     discover_users: Находите пользователей
     documentation: Документация
-    extended_description_html: |
-      <h3>Хорошее место для правил</h3>
-      <p>Расширенное описание еще не настроено.</p>
     federation_hint_html: С учётной записью на %{instance} вы сможете подписываться на людей с любого сервера Mastodon и не только.
     generic_description: "%{domain} - один из серверов сети"
     get_apps: Попробуйте мобильное приложение
@@ -273,7 +270,7 @@ ru:
       space: Использовано места
       title: Панель управления
       total_users: всего пользователей
-      trends: Тренды
+      trends: Актуальное
       week_interactions: взаимодействий на этой неделе
       week_users_active: активно на этой неделе
       week_users_new: пользователей на этой неделе
@@ -517,6 +514,8 @@ ru:
       subject: Новая жалоба, узел %{instance} (#%{id})
   appearance:
     advanced_web_interface: Многоколоночный интерфейс
+    confirmation_dialogs: Окна подтверждений
+    discovery: Обзор
     sensitive_content: Чувствительное содержимое
   application_mailer:
     notification_preferences: Изменить настройки e-mail
@@ -583,7 +582,6 @@ ru:
       x_months: "%{count}мес"
       x_seconds: "%{count}сек"
   deletes:
-    bad_password_msg: Не вышло, хакеры! Неверный пароль
     confirm_password: Введите текущий пароль для подтверждения Вашей личности
     proceed: Удалить аккаунт
     success_msg: Ваш аккаунт был успешно удален
@@ -591,8 +589,6 @@ ru:
     directory: Каталог профилей
     explanation: Находите пользователей по интересам
     explore_mastodon: Изучайте %{title}
-  domain_blocks:
-    domain: Домен
   errors:
     '400': The request you submitted was invalid or malformed.
     '403': У Вас нет доступа к просмотру этой страницы.
@@ -729,9 +725,6 @@ ru:
       too_many: Нельзя добавить более 4 файлов
   migrations:
     acct: имя@домен нового аккаунта
-    currently_redirecting: 'Ваш профиль будет перенаправлен на:'
-    proceed: Сохранить
-    updated_msg: Настройки миграции вашего аккаунта обновлены!
   moderation:
     title: Модерация
   notification_mailer:

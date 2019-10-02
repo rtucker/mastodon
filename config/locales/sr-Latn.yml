@@ -6,9 +6,6 @@ sr-Latn:
     about_this: O instanci
     contact: Kontakt
     contact_missing: Nije postavljeno
-    extended_description_html: |
-      <h3>Dobro mesto za pravila</h3>
-      <p>Prošireni opis koji još nije postavljen.</p>
     generic_description: "%{domain} je server na mreži"
     hosted_on: Mastodont hostovan na %{domain}
     learn_more: Saznajte više
@@ -314,7 +311,6 @@ sr-Latn:
       over_x_years: "%{count}god"
       x_months: "%{count}mesec"
   deletes:
-    bad_password_msg: Dobar pokušaj, hakeri! Neispravna lozinka
     confirm_password: Unesite trenutnu lozinku da bismo proverili Vaš identitet
     proceed: Obriši nalog
     success_msg: Vaš nalog je uspešno obrisan
@@ -382,9 +378,6 @@ sr-Latn:
       too_many: Ne može se prikačiti više od 4 fajla
   migrations:
     acct: korisnik@domen novog naloga
-    currently_redirecting: 'Profil Vam je podešen da preusmerava na :'
-    proceed: Sačuvaj
-    updated_msg: Prebacivanje postavki Vašeg naloga uspešno izmenjeno!
   moderation:
     title: Moderacija
   notification_mailer:

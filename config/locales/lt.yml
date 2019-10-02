@@ -9,9 +9,6 @@ lt:
     contact: Kontaktai
     contact_missing: Nenustatyta
     documentation: Dokumentacija
-    extended_description_html: |
-      <h3>Taisyklės</h3>
-      <p>Ilgas aprašymas dar nėra sudartyas</p>
     generic_description: "%{domain} yra vienas serveris tinkle"
     hosted_on: Mastodon palaikomas naudojantis %{domain} talpinimu
     learn_more: Daugiau
@@ -490,7 +487,6 @@ lt:
       x_months: "%{count}mėn"
       x_seconds: "%{count}sek"
   deletes:
-    bad_password_msg: Geras bandymas, programišiau! Neteisingas slaptažodis
     confirm_password: Kad patvirtintumėte savo tapatybę, įveskite dabartini slaptažodį
     proceed: Ištrinti paskyrą
     success_msg: Jūsų paskyra sėkmingai ištrinta
@@ -598,9 +594,6 @@ lt:
       too_many: Negalima pridėti daugiau nei 4 failų
   migrations:
     acct: slapyvardis@domenas naujam vartotojui
-    currently_redirecting: 'Jūsų profilis nustatytas nukreipimui į:'
-    proceed: Išsaugoti
-    updated_msg: Jūsų paskyros migracijos nustatymai sėkmingai pakeisti!
   moderation:
     title: Moderacija
   notification_mailer:

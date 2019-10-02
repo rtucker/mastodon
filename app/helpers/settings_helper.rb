@@ -42,7 +42,8 @@ module SettingsHelper
     no: 'Norsk',
     oc: 'Occitan',
     pl: 'Polski',
-    pt: 'Português (Portugal)',
+    pt: 'Português',
+    'pt-PT': 'Português (Portugal)',
     'pt-BR': 'Português (Brasil)',
     ro: 'Română',
     ru: 'Русский',
@@ -84,6 +85,14 @@ module SettingsHelper
       'tablet'
     else
       'desktop'
+    end
+  end
+
+  def compact_account_link_to(account)
+    return if account.nil?
+
+    link_to ActivityPub::TagManager.instance.url_for(account), class: 'name-tag', title: account.acct do
+      safe_join([image_tag(account.avatar.url, width: 15, height: 15, alt: display_name(account), class: 'avatar'), content_tag(:span, account.acct, class: 'username')], ' ')
     end
   end
 end
