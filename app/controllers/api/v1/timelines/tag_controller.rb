@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 class Api::V1::Timelines::TagController < Api::BaseController
+  include FilterHelper
+
   before_action :load_tag
   after_action :insert_pagination_headers, unless: -> { @statuses.empty? }
 
   respond_to :json
 
   def show
-    @statuses = load_statuses
+    @statuses = current_account ? load_statuses.reject { |status| phrase_filtered?(status, current_account.id, 'public') } : load_statuses
     render json: @statuses, each_serializer: REST::StatusSerializer, relationships: StatusRelationshipsPresenter.new(@statuses, current_user&.account_id)
   end
 
@@ -47,7 +49,7 @@ class Api::V1::Timelines::TagController < Api::BaseController
   end
 
   def tag_timeline_statuses
-    HashtagQueryService.new.call(@tag, params.slice(:any, :all, :none), current_account, truthy_param?(:local))
+    statuses = HashtagQueryService.new.call(@tag, params.slice(:any, :all, :none), current_account, truthy_param?(:local))
   end
 
   def bookmark_results

@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 class Api::V1::Timelines::PublicController < Api::BaseController
+  include FilterHelper
+
   after_action :insert_pagination_headers, unless: -> { @statuses.empty? }
 
   respond_to :json
 
   def show
-    @statuses = load_statuses
+    @statuses = current_account ? load_statuses.reject { |status| phrase_filtered?(status, current_account.id, 'public') } : load_statuses
     render json: @statuses, each_serializer: REST::StatusSerializer, relationships: StatusRelationshipsPresenter.new(@statuses, current_user&.account_id)
   end
 
@@ -37,7 +39,7 @@ class Api::V1::Timelines::PublicController < Api::BaseController
   end
 
   def public_timeline_statuses
-    Status.as_public_timeline(current_account, truthy_param?(:local))
+    statuses = Status.as_public_timeline(current_account, truthy_param?(:local))
   end
 
   def insert_pagination_headers
