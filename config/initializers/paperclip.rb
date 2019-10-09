@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-Paperclip::DataUriAdapter.register
-
 Paperclip.interpolates :filename do |attachment, style|
   if style == :original
     attachment.original_filename
@@ -91,7 +89,7 @@ else
   Paperclip::Attachment.default_options.merge!(
     storage: :filesystem,
     use_timestamp: true,
-    path: File.join(ENV.fetch('PAPERCLIP_ROOT_PATH', File.join(':rails_root', 'public', 'system')), ':class', ':attachment', ':id_partition', ':style', ':filename'),
+    path: ENV.fetch('PAPERCLIP_ROOT_PATH', ':rails_root/public/system') + '/:class/:attachment/:id_partition/:style/:filename',
     url: ENV.fetch('PAPERCLIP_ROOT_URL', '/system') + '/:class/:attachment/:id_partition/:style/:filename',
   )
 end
