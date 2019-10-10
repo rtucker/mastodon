@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_09_231327) do
+ActiveRecord::Schema.define(version: 2019_10_10_005320) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -259,6 +259,7 @@ ActiveRecord::Schema.define(version: 2019_10_09_231327) do
     t.text "custom_cw"
     t.boolean "override_cw", default: false, null: false
     t.boolean "desc", default: false, null: false
+    t.boolean "no_desc", default: false, null: false
     t.index ["account_id"], name: "index_custom_filters_on_account_id"
   end
 

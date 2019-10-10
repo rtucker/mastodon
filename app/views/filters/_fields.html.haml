@@ -16,8 +16,13 @@
   = f.input :status_text, wrapper: :with_label
   = f.input :spoiler, wrapper: :with_label
   = f.input :tags, wrapper: :with_label
-  = f.input :desc, wrapper: :with_label
   = f.input :thread, wrapper: :with_label
+
+.fields-group
+  = f.input :desc, wrapper: :with_label
+  = f.input :no_desc, wrapper: :with_label
+
+.fields-group
   = f.input :media_only, wrapper: :with_label
   = f.input :exclude_media, wrapper: :with_label
 

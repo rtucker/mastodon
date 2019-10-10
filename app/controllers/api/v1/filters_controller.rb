@@ -43,6 +43,6 @@ class Api::V1::FiltersController < Api::BaseController
   end
 
   def resource_params
-    params.permit(:phrase, :expires_in, :whole_word, :exclude_media, :media_only, :status_text, :spoiler, :tags, :custom_cw, :override_cw, :desc, context: [])
+    params.permit(:phrase, :expires_in, :whole_word, :exclude_media, :media_only, :status_text, :spoiler, :tags, :custom_cw, :override_cw, :desc, :no_desc, context: [])
   end
 end

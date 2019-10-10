@@ -41,6 +41,7 @@ module FilterHelper
       matched ||= regex.match(spoiler_text).present? if filter.spoiler && spoiler_text.present?
       matched ||= regex.match(tags).present? if filter.tags && tags.present?
       matched ||= regex.match(descs).present? if filter.desc && descs.present?
+      matched ||= status.media_attachments.all { |a| a.description.blank? } if filter.no_desc && status.media_attachments.any?
 
       if matched
         filter_thread(receiver_id, status.conversation_id) if filter.thread && filter.custom_cw.blank?

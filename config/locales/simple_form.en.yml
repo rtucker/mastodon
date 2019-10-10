@@ -183,6 +183,7 @@ en:
         whole_word: Whole word
         custom_cw: Set or prepend content warning
         desc: Filter roars with matching media descriptions
+        no_desc: Filter roars WITHOUT media descriptions
         override_cw: Override existing content warning
       boost_interval:
         1: 1 minute

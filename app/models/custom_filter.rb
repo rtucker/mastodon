@@ -21,6 +21,7 @@
 #  custom_cw     :text
 #  override_cw   :boolean          default(FALSE), not null
 #  desc          :boolean          default(FALSE), not null
+#  no_desc       :boolean          default(FALSE), not null
 #
 
 class CustomFilter < ApplicationRecord
