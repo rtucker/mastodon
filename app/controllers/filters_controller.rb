@@ -58,7 +58,7 @@ class FiltersController < ApplicationController
   end
 
   def resource_params
-    params.require(:custom_filter).permit(:phrase, :expires_in, :irreversible, :whole_word, :exclude_media, :media_only, :status_text, :spoiler, :tags, :custom_cw, :override_cw, context: [])
+    params.require(:custom_filter).permit(:phrase, :expires_in, :irreversible, :whole_word, :exclude_media, :media_only, :status_text, :spoiler, :tags, :custom_cw, :override_cw, :desc, context: [])
   end
 
   def set_body_classes

@@ -182,6 +182,7 @@ en:
         username_or_email: Username or Email
         whole_word: Whole word
         custom_cw: Set or prepend content warning
+        desc: Filter roars with matching media descriptions
         override_cw: Override existing content warning
       boost_interval:
         1: 1 minute

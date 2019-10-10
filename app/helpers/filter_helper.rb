@@ -24,6 +24,7 @@ module FilterHelper
     status_text = Formatter.instance.plaintext(status)
     spoiler_text = status.spoiler_text
     tags = status.tags.pluck(:name).join("\n")
+    descs = status.media_attachments.map { |a| a.description }.join("\n").strip
 
     filters.each do |filter|
       if filter.whole_word
@@ -39,6 +40,7 @@ module FilterHelper
       matched ||= regex.match(status_text).present? if filter.status_text
       matched ||= regex.match(spoiler_text).present? if filter.spoiler && spoiler_text.present?
       matched ||= regex.match(tags).present? if filter.tags && tags.present?
+      matched ||= regex.match(descs).present? if filter.desc && descs.present?
 
       if matched
         filter_thread(receiver_id, status.conversation_id) if filter.thread && filter.custom_cw.blank?
