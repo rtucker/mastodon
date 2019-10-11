@@ -135,14 +135,14 @@ class PostStatusService < BaseService
   def extract_tags
     return unless '#'.in?(@text)
     @text = @text.dup if @text.frozen?
-    @text.gsub!(/^##/, "\uf666")
-    @text.gsub!('##', "\uf669")
+    @text.gsub!(/^##/, "\ufdd6")
+    @text.gsub!('##', "\ufdd9")
     @tags |= Extractor.extract_hashtags(@text)
     @text.strip!
     @text.gsub!(/^(?:#[\w:._·\-]+\s*)+$/, '')
     @text.strip!
-    @text.gsub!("\uf669", "##")
-    @text.gsub!("\uf666", "#")
+    @text.gsub!("\ufdd9", "##")
+    @text.gsub!("\ufdd6", "#")
   end
 
   def preprocess_attributes!

@@ -72,11 +72,11 @@ class Bangtags
   def process
     return unless !@vars['_bangtags:disable'] && status.text&.present? && status.text.include?('#!')
 
-    status.text.gsub!('#!!', "#\uf666!")
+    status.text.gsub!('#!!', "#\ufdd6!")
 
     status.text.split(/(#!(?:.*:!#|{.*?}|[^\s#]+))/).each do |chunk|
       if @vore_stack.last == '_draft' || (@chunks.present? && @chunks.first.include?('#!draft'))
-        chunk.gsub("#\uf666!", '#!')
+        chunk.gsub("#\ufdd6!", '#!')
         @chunks << chunk
       elsif chunk.starts_with?("#!")
         chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
@@ -695,11 +695,11 @@ class Bangtags
         when 'nosr', 'sroff', 'srskip'
           next if @sroff_open
           @sroff_open = true
-          chunk = "\uf333"
+          chunk = "\ufdd3"
         when 'sr', 'sron', 'srcont'
           next unless @sroff_open
           @sroff_open = false
-          chunk = "\uf334"
+          chunk = "\ufdd4"
         when 'histogram'
           @status.content_type = 'text/html'
           barchars = " #{(0x2588..0x258F).to_a.reverse.pack('U*')}"
@@ -841,7 +841,7 @@ class Bangtags
         end
       end
 
-      chunk.gsub!("#\uf666!", '#!') unless chunk.blank? || chunk.frozen?
+      chunk.gsub!("#\ufdd6!", '#!') unless chunk.blank? || chunk.frozen?
 
       if chunk.present? && @tf_cmds.present?
         @tf_cmds.each do |tf_cmd|
@@ -1032,7 +1032,7 @@ class Bangtags
       end
     end
 
-    @chunks << "\uf334" if @sroff_open
+    @chunks << "\ufdd4" if @sroff_open
   end
 
   def postprocess_after_save

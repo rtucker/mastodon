@@ -257,7 +257,7 @@ class Formatter
   end
 
   def format_screenreader(html)
-    html.gsub(/\uf333(.*)\uf334/m, '<span aria-hidden="true">\1</span>')
+    html.gsub(/\ufdd3(.*)\ufdd4/m, '<span aria-hidden="true">\1</span>')
   end
 
   def format_console(html)
@@ -372,9 +372,9 @@ class Formatter
 
   def bbcode_formatter(html)
     begin
-      html.gsub!(/\[(?=[^\w\/])/, "\uf666")
+      html.gsub!(/\[(?=[^\w\/])/, "\ufdd6")
       html = html.bbcode_to_html(false, BBCODE_TAGS, :enable, *BBCODE_TAGS.keys)
-      html.gsub!("\uf666", '[')
+      html.gsub!("\ufdd6", '[')
     rescue Exception => e
     end
     html
