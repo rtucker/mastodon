@@ -121,11 +121,11 @@ class Sanitize
       elements: %w(p br span a abbr del pre sub sup blockquote code b strong u i s em h1 h2 h3 h4 h5 h6 ul ol li hr),
 
       attributes: {
-        'a'          => %w(href rel class title alt aria-hidden),
-        'span'       => %w(class aria-hidden),
-        'abbr'       => %w(title aria-hidden),
-        'blockquote' => %w(cite aria-hidden),
-        'p'          => %w(class aria-hidden),
+        'a'          => %w(href rel class title alt aria-hidden aria-label),
+        'span'       => %w(class aria-hidden aria-label),
+        'abbr'       => %w(title aria-hidden aria-label),
+        'blockquote' => %w(cite aria-hidden aria-label),
+        'p'          => %w(class aria-hidden aria-label),
       },
 
       add_attributes: {
