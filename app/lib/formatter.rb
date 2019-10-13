@@ -237,7 +237,9 @@ class Formatter
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
 
     if %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type)
-      html = reformat(html)
+      is_html = status.content_type == 'text/html'
+      html = reformat(html, strip_newlines: !is_html)
+      html.gsub!("\n", '<br>') if is_html
     else
       html = simple_format(html, {}, sanitize: false)
       html = html.delete("\n")
@@ -280,8 +282,12 @@ class Formatter
     format_markdown(html)
   end
 
-  def reformat(html)
-    sanitize(html, Sanitize::Config::MASTODON_STRICT).delete("\r").delete("\n")
+  def reformat(html, strip_newlines: true)
+    html = sanitize(html, Sanitize::Config::MASTODON_STRICT)
+    return html.delete("\r").delete("\n") if strip_newlines
+    html.gsub!("\r\n", "\n")
+    html.gsub!("\n\r", "\n")
+    html.gsub("\r", "\n")
   end
 
   def plaintext(status)
