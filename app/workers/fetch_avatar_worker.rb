@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FetchAvatarMediaWorker
+class FetchAvatarWorker
   include Sidekiq::Worker
 
   sidekiq_options queue: 'bulk', retry: 2
