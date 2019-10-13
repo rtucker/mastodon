@@ -351,6 +351,13 @@ class Bangtags
               roar.save
               Rails.cache.delete("statuses/#{roar.id}")
             end
+          when 'fetch', 'refetch'
+            next if status.conversation_id.nil?
+            Status.where(conversation_id: status.conversation_id).pluck(:id).uniq.each do |acct_id|
+              FetchAvatarWorker.perform_async(acct_id)
+            end
+            media_ids = Status.where(conversation_id: status.conversation_id).joins(:media_attachments).distinct(:id).pluck(:id)
+            BatchFetchMediaWorker.perform_async(media_ids) unless media_ids.empty?
           end
         when 'parent'
           chunk = nil
@@ -399,6 +406,11 @@ class Bangtags
             @parent_status.curated = true
             @parent_status.save
             FanOutOnWriteService.new.call(@parent_status)
+          when 'fetch', 'refetch'
+            chunk = nil
+            media_ids = @parent_status.media_attachments.pluck(:id)
+            BatchFetchMediaWorker.perform_async(media_ids) unless media_ids.empty?
+            FetchAvatarWorker.perform_async(@parent_status.account.id)
           end
         when 'media'
           chunk = nil
