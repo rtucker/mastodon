@@ -65,6 +65,8 @@ defaults: &defaults
   show_reblogs_in_public_timelines: false
   show_replies_in_public_timelines: false
   default_content_type: 'text/x-bbcode+markdown'
+  auto_reject_unknown: true
+  auto_mark_known: true
 
 development:
   <<: *defaults

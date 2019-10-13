@@ -42,6 +42,12 @@
 
   %hr.spacer/
 
+  = f.input :auto_reject_unknown, as: :boolean, wrapper: :with_label, label: t('admin.settings.auto_reject_unknown.title'), hint: t('admin.settings.auto_reject_unknown.desc_html')
+
+  = f.input :auto_mark_known, as: :boolean, wrapper: :with_label, label: t('admin.settings.auto_mark_known.title'), hint: t('admin.settings.auto_mark_known.desc_html')
+
+  %hr.spacer/
+
   .fields-group
     = f.input :timeline_preview, as: :boolean, wrapper: :with_label, label: t('admin.settings.timeline_preview.title'), hint: t('admin.settings.timeline_preview.desc_html')
 

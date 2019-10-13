@@ -23,7 +23,7 @@ class ActivityPub::ProcessAccountService < BaseService
 
         is_new_account = @account.nil?
         if is_new_account
-          set_reject_unknown_policy
+          set_reject_unknown_policy if Setting.auto_reject_unknown
           create_account
         end
         update_account

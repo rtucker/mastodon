@@ -9,7 +9,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
       if @options[:announced_by].nil?
         return reject_payload! if !@options[:requested] && rejecting_unknown?
       else
-        @account.mark_known! if known?(@options[:announced_by])
+        @account.mark_known! if Setting.auto_mark_known && known?(@options[:announced_by])
       end
     end
 

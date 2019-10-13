@@ -34,6 +34,8 @@ class Form::AdminSettings
     mascot
     show_reblogs_in_public_timelines
     show_replies_in_public_timelines
+    auto_reject_unknown
+    auto_mark_known
   ).freeze
 
   BOOLEAN_KEYS = %i(
@@ -49,6 +51,8 @@ class Form::AdminSettings
     enable_keybase
     show_reblogs_in_public_timelines
     show_replies_in_public_timelines
+    auto_reject_unknown
+    auto_mark_known
   ).freeze
 
   UPLOAD_KEYS = %i(
