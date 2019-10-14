@@ -9,7 +9,8 @@
 	// Small-caps links
 	a[href], h1, h2, h3, h4,
 	.column-header,
-	.column-back-button {
+	.column-back-button,
+  .signature {
 		text-decoration: none;
 		font-variant: small-caps;
 	}
@@ -45,16 +46,11 @@
 	.name .username,
 	.name small,
 	.status__display-name,
-	.display-name__account {
+	.display-name__account,
+  .signature {
 		font-size: 12px;
 		font-weight: bold;
 	}
-
-  .signature {
-    font-size: 12px;
-    font-weight: bold;
-		font-variant: small-caps;
-  }
 
 	// TL status: color of users' friendly names; on own line
 	.account-grid-card .name a,
@@ -81,6 +77,10 @@
 		font-size: 14px;
 		line-height: inherit;
 	}
+
+	.composer--reply {
+    background: lighten($ui-primary-color, 40%);
+  }
 
   // staff tools
   div.drawer__inner__admin ul li a { color: $lighter-text-color }
