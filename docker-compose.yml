@@ -117,6 +117,53 @@ services:
 #      - internal_network
 
 # local additions
+  webdirect:
+    image: vulpineclub/mastodon:production
+    restart: always
+    env_file: .env.production
+    environment:
+     - 'S3_ALIAS_HOST=pool.jortage.com/vulpineclub'
+     - 'WEB_DOMAIN=direct.vulpine.club'
+    command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000"
+    networks:
+      external_network:
+      db_network:
+      es_network:
+      redis_network:
+      internal_network:
+        aliases:
+          - fe_webdirect
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --proxy=off localhost:3000/health || exit 1"]
+    depends_on:
+      - db
+      - redis
+      - es
+    volumes:
+      - /srv/mastodon/vulpine.club/media:/srv/mastodon/vulpine.club/media
+      - /srv/mastodon/vulpine.club/public/system:/mastodon/public/system
+      - /etc/localtime:/etc/localtime:ro
+
+  streamingdirect:
+    image: vulpineclub/mastodon:production
+    restart: always
+    env_file: .env.production
+    environment:
+     - 'S3_ALIAS_HOST=pool.jortage.com/vulpineclub'
+    command: node ./streaming
+    networks:
+      external_network:
+      db_network:
+      redis_network:
+      internal_network:
+        aliases:
+          - fe_streamingdirect
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider --proxy=off localhost:4000/api/v1/streaming/health || exit 1"]
+    depends_on:
+      - db
+      - redis
+
   ambassador:
     restart: always
     image: vulpineclub/ambassador

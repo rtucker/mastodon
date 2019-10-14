@@ -236,7 +236,7 @@ server {
 
     proxy_pass_header Server;
 
-    proxy_pass http://fe_web:3000;
+    proxy_pass http://fe_webdirect:3000;
     proxy_buffering on;
     proxy_redirect off;
     proxy_http_version 1.1;
@@ -271,7 +271,7 @@ server {
     # block fedichive.tk https://elekk.xyz/@noelle/102629143383192216
     deny 71.234.189.151;
 
-    proxy_pass http://fe_streaming:4000;
+    proxy_pass http://fe_streamingdirect:4000;
     proxy_buffering off;
     proxy_redirect off;
     proxy_http_version 1.1;
