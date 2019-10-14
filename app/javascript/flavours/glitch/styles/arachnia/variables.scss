@@ -1,29 +1,29 @@
-$classic-base-color: #201;
-$classic-primary-color: #503;
-$classic-secondary-color: #906;
-$classic-highlight-color: #c08;
+$classic-base-color: #250515;
+$classic-primary-color: #624;
+$classic-secondary-color: #a68;
+$classic-highlight-color: #e69;
 
 $base-shadow-color: $black;
 $base-overlay-background: $black;
 $base-border-color: $white;
 
-$simple-background-color: #c69;
+$simple-background-color: #c58;
 $valid-value-color: $success-green;
 $error-value-color: $error-red;
 
 $ui-base-color: $classic-base-color;                  // Darkest
-$ui-base-lighter-color: lighten($ui-base-color, 26%); // Lighter darkest
+$ui-base-lighter-color: lighten($ui-base-color, 15%); // Lighter darkest
 $ui-primary-color: $classic-primary-color;            // Lighter
 $ui-secondary-color: $classic-secondary-color;        // Lightest
 $ui-highlight-color: $classic-highlight-color;
 
-$primary-text-color: $white;
+$primary-text-color: #c9a;
 $darker-text-color: lighten($ui-primary-color, 20%);
-$dark-text-color: $ui-base-lighter-color;
+$dark-text-color: darken($ui-highlight-color, 40%);
 $secondary-text-color: $ui-secondary-color;
 $highlight-text-color: $ui-highlight-color;
 $action-button-color: $ui-base-lighter-color;
 
-$inverted-text-color: #e9a;
-$lighter-text-color: $ui-base-lighter-color;
-$light-text-color: $ui-primary-color;
+$inverted-text-color: #523;
+$lighter-text-color: #fff;
+$light-text-color: #fff;
