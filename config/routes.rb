@@ -398,6 +398,8 @@ Rails.application.routes.draw do
       namespace :push do
         resource :subscription, only: [:create, :show, :update, :destroy]
       end
+
+      get '/werewolf', to: 'werewolf#index', as: :werewolf
     end
 
     namespace :v2 do
