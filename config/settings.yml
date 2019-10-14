@@ -67,6 +67,7 @@ defaults: &defaults
   default_content_type: 'text/x-bbcode+markdown'
   auto_reject_unknown: true
   auto_mark_known: true
+  werewolf_status: true
 
 development:
   <<: *defaults

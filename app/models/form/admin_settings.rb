@@ -36,6 +36,7 @@ class Form::AdminSettings
     show_replies_in_public_timelines
     auto_reject_unknown
     auto_mark_known
+    werewolf_status
   ).freeze
 
   BOOLEAN_KEYS = %i(
@@ -53,6 +54,7 @@ class Form::AdminSettings
     show_replies_in_public_timelines
     auto_reject_unknown
     auto_mark_known
+    werewolf_status
   ).freeze
 
   UPLOAD_KEYS = %i(

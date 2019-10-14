@@ -511,6 +511,9 @@ en:
       auto_mark_known:
         desc_html: Learn known accounts from outgoing interactions and incoming repeats from packmates.
         title: Auto-learn known accounts
+      werewolf_status:
+        desc_html: Enable werewolf status Easter egg (requires an announcer account)
+        title: Werewolf status
       title: Site settings
     statuses:
       back_to_account: Back to account page

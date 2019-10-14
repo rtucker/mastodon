@@ -87,6 +87,11 @@
   %hr.spacer/
 
   .fields-group
+    = f.input :werewolf_status, as: :boolean, wrapper: :with_label, label: t('admin.settings.werewolf_status.title'), hint: t('admin.settings.werewolf_status.desc_html')
+
+  %hr.spacer/
+
+  .fields-group
     = f.input :min_invite_role, wrapper: :with_label, collection: %i(disabled user moderator admin), label: t('admin.settings.registrations.min_invite_role.title'), label_method: lambda { |role| role == :disabled ? t('admin.settings.registrations.min_invite_role.disabled') : t("admin.accounts.roles.#{role}") }, include_blank: false, collection_wrapper_tag: 'ul', item_wrapper_tag: 'li'
 
   .fields-group
