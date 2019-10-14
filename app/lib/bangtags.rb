@@ -886,7 +886,7 @@ class Bangtags
             output = []
             action = tf_cmd[1].downcase
             case action
-            when 'announce'
+            when 'unannounce'
               announcer = ENV['ANNOUNCEMENTS_USER'].to_i
               if announcer == 0
                 @chunks << '<em>No announcer set.</em>'
