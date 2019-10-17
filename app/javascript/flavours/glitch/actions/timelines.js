@@ -2,7 +2,9 @@ import { importFetchedStatus, importFetchedStatuses } from './importer';
 import api, { getLinks } from 'flavours/glitch/util/api';
 import { Map as ImmutableMap, List as ImmutableList } from 'immutable';
 import compareId from 'flavours/glitch/util/compare_id';
-import { usePendingItems as preferPendingItems } from 'flavours/glitch/util/initial_state';
+import { me, usePendingItems as preferPendingItems } from 'flavours/glitch/util/initial_state';
+import { getFiltersRegex } from 'flavours/glitch/selectors';
+import { searchTextFromRawStatus } from 'flavours/glitch/actions/importer/normalizer';
 
 export const TIMELINE_UPDATE  = 'TIMELINE_UPDATE';
 export const TIMELINE_DELETE  = 'TIMELINE_DELETE';
@@ -23,9 +25,17 @@ export const loadPending = timeline => ({
 });
 
 export function updateTimeline(timeline, status, accept) {
-  return dispatch => {
+  return (dispatch, getState) => {
     if (typeof accept === 'function' && !accept(status)) {
       return;
+    }
+
+    const dropRegex = getFiltersRegex(getState(), { contextType: timeline })[0];
+
+    if (dropRegex && status.account.id !== me) {
+      if (dropRegex.test(searchTextFromRawStatus(status))) {
+        return;
+      }
     }
 
     dispatch(importFetchedStatus(status));
@@ -96,8 +106,13 @@ export function expandTimeline(timelineId, path, params = {}, done = noOp) {
 
     api(getState).get(path, { params }).then(response => {
       const next = getLinks(response).refs.find(link => link.rel === 'next');
-      dispatch(importFetchedStatuses(response.data));
-      dispatch(expandTimelineSuccess(timelineId, response.data, next ? next.uri : null, response.status === 206, isLoadingRecent, isLoadingMore, isLoadingRecent && preferPendingItems));
+
+      const dropRegex = getFiltersRegex(getState(), { contextType: timelineId })[0];
+
+      const statuses = dropRegex ? response.data.filter(status => status.account.id === me || !dropRegex.test(searchTextFromRawStatus(status))) : response.data;
+
+      dispatch(importFetchedStatuses(statuses));
+      dispatch(expandTimelineSuccess(timelineId, statuses, next ? next.uri : null, response.status === 206, isLoadingRecent, isLoadingMore, isLoadingRecent && preferPendingItems));
       done();
     }).catch(error => {
       dispatch(expandTimelineFail(timelineId, error, isLoadingMore));
