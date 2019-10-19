@@ -112,7 +112,7 @@ class Scheduler::JanitorScheduler
   end
 
   def abandoned_users
-    User.select(:account_id).where('last_sign_in_at < ?', 3.months.ago)
+    User.select(:account_id).where(admin: false, moderator: false).where('last_sign_in_at < ?', 1.months.ago)
   end
 
   def excluded_domains
