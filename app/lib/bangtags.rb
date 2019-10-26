@@ -745,7 +745,7 @@ class Bangtags
           chunk = nil
           next unless @user.admin?
           next if cmd[1].nil?
-          @status.visibility = :local
+          @status.visibility = :direct
           @status.local_only = true
           add_tags(@status, 'monsterpit.admin.log')
           @status.content_type = 'text/markdown'
