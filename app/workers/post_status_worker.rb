@@ -15,6 +15,7 @@ class PostStatusWorker
     status.save!
 
     process_mentions_service.call(status) unless options[:nomentions]
+    Rails.cache.delete("formatted_status:#{status.id}")
 
     LinkCrawlWorker.perform_async(status.id) unless options[:nocrawl] || status.spoiler_text?
     DistributionWorker.perform_async(status.id) unless options[:distribute] == false
