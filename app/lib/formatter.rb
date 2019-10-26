@@ -188,7 +188,7 @@ class Formatter
 
   def format(status, **options)
     unless options[:skip_cache]
-      html = Rails.cache.fetch()
+      html = Rails.cache.fetch("formatted_status:#{status.id}")
       unless html.nil?
         html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
         return html.html_safe # rubocop:disable Rails/OutputSafety
@@ -305,7 +305,7 @@ class Formatter
     unless options[:skip_cache]
       html = Rails.cache.fetch("formatted_account:#{account.id}")
       unless html.nil?
-        html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if account.local && options[:custom_emojify]
+        html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if account.local? && options[:custom_emojify]
         return html.html_safe # rubocop:disable Rails/OutputSafety
       end
     end
@@ -320,7 +320,7 @@ class Formatter
 
     Rails.cache.write("formatted_account:#{account.id}", html, expires_in: CACHE_TIME)
 
-    html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if account.local && options[:custom_emojify]
+    html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if account.local? && options[:custom_emojify]
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
 
