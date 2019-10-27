@@ -52,6 +52,9 @@
 #  kobold                  :boolean          default(FALSE), not null
 #  froze                   :boolean
 #  known                   :boolean          default(FALSE), not null
+#  force_private           :boolean          default(FALSE), not null
+#  unboostable             :boolean          default(FALSE), not null
+#  block_anon              :boolean          default(FALSE), not null
 #
 
 class Account < ApplicationRecord
@@ -229,6 +232,14 @@ class Account < ApplicationRecord
     end
   end
 
+  def force_private!
+    transaction do
+      update!(force_private: true)
+      scope = Status.where(account_id: id)
+      scope.where.not(visibility: [:direct, :limited, :private]).in_batches.update_all(visibility: :private)
+    end
+  end
+
   def force_sensitive!
     transaction do
       update!(force_sensitive: true)
@@ -236,8 +247,20 @@ class Account < ApplicationRecord
     end
   end
 
+  def unboostable!
+    update!(unboostable: true)
+  end
+
+  def boostable!
+    update!(unboostable: false)
+  end
+
   def allow_public!
     update!(force_unlisted: false)
+  end
+
+  def allow_nonprivate!
+    update!(force_private: false)
   end
 
   def allow_nonsensitive!

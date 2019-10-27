@@ -10,6 +10,7 @@ en:
         type_html: Choose what to do with <strong>%{acct}</strong>
         warning_preset_id: Optional. You can still add custom text to end of the preset
       defaults:
+        block_anon: Links to your public roars are disabled unless they are made accessible by sharekey. Be aware that roars sent to other Fediverse servers can be publically indexed!
         unlisted: Excludes you from public repeated/admired by lists of *local* monsters
         autofollow: People who sign up through the invite will automatically join your pack
         avatar: PNG, GIF or JPG. At most %{size}. Will be downscaled to %{dimensions}px
@@ -167,6 +168,7 @@ en:
         setting_favourite_modal: Show confirmation dialog before admiring (in Glitch flavour)
         setting_hide_followers_count: Hide your packmates count
         setting_hide_network: Make your packmate lists private
+        block_anon: Block anonymous post views
         setting_hide_public_profile: Hide your public profile from anonymous viewers
         setting_hide_public_outbox: Hide your public ActivityPub outbox (affects discoverability)
         setting_max_public_history: Limit history of roars on public profile to
