@@ -14,6 +14,7 @@ class Api::V1::Accounts::SearchController < Api::BaseController
   private
 
   def account_search
+    return Account.none unless user_signed_in?
     AccountSearchService.new.call(
       params[:q],
       current_account,
