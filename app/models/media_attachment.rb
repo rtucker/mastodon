@@ -26,6 +26,8 @@ class MediaAttachment < ApplicationRecord
 
   enum type: [:image, :gifv, :video, :audio, :unknown]
 
+  MAX_DESCRIPTION_LENGTH = 6666
+
   IMAGE_FILE_EXTENSIONS = %w(.jpg .jpeg .png .gif .webp).freeze
   VIDEO_FILE_EXTENSIONS = %w(.webm .mp4 .m4v .mov).freeze
   AUDIO_FILE_EXTENSIONS = %w(.ogg .oga .mp3 .wav .flac .opus .aac .m4a .3gp).freeze
@@ -243,7 +245,7 @@ class MediaAttachment < ApplicationRecord
   end
 
   def prepare_description
-    self.description = description.strip[0...420] unless description.nil?
+    self.description = description.strip[0...MAX_DESCRIPTION_LENGTH] unless description.nil?
   end
 
   def set_type_and_extension
