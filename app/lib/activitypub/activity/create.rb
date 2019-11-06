@@ -54,7 +54,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     inboxes = [@account.inbox_url, @account.preferred_inbox_url, @account.shared_inbox_url].uniq
     inboxes.each do |inbox|
       Redis.current.del("exhausted_deliveries:#{inbox}")
-      Redis.current.srem(inbox)
+      Redis.current.srem('unavailable_inboxes', inbox)
     end
   end
 
