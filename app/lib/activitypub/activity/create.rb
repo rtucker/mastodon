@@ -38,6 +38,8 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
         elsif @options[:delivered_to_account_id].present?
           postprocess_audience_and_deliver
         end
+
+        clear_unavail
       else
         raise Mastodon::RaceConditionError
       end
@@ -47,6 +49,14 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   end
 
   private
+
+  def clear_unavail
+    inboxes = [@account.inbox_url, @account.preferred_inbox_url, @account.shared_inbox_url].uniq
+    inboxes.each do |inbox|
+      Redis.current.del("exhausted_deliveries:#{inbox}")
+      Redis.current.srem(inbox)
+    end
+  end
 
   def process_status
     @tags     = []
