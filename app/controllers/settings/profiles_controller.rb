@@ -13,6 +13,8 @@ class Settings::ProfilesController < Settings::BaseController
   end
 
   def update
+    Rails.cache.delete("formatted_account:#{@account.id}")
+
     if UpdateAccountService.new.call(@account, account_params)
       ActivityPub::UpdateDistributionWorker.perform_async(@account.id)
       redirect_to settings_profile_path, notice: I18n.t('generic.changes_saved_msg')
