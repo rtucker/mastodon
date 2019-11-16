@@ -716,21 +716,15 @@ class Bangtags
           @status.content_type = 'text/html'
           barchars = " #{(0x2588..0x258F).to_a.reverse.pack('U*')}"
           q = cmd[1..-1].join.strip
-          if q.start_with?('@@')
-            sql = 'tsv @@ to_tsquery(?)'
-            q = q[2..-1].lstrip
-          else
-            sql = 'tsv @@ plainto_tsquery(?)'
-          end
           next if q.blank?
           begin
-            data = @account.statuses.where(sql, q)
+            data = @account.statuses.where('text ILIKE ?', "%#{sanitize_sql_like(q)}%")
               .reorder(:created_at)
               .pluck(:created_at)
               .map { |d| d.strftime('%Y-%m') }
               .reduce(Hash.new(0)) { |h, v| h.store(v, h[v] + 1); h }
           rescue ActiveRecord::StatementInvalid
-            raise Mastodon::ValidationError, 'Your advanced search query has invalid syntax.'
+            raise Mastodon::ValidationError, 'Invalid query.'
           end
           highest = data.values.max
           avg = "<code>average: #{data.values.sum / data.count}</code>"
