@@ -344,9 +344,8 @@ class Status < ApplicationRecord
         term = term.split(nil, 2)[1]
         query = account.statuses
       else
-        mutual_account_ids = account.following_ids & account.follower_ids
         query = Status.where(account_id: account.id)
-          .or(Status.where(account_id: mutual_account_ids, visibility: [:private, :local, :unlisted]))
+          .or(Status.where(account_id: account.following, visibility: [:private, :local, :unlisted]))
           .or(Status.where(id: account.mentions.select(:status_id)))
       end
       return none if term.blank? || term.length < 3
