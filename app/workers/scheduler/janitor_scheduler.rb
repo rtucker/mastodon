@@ -20,7 +20,6 @@ class Scheduler::JanitorScheduler
 
     prune_deleted_accounts!
     suspend_abandoned_accounts!
-    suspend_spammers!
     silence_markov!
     import_blocklists!
     export_suspensions!
@@ -37,13 +36,6 @@ class Scheduler::JanitorScheduler
     reason = "Appears to be abandoned. Freeing up the username for someone else."
     abandoned_accounts.find_each do |account|
       account_policy(account.username, nil, :suspend, reason)
-    end
-  end
-
-  def suspend_spammers!
-    reason = 'Appears to be a spammer account.'
-    spammer_accounts.find_each do |spammer|
-      account_policy(spammer.username, spammer.domain, :suspend, reason)
     end
   end
 
@@ -96,12 +88,6 @@ class Scheduler::JanitorScheduler
   end
 
 
-  def spammer_accounts
-    spammer_ids = spammer_account_ids
-    Account.reorder(nil).where(id: spammer_ids, suspended_at: nil)
-      .where.not(id: @exclude_ids)
-  end
-
   def markov_accounts
     Account.reorder(nil).where(silenced_at: nil).where.not(id: @exclude_markov)
       .where('username LIKE ? OR note ILIKE ?', '%ebooks%', '%markov%')
@@ -134,10 +120,6 @@ class Scheduler::JanitorScheduler
     local_account_ids | outgoing_follow_ids | excluded_accounts_from_env('USERNAMES')
   end
 
-  def spammer_account_ids
-    post_spammer_ids | card_spammer_ids
-  end
-
   def existing_policy_domains
     DomainBlock.all.pluck(:domain)
   end
@@ -152,19 +134,6 @@ class Scheduler::JanitorScheduler
 
   def outgoing_follow_ids
     Account.local.reorder(nil).flat_map { |account| account.following_ids }
-  end
-
-  def post_spammer_ids
-    Status.with_public_visibility
-      .reorder(nil)
-      .where('tsv @@ to_tsquery(?)', 'womenarestupid.site & /blog/:*')
-      .pluck(:account_id)
-  end
-
-  def card_spammer_ids
-    PreviewCard.where('url LIKE ? OR title ILIKE ?', '%womenarestupid%', '%womenaredumb%')
-      .reorder(nil)
-      .flat_map { |card| card.statuses.pluck(:account_id) }
   end
 
 
