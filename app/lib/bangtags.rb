@@ -2,6 +2,8 @@
 
 class Bangtags
   include ModerationHelper
+  include SearchHelper
+
   attr_reader :status, :account
 
   def initialize(status)
@@ -718,7 +720,7 @@ class Bangtags
           q = cmd[1..-1].join.strip
           next if q.blank?
           begin
-            data = @account.statuses.where('text ILIKE ?', "%#{sanitize_sql_like(q)}%")
+            data = @account.statuses.where('text ~* ?', expand_search_query(q))
               .reorder(:created_at)
               .pluck(:created_at)
               .map { |d| d.strftime('%Y-%m') }

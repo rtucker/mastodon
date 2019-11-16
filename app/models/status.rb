@@ -336,6 +336,8 @@ class Status < ApplicationRecord
   after_create :process_bangtags, if: :local?
 
   class << self
+    include SearchHelper
+
     def search_for(term, account = nil, limit = 33, offset = 0)
       return none if account.nil?
       if term.start_with?('me:')
@@ -349,7 +351,7 @@ class Status < ApplicationRecord
       end
       return none if term.blank? || term.length < 3
       query = query.without_reblogs
-        .where('text ILIKE ?', "%#{sanitize_sql_like(term)}%")
+        .where('text ~* ?', expand_search_query(term))
         .offset(offset).limit(limit)
       apply_timeline_filters(query, account, true)
     rescue ActiveRecord::StatementInvalid
