@@ -1,11 +1,18 @@
-ALTER TABLE statuses ADD COLUMN tsv tsvector;
+-- Run this section on Mastodon DB as Postgres superuser. --
+-- sudo -sHu postgres -- psql mastodon_production
 
-CREATE INDEX tsv_idx ON statuses USING gin(tsv);
+CREATE EXTENSION pg_trgm;
 
-CREATE FUNCTION tsv_update_trigger() RETURNS trigger AS $$ begin new.tsv := to_tsvector('english', COALESCE(new.spoiler_text, '') || ' ' || new.text); return new; end $$ LANGUAGE plpgsql;
+-- Run this section on Mastodon DB as Mastodon user. --
+-- sudo -sHu mastodon -- psql mastodon_production
 
-CREATE TRIGGER tsvectorupdate BEFORE UPDATE ON statuses FOR EACH ROW WHEN (old.spoiler_text IS DISTINCT FROM new.spoiler_text OR old.text IS DISTINCT FROM new.text) EXECUTE PROCEDURE tsv_update_trigger();
+-- Drop old FTS implementation --
+DROP TRIGGER IF EXISTS tsvectorinsert ON statuses;
+DROP TRIGGER IF EXISTS tsvectorupdate ON statuses;
+DROP FUNCTION IF EXISTS tsv_update_trigger;
+DROP INDEX IF EXISTS tsv_idx;
+ALTER TABLE statuses DROP COLUMN IF EXISTS tsv;
 
-CREATE TRIGGER tsvectorinsert BEFORE INSERT ON statuses FOR EACH ROW EXECUTE PROCEDURE tsv_update_trigger();
-
-UPDATE statuses SET tsv = to_tsvector('english', COALESCE(spoiler_text, '') || ' ' || text);
+-- Create new trigram indexes --
+CREATE INDEX CONCURRENTLY IF NOT EXISTS index_statuses_on_text_trgm ON statuses USING GIN (text gin_trgm_ops);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS index_statuses_on_spoiler_text_trgm ON statuses USING GIN (spoiler_text gin_trgm_ops);
