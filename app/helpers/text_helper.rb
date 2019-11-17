@@ -24,8 +24,8 @@ module TextHelper
     t.unaccent_via_split_map.strip
   end
 
-  def normalize_status(status)
+  def normalize_status(status, cache: true, skip_cache: true)
     return normalize_text("#{status.spoiler_text}\n#{status.text}") unless status.local?
-    normalize_text("#{status.spoiler_text}\n#{Formatter.instance.format(status)}")
+    normalize_text("#{status.spoiler_text}\n#{Formatter.instance.format(status, skip_cache: skip_cache, cache: cache)}")
   end
 end
