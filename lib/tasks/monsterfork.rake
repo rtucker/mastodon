@@ -13,7 +13,7 @@ namespace :monsterfork do
         statuses.each do |s|
           begin
             next if s.destroyed?
-            s.update_column(:normalized_text, normalize_status(s, cache: false))
+            s.update_column(:normalized_text, normalize_status(s))
           rescue rescue ActiveRecord::RecordNotFound
             true
           end

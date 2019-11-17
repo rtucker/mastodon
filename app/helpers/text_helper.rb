@@ -32,7 +32,7 @@ module TextHelper
     "#{tags.join(' ')}\n#{t.lstrip}".strip.unaccent_via_split_map
   end
 
-  def normalize_status(status, cache: false, skip_cache: true)
-    normalize_text("#{status.tags.pluck(:name).join(' ')}\n#{status.spoiler_text}\n#{status.local? ? Formatter.instance.format(status, skip_cache: skip_cache, cache: cache) : status.text}")
+  def normalize_status(status)
+    normalize_text("#{status.tags.pluck(:name).join(' ')}\n#{status.spoiler_text}\n#{status.local? ? Formatter.instance.format(status, skip_cache: true, cache: false) : status.text}")
   end
 end
