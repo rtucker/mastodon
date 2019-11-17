@@ -29,7 +29,7 @@ class DomainBlock < ApplicationRecord
   scope :matches_domain, ->(value) { where(arel_table[:domain].matches("%#{value}%")) }
   scope :unprocessed, -> { where(processing: true) }
 
-  before_create :set_processing
+  before_save :set_processing
 
   def self.blocked?(domain)
     where(domain: domain, severity: :suspend).exists?

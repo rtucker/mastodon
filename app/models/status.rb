@@ -336,9 +336,9 @@ class Status < ApplicationRecord
 
   after_create :set_poll_id
   after_create :process_bangtags, if: :local?
-  after_create :update_normalized_text
 
-  after_update :update_normalized_text
+  after_save :update_normalized_text
+  after_save :formatter_removed_cached
 
   class << self
     include SearchHelper
@@ -627,7 +627,10 @@ class Status < ApplicationRecord
     return if destroyed?
     return unless (normalized_text.blank? && !text.blank?) || saved_change_to_text?
     self.normalized_text = normalize_status(self)
-    Rails.cache.delete("formatted_status:#{id}")
+  end
+
+  def formatter_remove_cached
+    Rails.cache.delete("formatted_status:#{self.id}")
   end
 
   def set_conversation
