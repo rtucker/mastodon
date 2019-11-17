@@ -10,10 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_27_182731) do
+ActiveRecord::Schema.define(version: 2019_11_16_233416) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
+  enable_extension "unaccent"
 
   create_table "account_conversations", force: :cascade do |t|
     t.bigint "account_id"
@@ -697,9 +699,9 @@ ActiveRecord::Schema.define(version: 2019_10_27_182731) do
     t.boolean "edited"
     t.boolean "imported"
     t.string "origin"
-    t.tsvector "tsv"
     t.boolean "boostable"
     t.boolean "reject_replies"
+    t.text "normalized_text", default: "", null: false
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20180106", order: { id: :desc }
     t.index ["account_id", "id", "visibility"], name: "index_statuses_on_account_id_and_id_and_visibility", order: { id: :desc }, where: "(visibility = ANY (ARRAY[0, 1, 2, 4]))"
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id"
@@ -707,7 +709,8 @@ ActiveRecord::Schema.define(version: 2019_10_27_182731) do
     t.index ["network"], name: "index_statuses_on_network", where: "network"
     t.index ["origin"], name: "index_statuses_on_origin", unique: true
     t.index ["reblog_of_id", "account_id"], name: "index_statuses_on_reblog_of_id_and_account_id"
-    t.index ["tsv"], name: "tsv_idx", using: :gin
+    t.index ["spoiler_text"], name: "index_statuses_on_spoiler_text_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["text"], name: "index_statuses_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["uri"], name: "index_statuses_on_uri", unique: true
   end
 

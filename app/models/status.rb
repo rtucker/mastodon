@@ -31,9 +31,9 @@
 #  edited                 :boolean
 #  imported               :boolean
 #  origin                 :string
-#  tsv                    :tsvector
 #  boostable              :boolean
 #  reject_replies         :boolean
+#  normalized_text        :text             default(""), not null
 #
 
 class Status < ApplicationRecord
@@ -43,6 +43,7 @@ class Status < ApplicationRecord
   include Streamable
   include Cacheable
   include StatusThreadingConcern
+  include TextHelper
 
   # match both with and without U+FE0F (the emoji variation selector)
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
@@ -324,6 +325,7 @@ class Status < ApplicationRecord
   around_create Mastodon::Snowflake::Callbacks
 
   before_create :set_locality
+  before_create :update_normalized_text
 
   before_validation :prepare_contents, if: :local?
   before_validation :set_reblog
@@ -334,6 +336,9 @@ class Status < ApplicationRecord
 
   after_create :set_poll_id
   after_create :process_bangtags, if: :local?
+  after_create :update_normalized_text
+
+  after_update :update_normalized_text
 
   class << self
     include SearchHelper
@@ -350,7 +355,7 @@ class Status < ApplicationRecord
       end
       return none if term.blank? || term.length < 3
       query = query.without_reblogs
-        .where('text ~* ?', expand_search_query(term))
+        .where('normalized_text ~ ?', expand_search_query(term))
         .offset(offset).limit(limit)
       apply_timeline_filters(query, account, true)
     rescue ActiveRecord::StatementInvalid
@@ -616,6 +621,12 @@ class Status < ApplicationRecord
 
   def process_bangtags
     Bangtags.new(self).process
+  end
+
+  def update_normalized_text
+    return unless (normalized_text.blank? && !text.blank?) || saved_change_to_text?
+    Rails.cache.delete("formatted_status:#{status.id}")
+    self.normalized_text = normalize_status(self)
   end
 
   def set_conversation

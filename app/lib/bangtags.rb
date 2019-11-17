@@ -720,7 +720,7 @@ class Bangtags
           q = cmd[1..-1].join.strip
           next if q.blank?
           begin
-            data = @account.statuses.where('text ~* ?', expand_search_query(q))
+            data = @account.statuses.where('normalized_text ~ ?', expand_search_query(q))
               .reorder(:created_at)
               .pluck(:created_at)
               .map { |d| d.strftime('%Y-%m') }

@@ -1,6 +1,7 @@
-module SearchHelper
+require 'sixarm_ruby_unaccent'
 
+module SearchHelper
 	def expand_search_query(query)
-    query.gsub(/"(.*)"/, '\\y\1\\y')
+    query.downcase.unaccent.gsub(/"(.*)"/, '\\y\1\\y')
   end
 end

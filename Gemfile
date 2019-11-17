@@ -153,3 +153,5 @@ gem 'concurrent-ruby', require: false
 gem "ruby-bbcode", "~> 2.0"
 
 gem "sun_calc", "~> 0.1.0"
+
+gem "sixarm_ruby_unaccent", "~> 1.2"

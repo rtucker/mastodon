@@ -21,7 +21,7 @@ module FilterHelper
     return false if filters.empty?
 
     status = status.reblog if status.reblog?
-    status_text = Formatter.instance.plaintext(status)
+    status_text = status.normalized_text
     spoiler_text = status.spoiler_text
     tags = status.tags.pluck(:name).join("\n")
     descs = status.media_attachments.map { |a| a.description }.join("\n").strip

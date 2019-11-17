@@ -12,7 +12,11 @@ DROP TRIGGER IF EXISTS tsvectorupdate ON statuses;
 DROP FUNCTION IF EXISTS tsv_update_trigger;
 DROP INDEX IF EXISTS tsv_idx;
 ALTER TABLE statuses DROP COLUMN IF EXISTS tsv;
+DROP INDEX IF EXISTS index_statuses_on_text_trgm;
+DROP INDEX IF EXISTS index_statuses_on_spoiler_text_trgm;
 
 -- Create new trigram indexes --
-CREATE INDEX CONCURRENTLY IF NOT EXISTS index_statuses_on_text_trgm ON statuses USING GIN (text gin_trgm_ops);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS index_statuses_on_spoiler_text_trgm ON statuses USING GIN (spoiler_text gin_trgm_ops);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS index_statuses_on_normalized_text_trgm ON statuses USING GIN (normalized_text gin_trgm_ops);
+
+-- Compact tables ---
+VACUUM ANALYZE;
