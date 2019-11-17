@@ -46,7 +46,6 @@ module Admin
     def update
       return destroy unless resource_params[:undo].to_i.zero?
       resource_params[:reason].strip! if resource_params[:reason].present?
-      resource_params[:processing] = true
       authorize @domain_block, :update?
       @domain_block.update(resource_params.except(:domain, :undo))
       if @domain_block.save

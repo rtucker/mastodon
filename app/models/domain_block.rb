@@ -29,6 +29,8 @@ class DomainBlock < ApplicationRecord
   scope :matches_domain, ->(value) { where(arel_table[:domain].matches("%#{value}%")) }
   scope :unprocessed, -> { where(processing: true) }
 
+  before_create :set_processing
+
   def self.blocked?(domain)
     where(domain: domain, severity: :suspend).exists?
   end
@@ -62,5 +64,12 @@ class DomainBlock < ApplicationRecord
   # workaround for the domain policy editor
   def undo
     return false
+  end
+
+  private
+
+  def set_processing
+    return if processing
+    self.processing = true
   end
 end
