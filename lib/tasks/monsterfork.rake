@@ -11,7 +11,7 @@ namespace :monsterfork do
       ActiveRecord::Base.logger.silence do
         i += statuses.count
         statuses.each do |s|
-          s.update_column(:normalized_text, normalize_status(s))
+          s.update_column(:normalized_text, normalize_status(s, cache: false))
         end
       end
     end
