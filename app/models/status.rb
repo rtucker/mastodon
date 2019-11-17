@@ -624,6 +624,7 @@ class Status < ApplicationRecord
   end
 
   def update_normalized_text
+    return if destroyed?
     return unless (normalized_text.blank? && !text.blank?) || saved_change_to_text?
     self.normalized_text = normalize_status(self)
     Rails.cache.delete("formatted_status:#{id}")
