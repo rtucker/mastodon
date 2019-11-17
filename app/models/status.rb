@@ -338,7 +338,7 @@ class Status < ApplicationRecord
   after_create :process_bangtags, if: :local?
 
   after_save :update_normalized_text
-  after_save :formatter_removed_cached
+  after_save :formatter_remove_cached
 
   class << self
     include SearchHelper
