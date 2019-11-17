@@ -7,7 +7,7 @@ namespace :monsterfork do
     total = Status.count
 
     Status.find_in_batches do |statuses|
-      ActiveRecord::Base.logger.info("Indexing statuses #{1+i}-#{statuses.count} of #{total}.")
+      ActiveRecord::Base.logger.info("Indexing status #{1+i} of #{total}.")
       i += statuses.count
       statuses.each do |s|
         ActiveRecord::Base.logger.silence { s.update_column(:normalized_text, normalize_status(s)) }
