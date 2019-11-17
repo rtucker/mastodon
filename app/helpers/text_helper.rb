@@ -21,11 +21,18 @@ module TextHelper
     t.gsub!(/[ \t]+\n/, "\n")
     t.gsub!(/\n\n+/, "\n")
 
-    t.unaccent_via_split_map.strip
+    return t.strip.unaccent_via_split_map unless '#'.in?(t)
+
+    tags = Extractor.extract_hashtags(t).uniq
+    t.gsub!(/^(?:#[\w:._·\-]+\s*)+/, '')
+    t.gsub!(/(?:#[\w:._·\-]+\s*)+$/, '')
+
+    t.delete!('#')
+
+    "#{tags.join(' ')}\n#{t.lstrip}".strip.unaccent_via_split_map
   end
 
   def normalize_status(status, cache: true, skip_cache: true)
-    return normalize_text("#{status.spoiler_text}\n#{status.text}") unless status.local?
-    normalize_text("#{status.spoiler_text}\n#{Formatter.instance.format(status, skip_cache: skip_cache, cache: cache)}")
+    normalize_text("#{status.tags.pluck(:name).join(' ')}\n#{status.spoiler_text}\n#{status.local? ? Formatter.instance.format(status, skip_cache: skip_cache, cache: cache) : status.text}")
   end
 end
