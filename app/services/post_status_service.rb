@@ -145,6 +145,10 @@ class PostStatusService < BaseService
     @text.gsub!("\ufdd6", "#")
   end
 
+  def protect_leading_spaces
+    @text.gsub!(/^ /, "\u200b ")
+  end
+
   def preprocess_attributes!
     if @text.blank? && @options[:spoiler_text].present?
      @text = '.'
@@ -153,6 +157,7 @@ class PostStatusService < BaseService
 
     set_footer_from_i_am
     extract_tags
+    protect_leading_spaces
     set_local_only
     set_initial_visibility
     limit_visibility_if_silenced
