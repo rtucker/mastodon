@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_16_233416) do
+ActiveRecord::Schema.define(version: 2019_11_18_005833) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -160,6 +160,7 @@ ActiveRecord::Schema.define(version: 2019_11_16_233416) do
     t.boolean "force_private", default: false, null: false
     t.boolean "unboostable", default: false, null: false
     t.boolean "block_anon", default: false, null: false
+    t.boolean "filter_undescribed", default: false, null: false
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
     t.index "lower((username)::text), lower((domain)::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
     t.index ["moved_to_account_id"], name: "index_accounts_on_moved_to_account_id"
@@ -707,10 +708,9 @@ ActiveRecord::Schema.define(version: 2019_11_16_233416) do
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id"
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id"
     t.index ["network"], name: "index_statuses_on_network", where: "network"
+    t.index ["normalized_text"], name: "index_statuses_on_normalized_text_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["origin"], name: "index_statuses_on_origin", unique: true
     t.index ["reblog_of_id", "account_id"], name: "index_statuses_on_reblog_of_id_and_account_id"
-    t.index ["spoiler_text"], name: "index_statuses_on_spoiler_text_trgm", opclass: :gin_trgm_ops, using: :gin
-    t.index ["text"], name: "index_statuses_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["uri"], name: "index_statuses_on_uri", unique: true
   end
 
