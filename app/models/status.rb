@@ -340,7 +340,7 @@ class Status < ApplicationRecord
   after_create :set_poll_id
   after_create :process_bangtags, if: :local?
 
-  after_save :update_normalized_text
+  before_save :update_normalized_text
 
   class << self
     include SearchHelper
