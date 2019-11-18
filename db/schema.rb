@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_18_005833) do
+ActiveRecord::Schema.define(version: 2019_11_18_064252) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -251,21 +251,8 @@ ActiveRecord::Schema.define(version: 2019_11_18_005833) do
     t.bigint "account_id"
     t.datetime "expires_at"
     t.text "phrase", default: "", null: false
-    t.string "context", default: [], null: false, array: true
-    t.boolean "irreversible", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "whole_word", default: true, null: false
-    t.boolean "exclude_media", default: false, null: false
-    t.boolean "media_only", default: false, null: false
-    t.boolean "thread", default: false, null: false
-    t.boolean "spoiler", default: false, null: false
-    t.boolean "tags", default: false, null: false
-    t.boolean "status_text", default: false, null: false
-    t.text "custom_cw"
-    t.boolean "override_cw", default: false, null: false
-    t.boolean "desc", default: false, null: false
-    t.boolean "no_desc", default: false, null: false
     t.index ["account_id"], name: "index_custom_filters_on_account_id"
   end
 

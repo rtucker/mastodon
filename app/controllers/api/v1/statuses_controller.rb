@@ -2,7 +2,6 @@
 
 class Api::V1::StatusesController < Api::BaseController
   include Authorization
-  include FilterHelper
 
   before_action -> { authorize_if_got_token! :read, :'read:statuses' }, except: [:create, :destroy]
   before_action -> { doorkeeper_authorize! :write, :'write:statuses' }, only:   [:create, :destroy]

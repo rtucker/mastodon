@@ -23,7 +23,6 @@ class StatusFilter
   end
 
   def filtered_status?
-    return true if filtering_thread?(account.id, status.conversation_id)
     blocking_account? || blocking_domain? || muting_account? || filtered_reference?
   end
 
@@ -34,7 +33,7 @@ class StatusFilter
     return true if account.user_hides_replies_of_blocker? && reply_to_blocker?
 
     # filtered by user?
-    return true if phrase_filtered?(status, account.id, nil)
+    return true if phrase_filtered?(status, account.id)
 
     # kajiht has no filters if status has no mentions
     return false if status&.mentions.blank?
@@ -45,6 +44,9 @@ class StatusFilter
 
     # Don't filter statuses mentioning you.
     return false if mentioned_account_ids.include?(account.id)
+
+    # Filter posts missing media descriptions.
+    return true if account.filter_undescribed? && status.media_attachments.all? { |attachment| attachment.description.blank? }
 
     return true if account.user_hides_mentions_of_blocked? && mentioned_accounts.where.not(suspended_at: nil).exists?
 

@@ -3,59 +3,25 @@
 #
 # Table name: custom_filters
 #
-#  id            :bigint(8)        not null, primary key
-#  account_id    :bigint(8)
-#  expires_at    :datetime
-#  phrase        :text             default(""), not null
-#  context       :string           default([]), not null, is an Array
-#  irreversible  :boolean          default(FALSE), not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  whole_word    :boolean          default(TRUE), not null
-#  exclude_media :boolean          default(FALSE), not null
-#  media_only    :boolean          default(FALSE), not null
-#  thread        :boolean          default(FALSE), not null
-#  spoiler       :boolean          default(FALSE), not null
-#  tags          :boolean          default(FALSE), not null
-#  status_text   :boolean          default(FALSE), not null
-#  custom_cw     :text
-#  override_cw   :boolean          default(FALSE), not null
-#  desc          :boolean          default(FALSE), not null
-#  no_desc       :boolean          default(FALSE), not null
+#  id         :bigint(8)        not null, primary key
+#  account_id :bigint(8)
+#  expires_at :datetime
+#  phrase     :text             default(""), not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 
 class CustomFilter < ApplicationRecord
-  VALID_CONTEXTS = %w(
-    home
-    notifications
-    public
-    thread
-  ).freeze
-
   include Expireable
   include Redisable
 
   belongs_to :account
 
-  validates :phrase, :context, presence: true
-  validate :context_must_be_valid
-  validate :irreversible_must_be_within_context
+  validates :phrase, presence: true
 
-  scope :active_irreversible, -> { where(irreversible: true).where(Arel.sql('expires_at IS NULL OR expires_at > NOW()')) }
-
-  before_validation :prepare_custom_cw
-  before_validation :clean_up_contexts
   after_commit :remove_cache
 
   private
-
-  def clean_up_contexts
-    self.context = Array(context).map(&:strip).map(&:presence).compact
-  end
-
-  def prepare_custom_cw
-    custom_cw&.strip!
-  end
 
   def remove_cache
     Rails.cache.delete("filters:#{account_id}")
@@ -63,13 +29,5 @@ class CustomFilter < ApplicationRecord
     redis.del("filtered_threads:#{account_id}")
     redis.del("filtered_statuses:#{account_id}")
     Redis.current.publish("timeline:#{account_id}", Oj.dump(event: :filters_changed))
-  end
-
-  def context_must_be_valid
-    errors.add(:context, I18n.t('filters.errors.invalid_context')) if context.empty? || context.any? { |c| !VALID_CONTEXTS.include?(c) }
-  end
-
-  def irreversible_must_be_within_context
-    errors.add(:irreversible, I18n.t('filters.errors.invalid_irreversible')) if irreversible? && !context.include?('home') && !context.include?('notifications')
   end
 end

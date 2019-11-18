@@ -6,26 +6,3 @@
 
 .fields-group
   = f.input :context, wrapper: :with_block_label, collection: CustomFilter::VALID_CONTEXTS, as: :check_boxes, collection_wrapper_tag: 'ul', item_wrapper_tag: 'li', label_method: lambda { |context| I18n.t("filters.contexts.#{context}") }, include_blank: false
-
-%hr.spacer/
-
-.fields-group
-  = f.input :whole_word, wrapper: :with_label
-
-.fields-group
-  = f.input :status_text, wrapper: :with_label
-  = f.input :spoiler, wrapper: :with_label
-  = f.input :tags, wrapper: :with_label
-  = f.input :thread, wrapper: :with_label
-
-.fields-group
-  = f.input :desc, wrapper: :with_label
-  = f.input :no_desc, wrapper: :with_label
-
-.fields-group
-  = f.input :media_only, wrapper: :with_label
-  = f.input :exclude_media, wrapper: :with_label
-
-.fields-group
-  = f.input :custom_cw, as: :string, wrapper: :with_label
-  = f.input :override_cw, wrapper: :with_label
