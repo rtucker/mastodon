@@ -1,5 +1,9 @@
 class RemoveOldFilterColumns < ActiveRecord::Migration[5.2]
-  def change
+  def up
+    CustomFilters.find_each do |filter|
+      filter.update!(phrase: "\"#{filter.phrase}\"") if filter.whole_word
+    end
+
     safety_assured {
       remove_column :custom_filters, :no_desc
       remove_column :custom_filters, :desc
@@ -14,5 +18,9 @@ class RemoveOldFilterColumns < ActiveRecord::Migration[5.2]
       remove_column :custom_filters, :whole_word
       remove_column :custom_filters, :irreversible
     }
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration
   end
 end
