@@ -61,26 +61,21 @@ class PostStatusService < BaseService
       schedule_status!
     else
       return unless process_status!
-      if @options[:delayed].present? || @account&.user&.delayed_roars?
-        delay_for = [5, @account&.user&.delayed_for.to_i].max
-        delay_until = Time.now.utc + delay_for.seconds
-        opts = {
-          visibility: @visibility,
-          local_only: @local_only,
-          federate: @options[:federate],
-          distribute: @options[:distribute],
-          nocrawl: @options[:nocrawl],
-          nomentions: @options[:nomentions],
-          delete_after: @delete_after.nil? ? nil : @delete_after + 1.minute,
-          reject_replies: @options[:noreplies] || false,
-        }.compact
+      delay_for = (@options[:delayed].present? || @account&.user&.delayed_roars?) ? [5, @account&.user&.delayed_for.to_i].max : 1
+      delay_until = Time.now.utc + delay_for.seconds
+      opts = {
+        visibility: @visibility,
+        local_only: @local_only,
+        federate: @options[:federate],
+        distribute: @options[:distribute],
+        nocrawl: @options[:nocrawl],
+        nomentions: @options[:nomentions],
+        delete_after: @delete_after.nil? ? nil : @delete_after + 1.minute,
+        reject_replies: @options[:noreplies] || false,
+      }.compact
 
-        PostStatusWorker.perform_at(delay_until, @status.id, opts)
-        DistributionWorker.perform_async(@status.id, delayed = true) unless @options[:distribute] == false
-      else
-        postprocess_status!
-        bump_potential_friendship!
-      end
+      PostStatusWorker.perform_at(delay_until, @status.id, opts)
+      DistributionWorker.perform_async(@status.id, delayed = true) unless @options[:distribute] == false
     end
 
     redis.setex(idempotency_key, 3_600, @status.id) if idempotency_given?
@@ -201,9 +196,7 @@ class PostStatusService < BaseService
     return false if @status.destroyed?
 
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
-    process_mentions_service.call(@status) unless @options[:delayed].present? || @account&.user&.delayed_roars? || @options[:nomentions].present?
-
-    return true
+    true
   end
 
   def schedule_status!
@@ -223,19 +216,6 @@ class PostStatusService < BaseService
     end
   end
 
-  def postprocess_status!
-    LinkCrawlWorker.perform_async(@status.id) unless @options[:nocrawl] || @status.spoiler_text?
-    DistributionWorker.perform_async(@status.id) unless @options[:distribute] == false
-
-    unless @status.local_only? || @options[:distribute] == false || @options[:federate] == false
-      ActivityPub::DistributionWorker.perform_async(@status.id)
-    end
-
-    PollExpirationNotifyWorker.perform_at(@status.poll.expires_at, @status.poll.id) if @status.poll
-
-    @status.delete_after = @delete_after unless @delete_after.nil?
-  end
-
   def validate_media!
     return if @options[:media_ids].blank? || !@options[:media_ids].is_a?(Enumerable)
 
@@ -248,10 +228,6 @@ class PostStatusService < BaseService
 
   def language_from_option(str)
     ISO_639.find(str)&.alpha2
-  end
-
-  def process_mentions_service
-    ProcessMentionsService.new
   end
 
   def process_hashtags_service
@@ -284,13 +260,6 @@ class PostStatusService < BaseService
 
   def scheduled_in_the_past?
     @scheduled_at.present? && @scheduled_at <= Time.now.utc + MIN_SCHEDULE_OFFSET
-  end
-
-  def bump_potential_friendship!
-    return if !@status.reply? || @account.id == @status.in_reply_to_account_id
-    ActivityTracker.increment('activity:interactions')
-    return if @account.following?(@status.in_reply_to_account_id)
-    PotentialFriendshipTracker.record(@account.id, @status.in_reply_to_account_id, :reply)
   end
 
   def status_attributes
