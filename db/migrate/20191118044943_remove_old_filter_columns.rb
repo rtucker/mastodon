@@ -1,6 +1,6 @@
 class RemoveOldFilterColumns < ActiveRecord::Migration[5.2]
   def up
-    CustomFilters.find_each do |filter|
+    CustomFilter.find_each do |filter|
       filter.update!(phrase: "\"#{filter.phrase}\"") if filter.whole_word
     end
 
