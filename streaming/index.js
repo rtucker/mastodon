@@ -328,6 +328,11 @@ const startWorker = (workerId) => {
         output(event, encodedPayload);
       };
 
+      if (!req.accountId) {
+        log.error(req.requestId, `Unauthorized: ${accountId} is not logged in.`)
+        return;
+      }
+
       if (notificationOnly && event !== 'notification') {
         return;
       }
@@ -354,14 +359,14 @@ const startWorker = (workerId) => {
       const targetAccountIds = [unpackedPayload.account.id].concat(unpackedPayload.mentions.map(item => item.id));
       const accountDomain    = unpackedPayload.account.acct.split('@')[1];
 
-      if (Array.isArray(req.chosenLanguages) && unpackedPayload.language !== null && req.chosenLanguages.indexOf(unpackedPayload.language) === -1) {
-        log.silly(req.requestId, `Message ${unpackedPayload.id} filtered by language (${unpackedPayload.language})`);
-        return;
+      // Don't filter user's own events.
+      if (req.accountId === unpackedPayload.account.id) {
+        transmit();
+        return
       }
 
-      // When the account is not logged in, it is not necessary to confirm the block or mute
-      if (!req.accountId) {
-        transmit();
+      if (Array.isArray(req.chosenLanguages) && unpackedPayload.language !== null && req.chosenLanguages.indexOf(unpackedPayload.language) === -1) {
+        log.silly(req.requestId, `Message ${unpackedPayload.id} filtered by language (${unpackedPayload.language})`);
         return;
       }
 
