@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V1::Timelines::TagController < Api::BaseController
-  include FilterHelper
-
   before_action :load_tag
   after_action :insert_pagination_headers, unless: -> { @statuses.empty? }
 

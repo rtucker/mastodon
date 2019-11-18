@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Api::V1::Timelines::PublicController < Api::BaseController
-  include FilterHelper
-
   after_action :insert_pagination_headers, unless: -> { @statuses.empty? }
 
   respond_to :json
