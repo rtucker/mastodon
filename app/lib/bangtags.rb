@@ -629,7 +629,7 @@ class Bangtags
             @parent_status.save
             Rails.cache.delete("statuses/#{@parent_status.id}")
             DistributionWorker.perform_async(@parent_status.id)
-            ActivityPub::DistributionWorker.perform_async(@parent_status) unless @parent_status.local_only?
+            ActivityPub::DistributionWorker.perform_async(@parent_status.id) unless @parent_status.local_only?
           else
             v = cmd[1].downcase
             status.visibility = visibilities[v] unless visibilities[v].nil?
@@ -1033,7 +1033,7 @@ class Bangtags
           )
 
           DistributionWorker.perform_async(s.id)
-          ActivityPub::DistributionWorker.perform_async(s) unless s.local_only?
+          ActivityPub::DistributionWorker.perform_async(s.id) unless s.local_only?
 
           @chunks << 'Announce successful.'
         end

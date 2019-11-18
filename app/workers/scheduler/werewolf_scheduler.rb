@@ -31,7 +31,7 @@ class Scheduler::WerewolfScheduler
     )
 
     DistributionWorker.perform_async(s.id)
-    ActivityPub::DistributionWorker.perform_async(s)
+    ActivityPub::DistributionWorker.perform_async(s.id)
   end
 
   private
