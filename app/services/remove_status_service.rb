@@ -135,7 +135,7 @@ class RemoveStatusService < BaseService
       featured_tag.decrement(@status.id)
     end
 
-    return unless @status.public_visibility?
+    return unless @status.distributable?
 
     @tags.each do |hashtag|
       redis.publish("timeline:hashtag:#{hashtag}", @payload)
@@ -144,14 +144,14 @@ class RemoveStatusService < BaseService
   end
 
   def remove_from_public
-    return unless @status.public_visibility?
+    return unless @status.distributable?
 
     redis.publish('timeline:public', @payload)
     redis.publish('timeline:public:local', @payload) if @status.local?
   end
 
   def remove_from_media
-    return unless @status.public_visibility?
+    return unless @status.distributable?
 
     redis.publish('timeline:public:media', @payload)
     redis.publish('timeline:public:local:media', @payload) if @status.local?
