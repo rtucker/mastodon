@@ -118,6 +118,10 @@ class Status < ApplicationRecord
   scope :reply_not_excluded_by_account, ->(account) { where('statuses.in_reply_to_account_id IS NULL OR statuses.in_reply_to_account_id NOT IN (?)', account.excluded_from_timeline_account_ids) }
   scope :mention_not_excluded_by_account, ->(account) { left_outer_joins(:mentions).where('mentions.account_id IS NULL OR mentions.account_id NOT IN (?)', account.excluded_from_timeline_account_ids) }
   scope :not_domain_blocked_by_account, ->(account) { account.excluded_from_timeline_domains.blank? ? left_outer_joins(:account) : left_outer_joins(:account).where('accounts.domain IS NULL OR accounts.domain NOT IN (?)', account.excluded_from_timeline_domains) }
+
+  scope :not_string_filtered_by_account, ->(account) { where("statuses.normalized_text !~ ANY(ARRAY(#{account.custom_filters.select('unaccent(lower(phrase))').to_sql}))") }
+  scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
+
   scope :tagged_with_all, ->(tags) {
     Array(tags).map(&:id).map(&:to_i).reduce(self) do |result, id|
       result.joins("INNER JOIN statuses_tags t#{id} ON t#{id}.status_id = statuses.id AND t#{id}.tag_id = #{id}")
@@ -550,6 +554,8 @@ class Status < ApplicationRecord
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
       query = query.reply_not_excluded_by_account(account) unless tag_timeline
       query = query.mention_not_excluded_by_account(account)
+      query = query.not_string_filtered_by_account(account)
+      query = query.not_missing_media_desc if account.filter_undescribed?
       query.merge(account_silencing_filter(account))
     end
 
