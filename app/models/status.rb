@@ -119,7 +119,7 @@ class Status < ApplicationRecord
   scope :mention_not_excluded_by_account, ->(account) { left_outer_joins(:mentions).where('mentions.account_id IS NULL OR mentions.account_id NOT IN (?)', account.excluded_from_timeline_account_ids) }
   scope :not_domain_blocked_by_account, ->(account) { account.excluded_from_timeline_domains.blank? ? left_outer_joins(:account) : left_outer_joins(:account).where('accounts.domain IS NULL OR accounts.domain NOT IN (?)', account.excluded_from_timeline_domains) }
 
-  scope :not_string_filtered_by_account, ->(account) { where("statuses.normalized_text !~ ANY(ARRAY(SELECT unaccent(lower(phrase)) FROM custom_filters WHERE account_id = ?))", account.id) }
+  scope :not_string_filtered_by_account, ->(account) { where("statuses.normalized_text !~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))", account.id) }
   scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
   scope :tagged_with_all, ->(tags) {
