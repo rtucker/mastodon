@@ -8,7 +8,7 @@ class Api::V1::Timelines::PublicController < Api::BaseController
   respond_to :json
 
   def show
-    @statuses = current_account ? load_statuses.reject { |status| phrase_filtered?(status, current_account.id, 'public') } : load_statuses
+    @statuses = load_statuses
     render json: @statuses, each_serializer: REST::StatusSerializer, relationships: StatusRelationshipsPresenter.new(@statuses, current_user&.account_id)
   end
 

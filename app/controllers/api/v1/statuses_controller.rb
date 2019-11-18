@@ -19,8 +19,6 @@ class Api::V1::StatusesController < Api::BaseController
 
   def show
     @status = cache_collection([@status], Status).first
-    # make sure any custom cws are applied
-    phrase_filtered?(@status, current_account.id, 'thread') unless current_account.nil?
     render json: @status, serializer: REST::StatusSerializer
   end
 

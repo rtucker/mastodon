@@ -196,9 +196,6 @@ class StatusesController < ApplicationController
     @type         = @stream_entry.activity_type.downcase
     @sharekey     = params[:key]
 
-    # make sure any custom cws are applied
-    phrase_filtered?(@status, current_account.id, 'thread') unless current_account.nil?
-
     if @status.sharekey.present? && @sharekey == @status.sharekey
       skip_authorization
     elsif @account.block_anon && !user_signed_in?
