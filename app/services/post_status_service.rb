@@ -201,7 +201,7 @@ class PostStatusService < BaseService
     return false if @status.destroyed?
 
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
-    process_mentions_service.call(@status) unless @options[:delayed].present? || @account&.user&.delayed_roars? || @options[:nomentions]
+    process_mentions_service.call(@status) unless @options[:delayed].present? || @account&.user&.delayed_roars? || @options[:nomentions].present?
 
     return true
   end

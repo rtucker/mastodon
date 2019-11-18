@@ -14,7 +14,7 @@ class PostStatusWorker
     status.reject_replies = options[:reject_replies] if options[:reject_replies]
     status.save!
 
-    process_mentions_service.call(status) unless options[:nomentions]
+    process_mentions_service.call(status) unless options[:nomentions].present?
 
     LinkCrawlWorker.perform_async(status.id) unless options[:nocrawl] || status.spoiler_text?
     DistributionWorker.perform_async(status.id) unless options[:distribute] == false
