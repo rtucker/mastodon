@@ -27,7 +27,7 @@ class Settings::ProfilesController < Settings::BaseController
   private
 
   def account_params
-    params.require(:account).permit(:display_name, :note, :avatar, :header, :replies, :locked, :hidden, :unlisted, :block_anon, :gently, :kobold, :adult_content, :bot, :discoverable, fields_attributes: [:name, :value])
+    params.require(:account).permit(:display_name, :note, :avatar, :header, :replies, :locked, :hidden, :unlisted, :block_anon, :gently, :kobold, :adult_content, :bot, :discoverable, :filter_undescribed, fields_attributes: [:name, :value])
   end
 
   def set_account
