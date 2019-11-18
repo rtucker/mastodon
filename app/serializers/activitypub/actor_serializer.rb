@@ -82,7 +82,7 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
   end
 
   def summary
-    Formatter.instance.simplified_format(object)
+    Formatter.instance.simplified_format(object, skip_cache: true)
   end
 
   def icon
