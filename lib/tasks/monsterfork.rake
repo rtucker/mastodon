@@ -14,7 +14,7 @@ namespace :monsterfork do
           begin
             next if s.destroyed?
             s.update_column(:normalized_text, normalize_status(s))
-          rescue rescue ActiveRecord::RecordNotFound
+          rescue ActiveRecord::RecordNotFound
             true
           end
         end
