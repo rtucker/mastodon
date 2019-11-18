@@ -329,7 +329,6 @@ class Status < ApplicationRecord
   around_create Mastodon::Snowflake::Callbacks
 
   before_create :set_locality
-  before_create :update_normalized_text
 
   before_validation :prepare_contents, if: :local?
   before_validation :set_reblog
