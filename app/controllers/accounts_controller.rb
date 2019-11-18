@@ -67,7 +67,7 @@ class AccountsController < ApplicationController
     if reblogs_requested?
       scope = default_statuses.reblogs
     elsif replies_requested?
-      scope = @account.replies ? default_statuses : default_statuses.without_replies
+      scope = @account.replies ? default_statuses.without_reblogs : default_statuses.without_reblogs.without_replies
     elsif media_requested?
       scope = default_statuses.where(id: account_media_status_ids)
     elsif tag_requested?
