@@ -68,8 +68,6 @@ class ActivityPub::ProcessAccountService < BaseService
     set_immediate_attributes!
     set_fetchable_attributes! unless @options[:only_keys]
 
-    Rails.cache.delete("formatted_account:#{@account.id}")
-
     @account.save_with_optional_media!
   end
 

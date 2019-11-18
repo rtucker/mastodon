@@ -33,6 +33,6 @@ module TextHelper
   end
 
   def normalize_status(status)
-    normalize_text("#{status.tags.pluck(:name).join(' ')}\n#{status.spoiler_text}\n#{status.local? ? Formatter.instance.format(status, skip_cache: true, cache: false) : status.text}\n#{status.media_attachments.pluck(:description).join("\n")}")
+    normalize_text("#{status.tags.pluck(:name).join(' ')}\n#{status.spoiler_text}\n#{status.local? ? Formatter.instance.format(status) : status.text}\n#{status.media_attachments.pluck(:description).join("\n")}")
   end
 end

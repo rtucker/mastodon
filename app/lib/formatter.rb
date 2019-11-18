@@ -30,8 +30,6 @@ class Formatter
 
   include ActionView::Helpers::TextHelper
 
-  CACHE_TIME = 1.hour
-
 	BBCODE_TAGS = {
     url: {
 			html_open: '<a href="%url%" rel="noopener nofollow" target="_blank">', html_close: '</a>',
@@ -187,16 +185,6 @@ class Formatter
 	}
 
   def format(status, **options)
-    unless options[:skip_cache]
-      html = Rails.cache.fetch("formatted_status:#{status.id}")
-      unless html.nil?
-        html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
-        return html.html_safe # rubocop:disable Rails/OutputSafety
-      end
-    end
-
-    orig_status = status
-
     if status.reblog?
       prepend_reblog = status.reblog.account.acct
       status         = status.proper
@@ -214,9 +202,6 @@ class Formatter
 
     unless status.local?
       html = reformat(raw_content)
-
-      Rails.cache.write("formatted_status:#{orig_status.id}", html, expires_in: CACHE_TIME) unless options[:cache] == false
-
       html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
       return html.html_safe # rubocop:disable Rails/OutputSafety
     end
@@ -237,7 +222,6 @@ class Formatter
     end
 
     html = format_screenreader(html)
-
     html = encode_and_link_urls(html, linkable_accounts, keep_html: %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type))
 
     if %w(text/markdown text/x-bbcode text/x-bbcode+markdown text/html).include?(status.content_type)
@@ -255,8 +239,6 @@ class Formatter
       footer = encode_and_link_urls(footer)
       html = "#{html.strip}\n<p class=\"signature\">— #{footer}</p>"
     end
-
-    Rails.cache.write("formatted_status:#{orig_status.id}", html, expires_in: CACHE_TIME) unless options[:cache] == false
 
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
     html.html_safe # rubocop:disable Rails/OutputSafety
@@ -296,20 +278,11 @@ class Formatter
 
   def plaintext(status)
     return status.text if status.local?
-
     text = status.text.gsub(/(<br \/>|<br>|<\/p>)+/) { |match| "#{match}\n" }
     strip_tags(text)
   end
 
   def simplified_format(account, **options)
-    unless options[:skip_cache]
-      html = Rails.cache.fetch("formatted_account:#{account.id}")
-      unless html.nil?
-        html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if account.local? && options[:custom_emojify]
-        return html.html_safe # rubocop:disable Rails/OutputSafety
-      end
-    end
-
     if account.local?
       html = format_bbdown(account.note)
       html = encode_and_link_urls(html, keep_html: true)
@@ -317,8 +290,6 @@ class Formatter
     else
       html = reformat(account.note)
     end
-
-    Rails.cache.write("formatted_account:#{account.id}", html, expires_in: CACHE_TIME) unless options[:cache] == false
 
     html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if account.local? && options[:custom_emojify]
     html.html_safe # rubocop:disable Rails/OutputSafety
@@ -329,52 +300,19 @@ class Formatter
   end
 
   def format_spoiler(status, **options)
-    unless options[:skip_cache]
-      html = Rails.cache.fetch("formatted_spoiler:#{status.id}")
-      unless html.nil?
-        html = encode_custom_emojis(html, status.emojis, options[:autoplay])
-        return html.html_safe # rubocop:disable Rails/OutputSafety
-      end
-    end
-
     html = encode(status.spoiler_text)
-
-    Rails.cache.write("formatted_spoiler:#{status.id}", html, expires_in: CACHE_TIME) unless options[:cache] == false
-
     html = encode_custom_emojis(html, status.emojis, options[:autoplay])
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
 
   def format_poll_option(status, option, **options)
-    unless options[:skip_cache]
-      html = Rails.cache.fetch("formatted_poll:#{status.id}:#{option.id}")
-      unless html.nil?
-        html = encode_custom_emojis(html, status.emojis, options[:autoplay])
-        return html.html_safe # rubocop:disable Rails/OutputSafety
-      end
-    end
-
     html = encode(option.title)
-
-    Rails.cache.write("formatted_poll:#{status.id}:#{option.id}", html, expires_in: CACHE_TIME) unless options[:cache] == false
-
     html = encode_custom_emojis(html, status.emojis, options[:autoplay])
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
 
   def format_display_name(account, **options)
-    unless options[:skip_cache]
-      html = Rails.cache.fetch("formatted_display_name:#{account.id}")
-      unless html.nil?
-        html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if options[:custom_emojify]
-        return html.html_safe # rubocop:disable Rails/OutputSafety
-      end
-    end
-
     html = encode(account.display_name.presence || account.username)
-
-    Rails.cache.write("formatted_display_name:#{account.id}", html, expires_in: CACHE_TIME) unless options[:cache] == false
-
     html = encode_custom_emojis(html, account.emojis, options[:autoplay]) if options[:custom_emojify]
     html.html_safe # rubocop:disable Rails/OutputSafety
   end

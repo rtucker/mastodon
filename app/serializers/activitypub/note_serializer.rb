@@ -38,7 +38,7 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
   end
 
   def content
-    Formatter.instance.format(object, skip_cache: true)
+    Formatter.instance.format(object)
   end
 
   def source
@@ -48,7 +48,7 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
   end
 
   def content_map
-    { object.language => Formatter.instance.format(object, skip_cache: true) }
+    { object.language => Formatter.instance.format(object) }
   end
 
   def replies
