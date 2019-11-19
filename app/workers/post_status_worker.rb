@@ -9,8 +9,6 @@ class PostStatusWorker
     status = Status.find(status_id)
     return false if status.destroyed?
 
-    RemoveFromLocalTimelinesService.new.call(status)
-
     status.visibility = options[:visibility] if options[:visibility]
     status.local_only = options[:local_only] if options[:local_only]
     status.reject_replies = options[:reject_replies] if options[:reject_replies]
