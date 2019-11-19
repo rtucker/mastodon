@@ -6,7 +6,7 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
                      :reject_replies
 
   attributes :id, :type, :summary,
-             :in_reply_to, :published, :url,
+             :in_reply_to, :published, :updated, :url,
              :attributed_to, :to, :cc, :sensitive,
              :conversation, :source, :tails_never_fail,
              :reject_replies
@@ -83,6 +83,10 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
 
   def published
     object.created_at.iso8601
+  end
+
+  def updated
+    object.updated_at.iso8601
   end
 
   def url

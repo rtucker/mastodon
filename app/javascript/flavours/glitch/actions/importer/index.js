@@ -9,6 +9,9 @@ export const POLLS_IMPORT    = 'POLLS_IMPORT';
 function pushUnique(array, object) {
   if (array.every(element => element.id !== object.id)) {
     array.push(object);
+  } else {
+    const idx = array.findIndex(element => element.id === object.id);
+    array.splice(idx, 1, object);
   }
 }
 

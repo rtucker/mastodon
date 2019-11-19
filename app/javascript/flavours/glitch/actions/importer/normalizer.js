@@ -47,9 +47,10 @@ export function normalizeStatus(status, normalOldStatus) {
     normalStatus.poll = status.poll.id;
   }
 
-  // Only calculate these values when status first encountered
-  // Otherwise keep the ones already in the reducer
-  if (normalOldStatus) {
+  const oldUpdatedAt = normalOldStatus ? normalOldStatus.updated_at || normalOldStatus.created_at : null;
+  const newUpdatedAt = normalStatus ? normalStatus.updated_at || normalStatus.created_at : null;
+
+  if (normalOldStatus && oldUpdatedAt === newUpdatedAt) {
     normalStatus.search_index = normalOldStatus.get('search_index');
     normalStatus.contentHtml = normalOldStatus.get('contentHtml');
     normalStatus.spoilerHtml = normalOldStatus.get('spoilerHtml');

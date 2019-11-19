@@ -4,9 +4,9 @@ class REST::AccountSerializer < ActiveModel::Serializer
   include RoutingHelper
 
   attributes :id, :username, :acct, :display_name, :locked, :bot, :created_at,
-             :note, :url, :avatar, :avatar_static, :header, :header_static,
-             :followers_count, :following_count, :statuses_count, :replies,
-             :adult_content, :gently, :kobold, :role, :froze, :identity,
+             :updated_at, :note, :url, :avatar, :avatar_static, :header,
+             :header_static, :followers_count, :following_count, :statuses_count,
+             :replies, :adult_content, :gently, :kobold, :role, :froze, :identity,
              :limited, :signature
 
   has_one :moved_to_account, key: :moved, serializer: REST::AccountSerializer, if: :moved_and_not_nested?

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ActivityPub::ActivitySerializer < ActivityPub::Serializer
-  attributes :id, :type, :actor, :published, :to, :cc
+  attributes :id, :type, :actor, :published, :updated, :to, :cc
 
   has_one :proper, key: :object, serializer: ActivityPub::NoteSerializer, if: :serialize_object?
   attribute :proper_uri, key: :object, unless: :serialize_object?
@@ -20,6 +20,10 @@ class ActivityPub::ActivitySerializer < ActivityPub::Serializer
 
   def published
     object.created_at.iso8601
+  end
+
+  def updated
+    object.updated_at.iso8601
   end
 
   def to
