@@ -208,6 +208,16 @@ ActiveRecord::Schema.define(version: 2019_11_18_102858) do
     t.index ["target_account_id"], name: "index_blocks_on_target_account_id"
   end
 
+  create_table "bookmarks", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "status_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "status_id"], name: "index_bookmarks_on_account_id_and_status_id", unique: true
+    t.index ["account_id"], name: "index_bookmarks_on_account_id"
+    t.index ["status_id"], name: "index_bookmarks_on_status_id"
+  end
+
   create_table "conversation_mutes", force: :cascade do |t|
     t.bigint "conversation_id", null: false
     t.bigint "account_id", null: false
