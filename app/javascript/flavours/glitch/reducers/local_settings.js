@@ -15,7 +15,7 @@ const initialState = ImmutableMap({
   show_reply_count : false,
   always_show_spoilers_field: true,
   confirm_missing_media_description: true,
-  confirm_boost_missing_media_description: true,
+  confirm_boost_missing_media_description: false,
   confirm_before_clearing_draft: true,
   preselect_on_reply: true,
   inline_preview_cards: true,
