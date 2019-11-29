@@ -33,7 +33,7 @@ class MediaAttachment < ApplicationRecord
   IMAGE_MIME_TYPES             = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].freeze
   VIDEO_MIME_TYPES             = ['video/webm', 'video/mp4', 'video/quicktime'].freeze
   VIDEO_CONVERTIBLE_MIME_TYPES = ['video/webm', 'video/quicktime'].freeze
-  AUDIO_MIME_TYPES             = ['audio/mpeg', 'audio/mp4', 'audio/vnd.wav', 'audio/wav', 'audio/x-wav', 'audio/x-wave', 'audio/ogg', 'audio/flac',].freeze
+  AUDIO_MIME_TYPES             = ['audio/mpeg', 'audio/mp3', 'audio/mp4', 'audio/vnd.wav', 'audio/wav', 'audio/x-wav', 'audio/x-wave', 'audio/ogg', 'audio/flac',].freeze
 
   BLURHASH_OPTIONS = {
     x_comp: 4,
@@ -58,8 +58,8 @@ class MediaAttachment < ApplicationRecord
       format: 'mp4',
       convert_options: {
         output: {
-          filter_complex: '"[0:a]compand,showwaves=s=640x360:mode=line,format=yuv420p[v]"',
-          map: '"[v]" -map 0:a', 
+          filter_complex: '"[0:a]compand,showwavespic=s=640x360:colors=lime|green,format=yuv420p[v]"',
+          map: '"[v]" -map 0:a',
           threads: 2,
           vcodec: 'libx264',
           acodec: 'aac',
