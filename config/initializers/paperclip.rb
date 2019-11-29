@@ -89,4 +89,6 @@ Paperclip.options[:content_type_mappings] = {
   json:   %w(text/plain text/html application/json application/json+ld),
   jsonld: %w(text/plain text/html application/json application/json+ld),
   csv:    %w(text/plain),
+  mp3:    %w(audio/mpeg video/mpeg audio/mp4 video/mp4 audio/mp3),
+  mpga:   %w(audio/mpeg video/mpeg audio/mp4 video/mp4),
 }
