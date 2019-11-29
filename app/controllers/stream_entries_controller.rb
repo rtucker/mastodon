@@ -15,6 +15,8 @@ class StreamEntriesController < ApplicationController
   def show
     respond_to do |format|
       format.html do
+        use_pack 'public'
+
         expires_in 5.minutes, public: true unless @stream_entry.hidden?
 
         redirect_to short_account_status_url(params[:account_username], @stream_entry.activity)
