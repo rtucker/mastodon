@@ -11,7 +11,7 @@ class BlockDomainService < BaseService
     process_domain_block!
     invalidate_association_caches!
 
-    @domain_block.update(processing: false)
+    @domain_block.update!(processing: false)
   end
 
   private
