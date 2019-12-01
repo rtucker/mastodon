@@ -70,6 +70,7 @@ class DomainBlock < ApplicationRecord
 
   def set_processing
     return if processing
+    return unless (changed & %w(severity suspended_at silenced_at force_sensitive reject_media reject_reports reject_unknown)).any?
     self.processing = true
   end
 end
