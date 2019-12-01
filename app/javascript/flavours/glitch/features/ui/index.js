@@ -15,6 +15,7 @@ import { clearHeight } from 'flavours/glitch/actions/height_cache';
 import { submitMarkers } from 'flavours/glitch/actions/markers';
 import { WrappedSwitch, WrappedRoute } from 'flavours/glitch/util/react_router_helpers';
 import UploadArea from './components/upload_area';
+import PermaLink from 'flavours/glitch/components/permalink';
 import ColumnsAreaContainer from './containers/columns_area_container';
 import classNames from 'classnames';
 import Favico from 'favico.js';
@@ -51,7 +52,7 @@ import {
 } from 'flavours/glitch/util/async-components';
 import { HotKeys } from 'react-hotkeys';
 import { me } from 'flavours/glitch/util/initial_state';
-import { defineMessages, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 
 // Dummy import, to make sure that <Status /> ends up in the application bundle.
 // Without this it ends up in ~8 very commonly used bundles.
@@ -72,6 +73,7 @@ const mapStateToProps = state => ({
   unreadNotifications: state.getIn(['notifications', 'unread']),
   showFaviconBadge: state.getIn(['local_settings', 'notifications', 'favicon_badge']),
   hicolorPrivacyIcons: state.getIn(['local_settings', 'hicolor_privacy_icons']),
+  moved: state.getIn(['accounts', me, 'moved']) && state.getIn(['accounts', state.getIn(['accounts', me, 'moved'])]),
 });
 
 const keyMap = {
@@ -105,6 +107,7 @@ const keyMap = {
   bookmark: 'd',
   toggleCollapse: 'shift+x',
   toggleSensitive: 'h',
+  openMedia: 'e',
 };
 
 class SwitchingColumnsArea extends React.PureComponent {
@@ -254,6 +257,7 @@ class UI extends React.Component {
     dropdownMenuIsOpen: PropTypes.bool,
     unreadNotifications: PropTypes.number,
     showFaviconBadge: PropTypes.bool,
+    moved: PropTypes.map,
   };
 
   state = {
@@ -539,7 +543,7 @@ class UI extends React.Component {
 
   render () {
     const { draggingOver } = this.state;
-    const { children, layout, isWide, navbarUnder, location, dropdownMenuIsOpen } = this.props;
+    const { children, layout, isWide, navbarUnder, location, dropdownMenuIsOpen, moved } = this.props;
 
     const columnsClass = layout => {
       switch (layout) {
@@ -583,6 +587,17 @@ class UI extends React.Component {
     return (
       <HotKeys keyMap={keyMap} handlers={handlers} ref={this.setHotkeysRef} attach={window} focused>
         <div className={className} ref={this.setRef} style={{ pointerEvents: dropdownMenuIsOpen ? 'none' : null }}>
+          {moved && (<div className='flash-message alert'>
+            <FormattedMessage
+              id='moved_to_warning'
+              defaultMessage='This account is marked as moved to {moved_to_link}, and may thus not accept new follows.'
+              values={{ moved_to_link: (
+                <PermaLink href={moved.get('url')} to={`/accounts/${moved.get('id')}`}>
+                  @{moved.get('acct')}
+                </PermaLink>
+              )}}
+            />
+          </div>)}
           <SwitchingColumnsArea location={location} layout={layout} navbarUnder={navbarUnder} onLayoutChange={this.handleLayoutChange}>
             {children}
           </SwitchingColumnsArea>

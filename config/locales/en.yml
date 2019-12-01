@@ -406,6 +406,7 @@ en:
       are_you_sure: Are you sure?
       assign_to_self: Assign to me
       assigned: Assigned moderator
+      by_target_domain: Domain of reported account
       comment:
         none: None
       created_at: Reported
@@ -900,6 +901,10 @@ en:
       body: 'Your post was awooed by %{name}:'
       subject: "%{name} awooed your post"
       title: New boost
+  notifications:
+    email_events: Events for e-mail notifications
+    email_events_hint: 'Select events that you want to receive notifications for:'
+    other_settings: Other notifications settings
   number:
     human:
       decimal_units:
@@ -934,6 +939,8 @@ en:
   relationships:
     activity: Account activity
     dormant: Dormant
+    followers: Followers
+    following: Following
     last_active: Last active
     most_recent: Most recent
     moved: Moved
