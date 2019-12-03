@@ -417,7 +417,7 @@ const startWorker = (workerId) => {
         }
 
         const queries = [
-          client.query(`SELECT 1 FROM blocks WHERE (account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)})) OR (account_id = $2 AND target_account_id = $1) UNION SELECT 1 FROM mutes WHERE account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)}) UNION SELECT 1 FROM statuses WHERE id = $3 AND normalized_text ~ ANY(ARRAY(SELECT unaccent(lower(phrase)) FROM custom_filters WHERE account_id = $1)) UNION SELECT 1 FROM media_attachments WHERE (1 = (SELECT 1 FROM accounts WHERE id = $1 AND filter_undescribed)) AND status_id = $3 AND description IS NULL LIMIT 1`, [req.accountId, unpackedPayload.account.id, unpackedPayload.id].concat(targetAccountIds)),
+          client.query(`SELECT 1 FROM blocks WHERE (account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)})) OR (account_id = $2 AND target_account_id = $1) UNION SELECT 1 FROM mutes WHERE account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)}) UNION SELECT 1 FROM statuses WHERE id = $3 AND normalized_text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = $1)) UNION SELECT 1 FROM media_attachments WHERE (1 = (SELECT 1 FROM accounts WHERE id = $1 AND filter_undescribed)) AND status_id = $3 AND description IS NULL LIMIT 1`, [req.accountId, unpackedPayload.account.id, unpackedPayload.id].concat(targetAccountIds)),
         ];
 
         if (accountDomain) {
