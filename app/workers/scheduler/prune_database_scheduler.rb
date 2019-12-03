@@ -15,13 +15,6 @@ class Scheduler::PruneDatabaseScheduler
       BatchedRemoveStatusService.new.call(status)
     end
 
-    # prune leaves of threads that lost their context after a suspension
-    # keeping these around eats a pretty good amount of storage
-    deleted_mentions = Mention.where(account_id: suspended_accounts).select(:status_id)
-    Status.remote.where(account_id: deleted_mentions).in_batches do |status|
-      BatchedRemoveStatusService.new.call(status)
-    end
-
     # remove mention entries that have no status or account attached to them
     Mention.where(account_id: nil).in_batches.destroy_all
     Mention.where(status_id: nil).in_batches.destroy_all
