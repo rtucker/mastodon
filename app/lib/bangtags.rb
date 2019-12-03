@@ -312,7 +312,7 @@ class Bangtags
               if status.conversation_id.present?
                 roars = Status.where(conversation_id: status.conversation_id, account_id: @account.id)
                 earliest_roar = roars.last # The results are in reverse-chronological order.
-                if cmd[2] == 'new' || earlist_roar.sharekey.blank?
+                if cmd[2] == 'new' || earliest_roar.sharekey.blank?
                   sharekey = SecureRandom.urlsafe_base64(32)
                   earliest_roar.sharekey = sharekey
                   earliest_roar.save
