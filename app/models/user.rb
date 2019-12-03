@@ -520,6 +520,8 @@ class User < ApplicationRecord
   end
 
   def detect_spam!
+    return false if valid_invitation? || external?
+
     janitor = janitor_account || Account.representative
 
     intro = self.invite_request&.text
