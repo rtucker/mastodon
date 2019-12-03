@@ -12,6 +12,10 @@ class Feed
     from_redis(limit, max_id, since_id, min_id)
   end
 
+  def size
+    redis.zcount(key, '-inf', '+inf') || 0
+  end
+
   protected
 
   def from_redis(limit, max_id, since_id, min_id)
