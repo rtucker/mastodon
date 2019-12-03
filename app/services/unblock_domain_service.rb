@@ -6,6 +6,7 @@ class UnblockDomainService < BaseService
   def call(domain_block, destroy_domain_block = true)
     @domain_block = domain_block
     process_retroactive_updates
+    clear_filtered_status_cache
     domain_block.destroy if destroy_domain_block
   end
 
@@ -14,6 +15,11 @@ class UnblockDomainService < BaseService
     if @domain_block.force_sensitive?
       blocked_accounts.where(force_sensitive: true).in_batches.update_all(force_sensitive: false)
     end
+  end
+
+  def clear_filtered_status_cache
+    keys = redis.keys("filtered_statuses:*")
+    redis.del(*keys) unless keys.empty?
   end
 
   def blocked_accounts
