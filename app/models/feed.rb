@@ -16,6 +16,15 @@ class Feed
     redis.zcount(key, '-inf', '+inf') || 0
   end
 
+  def all
+    unhydrated = redis.zrange(key, 0, -1, with_scores: true).map(&:first).map(&:to_i)
+    Status.where(id: unhydrated)
+  end
+
+  def all_cached
+    all.cache_ids
+  end
+
   protected
 
   def from_redis(limit, max_id, since_id, min_id)
