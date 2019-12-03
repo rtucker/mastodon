@@ -430,9 +430,11 @@ export default class MediaGallery extends React.PureComponent {
           {children}
         </div>
 
-        <div className='media-caption'>
-          {descriptions}
-        </div>
+        {visible && (
+          <div className='media-caption'>
+            {descriptions}
+          </div>
+        )}
       </React.Fragment>
     );
   }
