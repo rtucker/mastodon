@@ -405,8 +405,7 @@ class Bangtags
             Bookmark.find_or_create_by!(account: @account, status: @parent_status)
             next if @parent_status.curated || !@parent_status.distributable?
             next if @parent_status.reply? && @status.in_reply_to_account_id != @account.id
-            @parent_status.curated = true
-            @parent_status.save
+            @parent_status.update(curated: true)
             FanOutOnWriteService.new.call(@parent_status)
           when 'fetch', 'refetch'
             chunk = nil

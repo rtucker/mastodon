@@ -41,8 +41,7 @@ class Api::V1::Statuses::BookmarksController < Api::BaseController
 
   def curate_status(status)
     return if status.curated || !status.distributable? || (status.reply? && status.in_reply_to_account_id != status.account_id)
-    status.curated = true
-    status.save
+    status.update(curated: true)
     FanOutOnWriteService.new.call(status)
   end
 end
