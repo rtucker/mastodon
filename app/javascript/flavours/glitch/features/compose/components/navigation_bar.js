@@ -30,6 +30,10 @@ export default class NavigationBar extends ImmutablePureComponent {
             href={ profileLink }
           ><FormattedMessage id='navigation_bar.edit_profile' defaultMessage='Edit profile' /></a>
         )}
+
+        <Permalink className='drafts' href='/tags/self.draft' to='/timelines/tag/self.draft'>
+          <FormattedMessage id='navigation_bar.drafts' defaultMessage='Show drafts' />
+        </Permalink>
       </div>
     );
   };
