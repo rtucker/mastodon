@@ -114,6 +114,13 @@ class PostStatusService < BaseService
       VISIBILITY_RANK[@visibility] < VISIBILITY_RANK[@in_reply_to.visibility]
   end
 
+  def limit_visibility_if_draft
+    if @tags.include?('self.draft') || @preloaded_tags.include?('self.draft')
+      @visibility = :direct
+      @local_only = true
+    end
+  end
+
   def unfilter_thread_on_reply
     Redis.current.srem("filtered_threads:#{@account.id}", @in_reply_to.conversation_id)
   end
@@ -157,6 +164,7 @@ class PostStatusService < BaseService
     set_local_only
     set_initial_visibility
     limit_visibility_if_silenced
+    limit_visibility_if_draft
 
     unless @in_reply_to.nil?
       mark_recipient_known
