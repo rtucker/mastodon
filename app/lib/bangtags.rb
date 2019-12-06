@@ -77,7 +77,7 @@ class Bangtags
     status.text.gsub!('#!!', "#\ufdd6!")
 
     status.text.split(/(#!(?:.*:!#|{.*?}|[^\s#]+))/).each do |chunk|
-      if @vore_stack.last == '_draft' || (@chunks.present? && @chunks.first.include?('#!draft'))
+      if @vore_stack.last == '_draft' || (@chunks.present? && status.draft?)
         chunk.gsub("#\ufdd6!", '#!')
         @chunks << chunk
       elsif chunk.starts_with?("#!")
@@ -543,10 +543,8 @@ class Bangtags
           end
         when 'draft'
           chunk = nil
-          @chunks.insert(0, "[center]`#!draft!#`[/center]\n") unless @chunks.present? && @chunks.first.include?('#!draft')
           @status.visibility = :direct
           @status.local_only = true
-          @status.content_type = 'text/x-bbcode+markdown'
           @vore_stack.push('_draft')
           @component_stack.push(:var)
           add_tags(status, 'self.draft')

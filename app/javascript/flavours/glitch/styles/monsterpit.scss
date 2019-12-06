@@ -19,6 +19,10 @@
       color: darken($secondary-text-color, 20%);
     }
   }
+  h1.draft {
+    color: lighten($dark-text-color, 20%);
+    text-align: center;
+  }
   span.cursor {
     color: lighten($dark-text-color, 20%);
     font-family: $font-monospace, monospace;
@@ -37,6 +41,10 @@
     a {
       color: darken($secondary-text-color, 50%);
     }
+  }
+  h1.draft {
+    color: $dark-text-color;
+    text-align: center;
   }
 }
 

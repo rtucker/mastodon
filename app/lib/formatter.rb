@@ -240,6 +240,10 @@ class Formatter
       html = "#{html.strip}\n<p class=\"signature\">— #{footer}</p>"
     end
 
+    if status.draft?
+      html = "<h1 class=\"draft\">Draft</h1>\n#{html}"
+    end
+
     html = encode_custom_emojis(html, status.emojis, options[:autoplay]) if options[:custom_emojify]
     html.html_safe # rubocop:disable Rails/OutputSafety
   end

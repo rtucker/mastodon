@@ -227,7 +227,7 @@ class Status < ApplicationRecord
   end
 
   def draft?
-    local? && text.present? && text.include?('#!draft')
+    local? && text.present? && self.tags.where(name: 'self.draft').exists?
   end
 
   def target
