@@ -127,15 +127,11 @@ class BlockDomainService < BaseService
   end
 
   def known_account_ids
-    local_accounts | packmates | boosted_authors | faved_authors
+    local_accounts | packmates | boosted_authors
   end
 
   def boosted_authors
     Status.where(id: Status.local.reblogs.reorder(nil).select(:reblog_of_id)).reorder(nil).pluck(:account_id)
-  end
-
-  def faved_authors
-    Status.where(id: Favourite.select(:status_id)).reorder(nil).pluck(:account_id)
   end
 
   def local_accounts

@@ -17,8 +17,6 @@ class FavouriteService < BaseService
 
     favourite = Favourite.create!(account: account, status: status)
 
-    status.account.mark_known! unless !Setting.auto_mark_known || status.account.known?
-
     curate_status(status)
     create_notification(favourite) unless skip_notify
     bump_potential_friendship(account, status)
