@@ -104,7 +104,7 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def copy_policy_of_parent_domain
     domain_parts = @domain.split('.')
-    domains = (1..domain_parts.count-1).map { |i| domain_parts[i..-1] }
+    domains = (1..domain_parts.count-1).map { |i| domain_parts[i..-1].join('.') }
     return if domains.empty?
 
     existing_policy = DomainBlock.find_by(domain: domains)
