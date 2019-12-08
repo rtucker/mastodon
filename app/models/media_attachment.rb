@@ -183,13 +183,6 @@ class MediaAttachment < ApplicationRecord
     audio? || video?
   end
 
-  def blocked?
-    domains = Set[self.account.domain]
-    domains.add(remote_url.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first) if remote_url.present?
-    blocks = DomainBlock.suspend.or(DomainBlock.where(reject_media: true))
-    domains.any? { |domain| blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists? }
-  end
-
   def variant?(other_file_name)
     return true if file_file_name == other_file_name
 
