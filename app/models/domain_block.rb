@@ -61,6 +61,10 @@ class DomainBlock < ApplicationRecord
     additionals
   end
 
+  def template
+    self.attributes.except('id', 'domain', 'created_at', 'updated_at', 'processing')
+  end
+
   # workaround for the domain policy editor
   def undo
     return false
