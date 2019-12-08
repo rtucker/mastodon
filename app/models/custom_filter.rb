@@ -19,8 +19,10 @@ class CustomFilter < ApplicationRecord
 
   validates :phrase, presence: true
 
-  after_save :update_feeds
   after_save :remove_cache
+  after_save :update_feeds
+
+  after_destroy :remove_cache
 
   private
 
