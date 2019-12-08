@@ -22,7 +22,7 @@ class UserSettingsDecorator
     user.settings['larger_menus']        = larger_menus_preference if change?('setting_larger_menus')
     user.settings['larger_buttons']      = larger_buttons_preference if change?('setting_larger_buttons')
     user.settings['larger_drawer']       = larger_drawer_preference if change?('setting_larger_drawer')
-    user.settings['remove_filtered']     = remove_filtered_preference if change?('setting_remove_filtered')
+    user.settings['filter_mentions']     = filter_mentions_preference if change?('setting_filter_mentions')
     user.settings['hide_replies_muted']  = hide_replies_muted_preference if change?('setting_hide_replies_muted')
     user.settings['hide_replies_blocked']= hide_replies_blocked_preference if change?('setting_hide_replies_blocked')
     user.settings['hide_replies_blocker']= hide_replies_blocker_preference if change?('setting_hide_replies_blocker')
@@ -88,8 +88,8 @@ class UserSettingsDecorator
     boolean_cast_setting 'setting_larger_emoji'
   end
 
-  def remove_filtered_preference
-    boolean_cast_setting 'setting_remove_filtered'
+  def filter_mentions_preference
+    boolean_cast_setting 'setting_filter_mentions'
   end
 
   def hide_replies_muted_preference

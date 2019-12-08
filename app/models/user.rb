@@ -122,7 +122,7 @@ class User < ApplicationRecord
     :larger_buttons,
     :larger_drawer,
     :larger_emoji,
-    :remove_filtered,
+    :filter_mentions,
     :hide_replies_muted,
     :hide_replies_blocked,
     :hide_replies_blocker,
@@ -268,8 +268,8 @@ class User < ApplicationRecord
     @wants_larger_emoji ||= (settings.larger_emoji || false)
   end
 
-  def hides_filtered_gap?
-    @hides_filtered_gap ||= (settings.remove_filtered || false)
+  def filters_mentions?
+    @filters_mentions ||= (settings.filter_mentions || false)
   end
 
   def hides_replies_of_muted?

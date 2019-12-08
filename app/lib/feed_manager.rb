@@ -155,6 +155,15 @@ class FeedManager
   end
 
   def filter_from_home?(status, receiver_id)
+    return true if redis.sismember("filtered_statuses:#{receiver_id}", status.id)
+    if _filter_from_home?(status, receiver_id)
+      redis.sadd("filtered_statuses:#{receiver_id}", status.id)
+      return true
+    end
+    false
+  end
+
+  def _filter_from_home?(status, receiver_id)
     return false if receiver_id == status.account_id
     return true  if status.reply? && (status.in_reply_to_id.nil? || status.in_reply_to_account_id.nil?)
     return true  if phrase_filtered?(status, receiver_id)
@@ -187,7 +196,7 @@ class FeedManager
 
   def filter_from_mentions?(status, receiver_id)
     return true if receiver_id == status.account_id
-    return true if phrase_filtered?(status, receiver_id)
+    return true if Account.find(receiver_id)&.user&.filters_mentions? && phrase_filtered?(status, receiver_id)
 
     # This filter is called from NotifyService, but already after the sender of
     # the notification has been checked for mute/block. Therefore, it's not

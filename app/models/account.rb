@@ -144,6 +144,7 @@ class Account < ApplicationRecord
            :hides_stats?,
            :shows_application?,
 
+           :filters_mentions?,
            :hides_replies_of_muted?,
            :hides_replies_of_blocked?,
            :hides_replies_of_blocker?,
@@ -156,7 +157,6 @@ class Account < ApplicationRecord
            :wants_larger_buttons?,
            :wants_larger_drawer?,
            :wants_larger_emoji?,
-           :hides_filtered_gap?,
            :hides_mascot?,
            :hides_captions?,
            :shows_cursor?,
