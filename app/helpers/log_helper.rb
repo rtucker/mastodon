@@ -6,7 +6,11 @@ module LogHelper
     case action
     when :create
       if target.is_a? DomainBlock
-        LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> applied a #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''} policy on '#{target.domain}'\u200b.\n\nReview (moderators only): https://#{web_domain}/admin/instances/#{target.domain}\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
+        if source.is_a? DomainBlock
+          LogWorker.perform_async("\xf0\x9f\x9a\xab Applied the existing #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''} policy set on '#{source.domain}' to '#{target.domain}'\u200b.\n\nReview (moderators only): https://#{web_domain}/admin/instances/#{target.domain}")
+        else
+          LogWorker.perform_async("\xf0\x9f\x9a\xab <#{source}> applied a #{target.severity}#{target.force_sensitive? ? " and force sensitive media" : ''}#{target.reject_media? ? " and reject media" : ''}#{target.reject_unknown? ? " and reject unknown accounts" : ''} policy on '#{target.domain}'\u200b.\n\nReview (moderators only): https://#{web_domain}/admin/instances/#{target.domain}\n\n#{target.reason? ? "Comment: #{target.reason}" : ''}")
+        end
       elsif target.is_a? EmailDomainBlock
         LogWorker.perform_async("\u26d4 <#{source}> added a registration block on email domain '#{target.domain}'.\n\nReview (moderators only): https://#{web_domain}/admin/email_domain_blocks")
       elsif target.is_a? CustomEmoji

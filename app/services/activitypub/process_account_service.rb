@@ -23,7 +23,8 @@ class ActivityPub::ProcessAccountService < BaseService
 
         is_new_account = @account.nil?
         if is_new_account
-          set_reject_unknown_policy if Setting.auto_reject_unknown
+          copy_policy_of_parent_domain
+          set_reject_unknown_policy if Setting.auto_reject_unknown && new_domain?
           create_account
         end
         update_account
@@ -101,11 +102,29 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.moved_to_account  = @json['movedTo'].present? ? moved_account : nil
   end
 
+  def copy_policy_of_parent_domain
+    domain_parts = @domain.split('.')
+    domains = (1..domain_parts.count-1).map { |i| domain_parts[i..-1] }
+    return if domains.empty?
+
+    existing_policy = DomainBlock.find_by(domain: domains)
+    return if existing_policy.nil?
+
+    policy_attributes = existing_policy.template
+    policy_attributes['domain'] = @domain
+    policy = DomainBlock.create!(policy_attributes)
+    user_friendly_action_log(existing_policy, :create, policy)
+
+    @new_domain = false
+  end
+
   def set_reject_unknown_policy
-    unless Account.where(domain: @domain).exists? || DomainBlock.where(domain: @domain).exists?
-      policy = DomainBlock.create!(domain: @domain, severity: :noop, reject_unknown: true)
-      user_friendly_action_log(nil, :mark_unknown, @domain)
-    end
+    policy = DomainBlock.create!(domain: @domain, severity: :noop, reject_unknown: true)
+    user_friendly_action_log(nil, :mark_unknown, @domain)
+  end
+
+  def new_domain?
+    @new_domain ||= !(Account.where(domain: @domain).exists? || DomainBlock.where(domain: @domain).exists?)
   end
 
   def after_key_change!
