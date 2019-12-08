@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UnblockDomainService < BaseService
+  include Redisable
+
   attr_accessor :domain_block
 
   def call(domain_block, destroy_domain_block = true)
