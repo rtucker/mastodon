@@ -2,17 +2,23 @@
 
 class ActivityPub::FetchAccountStatusesService < BaseService
   include JsonLdHelper
+  include Redisable
 
   MAX_PAGES = 50
 
   def call(account, url = nil)
     @account = account
-    return if account.local? || account.suspended?
+    return if account.local? || account.suspended? || redis.get('busy_key')
 
-    page = 1
+    redis.set(busy_key, 1, ex: 3.days)
+
+    @items = Rails.cache.fetch(sync_key) || []
+
+    return if redis.get(cooldown_key) && @items.empty?
+    redis.set(cooldown_key, 1, ex: 1.day)
 
     @json = fetch_collection(url || account.outbox_url)
-    @items = Rails.cache.fetch("account_sync:#{account.id}") || []
+    page = 1
 
     if @items.empty?
       until page == MAX_PAGES || @json.blank?
@@ -24,14 +30,31 @@ class ActivityPub::FetchAccountStatusesService < BaseService
       end
     end
 
-    Rails.cache.write("account_sync:#{account.id}", @items, expires_in: 1.day)
+    Rails.cache.write(sync_key, @items, expires_in: 1.day)
+
     process_items(@items)
-    Rails.cache.delete("account_sync:#{account.id}")
+
+    Rails.cache.delete(sync_key)
+    redis.expire(cooldown_key, 1.week)
 
     @items
+  ensure
+    redis.del(busy_key)
   end
 
   private
+
+  def sync_key
+    "account_sync:#{@account.id}"
+  end
+
+  def busy_key
+    "account_sync:#{@account.id}:busy"
+  end
+
+  def cooldown_key
+    "account_sync:#{@account.id}:cooldown"
+  end
 
   def fetch_collection(collection_or_uri)
     return collection_or_uri if collection_or_uri.is_a?(Hash)
