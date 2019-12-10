@@ -14,7 +14,7 @@ class ActivityPub::FetchAccountStatusesService < BaseService
 
     @items = Rails.cache.fetch(sync_key) || []
 
-    return if redis.get(cooldown_key) && @items.empty?
+    return if redis.get(cooldown_key).present? && @items.empty?
     redis.set(cooldown_key, 1, ex: 1.day)
 
     @json = fetch_collection(url || account.outbox_url)
@@ -91,7 +91,7 @@ class ActivityPub::FetchAccountStatusesService < BaseService
 
   def process_item(item)
     return unless item.is_a?(Hash) && item['type'].present?
-    ActivityPub::Activity.factory(item, @account, override_timestamps: true, requested: true)&.perform
+    ActivityPub::Activity.factory(item, @account, requested: true)&.perform
   rescue => e
     Rails.logger.error("Failed to process #{item['type']} #{item['id']} due to #{e}: #{e.message}")
     Rails.logger.error("Stack trace: #{backtrace.map {|l| "  #{l}\n"}.join}")
