@@ -54,7 +54,11 @@ class AccountPolicy < ApplicationPolicy
   end
 
   def redownload?
-    admin?
+    staff?
+  end
+
+  def sync?
+    staff?
   end
 
   def remove_avatar?

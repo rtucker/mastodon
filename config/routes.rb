@@ -199,6 +199,7 @@ Rails.application.routes.draw do
         post :unsilence
         post :unsuspend
         post :redownload
+        post :sync
         post :remove_avatar
         post :remove_header
         post :memorialize

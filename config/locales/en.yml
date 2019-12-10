@@ -158,6 +158,7 @@ en:
       public: Public
       push_subscription_expires: PuSH subscription expires
       redownload: Refresh profile
+      sync: Synchronize
       reject: Reject
       reject_all: Reject all
       remove_avatar: Remove avatar

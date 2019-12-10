@@ -2,8 +2,8 @@
 
 module Admin
   class AccountsController < BaseController
-    before_action :set_account, only: [:show, :redownload, :remove_avatar, :remove_header, :enable, :mark_known, :mark_unknown, :allow_public, :allow_nonsensitive, :unsilence, :unsuspend, :memorialize, :approve, :reject]
-    before_action :require_remote_account!, only: [:redownload]
+    before_action :set_account, only: [:show, :redownload, :remove_avatar, :remove_header, :enable, :mark_known, :mark_unknown, :allow_public, :allow_nonsensitive, :unsilence, :unsuspend, :memorialize, :approve, :reject, :sync]
+    before_action :require_remote_account!, only: [:redownload, :sync]
     before_action :require_local_account!, only: [:enable, :memorialize, :approve, :reject]
 
     def index
@@ -106,6 +106,16 @@ module Admin
 
       @account.update!(last_webfingered_at: nil)
       ResolveAccountService.new.call(@account)
+
+      redirect_to admin_account_path(@account.id)
+    end
+
+    def sync
+      authorize @account, :sync?
+
+      @account.update!(last_webfingered_at: nil)
+      ResolveAccountService.new.call(@account)
+      SyncRemoteAccountWorker.perform_async(@account.id)
 
       redirect_to admin_account_path(@account.id)
     end

@@ -191,6 +191,7 @@
         = link_to t('admin.accounts.memorialize'), memorialize_admin_account_path(@account.id), method: :post, data: { confirm: t('admin.accounts.are_you_sure') }, class: 'button button--destructive' if can?(:memorialize, @account)
     - else
       = link_to t('admin.accounts.redownload'), redownload_admin_account_path(@account.id), method: :post, class: 'button' if can?(:redownload, @account)
+      = link_to t('admin.accounts.sync'), sync_admin_account_path(@account.id), method: :post, class: 'button' if can?(:sync, @account)
 
   %hr.spacer/
 
