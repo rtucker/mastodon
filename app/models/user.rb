@@ -117,6 +117,7 @@ class User < ApplicationRecord
     :always_local,
     :rawr_federated,
     :hide_stats,
+    :force_lowercase,
     :hide_captions,
     :larger_menus,
     :larger_buttons,
@@ -366,6 +367,10 @@ class User < ApplicationRecord
 
   def hides_stats?
     @hides_stats ||= (settings.hide_stats || false)
+  end
+
+  def forces_lowercase?
+    @force_lowercase ||= (settings.force_lowercase || false)
   end
 
   def hides_captions?

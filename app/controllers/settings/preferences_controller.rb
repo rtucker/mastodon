@@ -37,6 +37,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_always_local,
       :setting_rawr_federated,
       :setting_hide_stats,
+      :setting_force_lowercase,
       :setting_hide_captions,
       :setting_larger_menus,
       :setting_larger_buttons,

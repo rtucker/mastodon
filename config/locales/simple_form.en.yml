@@ -140,7 +140,7 @@ en:
         setting_always_local: Don't send your roars outside Monsterpit
         setting_rawr_federated: Show raw world timeline (may contain offensive content!)
         setting_hide_stats: Hide statistics on public pages
-        setting_disable_color: Ignore text color formatting
+        setting_force_lowercase: make everything lowercase
         setting_hide_captions: Hide media captions
         setting_larger_menus: Increase size and spacing of menu items
         setting_larger_buttons: Increase size and spacing of action buttons

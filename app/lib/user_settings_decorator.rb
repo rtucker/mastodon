@@ -30,6 +30,7 @@ class UserSettingsDecorator
     user.settings['hide_mntions_blocked']= hide_mntions_blocked_preference if change?('setting_hide_mntions_blocked')
     user.settings['hide_mntions_blocker']= hide_mntions_blocker_preference if change?('setting_hide_mntions_blocker')
     user.settings['hide_mntions_packm8'] = hide_mntions_packm8_preference if change?('setting_hide_mntions_packm8')
+    user.settings['force_lowercase']     = force_lowercase_preference if change?('setting_force_lowercase')
     user.settings['hide_captions']       = hide_captions_preference if change?('setting_hide_captions')
     user.settings['hide_mascot']         = hide_mascot_preference if change?('setting_hide_mascot')
     user.settings['hide_interactions']   = hide_interactions_preference if change?('setting_hide_interactions')
@@ -202,6 +203,10 @@ class UserSettingsDecorator
 
   def hide_stats_preference
     boolean_cast_setting 'setting_hide_stats'
+  end
+
+  def force_lowercase_preference
+    boolean_cast_setting 'setting_force_lowercase'
   end
 
   def hide_captions_preference

@@ -87,6 +87,10 @@
         :css
           span.cursor:hover { animation: t_blink 1s linear infinite }
 
+    - if current_account&.user_forces_lowercase?
+      :css
+        * { text-transform: lowercase; font-variant: inherit !important; }
+
   %body{ class: body_classes }
     = content_for?(:content) ? yield(:content) : yield
 

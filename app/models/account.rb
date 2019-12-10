@@ -160,6 +160,7 @@ class Account < ApplicationRecord
            :hides_mascot?,
            :hides_captions?,
            :shows_cursor?,
+           :forces_lowercase?,
 
            to: :user,
            prefix: true,
