@@ -29,12 +29,12 @@ module TextHelper
   end
 
   def normalize_status(status)
-    "#{_format_tags(status)}\n#{_format_spoiler(status)}\n#{_format_status(status)}\n#{_format_desc(status)}".delete("\n\n").strip
+    "#{_format_tags(status)}\n#{_format_spoiler(status)}\n#{_format_status(status)}\n#{_format_desc(status)}".strip
   end
 
   def _format_tags(status)
     return unless status.tags.present?
-    "tags #{status.tags.pluck(:name).join("\ntags ")}"
+    "tag #{status.tags.pluck(:name).join("\ntag ")}"
   end
 
   def _format_spoiler(status)

@@ -7,8 +7,8 @@ module SearchHelper
 
     if query.include?(':')
       query_parts = query.split(':', 2)
-      if query_parts[0] == 'tags'
-        query = "^tags .*(#{query_parts[1].split.join('|')})"
+      if %w(tag tags).include?(query_parts[0])
+        query = "^tag (#{query_parts[1].split.join('|')})"
       elsif %w(subj text desc).include?(query_parts[0])
         query = "^#{query_parts[0]} .*#{query_parts[1]}"
       end
