@@ -17,6 +17,8 @@ class FollowService < BaseService
 
     target_account.mark_known! unless !Setting.auto_mark_known || target_account.known?
 
+    SyncRemoteAccountWorker.perform_async(target_account.id) unless target_account.local? || target_account.passive_relationships.exists?
+
     if source_account.following?(target_account)
       # We're already following this account, but we'll call follow! again to
       # make sure the reblogs status is set correctly.
