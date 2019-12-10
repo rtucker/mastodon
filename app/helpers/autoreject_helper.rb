@@ -17,10 +17,6 @@ module AutorejectHelper
     blocks = DomainBlock.suspend
     return [:domain, uri] if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
 
-    domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
-    blocks = DomainBlock.suspend
-    return [:domain, uri] if blocks.where(domain: domain).or(blocks.where('domain LIKE ?', "%.#{domain}")).exists?
-
     if @json
       oid = @json['id']
       if oid
