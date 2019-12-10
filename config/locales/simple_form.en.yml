@@ -45,7 +45,7 @@ en:
         setting_skin: Reskins the selected Mastodon flavour
         setting_theme: Affects how Mastodon looks when you're logged in from any device.
         username: Your username will be unique on %{domain}
-        phrase_html: "<code>&quot;thing&quot;</code> - match whole words<br/><code>tags: &quot;thing&quot;</code> - match tags</code><br/><code>subj: thing</code> - match subject or CW</code><br/><code>text: thing</code> - match text<br/><code>desc: thing</code> - match media descriptions"
+        phrase_html: "<code>&quot;thing&quot;</code> - match whole words<br/><code>tags: &quot;tag1&quot; tag2 ...</code> - match tags (don't include <code>#</code>)<br/><code>subj: thing</code> - match subject or CW</code><br/><code>text: thing</code> - match text<br/><code>desc: thing</code> - match media descriptions"
       featured_tag:
         name: 'You might want to use one of these:'
       imports:
