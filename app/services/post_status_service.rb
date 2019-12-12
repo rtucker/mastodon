@@ -55,6 +55,7 @@ class PostStatusService < BaseService
 
     raise Mastodon::LengthValidationError, I18n.t('statuses.replies_rejected') if recipient_rejects_replies?
     raise Mastodon::LengthValidationError, I18n.t('statuses.kicked') if kicked?
+    raise Mastodon::LengthValidationError, I18n.t('statuses.no_body') if has_only_mentions?
 
     return idempotency_duplicate if idempotency_given? && idempotency_duplicate?
 
@@ -96,6 +97,10 @@ class PostStatusService < BaseService
 
   def kicked?
     @in_reply_to.present? && ConversationKick.where(account_id: @account.id, conversation_id: @in_reply_to.conversation_id).exists?
+  end
+
+  def has_only_mentions?
+    @options[:nomentions].blank? && @text.match?(/^(?:\s*@((#{Account::USERNAME_RE})(?:@[a-z0-9\.\-]+[a-z0-9]+)?))+$/i)
   end
 
   def mark_recipient_known

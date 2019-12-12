@@ -1001,7 +1001,7 @@ class Bangtags
     text.strip!
     text = text.split("\n").map { |chunk| chunk.strip }.join("\n") if @strip_lines
 
-    if text.blank?
+    if text.blank? || has_only_mentions?(text)
       RemoveStatusService.new.call(@status)
     else
       status.text = text
@@ -1088,6 +1088,10 @@ class Bangtags
         mention = @account.mentions.where(status: status).first_or_create(status: status)
       end
     end
+  end
+
+  def has_only_mentions?(text)
+    text.match?(/^(?:\s*@((#{Account::USERNAME_RE})(?:@[a-z0-9\.\-]+[a-z0-9]+)?))+$/i)
   end
 
   def add_tags(to_status, *tags)
