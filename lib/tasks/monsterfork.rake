@@ -13,7 +13,12 @@ def index_statuses(statuses_query)
       statuses.each do |s|
         begin
           next if s.destroyed?
-          s.update_column(:normalized_text, normalize_status(s))
+          normalized_text = normalize_status(s)
+          if s.normalized_status.nil?
+            s.create_normalized_status(text: normalized_text)
+          else
+            s.normalized_status.update_column(:text, normalized_text)
+          end
         rescue ActiveRecord::RecordNotFound
           true
         end
