@@ -15,6 +15,7 @@ module TextHelper
 
   def normalize_text(html)
     html.downcase
+      .gsub(Account::MENTION_RE, '')
       .gsub(/[ \t]*\302\240+[ \t]*/, ' ')
       .gsub(/  +/, ' ')
       .gsub(/\r\n?/, "\n")
