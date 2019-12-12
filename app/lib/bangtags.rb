@@ -303,7 +303,7 @@ class Bangtags
               next if @parent_status.nil?
               parent_account = @parent_status.account
             end
-            next if parent_account.nil?
+            next if parent_account.nil? || parent_account.id == @account.id
             ConversationKick.find_or_create_by(account_id: parent_account.id, conversation_id: status.conversation_id)
             convo_statuses.where(account_id: parent_account.id).find_each do |s|
               RemoveStatusForAccountService.new.call(@account, s)
@@ -325,7 +325,7 @@ class Bangtags
               next if @parent_status.nil?
               parent_account = @parent_status.account
             end
-            next if parent_account.nil?
+            next if parent_account.nil? || parent_account.id == @account.id
             ConversationKick.where(account_id: parent_account.id, conversation_id: status.conversation_id).destroy_all
             service_dm(
               'janitor', @account,
