@@ -2,6 +2,7 @@
 
 class Bangtags
   include ModerationHelper
+  include ServiceAccountHelper
   include SearchHelper
 
   attr_reader :status, :account
@@ -25,6 +26,8 @@ class Bangtags
       'leave' => ['thread'],
       'part' => ['thread'],
       'quit' => ['thread'],
+      'kick' => ['thread'],
+      'unkick' => ['thread'],
     }
 
     @aliases = {
@@ -40,6 +43,8 @@ class Bangtags
 
       ['parent', 'visibility'] => ['visibility', 'parent'],
       ['parent', 'v'] => ['visibility', 'parent'],
+      ['parent', 'kick'] => ['thread', 'kick'],
+      ['parent', 'unkick'] => ['thread', 'unkick'],
 
       ['parent', 'l'] => ['live', 'parent'],
       ['parent', 'live'] => ['live', 'parent'],
@@ -284,6 +289,48 @@ class Bangtags
               next unless rum.present?
               rum.mentions.where(status: status).first_or_create(status: status)
             end
+          when 'kick'
+            next if cmd[2].blank? && @parent_status.nil?
+            convo_statuses = status.conversation.statuses.reorder(:id)
+            first = convo_statuses.first
+            next if status.conversation_id.nil? || first.account_id != @account.id
+            if cmd[2].present?
+              cmd[2] = cmd[2][1..-1] if cmd[2].start_with?('@')
+              cmd[2], cmd[3] = cmd[2].split('@', 2) if cmd[2].include?('@')
+              cmd[3] = cmd[3].strip unless cmd[3].nil?
+              parent_account = Account.find_by(username: cmd[2].strip, domain: cmd[3])
+            else
+              next if @parent_status.nil?
+              parent_account = @parent_status.account
+            end
+            next if parent_account.nil?
+            ConversationKick.find_or_create_by(account_id: parent_account.id, conversation_id: status.conversation_id)
+            convo_statuses.where(account_id: parent_account.id).find_each do |s|
+              RemoveStatusForAccountService.new.call(@account, s)
+            end
+            service_dm(
+              'janitor', @account,
+              "Kicked @#{parent_account.acct} from [thread #{status.conversation_id}](#{TagManager.instance.url_for(first)})."
+            )
+          when 'unkick'
+            next if cmd[2].blank? && @parent_status.nil?
+            convo_statuses = status.conversation.statuses.reorder(:id)
+            first = convo_statuses.first
+            next if status.conversation_id.nil? || first.account_id != @account.id
+            if cmd[2].present?
+              cmd[2] = cmd[2][1..-1] if cmd[2].start_with?('@')
+              cmd[3] = cmd[3].strip unless cmd[3].nil?
+              parent_account = Account.find_by(username: cmd[2].strip, domain: cmd[3])
+            else
+              next if @parent_status.nil?
+              parent_account = @parent_status.account
+            end
+            next if parent_account.nil?
+            ConversationKick.where(account_id: parent_account.id, conversation_id: status.conversation_id).destroy_all
+            service_dm(
+              'janitor', @account,
+              "Allowed @#{parent_account.acct} back into [thread ##{status.conversation_id}](#{TagManager.instance.url_for(first)})."
+            )
           when 'reall'
             if status.conversation_id.present?
               participants = Status.where(conversation_id: status.conversation_id)
@@ -1025,9 +1072,6 @@ class Bangtags
             footer: footer,
             local_only: post_cmd[2] == 'local'
           )
-
-          DistributionWorker.perform_async(s.id)
-          ActivityPub::DistributionWorker.perform_async(s.id) unless s.local_only?
 
           @chunks << 'Announce successful.'
         end
