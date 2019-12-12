@@ -130,7 +130,7 @@ class PostStatusService < BaseService
   end
 
   def unfilter_thread_on_reply
-    Redis.current.srem("filtered_threads:#{@account.id}", @in_reply_to.conversation_id)
+    ConversationKick.where(account_id: @in_reply_to.account_id, conversation: @in_reply_to.conversation_id).destroy_all
   end
 
   def inherit_reply_rejection

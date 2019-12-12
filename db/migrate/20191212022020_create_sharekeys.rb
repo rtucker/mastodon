@@ -1,7 +1,7 @@
 class CreateSharekeys < ActiveRecord::Migration[5.2]
   def up
     create_table :sharekeys do |t|
-      t.references :status, foreign_key: true, index: {unique: true}
+      t.references :status, null: false, foreign_key: {on_delete: :cascade}, index: {unique: true}
       t.string :key
     end
 

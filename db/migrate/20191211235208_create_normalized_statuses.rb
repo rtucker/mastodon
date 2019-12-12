@@ -1,7 +1,7 @@
 class CreateNormalizedStatuses < ActiveRecord::Migration[5.2]
   def up
     create_table :normalized_statuses do |t|
-      t.references :status, foreign_key: true, index: {unique: true}
+      t.references :status, null: false, foreign_key: {on_delete: :cascade}, index: {unique: true}
       t.text :text
     end
 
