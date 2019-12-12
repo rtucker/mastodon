@@ -120,8 +120,8 @@ class Status < ApplicationRecord
 
   scope :like, ->(needle) { joins(:normalized_status).where('normalized_statuses.text LIKE f_normalize(?)', needle) }
   scope :regex, ->(needle) { joins(:normalized_status).where('normalized_statuses.text ~ f_normalize(?)', needle) }
-  scope :regex_filtered_by_account, ->(account) { joins(:normalized_status).where('normalized_statuses.text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account.id) }
-  scope :regex_not_filtered_by_account, ->(account) { joins(:normalized_status).where('normalized_statuses.text !~ ALL(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account.id) }
+  scope :regex_filtered_by_account, ->(account_id) { joins(:normalized_status).where('normalized_statuses.text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account_id) }
+  scope :regex_not_filtered_by_account, ->(account_id) { joins(:normalized_status).where('normalized_statuses.text !~ ALL(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account_id) }
 
   scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
@@ -569,7 +569,7 @@ class Status < ApplicationRecord
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
       query = query.reply_not_excluded_by_account(account) unless tag_timeline
       query = query.mention_not_excluded_by_account(account)
-      query = query.regex_not_filtered_by_account(account) if account.custom_filters.present?
+      query = query.regex_not_filtered_by_account(account.id) if account.custom_filters.present?
       query = query.not_missing_media_desc if account.filter_undescribed?
       query.merge(account_silencing_filter(account))
     end
