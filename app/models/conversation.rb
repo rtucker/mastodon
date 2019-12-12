@@ -13,6 +13,7 @@ class Conversation < ApplicationRecord
   validates :uri, uniqueness: true, if: :uri?
 
   has_many :statuses
+  has_many :kicks, class_name: 'ConversationKick', inverse_of: :conversation, dependent: :destroy
 
   def local?
     uri.nil?

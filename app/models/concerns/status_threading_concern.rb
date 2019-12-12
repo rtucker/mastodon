@@ -127,7 +127,8 @@ module StatusThreadingConcern
   end
 
   def statuses_with_accounts(ids)
-    Status.where(id: ids).includes(:account)
+    kicked_accounts = ConversationKick.select(:account_id).where(conversation_id: self.conversation_id)
+    Status.where(id: ids).where.not(account_id: kicked_accounts).includes(:account)
   end
 
   def filter_from_context?(status, account, relations)

@@ -66,7 +66,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     @mentions_local_account = false
 
     process_status_params
-    return reject_payload! if twitter_retweet? || recipient_rejects_replies?
+    return reject_payload! if twitter_retweet? || recipient_rejects_replies? || kicked?
 
     process_tags
     process_audience
@@ -107,6 +107,11 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
     @params[:thread].present? &&
       @params[:thread]&.reject_replies &&
       @params[:thread]&.account_id != @account.id
+  end
+
+  def kicked?
+    @params[:conversation].present? &&
+      @params[:conversation].kicks.where(account_id: @account.id).exists?
   end
 
   def process_status_params

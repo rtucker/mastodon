@@ -61,5 +61,8 @@ module AccountAssociations
 
     # queued boosts
     has_many :queued_boosts, dependent: :destroy, inverse_of: :account
+
+    # kicked-out-of conversations
+    has_many :conversation_kicks, dependent: :destroy, inverse_of: :account
   end
 end

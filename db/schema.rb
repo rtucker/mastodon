@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_12_022653) do
+ActiveRecord::Schema.define(version: 2019_12_12_043419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -216,6 +216,14 @@ ActiveRecord::Schema.define(version: 2019_12_12_022653) do
     t.index ["account_id", "status_id"], name: "index_bookmarks_on_account_id_and_status_id", unique: true
     t.index ["account_id"], name: "index_bookmarks_on_account_id"
     t.index ["status_id"], name: "index_bookmarks_on_status_id"
+  end
+
+  create_table "conversation_kicks", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "conversation_id", null: false
+    t.index ["account_id", "conversation_id"], name: "index_conversation_kicks_on_account_id_and_conversation_id", unique: true
+    t.index ["account_id"], name: "index_conversation_kicks_on_account_id"
+    t.index ["conversation_id"], name: "index_conversation_kicks_on_conversation_id"
   end
 
   create_table "conversation_mutes", force: :cascade do |t|
@@ -846,6 +854,8 @@ ActiveRecord::Schema.define(version: 2019_12_12_022653) do
   add_foreign_key "blocks", "accounts", name: "fk_4269e03e65", on_delete: :cascade
   add_foreign_key "bookmarks", "accounts", on_delete: :cascade
   add_foreign_key "bookmarks", "statuses", on_delete: :cascade
+  add_foreign_key "conversation_kicks", "accounts", on_delete: :cascade
+  add_foreign_key "conversation_kicks", "conversations", on_delete: :cascade
   add_foreign_key "conversation_mutes", "accounts", name: "fk_225b4212bb", on_delete: :cascade
   add_foreign_key "conversation_mutes", "conversations", on_delete: :cascade
   add_foreign_key "custom_filters", "accounts", on_delete: :cascade

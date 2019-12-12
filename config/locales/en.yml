@@ -975,6 +975,7 @@ en:
         other: "%{count} votes"
       vote: Vote
     replies_rejected: 'The author is not accepting replies to this roar.'
+    kicked: "You do not have the author's permission to reply to this thread."
     show_more: Show more
     sign_in_to_participate: Sign in to participate in the conversation
     title: '%{name}: "%{quote}"'
