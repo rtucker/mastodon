@@ -30,6 +30,7 @@ class PostStatusService < BaseService
   # @option [String] :language
   # @option [String] :scheduled_at
   # @option [String] :delete_after
+  # @option [Account] :mentions Optional accounts to mention out-of-body
   # @option [Boolean] :noreplies Author does not accept replies
   # @option [Boolean] :nocrawl Optional skip link card generation
   # @option [Boolean] :nomentions Optional skip mention processing
@@ -48,9 +49,12 @@ class PostStatusService < BaseService
     @tags        = @options[:tags] || []
     @local_only  = @options[:local_only]
     @sensitive   = (@account.force_sensitive? ? true : @options[:sensitive])
+
     @preloaded_tags = @options[:preloaded_tags] || []
+    @preloaded_mentions = @options[:preloaded_mentions] || []
 
     raise Mastodon::LengthValidationError, I18n.t('statuses.replies_rejected') if recipient_rejects_replies?
+    raise Mastodon::LengthValidationError, I18n.t('statuses.kicked') if kicked?
 
     return idempotency_duplicate if idempotency_given? && idempotency_duplicate?
 
@@ -61,6 +65,7 @@ class PostStatusService < BaseService
       schedule_status!
     else
       return unless process_status!
+
       is_delayed = @options[:delayed].present? || @account&.user&.delayed_roars?
       delay_for = is_delayed ? [5, @account&.user&.delayed_for.to_i].max : 1
       delay_until = Time.now.utc + delay_for.seconds
@@ -70,7 +75,6 @@ class PostStatusService < BaseService
         federate: @options[:federate],
         distribute: @options[:distribute],
         nocrawl: @options[:nocrawl],
-        nomentions: @options[:nomentions],
         delete_after: @delete_after.nil? ? nil : @delete_after + 1.minute,
         reject_replies: @options[:noreplies] || false,
       }.compact
@@ -88,6 +92,10 @@ class PostStatusService < BaseService
 
   def recipient_rejects_replies?
     @in_reply_to.present? && @in_reply_to.reject_replies && @in_reply_to.account_id != @account.id
+  end
+
+  def kicked?
+    @in_reply_to.present? && ConversationKick.where(account_id: @account.id, conversation_id: @in_reply_to.conversation_id).exists?
   end
 
   def mark_recipient_known
@@ -137,7 +145,6 @@ class PostStatusService < BaseService
   # move tags out of body so we can format them later
   def extract_tags
     return unless '#'.in?(@text)
-    @text = @text.dup if @text.frozen?
     @text.gsub!(/^##/, "\ufdd6")
     @text.gsub!('##', "\ufdd9")
     @tags |= Extractor.extract_hashtags(@text)
@@ -158,6 +165,8 @@ class PostStatusService < BaseService
      @text = @media.find(&:video?) ? '📹' : '🖼' if @media.size > 0
     end
 
+    @text = @text.dup if @text.frozen?
+
     set_footer_from_i_am
     extract_tags
     protect_leading_spaces
@@ -172,6 +181,8 @@ class PostStatusService < BaseService
       limit_visibility_to_reply
       unfilter_thread_on_reply
     end
+
+    @text.freeze
 
     @sensitive = (@account.user_defaults_to_sensitive? || @options[:spoiler_text].present?) if @sensitive.nil?
 
@@ -205,6 +216,7 @@ class PostStatusService < BaseService
     return false if @status.destroyed?
 
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
+    process_mentions
     true
   end
 
@@ -235,12 +247,26 @@ class PostStatusService < BaseService
     raise Mastodon::ValidationError, I18n.t('media_attachments.validations.images_and_video') if @media.size > 1 && @media.find(&:video?)
   end
 
+  def process_mentions
+    if @options[:mentions].present?
+      @options[:mentions].each do |mentioned_account|
+        mentioned_account.mentions.where(status: @status).first_or_create(status: @status)
+      end
+    end
+
+    process_mentions_service.call(@status, skip_notify: true) unless @options[:nomentions]
+  end
+
   def language_from_option(str)
     ISO_639.find(str)&.alpha2
   end
 
   def process_hashtags_service
     ProcessHashtagsService.new
+  end
+
+  def process_mentions_service
+    ProcessMentionsService.new
   end
 
   def scheduled?
