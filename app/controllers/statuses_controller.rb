@@ -3,7 +3,6 @@
 class StatusesController < ApplicationController
   include SignatureAuthentication
   include Authorization
-  include FilterHelper
 
   ANCESTORS_LIMIT         = 40
   DESCENDANTS_LIMIT       = 60
