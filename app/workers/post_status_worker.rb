@@ -3,20 +3,14 @@
 class PostStatusWorker
   include Sidekiq::Worker
 
-  sidekiq_options unique: :until_executed
-
   def perform(status_id, options = {})
     status = Status.find(status_id)
     return false if status.destroyed?
 
-    status.visibility = options[:visibility] if options[:visibility]
-    status.local_only = options[:local_only] if options[:local_only]
-    status.reject_replies = options[:reject_replies] if options[:reject_replies]
-    status.save!
+    status.update(options.slice(:visibility, :local_only, :reject_replies).compact)
+    process_mentions_service.call(status, skip_process: true) unless options[:nomentions]
 
-    process_mentions_service.call(status) unless options[:nomentions].present?
-
-    LinkCrawlWorker.perform_async(status.id) unless options[:nocrawl] || status.spoiler_text?
+    LinkCrawlWorker.perform_async(status.id) unless options[:nocrawl] || status.spoiler_text.present?
     DistributionWorker.perform_async(status.id) unless options[:distribute] == false
 
     unless status.local_only? || options[:distribute] == false || options[:federate] == false
@@ -36,6 +30,8 @@ class PostStatusWorker
   rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
     true
   end
+
+  private
 
   def process_mentions_service
     ProcessMentionsService.new
