@@ -185,7 +185,7 @@ class StatusesController < ApplicationController
     @type         = @stream_entry.activity_type.downcase
     @sharekey     = params[:key]
 
-    if @status.sharekey.present? && @sharekey == @status.sharekey
+    if @status.sharekey.present? && @sharekey == @status.sharekey.key
       skip_authorization
     elsif @account.block_anon && !user_signed_in?
       raise ActiveRecord::RecordNotFound
@@ -203,11 +203,9 @@ class StatusesController < ApplicationController
     case params[:rekey]
     when '1'
       @status.sharekey = SecureRandom.urlsafe_base64(32)
-      @status.save
       Rails.cache.delete("statuses/#{@status.id}")
     when '0'
       @status.sharekey = nil
-      @status.save
       Rails.cache.delete("statuses/#{@status.id}")
     end
   end

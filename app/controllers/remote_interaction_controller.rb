@@ -49,7 +49,7 @@ class RemoteInteractionController < ApplicationController
     @status = Status.find(params[:id])
     @sharekey = params[:key]
 
-    if @status.sharekey.present? && @sharekey == @status.sharekey
+    if @status.sharekey.present? && @sharekey == @status.sharekey.key
       skip_authorization
     else
       authorize @status, :show?

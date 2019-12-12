@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_12_002705) do
+ActiveRecord::Schema.define(version: 2019_12_12_022653) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -335,6 +335,13 @@ ActiveRecord::Schema.define(version: 2019_12_12_002705) do
     t.index ["user_id"], name: "index_identities_on_user_id"
   end
 
+  create_table "imported_statuses", force: :cascade do |t|
+    t.bigint "status_id"
+    t.string "origin"
+    t.index ["origin"], name: "index_imported_statuses_on_origin", unique: true
+    t.index ["status_id"], name: "index_imported_statuses_on_status_id", unique: true
+  end
+
   create_table "imports", force: :cascade do |t|
     t.integer "type", null: false
     t.boolean "approved", default: false, null: false
@@ -636,6 +643,12 @@ ActiveRecord::Schema.define(version: 2019_12_12_002705) do
     t.index ["thing_type", "thing_id", "var"], name: "index_settings_on_thing_type_and_thing_id_and_var", unique: true
   end
 
+  create_table "sharekeys", force: :cascade do |t|
+    t.bigint "status_id"
+    t.string "key"
+    t.index ["status_id"], name: "index_sharekeys_on_status_id", unique: true
+  end
+
   create_table "site_uploads", force: :cascade do |t|
     t.string "var", default: "", null: false
     t.string "file_file_name"
@@ -687,13 +700,10 @@ ActiveRecord::Schema.define(version: 2019_12_12_002705) do
     t.boolean "local_only"
     t.bigint "poll_id"
     t.boolean "curated", default: false, null: false
-    t.string "sharekey"
     t.boolean "network", default: false, null: false
     t.string "content_type"
     t.text "footer"
     t.boolean "edited"
-    t.boolean "imported"
-    t.string "origin"
     t.boolean "boostable"
     t.boolean "reject_replies"
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20180106", order: { id: :desc }
@@ -701,7 +711,6 @@ ActiveRecord::Schema.define(version: 2019_12_12_002705) do
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id"
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id"
     t.index ["network"], name: "index_statuses_on_network", where: "network"
-    t.index ["origin"], name: "index_statuses_on_origin", unique: true
     t.index ["reblog_of_id", "account_id"], name: "index_statuses_on_reblog_of_id_and_account_id"
     t.index ["uri"], name: "index_statuses_on_uri", unique: true
   end
@@ -850,6 +859,7 @@ ActiveRecord::Schema.define(version: 2019_12_12_002705) do
   add_foreign_key "follows", "accounts", column: "target_account_id", name: "fk_745ca29eac", on_delete: :cascade
   add_foreign_key "follows", "accounts", name: "fk_32ed1b5560", on_delete: :cascade
   add_foreign_key "identities", "users", name: "fk_bea040f377", on_delete: :cascade
+  add_foreign_key "imported_statuses", "statuses"
   add_foreign_key "imports", "accounts", name: "fk_6db1b6e408", on_delete: :cascade
   add_foreign_key "invites", "users", on_delete: :cascade
   add_foreign_key "linked_users", "users", column: "target_user_id", on_delete: :cascade
@@ -888,6 +898,7 @@ ActiveRecord::Schema.define(version: 2019_12_12_002705) do
   add_foreign_key "scheduled_statuses", "accounts", on_delete: :cascade
   add_foreign_key "session_activations", "oauth_access_tokens", column: "access_token_id", name: "fk_957e5bda89", on_delete: :cascade
   add_foreign_key "session_activations", "users", name: "fk_e5fda67334", on_delete: :cascade
+  add_foreign_key "sharekeys", "statuses"
   add_foreign_key "status_pins", "accounts", name: "fk_d4cb435b62", on_delete: :cascade
   add_foreign_key "status_pins", "statuses", on_delete: :cascade
   add_foreign_key "status_stats", "statuses", on_delete: :cascade

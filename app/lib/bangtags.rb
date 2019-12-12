@@ -303,7 +303,6 @@ class Bangtags
                 roars.each do |roar|
                   if roar.sharekey.present?
                     roar.sharekey = nil
-                    roar.save
                     Rails.cache.delete("statuses/#{roar.id}")
                   end
                 end
@@ -315,15 +314,13 @@ class Bangtags
                 if cmd[2] == 'new' || earliest_roar.sharekey.blank?
                   sharekey = SecureRandom.urlsafe_base64(32)
                   earliest_roar.sharekey = sharekey
-                  earliest_roar.save
                   Rails.cache.delete("statuses/#{earliest_roar.id}")
                 else
-                  sharekey = earliest_roar.sharekey
+                  sharekey = earliest_roar.sharekey.key
                 end
                 roars.each do |roar|
-                  if roar.sharekey != sharekey
+                  if roar.sharekey.nil? || roar.sharekey.key != sharekey
                     roar.sharekey = sharekey
-                    roar.save
                     Rails.cache.delete("statuses/#{roar.id}")
                   end
                 end

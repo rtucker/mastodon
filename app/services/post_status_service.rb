@@ -285,7 +285,7 @@ class PostStatusService < BaseService
       local_only: @local_only,
       delete_after: @delete_after,
       reject_replies: @options[:noreplies] || false,
-      sharekey: @sharekey,
+      sharekey: @options[:sharekey],
       language: language_from_option(@options[:language]) || @account.user_default_language&.presence || 'en',
       application: @options[:application],
       content_type: @options[:content_type] || @account.user&.setting_default_content_type,

@@ -92,7 +92,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   end
 
   def find_imported_status
-    status   = Status.find_by(origin: @origin_hash)
+    status = Status.joins(:imported_status).select('statuses.*').find_by(origin: @origin_hash)
   end
 
   def obfuscate_origin(key)
@@ -138,7 +138,6 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
       if @options[:imported]
         @params.except!(:uri, :url)
         @params[:content_type] = 'text/html'
-        @params[:imported] = true
         @params[:origin] = @origin_hash unless @origin_hash.nil?
       end
 

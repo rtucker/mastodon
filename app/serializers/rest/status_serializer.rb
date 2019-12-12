@@ -14,7 +14,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   attribute :bookmarked, if: :current_user?
   attribute :pinned, if: :pinnable?
   attribute :local_only if :local?
-  attribute :sharekey, if: :owner?
+  attribute :sharekey, if: :has_sharekey?
   attribute :delete_after, if: :current_user?
 
   attribute :content, unless: :source_requested?
@@ -53,12 +53,16 @@ class REST::StatusSerializer < ActiveModel::Serializer
     current_user? && current_user.account_id == object.account_id
   end
 
+  def has_sharekey?
+    owner? && object.sharekey.present?
+  end
+
   def show_application?
     object.account.user_shows_application? || owner?
   end
 
-  def spoiler_text
-    redis.hget("custom_cw:#{current_user&.account_id}", object.id) || redis.hget("custom_cw:#{current_user&.account_id}", "c#{object.conversation_id}") || object.spoiler_text
+  def sharekey
+    object.sharekey.key
   end
 
   def visibility

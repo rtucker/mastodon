@@ -24,13 +24,10 @@
 #  local_only             :boolean
 #  poll_id                :bigint(8)
 #  curated                :boolean          default(FALSE), not null
-#  sharekey               :string
 #  network                :boolean          default(FALSE), not null
 #  content_type           :string
 #  footer                 :text
 #  edited                 :boolean
-#  imported               :boolean
-#  origin                 :string
 #  boostable              :boolean
 #  reject_replies         :boolean
 #
@@ -86,6 +83,8 @@ class Status < ApplicationRecord
   has_one :poll, inverse_of: :status, dependent: :destroy
   has_one :destructing_status, inverse_of: :status, dependent: :destroy
   has_one :normalized_status, inverse_of: :status, dependent: :destroy
+  has_one :imported_status, inverse_of: :status, dependent: :destroy
+  has_one :sharekey, inverse_of: :status, dependent: :destroy
 
   validates :uri, uniqueness: true, presence: true, unless: :local?
   validates :text, presence: true, unless: -> { with_media? || reblog? }
@@ -318,12 +317,22 @@ class Status < ApplicationRecord
     update_status_stat!(key => [public_send(key) - 1, 0].max)
   end
 
-  def session=(value)
-    @session = value
+  def sharekey=(value)
+    if value.nil? && !(new_record? || self.sharekey.nil?)
+      self.sharekey.destroy
+    else
+      @_sharekey = value
+      update_sharekey unless new_record? || changed?
+    end
   end
 
-  def session
-    @session || nil
+  def origin=(value)
+    if value.nil? && !(new_record? || self.imported_status.nil?)
+      self.imported_status.destroy
+    else
+      @_origin = value
+      update_origin unless new_record? || changed?
+    end
   end
 
   after_create_commit  :increment_counter_caches
@@ -344,8 +353,11 @@ class Status < ApplicationRecord
   before_validation :infer_reject_replies
 
   after_create :set_poll_id
-  after_create :update_normalized_text
-  after_create :process_bangtags, if: :local?
+
+  after_save :update_sharekey, if: :local?
+  after_save :update_origin, if: :local?
+  after_save :update_normalized_text
+  after_save :process_bangtags, if: :local?
 
   class << self
     include SearchHelper
@@ -629,7 +641,26 @@ class Status < ApplicationRecord
   end
 
   def process_bangtags
+    return unless text_changed? || saved_change_to_text?
     Bangtags.new(self).process
+  end
+
+  def update_sharekey
+    return if @_sharekey.nil?
+    if self.sharekey.nil?
+      self.create_sharekey(key: @_sharekey)
+    else
+      self.sharekey.update_attributes(key: @_sharekey)
+    end
+  end
+
+  def update_origin
+    return if @_origin.nil?
+    if self.imported_status.nil?
+      self.create_imported_status(origin: @_origin)
+    else
+      self.imported_status.update_attributes(origin: @_origin)
+    end
   end
 
   def update_normalized_text
