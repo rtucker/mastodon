@@ -17,7 +17,7 @@ class Scheduler::WerewolfScheduler
 
     return unless moon_fraction >= 0.998
 
-    redis.setex('werewolf-status', 1.day, 1)
+    redis.set('werewolf-status', 1, ex: 1.day)
 
     announcer = find_announcer_acct
     return if announcer.nil?
