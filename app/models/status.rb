@@ -33,7 +33,6 @@
 #  origin                 :string
 #  boostable              :boolean
 #  reject_replies         :boolean
-#  normalized_text        :text             default(""), not null
 #
 
 class Status < ApplicationRecord
@@ -86,6 +85,7 @@ class Status < ApplicationRecord
   has_one :status_stat, inverse_of: :status
   has_one :poll, inverse_of: :status, dependent: :destroy
   has_one :destructing_status, inverse_of: :status, dependent: :destroy
+  has_one :normalized_status, inverse_of: :status, dependent: :destroy
 
   validates :uri, uniqueness: true, presence: true, unless: :local?
   validates :text, presence: true, unless: -> { with_media? || reblog? }
@@ -119,7 +119,11 @@ class Status < ApplicationRecord
   scope :mention_not_excluded_by_account, ->(account) { left_outer_joins(:mentions).where('mentions.account_id IS NULL OR mentions.account_id NOT IN (?)', account.excluded_from_timeline_account_ids) }
   scope :not_domain_blocked_by_account, ->(account) { account.excluded_from_timeline_domains.blank? ? left_outer_joins(:account) : left_outer_joins(:account).where('accounts.domain IS NULL OR accounts.domain NOT IN (?)', account.excluded_from_timeline_domains) }
 
-  scope :not_string_filtered_by_account, ->(account) { where("statuses.normalized_text !~ ALL(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))", account.id) }
+  scope :like, ->(needle) { joins(:normalized_status).where('normalized_statuses.text LIKE f_normalize(?)', needle) }
+  scope :regex, ->(needle) { joins(:normalized_status).where('normalized_statuses.text ~ f_normalize(?)', needle) }
+  scope :regex_filtered_by_account, ->(account) { joins(:normalized_status).where('normalized_statuses.text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account.id) }
+  scope :regex_not_filtered_by_account, ->(account) { joins(:normalized_status).where('normalized_statuses.text !~ ALL(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account.id) }
+
   scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
   scope :tagged_with_all, ->(tags) {
@@ -340,9 +344,8 @@ class Status < ApplicationRecord
   before_validation :infer_reject_replies
 
   after_create :set_poll_id
+  after_create :update_normalized_text
   after_create :process_bangtags, if: :local?
-
-  before_save :update_normalized_text
 
   class << self
     include SearchHelper
@@ -359,7 +362,7 @@ class Status < ApplicationRecord
       end
       return none if term.blank? || term.length < 3
       query = query.without_reblogs
-        .where('normalized_text ~ ?', expand_search_query(term))
+        .regex(expand_search_query(term))
         .offset(offset).limit(limit)
       apply_timeline_filters(query, account, true)
     rescue ActiveRecord::StatementInvalid
@@ -554,7 +557,7 @@ class Status < ApplicationRecord
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
       query = query.reply_not_excluded_by_account(account) unless tag_timeline
       query = query.mention_not_excluded_by_account(account)
-      query = query.not_string_filtered_by_account(account) if account.custom_filters.present?
+      query = query.regex_not_filtered_by_account(account) if account.custom_filters.present?
       query = query.not_missing_media_desc if account.filter_undescribed?
       query.merge(account_silencing_filter(account))
     end
@@ -630,9 +633,13 @@ class Status < ApplicationRecord
   end
 
   def update_normalized_text
-    return if destroyed?
-    return unless (normalized_text.blank? && !text.blank?) || saved_change_to_text?
-    self.normalized_text = normalize_status(self)
+    return if destroyed? || text.blank? || !(text_changed? || saved_change_to_text?)
+    normalized_text = normalize_status(self)
+    if self.normalized_status.nil?
+      self.create_normalized_status(text: normalized_text)
+    else
+      self.normalized_status.update_attributes(text: normalized_text)
+    end
   end
 
   def set_conversation

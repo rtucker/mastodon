@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_18_102858) do
+ActiveRecord::Schema.define(version: 2019_12_12_002705) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -432,6 +432,13 @@ ActiveRecord::Schema.define(version: 2019_11_18_102858) do
     t.index ["target_account_id"], name: "index_mutes_on_target_account_id"
   end
 
+  create_table "normalized_statuses", force: :cascade do |t|
+    t.bigint "status_id"
+    t.text "text"
+    t.index ["status_id"], name: "index_normalized_statuses_on_status_id"
+    t.index ["text"], name: "index_statuses_on_normalized_text_trgm", opclass: :gin_trgm_ops, using: :gin
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.bigint "activity_id", null: false
     t.string "activity_type", null: false
@@ -689,13 +696,11 @@ ActiveRecord::Schema.define(version: 2019_11_18_102858) do
     t.string "origin"
     t.boolean "boostable"
     t.boolean "reject_replies"
-    t.text "normalized_text", default: "", null: false
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20180106", order: { id: :desc }
     t.index ["account_id", "id", "visibility"], name: "index_statuses_on_account_id_and_id_and_visibility", order: { id: :desc }, where: "(visibility = ANY (ARRAY[0, 1, 2, 4]))"
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id"
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id"
     t.index ["network"], name: "index_statuses_on_network", where: "network"
-    t.index ["normalized_text"], name: "index_statuses_on_normalized_text_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["origin"], name: "index_statuses_on_origin", unique: true
     t.index ["reblog_of_id", "account_id"], name: "index_statuses_on_reblog_of_id_and_account_id"
     t.index ["uri"], name: "index_statuses_on_uri", unique: true
@@ -860,6 +865,7 @@ ActiveRecord::Schema.define(version: 2019_11_18_102858) do
   add_foreign_key "mentions", "statuses", on_delete: :cascade
   add_foreign_key "mutes", "accounts", column: "target_account_id", name: "fk_eecff219ea", on_delete: :cascade
   add_foreign_key "mutes", "accounts", name: "fk_b8d8daf315", on_delete: :cascade
+  add_foreign_key "normalized_statuses", "statuses"
   add_foreign_key "notifications", "accounts", column: "from_account_id", name: "fk_fbd6b0bf9e", on_delete: :cascade
   add_foreign_key "notifications", "accounts", name: "fk_c141c8ee55", on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id", name: "fk_34d54b0a33", on_delete: :cascade

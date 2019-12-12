@@ -7,7 +7,7 @@ module FilterHelper
 
     status = status.reblog if status.reblog?
 
-    if Status.where(id: status.id).where("statuses.normalized_text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))", receiver_id).exists?
+    if Status.where(id: status.id).regex_filtered_by_account(receiver_id).exists?
       redis.sadd("filtered_statuses:#{receiver_id}", status.id)
       return true
     end
