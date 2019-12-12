@@ -7,34 +7,36 @@ class ProcessMentionsService < BaseService
   # local mention pointers, send Salmon notifications to mentioned
   # remote users
   # @param [Status] status
-  def call(status, skip_notify: false)
+  def call(status, skip_process: false, skip_notify: false)
     return unless status.local? && !status.draft?
 
     @status  = status
     mentions = Mention.where(status: status).to_a
 
-    status.text = status.text.gsub(Account::MENTION_RE) do |match|
-      username, domain  = Regexp.last_match(1).split('@')
-      mentioned_account = Account.find_remote(username, domain)
+    unless skip_process
+      status.text = status.text.gsub(Account::MENTION_RE) do |match|
+        username, domain  = Regexp.last_match(1).split('@')
+        mentioned_account = Account.find_remote(username, domain)
 
-      next match unless domain.nil? || '.'.in?(domain)
+        next match unless domain.nil? || '.'.in?(domain)
 
-      if mention_undeliverable?(mentioned_account)
-        begin
-          mentioned_account = resolve_account_service.call(Regexp.last_match(1))
-        rescue Goldfinger::Error, HTTP::Error, OpenSSL::SSL::SSLError, Mastodon::UnexpectedResponseError
-          mentioned_account = nil
+        if mention_undeliverable?(mentioned_account)
+          begin
+            mentioned_account = resolve_account_service.call(Regexp.last_match(1))
+          rescue Goldfinger::Error, HTTP::Error, OpenSSL::SSL::SSLError, Mastodon::UnexpectedResponseError
+            mentioned_account = nil
+          end
         end
+
+        next match if mention_undeliverable?(mentioned_account) || mentioned_account&.suspended?
+
+        mentions << mentioned_account.mentions.where(status: status).first_or_create(status: status)
+
+        "@#{mentioned_account.acct}"
       end
 
-      next match if mention_undeliverable?(mentioned_account) || mentioned_account&.suspended?
-
-      mentions << mentioned_account.mentions.where(status: status).first_or_create(status: status)
-
-      "@#{mentioned_account.acct}"
+      status.save!
     end
-
-    status.save!
 
     return if skip_notify
     mentions.uniq.each { |mention| create_notification(mention) }
