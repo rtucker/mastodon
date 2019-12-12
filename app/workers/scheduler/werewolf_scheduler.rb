@@ -22,16 +22,13 @@ class Scheduler::WerewolfScheduler
     announcer = find_announcer_acct
     return if announcer.nil?
 
-    s = PostStatusService.new.call(
+    PostStatusService.new.call(
       announcer,
       visibility: :public,
       text: STATUS,
       footer: FOOTER,
       content_type: 'text/console',
     )
-
-    DistributionWorker.perform_async(s.id)
-    ActivityPub::DistributionWorker.perform_async(s.id)
   end
 
   private
