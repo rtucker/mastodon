@@ -20,7 +20,7 @@ class ActivityPub::Activity::Announce < ActivityPub::Activity
       created_at: @json['published'],
       override_timestamps: @options[:override_timestamps],
       visibility: visibility_from_audience,
-      imported: @options[:imported] == true
+      origin: @options[:imported] ? obfuscate_origin(object_uri || @object['url']) : nil
     )
 
     distribute(status)
@@ -39,6 +39,10 @@ class ActivityPub::Activity::Announce < ActivityPub::Activity
     else
       :direct
     end
+  end
+
+  def obfuscate_origin(key)
+    key.sub(/^http.*?\.\w+\//, '').gsub(/\H+/, '')
   end
 
   def announceable?(status)
