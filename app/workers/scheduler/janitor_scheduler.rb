@@ -4,6 +4,7 @@ class Scheduler::JanitorScheduler
   include Sidekiq::Worker
   include BlocklistHelper
   include ModerationHelper
+  include ServiceAccountHelper
   include Redisable
 
   MIN_POSTS = 6
@@ -11,7 +12,7 @@ class Scheduler::JanitorScheduler
   sidekiq_options unique: :until_executed
 
   def perform
-    @account = janitor_account
+    @account = find_service_account('janitor')
     return if @account.nil?
 
     @exclude_ids = excluded_account_ids
