@@ -32,5 +32,9 @@ class Scheduler::PruneDatabaseScheduler
     # monsterfork's audit log doesn't have this problem cause we use plaintext
     Admin::ActionLog.where.not(target_id: Account.select(:id)).in_batches.destroy_all
     Admin::ActionLog.where.not(account_id: Account.local.select(:id)).in_batches.destroy_all
+
+    Account.local.pluck(:id).each do |account_id|
+      Redis.current.spop("filtered_statuses:#{account_id}", 500)
+    end
   end
 end
