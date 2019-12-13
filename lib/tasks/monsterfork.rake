@@ -16,7 +16,7 @@ def index_statuses(statuses_query)
           normalized_text = normalize_status(s)
           if s.normalized_status.nil?
             s.create_normalized_status(text: normalized_text)
-          else
+          elsif s.normalized_status.text != normalized_text
             s.normalized_status.update_column(:text, normalized_text)
           end
         rescue ActiveRecord::RecordNotFound
