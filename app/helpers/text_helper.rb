@@ -13,20 +13,19 @@ module TextHelper
     HTMLEntities.new.decode(html)
   end
 
-  def normalize_text(html)
-    html.downcase
+  def normalize_text(text)
+    text.downcase
       .gsub(Account::MENTION_RE, '')
-      .gsub(/[ \t]*\302\240+[ \t]*/, ' ')
-      .gsub(/  +/, ' ')
+      .gsub(/^(?:#[\w:._·\-]+\s*)+|(?:#[\w:._·\-]+\s*)+$/, '')
+      .gsub(/\s*\302\240+\s*/, ' ')
+      .gsub(/\n\s+|\s+\n/, "\n")
       .gsub(/\r\n?/, "\n")
-      .gsub(/\n[ \t]+/, "\n")
-      .gsub(/[ \t]+\n/, "\n")
       .gsub(/\n\n+/, "\n")
-      .gsub(/^(?:#[\w:._·\-]+\s*)+/, '')
-      .gsub(/(?:#[\w:._·\-]+\s*)+$/, '')
-      .delete('#')
-      .strip
       .unaccent_via_split_map
+      .gsub(/(?:htt|ft)ps?:\/\//, '')
+      .gsub(/[^\n\p{Word} [:punct:]]/, '')
+      .gsub(/  +/, ' ')
+      .strip
   end
 
   def normalize_status(status)
@@ -53,7 +52,7 @@ module TextHelper
 
   def _format_desc(status)
     return unless status.media_attachments.present?
-    text = status.media_attachments.pluck(:description).join("\ndesc ")
+    text = status.media_attachments.pluck(:description).compact.join("\ndesc ")
     "desc #{normalize_text(text)}"
   end
 end

@@ -3,7 +3,8 @@ require 'sixarm_ruby_unaccent'
 module SearchHelper
 	def expand_search_query(query)
     return '' if query.blank?
-    query = query.strip.downcase.unaccent
+    query = query.downcase.unaccent.gsub(/[^\p{Word} [:punct:]]/, '').gsub(/  +/, ' ').strip
+    return '' if query.blank?
 
     if query.include?(':')
       query_parts = query.split(':', 2)
