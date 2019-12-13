@@ -4,7 +4,7 @@ class ActivityPub::FetchAccountStatusesService < BaseService
   include JsonLdHelper
   include Redisable
 
-  MAX_PAGES = 50
+  MAX_PAGES = 100
 
   def call(account, url = nil)
     @account = account
@@ -73,7 +73,7 @@ class ActivityPub::FetchAccountStatusesService < BaseService
   def _fetch_collection(collection_or_uri)
     return collection_or_uri if collection_or_uri.is_a?(Hash)
     return if invalid_origin?(collection_or_uri)
-    fetch_resource_without_id_validation(collection_or_uri, nil, true)
+    fetch_resource_without_id_validation(collection_or_uri, @account.followers.local.first, false)
   end
 
   def collection_items(collection)
