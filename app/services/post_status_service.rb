@@ -100,7 +100,7 @@ class PostStatusService < BaseService
   end
 
   def has_only_mentions?
-    @options[:nomentions].blank? && @text.match?(/^(?:\s*@((#{Account::USERNAME_RE})(?:@[a-z0-9\.\-]+[a-z0-9]+)?))+$/i)
+    @options[:nomentions].blank? && @text.match?(/\A(?:\s*@((#{Account::USERNAME_RE})(?:@[a-z0-9\.\-]+[a-z0-9]+)?))+\z/i)
   end
 
   def mark_recipient_known
