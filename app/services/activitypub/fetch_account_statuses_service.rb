@@ -7,39 +7,39 @@ class ActivityPub::FetchAccountStatusesService < BaseService
   MAX_PAGES = 100
 
   def call(account, url = nil)
+    return if account.local? || account.suspended?
+
     @account = account
-    return if account.local? || account.suspended? || redis.get('busy_key')
-
-    redis.set(busy_key, 1, ex: 3.days)
-
     @items = Rails.cache.fetch(sync_key) || []
-
     return if redis.get(cooldown_key).present? && @items.empty?
-    redis.set(cooldown_key, 1, ex: 1.day)
 
-    @json = fetch_collection(url || account.outbox_url)
-    page = 1
+    RedisLock.acquire(lock_options) do |lock|
+      return unless lock.acquired?
 
-    if @items.empty?
-      until page == MAX_PAGES || @json.blank?
-        items = collection_items(@json).select { |item| item['type'] == 'Create' }
-        @items.concat(items)
-        break if @json['next'].blank?
-        page += 1
-        @json = fetch_collection(@json['next'])
+      redis.set(cooldown_key, 1, ex: 1.day)
+
+      @json = fetch_collection(url || account.outbox_url)
+      page = 1
+
+      if @items.empty?
+        until page == MAX_PAGES || @json.blank?
+          items = collection_items(@json).select { |item| item['type'] == 'Create' }
+          @items.concat(items)
+          break if @json['next'].blank?
+          page += 1
+          @json = fetch_collection(@json['next'])
+        end
       end
+
+      Rails.cache.write(sync_key, @items, expires_in: 1.day)
+
+      process_items(@items)
+
+      Rails.cache.delete(sync_key)
+      redis.expire(cooldown_key, 1.week)
     end
 
-    Rails.cache.write(sync_key, @items, expires_in: 1.day)
-
-    process_items(@items)
-
-    Rails.cache.delete(sync_key)
-    redis.expire(cooldown_key, 1.week)
-
     @items
-  ensure
-    redis.del(busy_key)
   end
 
   private
@@ -48,12 +48,12 @@ class ActivityPub::FetchAccountStatusesService < BaseService
     "account_sync:#{@account.id}"
   end
 
-  def busy_key
-    "account_sync:#{@account.id}:busy"
-  end
-
   def cooldown_key
     "account_sync:#{@account.id}:cooldown"
+  end
+
+  def lock_options
+    { redis: Redis.current, key: "account_sync:#{@account.id}:lock" }
   end
 
   def fetch_collection(collection_or_uri)
