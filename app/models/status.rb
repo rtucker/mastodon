@@ -118,12 +118,12 @@ class Status < ApplicationRecord
   scope :mention_not_excluded_by_account, ->(account) { left_outer_joins(:mentions).where('mentions.account_id IS NULL OR mentions.account_id NOT IN (?)', account.excluded_from_timeline_account_ids) }
   scope :not_domain_blocked_by_account, ->(account) { account.excluded_from_timeline_domains.blank? ? left_outer_joins(:account) : left_outer_joins(:account).where('accounts.domain IS NULL OR accounts.domain NOT IN (?)', account.excluded_from_timeline_domains) }
 
-  scope :like, ->(needle) { joins(:normalized_status).where('normalized_statuses.text LIKE f_normalize(?)', needle) }
-  scope :regex, ->(needle) { joins(:normalized_status).where('normalized_statuses.text ~ f_normalize(?)', needle) }
-  scope :regex_filtered_by_account, ->(account_id) { joins(:normalized_status).where('normalized_statuses.text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account_id) }
-  scope :regex_not_filtered_by_account, ->(account_id) { joins(:normalized_status).where('normalized_statuses.text !~ ALL(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account_id) }
+  scope :like, ->(needle) { joins(:normalized_status).select('statuses.*').where('normalized_statuses.text LIKE f_normalize(?)', needle) }
+  scope :regex, ->(needle) { joins(:normalized_status).select('statuses.*').where('normalized_statuses.text ~ f_normalize(?)', needle) }
+  scope :regex_filtered_by_account, ->(account_id) { joins(:normalized_status).select('statuses.*').where('normalized_statuses.text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account_id) }
+  scope :regex_not_filtered_by_account, ->(account_id) { joins(:normalized_status).select('statuses.*').where('normalized_statuses.text !~ ALL(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account_id) }
 
-  scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
+  scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).select('statuses.*').where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
   scope :tagged_with_all, ->(tags) {
     Array(tags).map(&:id).map(&:to_i).reduce(self) do |result, id|
