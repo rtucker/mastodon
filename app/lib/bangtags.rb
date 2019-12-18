@@ -481,7 +481,7 @@ class Bangtags
 
           @post_cmds.push(['media', media_idx, media_cmd])
         when 'bangtag'
-          chunk = chunk.sub('bangtag:', '').gsub(':', ":\u200c")
+          chunk = '#!'
         when 'join'
           chunk = nil
           next if cmd[1].nil?
