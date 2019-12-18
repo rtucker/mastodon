@@ -85,10 +85,4 @@ class Api::V1::Timelines::TagController < Api::BaseController
   def pagination_since_id
     @statuses.first.id
   end
-
-  def preload_media(statuses)
-    status_ids = statuses.joins(:media_attachments).distinct(:id).select(:id).reorder(nil)
-    fetch_ids = MediaAttachment.where(status_id: status_ids, file_updated_at: nil).pluck(:id)
-    fetch_ids.each { |m| FetchMediaWorker.perform_async(m) }
-  end
 end
