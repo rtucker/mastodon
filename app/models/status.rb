@@ -393,7 +393,7 @@ class Status < ApplicationRecord
 
     def as_home_timeline(account)
       query = where(account: [account] + account.following, visibility: [:public, :unlisted, :local, :private])
-      query = query.without_reblogs if account.present? && account&.user&.hides_boosts?
+      query = query.without_reblogs if account.present? && account&.user&.hide_boosts
       query
     end
 
@@ -448,8 +448,8 @@ class Status < ApplicationRecord
       query = query.without_replies unless Setting.show_replies_in_public_timelines
 
       if account.present? && account.local?
-        query = query.without_reblogs if account&.user&.hides_boosts?
-        query = query.only_followers_of(account) if account&.user&.shows_only_known?
+        query = query.without_reblogs if account&.user&.hide_boosts
+        query = query.only_followers_of(account) if account&.user&.only_known
       end
 
       apply_timeline_filters(query, account, local_only)
@@ -457,7 +457,7 @@ class Status < ApplicationRecord
 
     def as_tag_timeline(tag, account = nil, local_only = false, priv = false)
       query = tag_timeline_scope(account, local_only, priv).tagged_with(tag)
-      query = query.only_followers_of(account) if account.present? && account.local? && account&.user&.shows_only_known?
+      query = query.only_followers_of(account) if account.present? && account.local? && account&.user&.only_known?
       apply_timeline_filters(query, account, local_only, true)
     end
 

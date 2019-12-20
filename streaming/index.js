@@ -202,7 +202,7 @@ const startWorker = (workerId) => {
         return;
       }
 
-      client.query('SELECT oauth_access_tokens.resource_owner_id, users.account_id, users.chosen_languages, oauth_access_tokens.scopes FROM oauth_access_tokens INNER JOIN users ON oauth_access_tokens.resource_owner_id = users.id WHERE oauth_access_tokens.token = $1 AND oauth_access_tokens.revoked_at IS NULL LIMIT 1', [token], (err, result) => {
+      client.query('SELECT oauth_access_tokens.resource_owner_id, users.account_id, users.chosen_languages, users.hide_boosts, users.only_known, oauth_access_tokens.scopes FROM oauth_access_tokens INNER JOIN users ON oauth_access_tokens.resource_owner_id = users.id WHERE oauth_access_tokens.token = $1 AND oauth_access_tokens.revoked_at IS NULL LIMIT 1', [token], (err, result) => {
         done();
 
         if (err) {
@@ -230,6 +230,8 @@ const startWorker = (workerId) => {
 
         req.accountId = result.rows[0].account_id;
         req.chosenLanguages = result.rows[0].chosen_languages;
+        req.hideBoosts = result.rows[0].hide_boosts;
+        req.onlyKnown = result.rows[0].only_known;
         req.allowNotifications = scopes.some(scope => ['read', 'read:notifications'].includes(scope));
 
         next();
@@ -393,6 +395,10 @@ const startWorker = (workerId) => {
       const targetAccountIds = [unpackedPayload.account.id].concat(unpackedPayload.mentions.map(item => item.id));
       const accountDomain    = unpackedPayload.account.acct.split('@')[1];
 
+      if (req.hideBoosts && (unpackedPayload.in_reply_to !== undefined || unpackedPayload.in_reply_to !== null)) {
+        return;
+      }
+
       if (Array.isArray(req.chosenLanguages) && unpackedPayload.language !== null && req.chosenLanguages.indexOf(unpackedPayload.language) === -1) {
         log.silly(req.requestId, `Message ${unpackedPayload.id} filtered by language (${unpackedPayload.language})`);
         return;
@@ -422,6 +428,10 @@ const startWorker = (workerId) => {
 
         if (accountDomain) {
           queries.push(client.query('SELECT 1 FROM account_domain_blocks WHERE account_id = $1 AND domain = $2', [req.accountId, accountDomain]));
+        }
+
+        if (req.onlyKnown) {
+          queries.push(client.query('SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM follows WHERE account_id = $1 AND target_account_id = $2)', [req.accountId, unpackedPayload.account.id]));
         }
 
         Promise.all(queries).then(values => {

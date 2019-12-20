@@ -25,7 +25,7 @@ class Api::V1::Timelines::ListController < Api::BaseController
   end
 
   def cached_list_statuses
-    if current_account&.user&.hides_boosts?
+    if current_account&.user&.hide_boosts
       cache_collection list_statuses.without_reblogs, Status
     else
       cache_collection list_statuses, Status

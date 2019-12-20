@@ -39,6 +39,8 @@
 #  created_by_application_id :bigint(8)
 #  approved                  :boolean          default(TRUE), not null
 #  vars                      :jsonb            not null
+#  hide_boosts               :boolean
+#  only_known                :boolean
 #
 
 class User < ApplicationRecord
@@ -132,8 +134,6 @@ class User < ApplicationRecord
     :hide_mntions_blocker,
     :hide_mntions_packm8,
     :hide_mascot,
-    :hide_boosts,
-    :only_known,
     :hide_interactions,
     :hide_public_profile,
     :hide_public_outbox,
@@ -305,14 +305,6 @@ class User < ApplicationRecord
 
   def hides_mascot?
     @hides_mascot ||= (settings.hide_mascot || false)
-  end
-
-  def hides_boosts?
-    @hides_boosts ||= (settings.hide_boosts || false)
-  end
-
-  def shows_only_known?
-    @only_known ||= (settings.only_known || false)
   end
 
   def hides_interactions?
