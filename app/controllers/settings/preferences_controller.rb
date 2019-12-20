@@ -51,6 +51,8 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_hide_mntions_blocked,
       :setting_hide_mntions_blocker,
       :setting_hide_mntions_packm8,
+      :setting_hide_boosts,
+      :setting_only_known,
       :setting_gently_kobolds,
       :setting_user_is_kobold,
       :setting_hide_mascot,

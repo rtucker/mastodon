@@ -23,7 +23,11 @@ class Api::V1::Timelines::HomeController < Api::BaseController
   end
 
   def cached_home_statuses
-    cache_collection home_statuses, Status
+    if current_account&.user&.hides_boosts?
+      cache_collection home_statuses.without_reblogs, Status
+    else
+      cache_collection home_statuses, Status
+    end
   end
 
   def home_statuses

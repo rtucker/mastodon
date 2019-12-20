@@ -30,6 +30,8 @@ class UserSettingsDecorator
     user.settings['hide_mntions_blocked']= hide_mntions_blocked_preference if change?('setting_hide_mntions_blocked')
     user.settings['hide_mntions_blocker']= hide_mntions_blocker_preference if change?('setting_hide_mntions_blocker')
     user.settings['hide_mntions_packm8'] = hide_mntions_packm8_preference if change?('setting_hide_mntions_packm8')
+    user.settings['hide_boosts']         = hide_boosts_preference if change?('setting_hide_boosts')
+    user.settings['only_known']          = only_known_preference if change?('setting_only_known')
     user.settings['force_lowercase']     = force_lowercase_preference if change?('setting_force_lowercase')
     user.settings['hide_captions']       = hide_captions_preference if change?('setting_hide_captions')
     user.settings['hide_mascot']         = hide_mascot_preference if change?('setting_hide_mascot')
@@ -123,6 +125,14 @@ class UserSettingsDecorator
 
   def hide_mascot_preference
     boolean_cast_setting 'setting_hide_mascot'
+  end
+
+  def hide_boosts_preference
+    boolean_cast_setting 'setting_hide_boosts'
+  end
+
+  def only_known_preference
+    boolean_cast_setting 'setting_only_known'
   end
 
   def hide_interactions_preference

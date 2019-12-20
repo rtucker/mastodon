@@ -125,6 +125,8 @@ class Status < ApplicationRecord
 
   scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).select('statuses.*').where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
+  scope :only_followers_of, ->(account) { where(account: [account] + account.following) }
+
   scope :tagged_with_all, ->(tags) {
     Array(tags).map(&:id).map(&:to_i).reduce(self) do |result, id|
       result.joins("INNER JOIN statuses_tags t#{id} ON t#{id}.status_id = statuses.id AND t#{id}.tag_id = #{id}")
@@ -390,7 +392,9 @@ class Status < ApplicationRecord
     end
 
     def as_home_timeline(account)
-      where(account: [account] + account.following, visibility: [:public, :unlisted, :local, :private])
+      query = where(account: [account] + account.following, visibility: [:public, :unlisted, :local, :private])
+      query = query.without_reblogs if account.present? && account&.user&.hides_boosts?
+      query
     end
 
     def as_direct_timeline(account, limit = 20, max_id = nil, since_id = nil, cache_ids = false)
@@ -440,13 +444,20 @@ class Status < ApplicationRecord
       else
         query = Status.curated
       end
+
       query = query.without_replies unless Setting.show_replies_in_public_timelines
+
+      if account.present? && account.local?
+        query = query.without_reblogs if account&.user&.hides_boosts?
+        query = query.only_followers_of(account) if account&.user&.shows_only_known?
+      end
 
       apply_timeline_filters(query, account, local_only)
     end
 
     def as_tag_timeline(tag, account = nil, local_only = false, priv = false)
       query = tag_timeline_scope(account, local_only, priv).tagged_with(tag)
+      query = query.only_followers_of(account) if account.present? && account.local? && account&.user&.shows_only_known?
       apply_timeline_filters(query, account, local_only, true)
     end
 
