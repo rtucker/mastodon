@@ -183,6 +183,7 @@ en:
         hide_boosts: Don't show boosts on any timeline
         only_known: Only show posts from packmates on all timelines
         invert_filters: Use allow list mode for filters
+        filter_timelines_only: Apply filters to timelines only
         severity: Severity
         type: Import type
         username: Username

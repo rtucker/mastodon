@@ -32,6 +32,7 @@ class Settings::PreferencesController < Settings::BaseController
       :hide_boosts,
       :only_known,
       :invert_filters,
+      :filter_timelines_only,
       chosen_languages: []
     )
   end

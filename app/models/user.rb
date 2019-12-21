@@ -42,6 +42,7 @@
 #  hide_boosts               :boolean
 #  only_known                :boolean
 #  invert_filters            :boolean          default(FALSE), not null
+#  filter_timelines_only     :boolean          default(FALSE), not null
 #
 
 class User < ApplicationRecord
