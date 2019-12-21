@@ -202,7 +202,7 @@ const startWorker = (workerId) => {
         return;
       }
 
-      client.query('SELECT oauth_access_tokens.resource_owner_id, users.account_id, users.chosen_languages, users.hide_boosts, users.only_known, oauth_access_tokens.scopes FROM oauth_access_tokens INNER JOIN users ON oauth_access_tokens.resource_owner_id = users.id WHERE oauth_access_tokens.token = $1 AND oauth_access_tokens.revoked_at IS NULL LIMIT 1', [token], (err, result) => {
+      client.query('SELECT oauth_access_tokens.resource_owner_id, users.account_id, users.chosen_languages, users.hide_boosts, users.only_known, users.invert_filters, oauth_access_tokens.scopes FROM oauth_access_tokens INNER JOIN users ON oauth_access_tokens.resource_owner_id = users.id WHERE oauth_access_tokens.token = $1 AND oauth_access_tokens.revoked_at IS NULL LIMIT 1', [token], (err, result) => {
         done();
 
         if (err) {
@@ -232,6 +232,7 @@ const startWorker = (workerId) => {
         req.chosenLanguages = result.rows[0].chosen_languages;
         req.hideBoosts = result.rows[0].hide_boosts;
         req.onlyKnown = result.rows[0].only_known;
+        req.invertFilters = result.rows[0].invert_filters;
         req.allowNotifications = scopes.some(scope => ['read', 'read:notifications'].includes(scope));
 
         next();
@@ -423,7 +424,7 @@ const startWorker = (workerId) => {
         }
 
         const queries = [
-          client.query(`SELECT 1 FROM blocks WHERE (account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)})) OR (account_id = $2 AND target_account_id = $1) UNION SELECT 1 FROM mutes WHERE account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)}) UNION SELECT 1 FROM normalized_statuses WHERE status_id = $3 AND text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = $1)) UNION SELECT 1 FROM media_attachments WHERE (1 = (SELECT 1 FROM accounts WHERE id = $1 AND filter_undescribed)) AND status_id = $3 AND description IS NULL LIMIT 1`, [req.accountId, unpackedPayload.account.id, unpackedPayload.id].concat(targetAccountIds)),
+          client.query(`SELECT 1 FROM blocks WHERE (account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)})) OR (account_id = $2 AND target_account_id = $1) UNION SELECT 1 FROM mutes WHERE account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)}) UNION SELECT 1 FROM normalized_statuses WHERE status_id = $3 AND text ${req.invertFilters ? '!~' : '~'} ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = $1)) UNION SELECT 1 FROM media_attachments WHERE (1 = (SELECT 1 FROM accounts WHERE id = $1 AND filter_undescribed)) AND status_id = $3 AND description IS NULL LIMIT 1`, [req.accountId, unpackedPayload.account.id, unpackedPayload.id].concat(targetAccountIds)),
         ];
 
         if (accountDomain) {

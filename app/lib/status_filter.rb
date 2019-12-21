@@ -15,7 +15,7 @@ class StatusFilter
   def filtered?
     return true if status.nil? || account.nil?
     return false if !account.nil? && account.id == status.account_id
-    return true if redis.sismember("filtered_statuses:#{account.id}", status.id)
+    return !account.user.invert_filters if redis.sismember("filtered_statuses:#{account.id}", status.id)
     if blocked_by_policy? || (account_present? && filtered_status?) || silenced_account?
       redis.sadd("filtered_statuses:#{account.id}", status.id)
       return true
@@ -40,7 +40,7 @@ class StatusFilter
     return true if account.user_hides_replies_of_blocker? && reply_to_blocker?
 
     # filtered by user?
-    return true if phrase_filtered?(status, account.id)
+    return true if !account.user.invert_filters && phrase_filtered?(status, account.id)
 
     # kajiht has no filters if status has no mentions
     return false if status&.mentions.blank?
@@ -74,7 +74,10 @@ class StatusFilter
     return true if !@preloaded_relations[:muting] && account.user_hides_mentions_of_muted? && account.muting?(mentioned_account_ids)
     return true if !@preloaded_relations[:blocking] && account.user_hides_mentions_of_blocked? && account.blocking?(mentioned_account_ids)
     return false unless status.reply? && status.private_visibility? && account.user_hides_mentions_outside_scope?
-    !@preloaded_relations[:following] && (mentioned_account_ids - account.following_ids).any?
+    return true if !@preloaded_relations[:following] && (mentioned_account_ids - account.following_ids).any?
+
+    # filtered by user?
+    account.user.invert_filters && !phrase_filtered?(status, account.id)
   end
 
   def reply_to_blocked?

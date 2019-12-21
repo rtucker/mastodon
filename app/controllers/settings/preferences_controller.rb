@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Settings::PreferencesController < Settings::BaseController
+  include Redisable
+
   layout 'admin'
 
   before_action :authenticate_user!
@@ -29,6 +31,7 @@ class Settings::PreferencesController < Settings::BaseController
       :locale,
       :hide_boosts,
       :only_known,
+      :invert_filters,
       chosen_languages: []
     )
   end

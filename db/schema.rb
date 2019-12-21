@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_21_164844) do
+ActiveRecord::Schema.define(version: 2019_12_21_183232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -810,6 +810,7 @@ ActiveRecord::Schema.define(version: 2019_12_21_164844) do
     t.jsonb "vars", default: {}, null: false
     t.boolean "hide_boosts"
     t.boolean "only_known"
+    t.boolean "invert_filters", default: false, null: false
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["created_by_application_id"], name: "index_users_on_created_by_application_id"

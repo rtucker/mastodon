@@ -182,6 +182,7 @@ en:
         setting_unfollow_modal: Show confirmation dialog before unfollowing someone
         hide_boosts: Don't show boosts on any timeline
         only_known: Only show posts from packmates on all timelines
+        invert_filters: Use allow list mode for filters
         severity: Severity
         type: Import type
         username: Username

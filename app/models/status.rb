@@ -580,7 +580,13 @@ class Status < ApplicationRecord
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
       query = query.reply_not_excluded_by_account(account) unless tag_timeline
       query = query.mention_not_excluded_by_account(account)
-      query = query.regex_not_filtered_by_account(account.id) if account.custom_filters.present?
+      unless account.custom_filters.nil?
+        if account.user.invert_filters
+          query = query.regex_filtered_by_account(account.id)
+        else
+          query = query.regex_not_filtered_by_account(account.id)
+        end
+      end
       query = query.not_missing_media_desc if account.filter_undescribed?
       query.merge(account_silencing_filter(account))
     end

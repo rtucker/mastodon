@@ -46,6 +46,7 @@
   %hr#settings_other/
 
   .fields-group
+    = f.input :invert_filters, as: :boolean, wrapper: :with_label
     = f.input :setting_rawr_federated, as: :boolean, wrapper: :with_label
     = f.input :hide_boosts, as: :boolean, wrapper: :with_label
     = f.input :only_known, as: :boolean, wrapper: :with_label
