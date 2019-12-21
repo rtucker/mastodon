@@ -391,9 +391,10 @@ class Status < ApplicationRecord
       where(language: nil).or where(language: account.chosen_languages)
     end
 
-    def as_home_timeline(account)
+    def as_home_timeline(account, reblogs_only: false)
       query = where(account: [account] + account.following, visibility: [:public, :unlisted, :local, :private])
-      query = query.without_reblogs if account.present? && account&.user&.hide_boosts
+      query = query.without_reblogs if !reblogs_only && account.present? && account&.user&.hide_boosts
+      query = query.reblogs if reblogs_only
       query
     end
 

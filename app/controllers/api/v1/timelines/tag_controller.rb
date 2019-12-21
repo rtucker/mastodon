@@ -30,6 +30,10 @@ class Api::V1::Timelines::TagController < Api::BaseController
       []
     elsif @tag.name.in?(['self.bookmarks', '.self.bookmarks'])
       Status.reorder(nil).joins(:bookmarks).merge(bookmark_results)
+    elsif @tag.name.in?(['self.boosts', '.self.boosts'])
+      reblog_results
+    elsif @tag.name.in?(['self.home.boosts', '.self.home.boosts'])
+      home_reblog_results
     else
       statuses = tag_timeline_statuses.paginate_by_id(
         limit_param(DEFAULT_STATUSES_LIMIT),
@@ -51,7 +55,7 @@ class Api::V1::Timelines::TagController < Api::BaseController
   end
 
   def bookmark_results
-    @_results ||= account_bookmarks.paginate_by_max_id(
+    account_bookmarks.paginate_by_max_id(
       limit_param(DEFAULT_STATUSES_LIMIT),
       params[:max_id],
       params[:since_id]
@@ -60,6 +64,30 @@ class Api::V1::Timelines::TagController < Api::BaseController
 
   def account_bookmarks
     current_account.bookmarks
+  end
+
+  def reblog_results
+    account_reblogs.paginate_by_max_id(
+      limit_param(DEFAULT_STATUSES_LIMIT),
+      params[:max_id],
+      params[:since_id]
+    )
+  end
+
+  def account_reblogs
+    current_account.statuses.reblogs
+  end
+
+  def home_reblog_results
+    account_home_reblogs.paginate_by_max_id(
+      limit_param(DEFAULT_STATUSES_LIMIT),
+      params[:max_id],
+      params[:since_id]
+    )
+  end
+
+  def account_home_reblogs
+    Status.as_home_timeline(current_account, reblogs_only: true)
   end
 
   def insert_pagination_headers
