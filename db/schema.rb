@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_20_020441) do
+ActiveRecord::Schema.define(version: 2019_12_21_164844) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -443,6 +443,7 @@ ActiveRecord::Schema.define(version: 2019_12_20_020441) do
     t.boolean "hide_notifications", default: true, null: false
     t.bigint "account_id", null: false
     t.bigint "target_account_id", null: false
+    t.boolean "timelines_only", default: false, null: false
     t.index ["account_id", "target_account_id"], name: "index_mutes_on_account_id_and_target_account_id", unique: true
     t.index ["target_account_id"], name: "index_mutes_on_target_account_id"
   end

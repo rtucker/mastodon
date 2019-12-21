@@ -9,6 +9,7 @@
 #  hide_notifications :boolean          default(TRUE), not null
 #  account_id         :bigint(8)        not null
 #  target_account_id  :bigint(8)        not null
+#  timelines_only     :boolean          default(FALSE), not null
 #
 
 class Mute < ApplicationRecord

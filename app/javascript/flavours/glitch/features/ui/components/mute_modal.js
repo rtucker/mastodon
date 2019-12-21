@@ -7,6 +7,7 @@ import Button from 'flavours/glitch/components/button';
 import { closeModal } from 'flavours/glitch/actions/modal';
 import { muteAccount } from 'flavours/glitch/actions/accounts';
 import { toggleHideNotifications } from 'flavours/glitch/actions/mutes';
+import { toggleTimelinesOnly } from 'flavours/glitch/actions/mutes';
 
 
 const mapStateToProps = state => {
@@ -14,13 +15,14 @@ const mapStateToProps = state => {
     isSubmitting: state.getIn(['reports', 'new', 'isSubmitting']),
     account: state.getIn(['mutes', 'new', 'account']),
     notifications: state.getIn(['mutes', 'new', 'notifications']),
+    timelinesOnly: state.getIn(['mutes', 'new', 'timelines_only']),
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onConfirm(account, notifications) {
-      dispatch(muteAccount(account.get('id'), notifications));
+    onConfirm(account, notifications, timelinesOnly) {
+      dispatch(muteAccount(account.get('id'), notifications, timelinesOnly));
     },
 
     onClose() {
@@ -29,6 +31,10 @@ const mapDispatchToProps = dispatch => {
 
     onToggleNotifications() {
       dispatch(toggleHideNotifications());
+    },
+
+    onToggleTimelinesOnly() {
+      dispatch(toggleTimelinesOnly());
     },
   };
 };
@@ -41,9 +47,11 @@ export default class MuteModal extends React.PureComponent {
     isSubmitting: PropTypes.bool.isRequired,
     account: PropTypes.object.isRequired,
     notifications: PropTypes.bool.isRequired,
+    timelinesOnly: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     onToggleNotifications: PropTypes.func.isRequired,
+    onTimelinesOnly: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
   };
 
@@ -53,7 +61,7 @@ export default class MuteModal extends React.PureComponent {
 
   handleClick = () => {
     this.props.onClose();
-    this.props.onConfirm(this.props.account, this.props.notifications);
+    this.props.onConfirm(this.props.account, this.props.notifications, this.props.timelinesOnly);
   }
 
   handleCancel = () => {
@@ -68,8 +76,12 @@ export default class MuteModal extends React.PureComponent {
     this.props.onToggleNotifications();
   }
 
+  toggleTimelinesOnly = () => {
+    this.props.onToggleTimelinesOnly();
+  }
+
   render () {
-    const { account, notifications } = this.props;
+    const { account, notifications, timelinesOnly } = this.props;
 
     return (
       <div className='modal-root__modal mute-modal'>
@@ -86,6 +98,13 @@ export default class MuteModal extends React.PureComponent {
               <FormattedMessage id='mute_modal.hide_notifications' defaultMessage='Hide notifications from this user?' />
               {' '}
               <Toggle id='mute-modal__hide-notifications-checkbox' checked={notifications} onChange={this.toggleNotifications} />
+            </label>
+          </div>
+          <div>
+            <label htmlFor='mute-modal__timelines-only-checkbox'>
+              <FormattedMessage id='mute_modal.timelines_only' defaultMessage='Hide from timelines only?' />
+              {' '}
+              <Toggle id='mute-modal__timelines-only-checkbox' checked={timelinesOnly} onChange={this.toggleTimelinesOnly} />
             </label>
           </div>
         </div>
