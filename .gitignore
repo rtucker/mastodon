@@ -25,6 +25,7 @@ public/.well-known
 .env
 .env.ambassador
 .env.production
+.env.development
 node_modules/
 build/
 

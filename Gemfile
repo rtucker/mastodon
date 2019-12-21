@@ -6,7 +6,8 @@ ruby '>= 2.4.0', '< 2.7.0'
 gem 'pkg-config', '~> 1.4'
 
 gem 'puma', '~> 4.3'
-gem 'rails', '~> 5.2.3'
+gem 'rails', '~> 5.2.4'
+gem 'sprockets', '~> 3.7'
 gem 'thor', '~> 0.20'
 
 gem 'hamlit-rails', '~> 0.2'
@@ -15,7 +16,7 @@ gem 'makara', '~> 0.4'
 gem 'pghero', '~> 2.4'
 gem 'dotenv-rails', '~> 2.7'
 
-gem 'aws-sdk-s3', '~> 1.57', require: false
+gem 'aws-sdk-s3', '~> 1.59', require: false
 gem 'fog-core', '<= 2.1.0'
 gem 'fog-openstack', '~> 0.3', require: false
 gem 'paperclip', '~> 6.0'
@@ -89,7 +90,7 @@ gem 'simple-navigation', '~> 4.1'
 gem 'simple_form', '~> 5.0'
 gem 'sprockets-rails', '~> 3.2', require: 'sprockets/railtie'
 gem 'stoplight', '~> 2.2.0'
-gem 'strong_migrations', '~> 0.4'
+gem 'strong_migrations', '~> 0.5'
 gem 'tty-command', '~> 0.9', require: false
 gem 'tty-prompt', '~> 0.20', require: false
 gem 'twitter-text', '~> 1.14'
@@ -125,7 +126,7 @@ group :test do
   gem 'rspec-sidekiq', '~> 3.0'
   gem 'simplecov', '~> 0.17', require: false
   gem 'webmock', '~> 3.7'
-  gem 'parallel_tests', '~> 2.29'
+  gem 'parallel_tests', '~> 2.30'
 end
 
 group :development do
@@ -137,7 +138,7 @@ group :development do
   gem 'letter_opener', '~> 1.7'
   gem 'letter_opener_web', '~> 1.3'
   gem 'memory_profiler'
-  gem 'rubocop', '~> 0.76', require: false
+  gem 'rubocop', '~> 0.77', require: false
   gem 'rubocop-rails', '~> 2.4', require: false
   gem 'brakeman', '~> 4.7', require: false
   gem 'bundler-audit', '~> 0.6', require: false

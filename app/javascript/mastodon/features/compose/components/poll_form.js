@@ -82,8 +82,8 @@ class Option extends React.PureComponent {
             onKeyPress={this.handleCheckboxKeypress}
             role='button'
             tabIndex='0'
-            title={intl.formatMessage(isPollMultiple ? messages.switchToMultiple : messages.switchToSingle)}
-            aria-label={intl.formatMessage(isPollMultiple ? messages.switchToMultiple : messages.switchToSingle)}
+            title={intl.formatMessage(isPollMultiple ? messages.switchToSingle : messages.switchToMultiple)}
+            aria-label={intl.formatMessage(isPollMultiple ? messages.switchToSingle : messages.switchToMultiple)}
           />
 
           <AutosuggestInput
@@ -155,7 +155,7 @@ class PollForm extends ImmutablePureComponent {
         <div className='poll__footer'>
           <button disabled={options.size >= 5} className='button button-secondary' onClick={this.handleAddOption}><Icon id='plus' /> <FormattedMessage {...messages.add_option} /></button>
 
-          <select value={expiresIn} onBlur={this.handleSelectDuration}>
+          <select value={expiresIn} onChange={this.handleSelectDuration}>
             <option value={300}>{intl.formatMessage(messages.minutes, { number: 5 })}</option>
             <option value={1800}>{intl.formatMessage(messages.minutes, { number: 30 })}</option>
             <option value={3600}>{intl.formatMessage(messages.hours, { number: 1 })}</option>
