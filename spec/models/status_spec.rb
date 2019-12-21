@@ -233,10 +233,10 @@ RSpec.describe Status, type: :model do
   end
 
   describe '#has_mutetag' do
-    describe 'on a status with a #timelinemute tag' do
+    describe 'on a status with a #bot tag' do
       before do
-        tag = Fabricate(:tag, name: 'timelinemute')
-        subject.text = "blahblahblah #TimelineMute"
+        tag = Fabricate(:tag, name: 'bot')
+        subject.text = "blahblahblah #bot"
         subject.tags = [tag]
         subject.save!
       end
@@ -246,9 +246,9 @@ RSpec.describe Status, type: :model do
       end
     end
 
-    describe 'on a status without a #timelinemute tag' do
+    describe 'on a status without a #bot tag' do
       before do
-        Fabricate(:tag, name: 'timelinemute')
+        Fabricate(:tag, name: 'bot')
         subject.text = "blahblahblah adfdsfsadf"
         subject.save!
       end

@@ -245,7 +245,7 @@ class Status < ApplicationRecord
   end
 
   def has_mutetag?
-    tags.where(name: "timelinemute").exists?
+    tags.where(name: "bot").exists?
   end
 
   def replies_count
@@ -340,7 +340,7 @@ class Status < ApplicationRecord
       query = timeline_scope(local_only)
       query = query.without_replies unless Setting.show_replies_in_public_timelines
 
-      mutetag = Tag.where(name: "timelinemute")
+      mutetag = Tag.where(name: "bot")
 
       if mutetag.exists?
         query = query
