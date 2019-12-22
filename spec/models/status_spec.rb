@@ -521,11 +521,11 @@ RSpec.describe Status, type: :model do
       subject { Status.as_public_timeline }
 
       before do
-        @tag = Fabricate(:tag, name: 'timelinemute')
-        @status = Fabricate(:status, text: "blahblahblah #TimelineMute", tags: [@tag])
+        @tag = Fabricate(:tag, name: 'bot')
+        @status = Fabricate(:status, text: "blahblahblah #bot", tags: [@tag])
       end
 
-      it 'does not include statuses with #timelinemute tag' do
+      it 'does not include statuses with #bot tag' do
         expect(subject).not_to include(@status)
       end
     end
