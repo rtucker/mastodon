@@ -311,7 +311,8 @@ class Bangtags
             end
             service_dm(
               'janitor', @account,
-              "Kicked @#{parent_account.acct} from [thread #{status.conversation_id}](#{TagManager.instance.url_for(first)})."
+              "Kicked @#{parent_account.acct} from [thread #{status.conversation_id}](#{TagManager.instance.url_for(first)}).",
+              footer: '#!thread:kick'
             )
           when 'unkick'
             next if cmd[2].blank? && @parent_status.nil?
@@ -330,7 +331,8 @@ class Bangtags
             ConversationKick.where(account_id: parent_account.id, conversation_id: status.conversation_id).destroy_all
             service_dm(
               'janitor', @account,
-              "Allowed @#{parent_account.acct} back into [thread ##{status.conversation_id}](#{TagManager.instance.url_for(first)})."
+              "Allowed @#{parent_account.acct} back into [thread ##{status.conversation_id}](#{TagManager.instance.url_for(first)}).",
+              footer: '#!thread:unkick'
             )
           when 'reall'
             if status.conversation_id.present?
@@ -897,7 +899,7 @@ class Bangtags
             @account.queued_boosts.find_each do |q|
               output << "\\- [#{q.status_id}](#{TagManager.instance.url_for(q.status_id)})"
             end
-            service_dm('announcements', @account, output.join("\n"))
+            service_dm('announcements', @account, output.join("\n"), footer: '#!queued:boosts')
           when 'posts', 'statuses', 'roars'
             output = ["<h1>Queued roars</h1><br>"]
             @account.scheduled_statuses.find_each do |s|
@@ -907,7 +909,7 @@ class Bangtags
               preview = html_entities.encode(preview)
               output << "- <a href=\"#{TagManager.instance.url_for(s.status_id)}\">#{preview}</a>"
             end
-            service_dm('announcements', @account, output.join("<br>"), content_type: 'text/html')
+            service_dm('announcements', @account, output.join("<br>"), content_type: 'text/html', footer: '#!queued:posts')
           end
         end
       end
