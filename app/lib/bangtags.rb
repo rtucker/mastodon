@@ -897,7 +897,7 @@ class Bangtags
             @account.queued_boosts.find_each do |q|
               output << "\\- [#{q.status_id}](#{TagManager.instance.url_for(q.status_id)})"
             end
-            service_dm('announcer', @account, output.join("\n"))
+            service_dm('announcements', @account, output.join("\n"))
           when 'posts', 'statuses', 'roars'
             output = ["<h1>Queued roars</h1><br>"]
             @account.scheduled_statuses.find_each do |s|
@@ -907,7 +907,7 @@ class Bangtags
               preview = html_entities.encode(preview)
               output << "- <a href=\"#{TagManager.instance.url_for(s.status_id)}\">#{preview}</a>"
             end
-            service_dm('announcer', @account, output.join("<br>"), content_type: 'text/html')
+            service_dm('announcements', @account, output.join("<br>"), content_type: 'text/html')
           end
         end
       end
