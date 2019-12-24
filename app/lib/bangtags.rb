@@ -899,6 +899,12 @@ class Bangtags
             @account.queued_boosts.find_each do |q|
               output << "\\- [#{q.status_id}](#{TagManager.instance.url_for(q.status_id)})"
             end
+            if Redis.current.exists("queued_boost:#{@account.id}")
+              output << "\nNext boost in #{Redis.current.ttl("queued_boost:#{@account.id}") / 60} minutes."
+            else
+              output << "\nNothing scheduled yet."
+            end
+
             service_dm('announcements', @account, output.join("\n"), footer: '#!queued:boosts')
           when 'posts', 'statuses', 'roars'
             output = ["<h1>Queued roars</h1><br>"]
