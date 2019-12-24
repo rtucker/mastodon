@@ -897,7 +897,9 @@ class Bangtags
           when 'boosts', 'repeats'
             output = ["# Queued boosts\n"]
             @account.queued_boosts.find_each do |q|
-              output << "\\- [#{q.status_id}](#{TagManager.instance.url_for(q.status_id)})"
+              s = Status.find_by(id: q.status_id)
+              next if s.nil?
+              output << "\\- [#{q.status_id}](#{TagManager.instance.url_for(s)})"
             end
             if Redis.current.exists("queued_boost:#{@account.id}")
               output << "\nNext boost in #{Redis.current.ttl("queued_boost:#{@account.id}") / 60} minutes."
@@ -909,11 +911,15 @@ class Bangtags
           when 'posts', 'statuses', 'roars'
             output = ["<h1>Queued roars</h1><br>"]
             @account.scheduled_statuses.find_each do |s|
-              preview = s.params['spoiler_text'] || s.params['text']
+              s = Status.find_by(id: s.status_id)
+              next if s.nil?
+
+              preview = s.spoiler_text || s.text
               preview = '[no body text]' if preview.blank?
               preview = preview[0..50]
               preview = html_entities.encode(preview)
-              output << "- <a href=\"#{TagManager.instance.url_for(s.status_id)}\">#{preview}</a>"
+
+              output << "- <a href=\"#{TagManager.instance.url_for(s)}\">#{preview}</a>"
             end
             service_dm('announcements', @account, output.join("<br>"), content_type: 'text/html', footer: '#!queued:posts')
           end
