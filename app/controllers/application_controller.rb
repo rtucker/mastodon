@@ -223,7 +223,10 @@ class ApplicationController < ActionController::Base
   end
 
   def respond_with_error(code)
-    render "errors/#{code}", layout: 'error', status: code, formats: [:html]
+    respond_to do |format|
+      format.any  { render "errors/#{code}", layout: 'error', status: code, formats: [:html] }
+      format.json { render json: { error: Rack::Utils::HTTP_STATUS_CODES[code] }, status: code }
+    end
   end
 
   def monsterfork_api
