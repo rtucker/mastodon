@@ -24,6 +24,10 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
       'Big' => 'https://tails.monsterpit.net/#',
       'tailsNeverFail' => 'Big:tailsNeverFail',
     },
+    trans: {
+      'mp' => 'https://monsterpit.net/#',
+      'trans' => 'mp:trans',
+    },
     adult_content: {
       'mp' => 'https://monsterpit.net/ns#',
       'adultContent' => 'mp:adultContent'

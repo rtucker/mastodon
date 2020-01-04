@@ -7,14 +7,14 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
 
   context_extensions :manually_approves_followers, :featured, :also_known_as,
                      :moved_to, :property_value, :hashtag, :emoji,
-                     :adult_content, :gently, :kobold, :froze, :big
+                     :adult_content, :gently, :kobold, :froze, :big, :trans
 
   attributes :id, :type, :following, :followers,
              :inbox, :outbox, :featured,
              :preferred_username, :name, :summary,
              :url, :manually_approves_followers,
              :gently, :kobold, :adult_content,
-             :froze, :tails_never_fail
+             :froze, :tails_never_fail, :trans
 
   has_one :public_key, serializer: ActivityPub::PublicKeySerializer
 
@@ -40,6 +40,10 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
   has_one :image, serializer: ActivityPub::ImageSerializer, if: :header_exists?
 
   delegate :moved?, to: :object
+
+  def trans
+    'rights'
+  end
 
   def id
     account_url(object)

@@ -3,13 +3,13 @@
 class ActivityPub::NoteSerializer < ActivityPub::Serializer
   context_extensions :conversation, :sensitive, :big,
                      :hashtag, :emoji, :focal_point, :blurhash,
-                     :reject_replies
+                     :reject_replies, :trans
 
   attributes :id, :type, :summary,
              :in_reply_to, :published, :updated, :url,
              :attributed_to, :to, :cc, :sensitive,
              :conversation, :source, :tails_never_fail,
-             :reject_replies
+             :reject_replies, :trans
 
   attribute :content
   attribute :content_map, if: :language?
@@ -24,6 +24,10 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
 
   attribute :end_time, if: :poll_and_expires?
   attribute :closed, if: :poll_and_expired?
+
+  def trans
+    'rights'
+  end
 
   def id
     raise Mastodon::NotPermittedError, 'Local-only statuses should not be serialized' if object.local_only?
