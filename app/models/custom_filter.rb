@@ -33,8 +33,6 @@ class CustomFilter < ApplicationRecord
     FilterFeedsWorker.perform_async(account_id)
   end
 
-  private
-
   def remove_cache
     redis.del("filtered_statuses:#{account_id}")
   end
