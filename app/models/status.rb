@@ -119,8 +119,8 @@ class Status < ApplicationRecord
 
   scope :search, ->(needle) { where("tsv @@ websearch_to_tsquery('fedi', ?)", needle) }
   scope :search_not, ->(needle) { where.not("tsv @@ websearch_to_tsquery('fedi', ?)", needle) }
-  scope :search_filtered_by_account, ->(account_id) { where('tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = ?)', account_id) }
-  scope :search_not_filtered_by_account, ->(account_id) { where.not('tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = ?)', account_id) }
+  scope :search_filtered_by_account, ->(account_id) { where('tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = ? AND is_enabled)', account_id) }
+  scope :search_not_filtered_by_account, ->(account_id) { where.not('tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = ? AND is_enabled)', account_id) }
 
   scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).select('statuses.*').where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
@@ -578,7 +578,7 @@ class Status < ApplicationRecord
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
       query = query.reply_not_excluded_by_account(account) unless tag_timeline
       query = query.mention_not_excluded_by_account(account)
-      unless account.custom_filters.empty?
+      unless account.custom_filters.enabled.empty?
         if account.user.invert_filters
           query = query.search_filtered_by_account(account.id)
         else

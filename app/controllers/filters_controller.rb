@@ -58,7 +58,7 @@ class FiltersController < ApplicationController
   end
 
   def resource_params
-    params.require(:custom_filter).permit(:phrase, :expires_in)
+    params.require(:custom_filter).permit(:phrase, :expires_in, :is_enabled)
   end
 
   def set_body_classes

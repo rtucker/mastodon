@@ -9,11 +9,14 @@
 #  phrase     :text             default(""), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  is_enabled :boolean          default(TRUE), not null
 #
 
 class CustomFilter < ApplicationRecord
   include Expireable
   include Redisable
+
+  scope :enabled, -> { where(is_enabled: true) }
 
   belongs_to :account
 

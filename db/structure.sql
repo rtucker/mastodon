@@ -114,6 +114,17 @@ $$;
 
 
 --
+-- Name: tsquery_union(tsquery); Type: AGGREGATE; Schema: public; Owner: -
+--
+
+CREATE AGGREGATE public.tsquery_union(tsquery) (
+    SFUNC = tsquery_or,
+    STYPE = tsquery,
+    PARALLEL = safe
+);
+
+
+--
 -- Name: fedi; Type: TEXT SEARCH CONFIGURATION; Schema: public; Owner: -
 --
 
@@ -862,7 +873,8 @@ CREATE TABLE public.custom_filters (
     expires_at timestamp without time zone,
     phrase text DEFAULT ''::text NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    is_enabled boolean DEFAULT true NOT NULL
 );
 
 
@@ -5377,6 +5389,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191221195147'),
 ('20200108051211'),
 ('20200109191740'),
-('20200110072034');
+('20200110072034'),
+('20200110195612');
 
 

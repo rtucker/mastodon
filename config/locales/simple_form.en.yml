@@ -193,7 +193,7 @@ en:
         desc: Filter roars with matching media descriptions
         no_desc: Filter roars WITHOUT media descriptions
         override_cw: Override existing content warning
-
+        is_enabled: Enabled
         filter_undescribed: Hide roars without media descriptions
       boost_interval:
         1: 1 minute
