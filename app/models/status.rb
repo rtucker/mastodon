@@ -40,7 +40,6 @@ class Status < ApplicationRecord
   include Streamable
   include Cacheable
   include StatusThreadingConcern
-  include TextHelper
 
   # match both with and without U+FE0F (the emoji variation selector)
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
@@ -358,7 +357,6 @@ class Status < ApplicationRecord
 
   after_save :update_sharekey, if: :local?
   after_save :update_origin, if: :local?
-  after_save :update_normalized_text
   after_save :process_bangtags, if: :local?
 
   class << self
@@ -677,16 +675,6 @@ class Status < ApplicationRecord
       self.create_imported_status(origin: @_origin)
     else
       self.imported_status.update_attributes(origin: @_origin)
-    end
-  end
-
-  def update_normalized_text
-    return if destroyed? || text.blank? || !(text_changed? || saved_change_to_text?)
-    normalized_text = normalize_status(self)
-    if self.normalized_status.nil?
-      self.create_normalized_status(text: normalized_text)
-    else
-      self.normalized_status.update_attributes(text: normalized_text)
     end
   end
 
