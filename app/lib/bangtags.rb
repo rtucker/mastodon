@@ -3,7 +3,6 @@
 class Bangtags
   include ModerationHelper
   include ServiceAccountHelper
-  include SearchHelper
 
   attr_reader :status, :account
 
@@ -764,7 +763,7 @@ class Bangtags
           q = cmd[1..-1].join.strip
           next if q.blank?
           begin
-            data = @account.statuses.regex(expand_search_query(q))
+            data = @account.statuses.search(q.unaccent)
               .reorder(:created_at)
               .pluck(:created_at)
               .map { |d| d.strftime('%Y-%m') }

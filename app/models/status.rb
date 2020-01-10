@@ -30,6 +30,7 @@
 #  edited                 :boolean
 #  boostable              :boolean
 #  reject_replies         :boolean
+#  tsv                    :tsvector
 #
 
 class Status < ApplicationRecord
@@ -82,7 +83,6 @@ class Status < ApplicationRecord
   has_one :status_stat, inverse_of: :status
   has_one :poll, inverse_of: :status, dependent: :destroy
   has_one :destructing_status, inverse_of: :status, dependent: :destroy
-  has_one :normalized_status, inverse_of: :status, dependent: :destroy
   has_one :imported_status, inverse_of: :status, dependent: :destroy
   has_one :sharekey, inverse_of: :status, dependent: :destroy
 
@@ -118,10 +118,10 @@ class Status < ApplicationRecord
   scope :mention_not_excluded_by_account, ->(account) { left_outer_joins(:mentions).where('mentions.account_id IS NULL OR mentions.account_id NOT IN (?)', account.excluded_from_timeline_account_ids) }
   scope :not_domain_blocked_by_account, ->(account) { account.excluded_from_timeline_domains.blank? ? left_outer_joins(:account) : left_outer_joins(:account).where('accounts.domain IS NULL OR accounts.domain NOT IN (?)', account.excluded_from_timeline_domains) }
 
-  scope :like, ->(needle) { joins(:normalized_status).select('statuses.*').where('normalized_statuses.text LIKE f_normalize(?)', needle) }
-  scope :regex, ->(needle) { joins(:normalized_status).select('statuses.*').where('normalized_statuses.text ~ f_normalize(?)', needle) }
-  scope :regex_filtered_by_account, ->(account_id) { joins(:normalized_status).select('statuses.*').where('normalized_statuses.text ~ ANY(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account_id) }
-  scope :regex_not_filtered_by_account, ->(account_id) { joins(:normalized_status).select('statuses.*').where('normalized_statuses.text !~ ALL(ARRAY(SELECT f_normalize(phrase) FROM custom_filters WHERE account_id = ?))', account_id) }
+  scope :search, ->(needle) { where("tsv @@ websearch_to_tsquery('fedi', ?)", needle) }
+  scope :search_not, ->(needle) { where.not("tsv @@ websearch_to_tsquery('fedi', ?)", needle) }
+  scope :search_filtered_by_account, ->(account_id) { where('tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = ?)', account_id) }
+  scope :search_not_filtered_by_account, ->(account_id) { where.not('tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = ?)', account_id) }
 
   scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).select('statuses.*').where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
@@ -362,8 +362,6 @@ class Status < ApplicationRecord
   after_save :process_bangtags, if: :local?
 
   class << self
-    include SearchHelper
-
     def search_for(term, account = nil, limit = 33, offset = 0)
       return none if account.nil?
       if term.start_with?('me:')
@@ -371,12 +369,13 @@ class Status < ApplicationRecord
         query = account.statuses
       else
         query = Status.where(account_id: account.id)
-          .or(Status.where(account_id: account.following, visibility: [:private, :local, :unlisted]))
+          .or(Status.where(visibility: [:local, :public]))
+          .or(Status.where(account_id: account.following, visibility: [:private, :unlisted]))
           .or(Status.where(id: account.mentions.select(:status_id)))
       end
-      return none if term.blank? || term.length < 3
+      return none if term.blank?
       query = query.without_reblogs
-        .regex(expand_search_query(term))
+        .search(term.unaccent)
         .offset(offset).limit(limit)
       apply_timeline_filters(query, account, true)
     rescue ActiveRecord::StatementInvalid
@@ -583,9 +582,9 @@ class Status < ApplicationRecord
       query = query.mention_not_excluded_by_account(account)
       unless account.custom_filters.nil?
         if account.user.invert_filters
-          query = query.regex_filtered_by_account(account.id)
+          query = query.search_filtered_by_account(account.id)
         else
-          query = query.regex_not_filtered_by_account(account.id)
+          query = query.search_not_filtered_by_account(account.id)
         end
       end
       query = query.not_missing_media_desc if account.filter_undescribed?

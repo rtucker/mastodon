@@ -45,7 +45,7 @@ en:
         setting_skin: Reskins the selected Mastodon flavour
         setting_theme: Affects how Mastodon looks when you're logged in from any device.
         username: Your username will be unique on %{domain}
-        phrase_html: "<code>&quot;thing&quot;</code> - match whole words<br/><code>tags: &quot;tag1&quot; tag2 ...</code> - match tags (don't include <code>#</code>)<br/><code>subj: thing</code> - match subject or CW</code><br/><code>text: thing</code> - match text<br/><code>desc: thing</code> - match media descriptions"
+        phrase_html: "<strong>Examples</strong><br>Containing any terms: <code>this OR that</code><br>Containing all terms: <code>this that</code>, <code>this AND that</code><br>Containing an exact term: <code>&quot;this thing&quot;</code><br>Grouping: <code>this OR (&quot;this thing&quot; AND &quot;that thing&quot;)</code>"
       featured_tag:
         name: 'You might want to use one of these:'
       imports:
@@ -113,7 +113,7 @@ en:
         note: Bio
         otp_attempt: Two-factor code
         password: Password
-        phrase: Regular expression
+        phrase: Filter query
         setting_advanced_layout: Enable advanced web interface
         setting_aggregate_reblogs: Group repeats in timelines
         setting_auto_play_gif: Auto-play animated GIFs
