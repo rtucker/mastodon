@@ -26,6 +26,7 @@ class CustomFilter < ApplicationRecord
   after_save :update_feeds
 
   after_destroy :remove_cache
+  after_destroy :update_feeds
 
   private
 
