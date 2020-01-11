@@ -202,7 +202,7 @@ const startWorker = (workerId) => {
         return;
       }
 
-      client.query('SELECT oauth_access_tokens.resource_owner_id, users.account_id, users.chosen_languages, users.hide_boosts, users.only_known, users.invert_filters, oauth_access_tokens.scopes FROM oauth_access_tokens INNER JOIN users ON oauth_access_tokens.resource_owner_id = users.id WHERE oauth_access_tokens.token = $1 AND oauth_access_tokens.revoked_at IS NULL LIMIT 1', [token], (err, result) => {
+      client.query('SELECT oauth_access_tokens.resource_owner_id, users.account_id, users.chosen_languages, users.filters_enabled, users.hide_boosts, users.only_known, users.invert_filters, users.media_only, users.filter_undescribed, oauth_access_tokens.scopes FROM oauth_access_tokens INNER JOIN users ON oauth_access_tokens.resource_owner_id = users.id WHERE oauth_access_tokens.token = $1 AND oauth_access_tokens.revoked_at IS NULL LIMIT 1', [token], (err, result) => {
         done();
 
         if (err) {
@@ -230,9 +230,12 @@ const startWorker = (workerId) => {
 
         req.accountId = result.rows[0].account_id;
         req.chosenLanguages = result.rows[0].chosen_languages;
+        req.filtersEnabled = result.rows[0].filters_enabled;
         req.hideBoosts = result.rows[0].hide_boosts;
         req.onlyKnown = result.rows[0].only_known;
         req.invertFilters = result.rows[0].invert_filters;
+        req.mediaOnly = result.rows[0].media_only;
+        req.filterUndescribed = result.rows[0].filter_undescribed;
         req.allowNotifications = scopes.some(scope => ['read', 'read:notifications'].includes(scope));
 
         next();
@@ -387,16 +390,28 @@ const startWorker = (workerId) => {
 
       // Only messages that may require filtering are statuses, since notifications
       // are already personalized and deletes do not matter
-      if (!needsFiltering || event !== 'update') {
+      if (event !== 'update') {
         transmit();
         return;
       }
 
       const unpackedPayload  = payload;
-      const targetAccountIds = [unpackedPayload.account.id].concat(unpackedPayload.mentions.map(item => item.id));
-      const accountDomain    = unpackedPayload.account.acct.split('@')[1];
+
+      // Don't filter user's own events.
+      if (req.accountId === unpackedPayload.account.id) {
+        transmit();
+        return;
+      }
 
       if (req.hideBoosts && (unpackedPayload.in_reply_to !== undefined || unpackedPayload.in_reply_to !== null)) {
+        return;
+      }
+
+      if (req.mediaOnly && (!unpackedPayload.media_attachments || unpackedPayload.media_attachments.length === 0)) {
+        return;
+      }
+
+      if (req.filterUndescribed && unpackedPayload.media_attachments && unpackedPayload.media_attachments.every(m => !m.description || m.description.length === 0)) {
         return;
       }
 
@@ -406,16 +421,13 @@ const startWorker = (workerId) => {
       }
 
       // When the account is not logged in, it is not necessary to confirm the block or mute
-      if (!req.accountId) {
+      if (!needsFiltering || !req.accountId) {
         transmit();
         return;
       }
 
-      // Don't filter user's own events.
-      if (req.accountId === unpackedPayload.account.id) {
-        transmit();
-        return
-      }
+      const targetAccountIds = [unpackedPayload.account.id].concat(unpackedPayload.mentions.map(item => item.id));
+      const accountDomain    = unpackedPayload.account.acct.split('@')[1];
 
       pgPool.connect((err, client, done) => {
         if (err) {
@@ -424,11 +436,15 @@ const startWorker = (workerId) => {
         }
 
         const queries = [
-          client.query(`SELECT 1 FROM blocks WHERE (account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)})) OR (account_id = $2 AND target_account_id = $1) UNION SELECT 1 FROM mutes WHERE account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 3)}) UNION SELECT 1 FROM statuses WHERE id = $3 ${req.invertFilters ? 'AND NOT' : 'AND'} tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = $1 AND is_enabled) UNION SELECT 1 FROM media_attachments WHERE (1 = (SELECT 1 FROM accounts WHERE id = $1 AND filter_undescribed)) AND status_id = $3 AND description IS NULL LIMIT 1`, [req.accountId, unpackedPayload.account.id, unpackedPayload.id].concat(targetAccountIds)),
+          client.query(`SELECT 1 FROM blocks WHERE (account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 2)})) OR (account_id = $2 AND target_account_id = $1) UNION SELECT 1 FROM mutes WHERE account_id = $1 AND target_account_id IN (${placeholders(targetAccountIds, 2)})`, [req.accountId, unpackedPayload.account.id].concat(targetAccountIds)),
         ];
 
         if (accountDomain) {
           queries.push(client.query('SELECT 1 FROM account_domain_blocks WHERE account_id = $1 AND domain = $2', [req.accountId, accountDomain]));
+        }
+
+        if (req.filtersEnabled) {
+          queries.push(client.query(`SELECT 1 FROM statuses WHERE id = $2 ${req.invertFilters ? 'AND NOT' : 'AND'} tsv @@ (SELECT tsquery_union(websearch_to_tsquery('fedi', phrase)) FROM custom_filters WHERE account_id = $1 AND is_enabled) LIMIT 1`, [req.accountId, unpackedPayload.id]));
         }
 
         if (req.onlyKnown) {
@@ -534,7 +550,7 @@ const startWorker = (workerId) => {
 
   app.get('/api/v1/streaming/user', (req, res) => {
     const channel = `timeline:${req.accountId}`;
-    streamFrom(channel, req, streamToHttp(req, res), streamHttpEnd(req, subscriptionHeartbeat(channel)));
+    streamFrom(channel, req, streamToHttp(req, res), streamHttpEnd(req, subscriptionHeartbeat(channel)), true);
   });
 
   app.get('/api/v1/streaming/user/notification', (req, res) => {
@@ -592,7 +608,7 @@ const startWorker = (workerId) => {
       }
 
       const channel = `timeline:list:${listId}`;
-      streamFrom(channel, req, streamToHttp(req, res), streamHttpEnd(req, subscriptionHeartbeat(channel)));
+      streamFrom(channel, req, streamToHttp(req, res), streamHttpEnd(req, subscriptionHeartbeat(channel)), true);
     });
   });
 

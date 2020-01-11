@@ -23,11 +23,10 @@ class Api::V1::Timelines::HomeController < Api::BaseController
   end
 
   def cached_home_statuses
-    if current_account&.user&.hide_boosts
-      cache_collection home_statuses.without_reblogs, Status
-    else
-      cache_collection home_statuses, Status
-    end
+    statuses = home_statuses
+    statuses = statuses.without_reblogs if current_account&.user&.hide_boosts
+    statuses = statuses.with_media if current_account&.user&.media_only
+    cache_collection statuses, Status
   end
 
   def home_statuses

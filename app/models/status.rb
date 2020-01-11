@@ -119,9 +119,10 @@ class Status < ApplicationRecord
 
   scope :search, ->(needle) { where("tsv @@ websearch_to_tsquery('fedi', ?)", needle) }
   scope :search_not, ->(needle) { where.not("tsv @@ websearch_to_tsquery('fedi', ?)", needle) }
-  scope :search_filtered_by_account, ->(account_id) { where('tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = ? AND is_enabled)', account_id) }
-  scope :search_not_filtered_by_account, ->(account_id) { where.not('tsv @@ (SELECT tsquery_union(websearch_to_tsquery(phrase)) FROM custom_filters WHERE account_id = ? AND is_enabled)', account_id) }
+  scope :search_filtered_by_account, ->(account_id) { where("tsv @@ (SELECT tsquery_union(websearch_to_tsquery('fedi', phrase)) FROM custom_filters WHERE account_id = ? AND is_enabled)", account_id) }
+  scope :search_not_filtered_by_account, ->(account_id) { where.not("tsv @@ (SELECT tsquery_union(websearch_to_tsquery('fedi', phrase)) FROM custom_filters WHERE account_id = ? AND is_enabled)", account_id) }
 
+  scope :with_media, -> { joins(:media_attachments).select('statuses.*') }
   scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).select('statuses.*').where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
   scope :only_followers_of, ->(account) { where(account: [account] + account.following) }
@@ -578,14 +579,15 @@ class Status < ApplicationRecord
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
       query = query.reply_not_excluded_by_account(account) unless tag_timeline
       query = query.mention_not_excluded_by_account(account)
-      unless account.custom_filters.enabled.empty?
+      unless !account.user.filters_enabled || account.custom_filters.enabled.blank?
         if account.user.invert_filters
           query = query.search_filtered_by_account(account.id)
         else
           query = query.search_not_filtered_by_account(account.id)
         end
       end
-      query = query.not_missing_media_desc if account.filter_undescribed?
+      query = query.with_media if account.user.media_only?
+      query = query.not_missing_media_desc if account.user.filter_undescribed?
       query.merge(account_silencing_filter(account))
     end
 

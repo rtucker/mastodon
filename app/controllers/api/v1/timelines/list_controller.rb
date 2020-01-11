@@ -25,11 +25,11 @@ class Api::V1::Timelines::ListController < Api::BaseController
   end
 
   def cached_list_statuses
-    if current_account&.user&.hide_boosts
-      cache_collection list_statuses.without_reblogs, Status
-    else
-      cache_collection list_statuses, Status
-    end
+    statuses = list_statuses
+    statuses = statuses.without_reblogs if current_account&.user&.hide_boosts
+    statuses = statuses.with_media if current_account&.user&.media_only
+
+    cache_collection statuses, Status
   end
 
   def list_statuses

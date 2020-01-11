@@ -14,6 +14,9 @@ class Settings::PreferencesController < Settings::BaseController
 
     if current_user.update(user_params)
       I18n.locale = current_user.locale
+      toggle_filters
+      remove_cache
+      update_feeds
       redirect_to settings_preferences_path, notice: I18n.t('generic.changes_saved_msg')
     else
       render :show
@@ -22,6 +25,18 @@ class Settings::PreferencesController < Settings::BaseController
 
   private
 
+  def toggle_filters
+    current_user.update!(filters_enabled: !current_account.custom_filters.enabled.blank?)
+  end
+
+  def update_feeds
+    FilterFeedsWorker.perform_async(current_user.account_id)
+  end
+
+  def remove_cache
+    redis.del("filtered_statuses:#{current_user.account_id}")
+  end
+
   def user_settings
     UserSettingsDecorator.new(current_user)
   end
@@ -29,8 +44,11 @@ class Settings::PreferencesController < Settings::BaseController
   def user_params
     params.require(:user).permit(
       :locale,
+      :filters_enabled,
       :hide_boosts,
       :only_known,
+      :media_only,
+      :filter_undescribed,
       :invert_filters,
       :filter_timelines_only,
       chosen_languages: []

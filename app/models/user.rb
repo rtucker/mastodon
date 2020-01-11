@@ -43,6 +43,9 @@
 #  only_known                :boolean
 #  invert_filters            :boolean          default(FALSE), not null
 #  filter_timelines_only     :boolean          default(FALSE), not null
+#  media_only                :boolean          default(FALSE), not null
+#  filter_undescribed        :boolean          default(FALSE), not null
+#  filters_enabled           :boolean          default(FALSE), not null
 #
 
 class User < ApplicationRecord

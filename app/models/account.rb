@@ -55,7 +55,6 @@
 #  force_private           :boolean          default(FALSE), not null
 #  unboostable             :boolean          default(FALSE), not null
 #  block_anon              :boolean          default(FALSE), not null
-#  filter_undescribed      :boolean          default(FALSE), not null
 #
 
 class Account < ApplicationRecord

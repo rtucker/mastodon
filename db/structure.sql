@@ -550,8 +550,7 @@ CREATE TABLE public.accounts (
     known boolean DEFAULT false NOT NULL,
     force_private boolean DEFAULT false NOT NULL,
     unboostable boolean DEFAULT false NOT NULL,
-    block_anon boolean DEFAULT false NOT NULL,
-    filter_undescribed boolean DEFAULT false NOT NULL
+    block_anon boolean DEFAULT false NOT NULL
 );
 
 
@@ -2396,7 +2395,10 @@ CREATE TABLE public.users (
     hide_boosts boolean,
     only_known boolean,
     invert_filters boolean DEFAULT false NOT NULL,
-    filter_timelines_only boolean DEFAULT false NOT NULL
+    filter_timelines_only boolean DEFAULT false NOT NULL,
+    media_only boolean DEFAULT false NOT NULL,
+    filter_undescribed boolean DEFAULT false NOT NULL,
+    filters_enabled boolean DEFAULT false NOT NULL
 );
 
 
@@ -5390,6 +5392,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200108051211'),
 ('20200109191740'),
 ('20200110072034'),
-('20200110195612');
+('20200110195612'),
+('20200110202317'),
+('20200110213720'),
+('20200110214031'),
+('20200110221801'),
+('20200110221920');
 
 

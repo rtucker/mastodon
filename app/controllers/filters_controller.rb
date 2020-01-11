@@ -22,6 +22,7 @@ class FiltersController < ApplicationController
     @filter = current_account.custom_filters.build(resource_params)
 
     if @filter.save
+      toggle_filters
       redirect_to filters_path
     else
       render action: :new
@@ -32,6 +33,7 @@ class FiltersController < ApplicationController
 
   def update
     if @filter.update(resource_params)
+      toggle_filters
       redirect_to filters_path
     else
       render action: :edit
@@ -40,10 +42,15 @@ class FiltersController < ApplicationController
 
   def destroy
     @filter.destroy
+    toggle_filters
     redirect_to filters_path
   end
 
   private
+
+  def toggle_filters
+    current_user.update!(filters_enabled: !current_account.custom_filters.enabled.blank?)
+  end
 
   def set_pack
     use_pack 'settings'

@@ -46,6 +46,8 @@ en:
         setting_theme: Affects how Mastodon looks when you're logged in from any device.
         username: Your username will be unique on %{domain}
         phrase_html: "<strong>Examples</strong><br>Containing any terms: <code>this OR that</code><br>Containing all terms: <code>this that</code>, <code>this AND that</code><br>Containing an exact term: <code>&quot;this thing&quot;</code><br>Grouping: <code>this OR (&quot;this thing&quot; AND &quot;that thing&quot;)</code>"
+        media_only: Hides text-only posts
+        filters_enabled: Enables custom timeline filters which can be configured in the Filters tab.
       featured_tag:
         name: 'You might want to use one of these:'
       imports:
@@ -102,7 +104,6 @@ en:
         irreversible: Drop instead of hide
         exclude_media: Filter roars WITHOUT attachments
         status_text: Filter roars with matching body text
-        media_only: Filter roars with attachments
         thread: Filter the entire thread this match is contained in
         spoiler: Filter roars with matching content warnings or topics
         tags: Filter roars with matching tag(s)
@@ -118,7 +119,7 @@ en:
         setting_aggregate_reblogs: Group repeats in timelines
         setting_auto_play_gif: Auto-play animated GIFs
         setting_boost_modal: Show confirmation dialog before repeating
-        setting_default_content_type: Default format for roars
+        setting_default_content_type: Default text format
         setting_default_content_type_html: HTML
         setting_default_content_type_markdown: Markdown
         setting_default_content_type_plain: Plain text
@@ -145,7 +146,7 @@ en:
         setting_larger_buttons: Increase size and spacing of action buttons
         setting_larger_drawer: Increase width of compose drawer column
         setting_larger_emoji: Increase size of emoji
-        setting_filter_mentions: Apply regex filters to mentions
+        setting_filter_mentions: Apply filters to mentions
         setting_hide_replies_muted: Filter replies to those who you are muting
         setting_hide_replies_blocked: Filter replies to those who you are blocking
         setting_hide_replies_blocker: Filter replies to those who are blocking you
@@ -182,8 +183,8 @@ en:
         setting_unfollow_modal: Show confirmation dialog before unfollowing someone
         hide_boosts: Don't show boosts on any timeline
         only_known: Only show posts from packmates on all timelines
-        invert_filters: Use allow list mode for filters
-        filter_timelines_only: Apply filters to timelines only
+        invert_filters: Use allow list mode for custom filters
+        filter_timelines_only: Apply custom filters to timelines only
         severity: Severity
         type: Import type
         username: Username
@@ -195,6 +196,8 @@ en:
         override_cw: Override existing content warning
         is_enabled: Enabled
         filter_undescribed: Hide roars without media descriptions
+        media_only: Media gallery mode
+        filters_enabled: Enable custom filters
       boost_interval:
         1: 1 minute
         2: 2 minutes
