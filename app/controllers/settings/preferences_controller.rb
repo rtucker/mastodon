@@ -51,6 +51,7 @@ class Settings::PreferencesController < Settings::BaseController
       :filter_undescribed,
       :invert_filters,
       :filter_timelines_only,
+      :monsterpit_api,
       chosen_languages: []
     )
   end

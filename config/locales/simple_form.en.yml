@@ -48,6 +48,7 @@ en:
         phrase_html: "<strong>Examples</strong><br>Containing any terms: <code>this OR that</code><br>Containing all terms: <code>this that</code>, <code>this AND that</code><br>Containing an exact term: <code>&quot;this thing&quot;</code><br>Grouping: <code>this OR (&quot;this thing&quot; AND &quot;that thing&quot;)</code>"
         media_only: Hides text-only posts
         filters_enabled: Enables custom timeline filters which can be configured in the Filters tab.
+        monsterfork_api: How much of Monsterfork features should be exposed to clients.  Set to Basic or Vanilla if your Mastodon app is having problems with Monsterfork.
       featured_tag:
         name: 'You might want to use one of these:'
       imports:
@@ -198,6 +199,11 @@ en:
         filter_undescribed: Hide roars without media descriptions
         media_only: Media gallery mode
         filters_enabled: Enable custom filters
+        monsterfork_api: Monsterfork API exposure
+      monsterfork_api:
+        vanilla: Vanilla
+        basic: Basic
+        full: Full
       boost_interval:
         1: 1 minute
         2: 2 minutes

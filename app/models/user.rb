@@ -46,6 +46,7 @@
 #  media_only                :boolean          default(FALSE), not null
 #  filter_undescribed        :boolean          default(FALSE), not null
 #  filters_enabled           :boolean          default(FALSE), not null
+#  monsterfork_api           :integer          default("full"), not null
 #
 
 class User < ApplicationRecord
@@ -80,6 +81,8 @@ class User < ApplicationRecord
   include Omniauthable
   include PamAuthenticable
   include LdapAuthenticable
+
+  enum monsterfork_api: [:vanilla, :basic, :full]
 
   belongs_to :account, inverse_of: :user
   belongs_to :invite, counter_cache: :uses, optional: true

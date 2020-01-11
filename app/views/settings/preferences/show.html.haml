@@ -46,9 +46,6 @@
     = f.input :setting_boost_interval_from, collection: [1, 2, 3, 4, 5, 6, 10, 15, 30, 60, 120, 180, 300, 360, 720, 1440], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.boost_interval.#{item}")]) }, selected: current_user.boost_interval_from
     = f.input :setting_boost_interval_to, collection: [1, 2, 3, 4, 5, 6, 10, 15, 30, 60, 120, 180, 300, 360, 720, 1440], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.boost_interval.#{item}")]) }, selected: current_user.boost_interval_to
 
-
-
-
   %hr#settings_other/
 
   .fields-group
@@ -67,6 +64,11 @@
 
   .fields-group
     = f.input :setting_rawr_federated, as: :boolean, wrapper: :with_label
+
+  %hr/
+
+  .fields-group
+    = f.input :monsterfork_api, collection: [:vanilla, :basic, :full], wrapper: :with_label, include_blank: false, label_method: lambda { |item| safe_join([t("simple_form.labels.monsterfork_api.#{item}")]) }, selected: current_user.monsterfork_api
 
   %hr/
 
