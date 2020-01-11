@@ -42,9 +42,9 @@ class StatusFilter
     # filtered by user?
     if account.user.filters_enabled && !account.user.filter_timelines_only
       if account.user.invert_filters
-        return true unless phrase_filtered?(status, account.id)
+        return true unless phrase_filtered?(status, account.id, skip_redis: true)
       else
-        return true if phrase_filtered?(status, account.id)
+        return true if phrase_filtered?(status, account.id, skip_redis: true)
       end
     end
 
