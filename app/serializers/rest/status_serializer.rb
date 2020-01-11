@@ -72,7 +72,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   def visibility
     if object.limited_visibility?
       'private'
-    elsif current_user.monsterfork_api != 'full' && object.local_visibility?
+    elsif current_user? && current_user.monsterfork_api != 'full' && object.local_visibility?
       'unlisted'
     else
       object.visibility
