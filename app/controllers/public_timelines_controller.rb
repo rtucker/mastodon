@@ -13,7 +13,7 @@ class PublicTimelinesController < ApplicationController
       format.html do
         @initial_state_json = ActiveModelSerializers::SerializableResource.new(
           InitialStatePresenter.new(settings: { known_fediverse: Setting.show_known_fediverse_at_about_page }, token: current_session&.token),
-          serializer: InitialStateSerializer
+          serializer: InitialStateSerializer, monsterfork_api: monsterfork_api
         ).to_json
       end
     end

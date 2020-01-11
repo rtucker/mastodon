@@ -46,7 +46,7 @@ class HomeController < ApplicationController
   end
 
   def set_initial_state_json
-    serializable_resource = ActiveModelSerializers::SerializableResource.new(InitialStatePresenter.new(initial_state_params), serializer: InitialStateSerializer)
+    serializable_resource = ActiveModelSerializers::SerializableResource.new(InitialStatePresenter.new(initial_state_params), serializer: InitialStateSerializer), monsterfork_api: monsterfork_api
     @initial_state_json   = serializable_resource.to_json
   end
 

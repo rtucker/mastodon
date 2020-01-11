@@ -16,7 +16,7 @@ class TagsController < ApplicationController
         use_pack 'about'
         @initial_state_json = ActiveModelSerializers::SerializableResource.new(
           InitialStatePresenter.new(settings: {}, token: current_session&.token),
-          serializer: InitialStateSerializer
+          serializer: InitialStateSerializer, monsterfork_api: monsterfork_api
         ).to_json
       end
 
