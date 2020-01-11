@@ -61,8 +61,14 @@ class InitialStateSerializer < ActiveModel::Serializer
 
     if object.current_account
       store[:me]                = object.current_account.id.to_s
-      store[:default_privacy]   = object.current_account.user_default_visibility
       store[:default_sensitive] = object.current_account.user_defaults_to_sensitive?
+
+      default_visibility = object.current_account.user_default_visibility
+      if monsterfork_api != :full && default_visibility == 'local'
+        default_visibility = 'unlisted'
+      end
+
+      store[:default_privacy]   = default_visibility
     end
 
     store[:text] = object.text if object.text
@@ -85,5 +91,11 @@ class InitialStateSerializer < ActiveModel::Serializer
 
   def instance_presenter
     @instance_presenter ||= InstancePresenter.new
+  end
+
+  private
+
+  def monsterfork_api
+    instance_options[:monsterfork_api] || object.current_account && object.current_account&.user&.monsterfork_api&.to_sym
   end
 end
