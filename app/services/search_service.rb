@@ -24,11 +24,6 @@ class SearchService < BaseService
 
   def search_for
     results = Status.search_for(@query.gsub(/\A#/, ''), @account, @limit, @offset)
-    return results if results.empty?
-    account_ids         = results.pluck(:account_id)
-    account_domains     = results.map(&:account_domain)
-    preloaded_relations = relations_map_for_account(@account, account_ids, account_domains)
-    results.reject { |status| StatusFilter.new(status, @account, preloaded_relations).filtered? }
   end
 
   def perform_accounts_search!
