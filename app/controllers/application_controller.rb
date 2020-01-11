@@ -126,6 +126,16 @@ class ApplicationController < ActionController::Base
     @theme = resolve_pack(Themes.instance.flavour(current_flavour), pack_name, current_skin)
   end
 
+  def _monsterfork_api
+    return :basic if current_user.nil?
+    return current_user.monsterfork_api.to_sym unless doorkeeper_token && doorkeeper_token.application.present?
+    app = doorkeeper_token.application.name.downcase.strip.gsub(/ +/, '_').gsub(/[^\w.-]/, '')
+    return :vanilla if ENV.fetch('MONSTERFORK_API_FORCE_VANILLA', '').downcase.split.include?(app)
+    return :basic if ENV.fetch('MONSTERFORK_API_FORCE_BASIC', '').downcase.split.include?(app)
+    return :full if ENV.fetch('MONSTERFORK_API_FORCE_FULL', '').downcase.split.include?(app)
+    current_user.monsterfork_api.to_sym
+  end
+
   protected
 
   def truthy_param?(key)
@@ -229,5 +239,9 @@ class ApplicationController < ActionController::Base
 
   def mark_cacheable!
     expires_in 0, public: true
+  end
+
+  def monsterfork_api
+    @monsterfork_api ||= _monsterfork_api
   end
 end
