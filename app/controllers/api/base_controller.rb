@@ -104,7 +104,7 @@ class Api::BaseController < ApplicationController
   def _monsterfork_api
     return :full if current_user.nil?
     return current_user.monsterfork_api.to_sym unless doorkeeper_token && doorkeeper_token.application.present?
-    app = doorkeeper_token.application.name.downcase.strip.gsub(/ +/, '_')
+    app = doorkeeper_token.application.name.downcase.strip.gsub(/ +/, '_').gsub(/[^\w.-]/, '')
     return :vanilla if ENV.fetch('MONSTERFORK_API_FORCE_VANILLA', '').downcase.split.include?(app)
     return :basic if ENV.fetch('MONSTERFORK_API_FORCE_BASIC', '').downcase.split.include?(app)
     return :full if ENV.fetch('MONSTERFORK_API_FORCE_FULL', '').downcase.split.include?(app)
