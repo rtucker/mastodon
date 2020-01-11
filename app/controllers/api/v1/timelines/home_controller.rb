@@ -13,6 +13,7 @@ class Api::V1::Timelines::HomeController < Api::BaseController
     render json: @statuses,
            each_serializer: REST::StatusSerializer,
            relationships: StatusRelationshipsPresenter.new(@statuses, current_user&.account_id),
+           monsterfork_api: monsterfork_api,
            status: regeneration_in_progress? ? 206 : 200
   end
 

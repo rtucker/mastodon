@@ -11,7 +11,7 @@ class Api::V1::Polls::VotesController < Api::BaseController
 
   def create
     VoteService.new.call(current_account, @poll, vote_params[:choices])
-    render json: @poll, serializer: REST::PollSerializer
+    render json: @poll, serializer: REST::PollSerializer, monsterfork_api: monsterfork_api
   end
 
   private

@@ -11,7 +11,7 @@ class Api::V1::MediaController < Api::BaseController
 
   def create
     @media = current_account.media_attachments.create!(media_params)
-    render json: @media, serializer: REST::MediaAttachmentSerializer
+    render json: @media, serializer: REST::MediaAttachmentSerializer, monsterfork_api: monsterfork_api
   rescue Paperclip::Errors::NotIdentifiedByImageMagickError
     render json: file_type_error, status: 422
   rescue Paperclip::Error
@@ -21,7 +21,7 @@ class Api::V1::MediaController < Api::BaseController
   def update
     @media = current_account.media_attachments.where(status_id: nil).find(params[:id])
     @media.update!(media_params)
-    render json: @media, serializer: REST::MediaAttachmentSerializer
+    render json: @media, serializer: REST::MediaAttachmentSerializer, monsterfork_api: monsterfork_api
   end
 
   private

@@ -7,7 +7,7 @@ class Api::ProofsController < Api::BaseController
   before_action :check_account_suspension
 
   def index
-    render json: @account, serializer: @provider.serializer_class
+    render json: @account, serializer: @provider.serializer_class, monsterfork_api: monsterfork_api
   end
 
   private

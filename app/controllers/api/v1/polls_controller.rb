@@ -10,7 +10,7 @@ class Api::V1::PollsController < Api::BaseController
   respond_to :json
 
   def show
-    render json: @poll, serializer: REST::PollSerializer, include_results: true
+    render json: @poll, serializer: REST::PollSerializer, include_results: true, monsterfork_api: monsterfork_api
   end
 
   private

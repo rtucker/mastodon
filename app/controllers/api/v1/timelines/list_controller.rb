@@ -11,7 +11,8 @@ class Api::V1::Timelines::ListController < Api::BaseController
   def show
     render json: @statuses,
            each_serializer: REST::StatusSerializer,
-           relationships: StatusRelationshipsPresenter.new(@statuses, current_user.account_id)
+           relationships: StatusRelationshipsPresenter.new(@statuses, current_user.account_id),
+           monsterfork_api: monsterfork_api
   end
 
   private

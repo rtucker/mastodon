@@ -15,7 +15,7 @@ class Api::V1::AccountsController < Api::BaseController
   respond_to :json
 
   def show
-    render json: @account, serializer: REST::AccountSerializer
+    render json: @account, serializer: REST::AccountSerializer, monsterfork_api: monsterfork_api
   end
 
   def create
@@ -33,32 +33,32 @@ class Api::V1::AccountsController < Api::BaseController
 
     options = @account.locked? ? {} : { following_map: { @account.id => { reblogs: truthy_param?(:reblogs) } }, requested_map: { @account.id => false } }
 
-    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships(options)
+    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships(options), monsterfork_api: monsterfork_api
   end
 
   def block
     BlockService.new.call(current_user.account, @account)
-    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships
+    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships, monsterfork_api: monsterfork_api
   end
 
   def mute
     MuteService.new.call(current_user.account, @account, notifications: truthy_param?(:notifications), timelines_only: truthy_param?(:timelines_only))
-    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships
+    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships, monsterfork_api: monsterfork_api
   end
 
   def unfollow
     UnfollowService.new.call(current_user.account, @account)
-    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships
+    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships, monsterfork_api: monsterfork_api
   end
 
   def unblock
     UnblockService.new.call(current_user.account, @account)
-    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships
+    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships, monsterfork_api: monsterfork_api
   end
 
   def unmute
     UnmuteService.new.call(current_user.account, @account)
-    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships
+    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships, monsterfork_api: monsterfork_api
   end
 
   private

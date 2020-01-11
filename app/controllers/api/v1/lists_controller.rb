@@ -9,21 +9,21 @@ class Api::V1::ListsController < Api::BaseController
 
   def index
     @lists = List.where(account: current_account).all
-    render json: @lists, each_serializer: REST::ListSerializer
+    render json: @lists, each_serializer: REST::ListSerializer, monsterfork_api: monsterfork_api
   end
 
   def show
-    render json: @list, serializer: REST::ListSerializer
+    render json: @list, serializer: REST::ListSerializer, monsterfork_api: monsterfork_api
   end
 
   def create
     @list = List.create!(list_params.merge(account: current_account))
-    render json: @list, serializer: REST::ListSerializer
+    render json: @list, serializer: REST::ListSerializer, monsterfork_api: monsterfork_api
   end
 
   def update
     @list.update!(list_params)
-    render json: @list, serializer: REST::ListSerializer
+    render json: @list, serializer: REST::ListSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy

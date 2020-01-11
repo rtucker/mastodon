@@ -94,4 +94,20 @@ class Api::BaseController < ApplicationController
   def set_cache_headers
     response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
   end
+
+  def monsterfork_api
+    @monsterfork_api ||= _monsterfork_api
+  end
+
+  private
+
+  def _monsterfork_api
+    return :full if current_user.nil?
+    return current_user.monsterfork_api.to_sym unless doorkeeper_token && doorkeeper_token.application.present?
+    app = doorkeeper_token.application.name.downcase.strip.gsub(/ +/, '_')
+    return :vanilla if ENV.fetch('MONSTERFORK_API_FORCE_VANILLA', '').downcase.split.include?(app)
+    return :basic if ENV.fetch('MONSTERFORK_API_FORCE_BASIC', '').downcase.split.include?(app)
+    return :full if ENV.fetch('MONSTERFORK_API_FORCE_FULL', '').downcase.split.include?(app)
+    current_user.monsterfork_api.to_sym
+  end
 end

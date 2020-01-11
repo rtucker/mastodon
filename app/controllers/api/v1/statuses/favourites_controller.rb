@@ -10,7 +10,7 @@ class Api::V1::Statuses::FavouritesController < Api::BaseController
 
   def create
     @status = favourited_status
-    render json: @status, serializer: REST::StatusSerializer
+    render json: @status, serializer: REST::StatusSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy
@@ -19,7 +19,7 @@ class Api::V1::Statuses::FavouritesController < Api::BaseController
 
     UnfavouriteWorker.perform_async(current_user.account_id, @status.id)
 
-    render json: @status, serializer: REST::StatusSerializer, relationships: StatusRelationshipsPresenter.new([@status], current_user&.account_id, favourites_map: @favourites_map)
+    render json: @status, serializer: REST::StatusSerializer, relationships: StatusRelationshipsPresenter.new([@status], current_user&.account_id, favourites_map: @favourites_map), monsterfork_api: monsterfork_api
   end
 
   private

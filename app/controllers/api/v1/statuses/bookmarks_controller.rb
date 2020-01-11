@@ -10,7 +10,7 @@ class Api::V1::Statuses::BookmarksController < Api::BaseController
 
   def create
     @status = bookmarked_status
-    render json: @status, serializer: REST::StatusSerializer
+    render json: @status, serializer: REST::StatusSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy
@@ -20,7 +20,7 @@ class Api::V1::Statuses::BookmarksController < Api::BaseController
     bookmark = Bookmark.find_by!(account: current_user.account, status: @status)
     bookmark.destroy!
 
-    render json: @status, serializer: REST::StatusSerializer, relationships: StatusRelationshipsPresenter.new([@status], current_user&.account_id, bookmarks_map: @bookmarks_map)
+    render json: @status, serializer: REST::StatusSerializer, relationships: StatusRelationshipsPresenter.new([@status], current_user&.account_id, bookmarks_map: @bookmarks_map), monsterfork_api: monsterfork_api
   end
 
   private

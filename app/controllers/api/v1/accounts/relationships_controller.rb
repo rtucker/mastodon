@@ -15,7 +15,7 @@ class Api::V1::Accounts::RelationshipsController < Api::BaseController
     else
       @accounts = Account.none
     end
-    render json: @accounts, each_serializer: REST::RelationshipSerializer, relationships: relationships
+    render json: @accounts, each_serializer: REST::RelationshipSerializer, relationships: relationships, monsterfork_api: monsterfork_api
   end
 
   private

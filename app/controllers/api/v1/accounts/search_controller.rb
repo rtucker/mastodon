@@ -8,7 +8,7 @@ class Api::V1::Accounts::SearchController < Api::BaseController
 
   def show
     @accounts = account_search
-    render json: @accounts, each_serializer: REST::AccountSerializer
+    render json: @accounts, each_serializer: REST::AccountSerializer, monsterfork_api: monsterfork_api
   end
 
   private

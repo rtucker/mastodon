@@ -12,7 +12,7 @@ class Api::V1::Statuses::PinsController < Api::BaseController
   def create
     StatusPin.create!(account: current_account, status: @status)
     distribute_add_activity!
-    render json: @status, serializer: REST::StatusSerializer
+    render json: @status, serializer: REST::StatusSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy
@@ -23,7 +23,7 @@ class Api::V1::Statuses::PinsController < Api::BaseController
       distribute_remove_activity!
     end
 
-    render json: @status, serializer: REST::StatusSerializer
+    render json: @status, serializer: REST::StatusSerializer, monsterfork_api: monsterfork_api
   end
 
   private

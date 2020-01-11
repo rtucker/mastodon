@@ -16,7 +16,7 @@ class Api::V1::FollowsController < Api::BaseController
       @account         = Account.find_remote!(username, domain)
     end
 
-    render json: @account, serializer: REST::AccountSerializer
+    render json: @account, serializer: REST::AccountSerializer, monsterfork_api: monsterfork_api
   end
 
   private

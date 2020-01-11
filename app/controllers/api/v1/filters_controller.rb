@@ -10,23 +10,23 @@ class Api::V1::FiltersController < Api::BaseController
   respond_to :json
 
   def index
-    render json: @filters, each_serializer: REST::FilterSerializer
+    render json: @filters, each_serializer: REST::FilterSerializer, monsterfork_api: monsterfork_api
   end
 
   def create
     @filter = current_account.custom_filters.create!(resource_params)
     toggle_filters
-    render json: @filter, serializer: REST::FilterSerializer
+    render json: @filter, serializer: REST::FilterSerializer, monsterfork_api: monsterfork_api
   end
 
   def show
-    render json: @filter, serializer: REST::FilterSerializer
+    render json: @filter, serializer: REST::FilterSerializer, monsterfork_api: monsterfork_api
   end
 
   def update
     @filter.update!(resource_params)
     toggle_filters
-    render json: @filter, serializer: REST::FilterSerializer
+    render json: @filter, serializer: REST::FilterSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy

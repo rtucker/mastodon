@@ -7,7 +7,7 @@ class Api::V1::Accounts::CredentialsController < Api::BaseController
 
   def show
     @account = current_account
-    render json: @account, serializer: REST::CredentialAccountSerializer
+    render json: @account, serializer: REST::CredentialAccountSerializer, monsterfork_api: monsterfork_api
   end
 
   def update
@@ -15,7 +15,7 @@ class Api::V1::Accounts::CredentialsController < Api::BaseController
     UpdateAccountService.new.call(@account, account_params, raise_error: true)
     UserSettingsDecorator.new(current_user).update(user_settings_params) if user_settings_params
     ActivityPub::UpdateDistributionWorker.perform_async(@account.id)
-    render json: @account, serializer: REST::CredentialAccountSerializer
+    render json: @account, serializer: REST::CredentialAccountSerializer, monsterfork_api: monsterfork_api
   end
 
   private

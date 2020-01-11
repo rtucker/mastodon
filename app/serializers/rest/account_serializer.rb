@@ -87,4 +87,10 @@ class REST::AccountSerializer < ActiveModel::Serializer
     return if name.blank?
     object.user.vars["_they:are:#{name}"]
   end
+
+  private
+
+  def monsterfork_api
+    instance_options[:monsterfork_api] || !current_user.nil? && current_user.monsterfork_api.to_sym
+  end
 end

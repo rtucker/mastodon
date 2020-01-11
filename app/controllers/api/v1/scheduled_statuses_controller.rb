@@ -12,16 +12,16 @@ class Api::V1::ScheduledStatusesController < Api::BaseController
   after_action :insert_pagination_headers, only: :index
 
   def index
-    render json: @statuses, each_serializer: REST::ScheduledStatusSerializer
+    render json: @statuses, each_serializer: REST::ScheduledStatusSerializer, monsterfork_api: monsterfork_api
   end
 
   def show
-    render json: @status, serializer: REST::ScheduledStatusSerializer
+    render json: @status, serializer: REST::ScheduledStatusSerializer, monsterfork_api: monsterfork_api
   end
 
   def update
     @status.update!(scheduled_status_params)
-    render json: @status, serializer: REST::ScheduledStatusSerializer
+    render json: @status, serializer: REST::ScheduledStatusSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy

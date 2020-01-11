@@ -17,13 +17,13 @@ class Api::V1::Push::SubscriptionsController < Api::BaseController
       access_token_id: doorkeeper_token.id
     )
 
-    render json: @web_subscription, serializer: REST::WebPushSubscriptionSerializer
+    render json: @web_subscription, serializer: REST::WebPushSubscriptionSerializer, monsterfork_api: monsterfork_api
   end
 
   def show
     raise ActiveRecord::RecordNotFound if @web_subscription.nil?
 
-    render json: @web_subscription, serializer: REST::WebPushSubscriptionSerializer
+    render json: @web_subscription, serializer: REST::WebPushSubscriptionSerializer, monsterfork_api: monsterfork_api
   end
 
   def update
@@ -31,7 +31,7 @@ class Api::V1::Push::SubscriptionsController < Api::BaseController
 
     @web_subscription.update!(data: data_params)
 
-    render json: @web_subscription, serializer: REST::WebPushSubscriptionSerializer
+    render json: @web_subscription, serializer: REST::WebPushSubscriptionSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy

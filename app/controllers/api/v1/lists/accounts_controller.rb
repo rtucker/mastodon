@@ -11,7 +11,7 @@ class Api::V1::Lists::AccountsController < Api::BaseController
 
   def show
     @accounts = load_accounts
-    render json: @accounts, each_serializer: REST::AccountSerializer
+    render json: @accounts, each_serializer: REST::AccountSerializer, monsterfork_api: monsterfork_api
   end
 
   def create

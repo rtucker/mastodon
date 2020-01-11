@@ -13,12 +13,12 @@ class Api::V1::ConversationsController < Api::BaseController
 
   def index
     @conversations = paginated_conversations
-    render json: @conversations, each_serializer: REST::ConversationSerializer
+    render json: @conversations, each_serializer: REST::ConversationSerializer, monsterfork_api: monsterfork_api
   end
 
   def read
     @conversation.update!(unread: false)
-    render json: @conversation, serializer: REST::ConversationSerializer
+    render json: @conversation, serializer: REST::ConversationSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy

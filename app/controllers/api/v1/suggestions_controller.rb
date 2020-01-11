@@ -10,7 +10,7 @@ class Api::V1::SuggestionsController < Api::BaseController
   respond_to :json
 
   def index
-    render json: @accounts, each_serializer: REST::AccountSerializer
+    render json: @accounts, each_serializer: REST::AccountSerializer, monsterfork_api: monsterfork_api
   end
 
   def destroy

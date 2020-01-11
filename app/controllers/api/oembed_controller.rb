@@ -5,7 +5,7 @@ class Api::OEmbedController < Api::BaseController
 
   def show
     @status = status_finder.status
-    render json: @status, serializer: OEmbedSerializer, width: maxwidth_or_default, height: maxheight_or_default
+    render json: @status, serializer: OEmbedSerializer, width: maxwidth_or_default, height: maxheight_or_default, monsterfork_api: monsterfork_api
   end
 
   private

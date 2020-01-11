@@ -12,7 +12,7 @@ class Api::V1::SearchController < Api::BaseController
 
   def index
     @search = Search.new(search_results)
-    render json: @search, serializer: REST::SearchSerializer
+    render json: @search, serializer: REST::SearchSerializer, monsterfork_api: monsterfork_api
   end
 
   private

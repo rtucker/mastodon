@@ -72,7 +72,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   def visibility
     if object.limited_visibility?
       'private'
-    elsif current_user? && current_user.monsterfork_api != 'full' && object.local_visibility?
+    elsif monsterfork_api == :full && object.local_visibility?
       'unlisted'
     else
       object.visibility
@@ -190,5 +190,11 @@ class REST::StatusSerializer < ActiveModel::Serializer
     def url
       tag_url(object)
     end
+  end
+
+  private
+
+  def monsterfork_api
+    instance_options[:monsterfork_api] || current_user? && current_user.monsterfork_api.to_sym
   end
 end

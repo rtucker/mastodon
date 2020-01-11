@@ -11,13 +11,13 @@ class Api::V1::Accounts::PinsController < Api::BaseController
 
   def create
     AccountPin.create!(account: current_account, target_account: @account)
-    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships_presenter
+    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships_presenter, monsterfork_api: monsterfork_api
   end
 
   def destroy
     pin = AccountPin.find_by(account: current_account, target_account: @account)
     pin&.destroy!
-    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships_presenter
+    render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships_presenter, monsterfork_api: monsterfork_api
   end
 
   private

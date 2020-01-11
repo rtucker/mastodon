@@ -15,7 +15,7 @@ class Api::V1::ReportsController < Api::BaseController
       forward: report_params[:forward]
     )
 
-    render json: @report, serializer: REST::ReportSerializer
+    render json: @report, serializer: REST::ReportSerializer, monsterfork_api: monsterfork_api
   end
 
   private

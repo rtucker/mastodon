@@ -9,13 +9,13 @@ class Api::V1::MutesController < Api::BaseController
 
   def index
     @data = @accounts = load_accounts
-    render json: @accounts, each_serializer: REST::AccountSerializer
+    render json: @accounts, each_serializer: REST::AccountSerializer, monsterfork_api: monsterfork_api
   end
 
   def details
     @data = @mutes = load_mutes
-    render json: @mutes, each_serializer: REST::MuteSerializer
-  end 
+    render json: @mutes, each_serializer: REST::MuteSerializer, monsterfork_api: monsterfork_api
+  end
 
   private
 

@@ -39,7 +39,7 @@ class Api::Web::PushSubscriptionsController < Api::Web::BaseController
 
     active_session.update!(web_push_subscription: web_subscription)
 
-    render json: web_subscription, serializer: REST::WebPushSubscriptionSerializer
+    render json: web_subscription, serializer: REST::WebPushSubscriptionSerializer, monsterfork_api: monsterfork_api
   end
 
   def update
@@ -48,7 +48,7 @@ class Api::Web::PushSubscriptionsController < Api::Web::BaseController
     web_subscription = ::Web::PushSubscription.find(params[:id])
     web_subscription.update!(data: data_params)
 
-    render json: web_subscription, serializer: REST::WebPushSubscriptionSerializer
+    render json: web_subscription, serializer: REST::WebPushSubscriptionSerializer, monsterfork_api: monsterfork_api
   end
 
   private

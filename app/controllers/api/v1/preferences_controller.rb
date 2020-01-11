@@ -7,6 +7,6 @@ class Api::V1::PreferencesController < Api::BaseController
   respond_to :json
 
   def index
-    render json: current_account, serializer: REST::PreferencesSerializer
+    render json: current_account, serializer: REST::PreferencesSerializer, monsterfork_api: monsterfork_api
   end
 end

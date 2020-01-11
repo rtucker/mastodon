@@ -18,7 +18,7 @@ class Api::V1::StatusesController < Api::BaseController
 
   def show
     @status = cache_collection([@status], Status).first
-    render json: @status, serializer: REST::StatusSerializer
+    render json: @status, serializer: REST::StatusSerializer, monsterfork_api: monsterfork_api
   end
 
   def context
@@ -30,7 +30,7 @@ class Api::V1::StatusesController < Api::BaseController
     @context = Context.new(ancestors: loaded_ancestors, descendants: loaded_descendants)
     statuses = [@status] + @context.ancestors + @context.descendants
 
-    render json: @context, serializer: REST::ContextSerializer, relationships: StatusRelationshipsPresenter.new(statuses, current_user&.account_id)
+    render json: @context, serializer: REST::ContextSerializer, relationships: StatusRelationshipsPresenter.new(statuses, current_user&.account_id), monsterfork_api: monsterfork_api
   end
 
   def card
@@ -39,7 +39,7 @@ class Api::V1::StatusesController < Api::BaseController
     if @card.nil?
       render_empty
     else
-      render json: @card, serializer: REST::PreviewCardSerializer
+      render json: @card, serializer: REST::PreviewCardSerializer, monsterfork_api: monsterfork_api
     end
   end
 
@@ -62,7 +62,7 @@ class Api::V1::StatusesController < Api::BaseController
     if @status.nil?
       raise Mastodon::ValidationError, 'Bangtags processed successfully.'
     else
-      render json: @status, serializer: @status.is_a?(ScheduledStatus) ? REST::ScheduledStatusSerializer : REST::StatusSerializer
+      render json: @status, serializer: @status.is_a?(ScheduledStatus) ? REST::ScheduledStatusSerializer : REST::StatusSerializer, monsterfork_api: monsterfork_api
     end
   end
 
@@ -72,7 +72,7 @@ class Api::V1::StatusesController < Api::BaseController
 
     RemovalWorker.perform_async(@status.id)
 
-    render json: @status, serializer: REST::StatusSerializer, source_requested: true
+    render json: @status, serializer: REST::StatusSerializer, source_requested: true, monsterfork_api: monsterfork_api
   end
 
   private

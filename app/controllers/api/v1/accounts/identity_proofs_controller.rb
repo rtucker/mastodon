@@ -8,7 +8,7 @@ class Api::V1::Accounts::IdentityProofsController < Api::BaseController
 
   def index
     @proofs = @account.identity_proofs.active
-    render json: @proofs, each_serializer: REST::IdentityProofSerializer
+    render json: @proofs, each_serializer: REST::IdentityProofSerializer, monsterfork_api: monsterfork_api
   end
 
   private
