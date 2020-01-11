@@ -59,7 +59,7 @@ class StatusFilter
     return false if mentioned_account_ids.include?(account.id)
 
     # Filter posts missing media descriptions.
-    return true if account.filter_undescribed? && status.media_attachments.all? { |attachment| attachment.description.blank? }
+    return true if account.user.filter_undescribed? && status.media_attachments.all? { |attachment| attachment.description.blank? }
 
     return true if account.user_hides_mentions_of_blocked? && mentioned_accounts.where.not(suspended_at: nil).exists?
 
