@@ -104,6 +104,7 @@ class Status < ApplicationRecord
   scope :curated, -> { where(curated: true) }
   scope :hidden, -> { where(hidden: true) }
 
+  scope :with_accounts, ->(ids) { where(id: ids).includes(:account) }
   scope :without_replies, -> { where('statuses.reply = FALSE OR statuses.in_reply_to_account_id = statuses.account_id') }
   scope :without_reblogs, -> { where('statuses.reblog_of_id IS NULL') }
   scope :reblogs, -> { where('statuses.reblog_of_id IS NOT NULL') } # all reblogs
