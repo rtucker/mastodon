@@ -535,7 +535,7 @@ class User < ApplicationRecord
   end
 
   def detect_spam!
-    return false if valid_invitation? || external?
+    return false if valid_invitation? || external? || Setting.registrations_mode == 'none'
 
     janitor = janitor_account || Account.representative
 
