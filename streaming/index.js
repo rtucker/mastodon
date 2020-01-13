@@ -403,7 +403,7 @@ const startWorker = (workerId) => {
         return;
       }
 
-      if (req.hideBoosts && unpackedPayload.in_reply_to) {
+      if (req.hideBoosts && !!unpackedPayload.in_reply_to) {
         return;
       }
 
@@ -411,7 +411,7 @@ const startWorker = (workerId) => {
         return;
       }
 
-      if (req.filterUndescribed && Array.isArray(unpackedPayload.media_attachments) && unpackedPayload.media_attachments.every(m => !m.description)) {
+      if (req.filterUndescribed && !!unpackedPayload.media_attachments && unpackedPayload.media_attachments.every(m => !m.description)) {
         return;
       }
 
