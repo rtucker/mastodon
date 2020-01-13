@@ -91,6 +91,7 @@ class StatusPolicy < ApplicationPolicy
   end
 
   def still_accessible?
+    return true unless record.local?
     record.created_at > record.account.user.max_public_access.to_i.days.ago
   end
 
