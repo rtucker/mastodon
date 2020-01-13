@@ -403,15 +403,15 @@ const startWorker = (workerId) => {
         return;
       }
 
-      if (req.hideBoosts && (unpackedPayload.in_reply_to !== undefined || unpackedPayload.in_reply_to !== null)) {
+      if (req.hideBoosts && unpackedPayload.in_reply_to) {
         return;
       }
 
-      if (req.mediaOnly && (!unpackedPayload.media_attachments || unpackedPayload.media_attachments.length === 0)) {
+      if (req.mediaOnly && !unpackedPayload.media_attachments) {
         return;
       }
 
-      if (req.filterUndescribed && unpackedPayload.media_attachments && unpackedPayload.media_attachments.every(m => !m.description || m.description.length === 0)) {
+      if (req.filterUndescribed && Array.isArray(unpackedPayload.media_attachments) && unpackedPayload.media_attachments.every(m => !m.description)) {
         return;
       }
 

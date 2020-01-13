@@ -176,6 +176,7 @@ en:
         setting_hide_public_profile: Hide your public profile from anonymous viewers
         setting_hide_public_outbox: Hide your public ActivityPub outbox (affects discoverability)
         setting_max_public_history: Limit history of roars on public profile to
+        setting_max_public_access: Limit public access to roar URLs without a sharekey to
         setting_noindex: Opt-out of search engine indexing
         setting_reduce_motion: Reduce motion in animations
         setting_show_application: Disclose application used to send roars

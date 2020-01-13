@@ -13,13 +13,12 @@ class StatusPolicy < ApplicationPolicy
 
   def show?
     return false if local_only? && (current_account.nil? || !current_account.local?)
+    return true if owned? || mention_exists?
 
-    if direct?
-      owned? || mention_exists?
-    elsif private?
-      owned? || following_author? || mention_exists?
+    if private?
+      following_author? && still_accessible?
     else
-      current_account.nil? || !author_blocking?
+      author_allows_anon? && still_accessible? && !author_blocking? && (author_not_invisible? || following_author?)
     end
   end
 
@@ -89,5 +88,17 @@ class StatusPolicy < ApplicationPolicy
 
   def local_only?
     record.local_only?
+  end
+
+  def still_accessible?
+    record.created_at > record.account.user.max_public_access.to_i.days.ago
+  end
+
+  def author_allows_anon?
+    (!current_account.nil? && user_signed_in?) || !record.account.block_anon
+  end
+
+  def author_not_invisible?
+    !record.account.hidden?
   end
 end

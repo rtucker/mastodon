@@ -40,6 +40,7 @@ class UserSettingsDecorator
     user.settings['hide_public_outbox']  = hide_public_outbox_preference if change?('setting_hide_public_outbox')
     user.settings['larger_emoji']        = larger_emoji_preference if change?('setting_larger_emoji')
     user.settings['max_public_history']  = max_public_history_preference if change?('setting_max_public_history')
+    user.settings['max_public_access']   = max_public_access_preference if change?('setting_max_public_access')
     user.settings['roar_lifespan']       = roar_lifespan_preference if change?('setting_roar_lifespan')
     user.settings['delayed_roars']       = delayed_roars_preference if change?('setting_delayed_roars')
     user.settings['delayed_for']         = delayed_for_preference if change?('setting_delayed_for')
@@ -149,6 +150,10 @@ class UserSettingsDecorator
 
   def max_public_history_preference
     settings['setting_max_public_history']
+  end
+
+  def max_public_access_preference
+    settings['setting_max_public_access']
   end
 
   def roar_lifespan_preference

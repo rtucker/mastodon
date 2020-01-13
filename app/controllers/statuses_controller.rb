@@ -186,8 +186,6 @@ class StatusesController < ApplicationController
 
     if @status.sharekey.present? && @sharekey == @status.sharekey.key
       skip_authorization
-    elsif @account.block_anon && !user_signed_in?
-      raise ActiveRecord::RecordNotFound
     else
       authorize @status, :show?
     end

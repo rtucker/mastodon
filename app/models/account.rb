@@ -133,6 +133,7 @@ class Account < ApplicationRecord
            :defaults_to_local_only?,
            :always_local_only?,
            :max_public_history,
+           :max_public_access,
            :roar_lifespan,
            :delayed_roars?,
 

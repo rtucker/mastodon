@@ -146,6 +146,7 @@ class User < ApplicationRecord
     :hide_public_profile,
     :hide_public_outbox,
     :max_public_history,
+    :max_public_access,
     :roar_lifespan,
     :delayed_roars,
     :delayed_for,
@@ -329,6 +330,10 @@ class User < ApplicationRecord
 
   def max_public_history
     @_max_public_history ||= [1, (settings.max_public_history || 6).to_i].max
+  end
+
+  def max_public_access
+    @_max_public_access ||= [1, (settings.max_public_access || 90).to_i].max
   end
 
   def roar_lifespan
