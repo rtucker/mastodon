@@ -79,7 +79,13 @@ class Api::V1::StatusesController < Api::BaseController
 
   def set_status
     @status = Status.find(params[:id])
-    authorize @status, :show?
+    @sharekey = params[:key]
+
+    if @status.sharekey.present? && @sharekey == @status.sharekey.key
+      skip_authorization
+    else
+      authorize @status, :show?
+    end
   rescue Mastodon::NotPermittedError
     raise ActiveRecord::RecordNotFound
   end
