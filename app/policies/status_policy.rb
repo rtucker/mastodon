@@ -14,6 +14,7 @@ class StatusPolicy < ApplicationPolicy
   def show?
     return false if local_only? && (current_account.nil? || !current_account.local?)
     return true if owned? || mention_exists?
+    return false if direct?
 
     if private?
       following_author? && still_accessible?
