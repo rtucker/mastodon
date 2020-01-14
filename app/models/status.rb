@@ -292,7 +292,7 @@ class Status < ApplicationRecord
     if destructing_status.nil?
       DestructingStatus.create!(status_id: id, delete_after: Time.now.utc + value)
     else
-      destructing_status.delete_after = Time.now.utc + value
+      destructing_status.update(delete_after: Time.now.utc + value)
     end
   end
 
@@ -306,7 +306,7 @@ class Status < ApplicationRecord
     if defederating_status.nil?
       DefederatingStatus.create!(status_id: id, defederate_after: Time.now.utc + value)
     else
-      defederating_status.defederate_after = Time.now.utc + value
+      defederating_status.update(defederate_after: Time.now.utc + value)
     end
   end
 
