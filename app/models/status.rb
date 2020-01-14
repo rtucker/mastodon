@@ -122,7 +122,7 @@ class Status < ApplicationRecord
   scope :search_filtered_by_account, ->(account_id) { where("tsv @@ (SELECT tsquery_union(websearch_to_tsquery('fedi', phrase)) FROM custom_filters WHERE account_id = ? AND is_enabled)", account_id) }
   scope :search_not_filtered_by_account, ->(account_id) { where.not("tsv @@ (SELECT tsquery_union(websearch_to_tsquery('fedi', phrase)) FROM custom_filters WHERE account_id = ? AND is_enabled)", account_id) }
 
-  scope :with_media, -> { joins(:media_attachments).select('statuses.*').distinct(:id) }
+  scope :with_media, -> { joins(:media_attachments).select('statuses.*').distinct(:status_id) }
   scope :not_missing_media_desc, -> { left_outer_joins(:media_attachments).select('statuses.*').where('media_attachments.id IS NULL OR media_attachments.description IS NOT NULL') }
 
   scope :only_followers_of, ->(account) { where(account: [account] + account.following) }
