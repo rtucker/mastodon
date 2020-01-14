@@ -19,7 +19,7 @@ class StatusPolicy < ApplicationPolicy
     if private?
       following_author? && still_accessible?
     else
-      author_allows_anon? && still_accessible? && !author_blocking? && (author_not_invisible? || following_author?)
+      author_allows_anon? && still_accessible? && !author_blocking? || following_author?
     end
   end
 
@@ -93,14 +93,10 @@ class StatusPolicy < ApplicationPolicy
 
   def still_accessible?
     return true unless record.local?
-    record.updated_at > record.account.user.max_public_access.to_i.days.ago
+    record.updated_at > record.account.user.max_public_access.days.ago
   end
 
   def author_allows_anon?
-    (!current_account.nil? && user_signed_in?) || !record.account.block_anon
-  end
-
-  def author_not_invisible?
-    !record.account.hidden?
+    (!current_account.nil? && user_signed_in?) || (!record.account.block_anon && !record.account.hidden)
   end
 end
