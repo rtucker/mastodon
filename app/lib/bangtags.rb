@@ -718,7 +718,7 @@ class Bangtags
             unit = cmd[2].present? ? cmd[2].downcase : 'minutes'
           end
           delete_after = case unit
-                         when 'min', 'mins', 'minute', 'minutes'
+                         when 'm', 'min', 'mins', 'minute', 'minutes'
                            i.minutes
                          when 'h', 'hr', 'hrs', 'hour', 'hours'
                            i.hours
@@ -726,7 +726,7 @@ class Bangtags
                            i.days
                          when 'w', 'wk', 'wks', 'week', 'weeks'
                            i.weeks
-                         when 'm', 'mn', 'mns', 'month', 'months'
+                         when 'mn', 'mns', 'month', 'months'
                            i.months
                          when 'y', 'yr', 'yrs', 'year', 'years'
                            i.years
@@ -762,7 +762,7 @@ class Bangtags
             unit = cmd[2].present? ? cmd[2].downcase : 'minutes'
           end
           defederate_after = case unit
-                         when 'min', 'mins', 'minute', 'minutes'
+                         when 'm', 'min', 'mins', 'minute', 'minutes'
                            i.minutes
                          when 'h', 'hr', 'hrs', 'hour', 'hours'
                            i.hours
@@ -770,7 +770,7 @@ class Bangtags
                            i.days
                          when 'w', 'wk', 'wks', 'week', 'weeks'
                            i.weeks
-                         when 'm', 'mn', 'mns', 'month', 'months'
+                         when 'mn', 'mns', 'month', 'months'
                            i.months
                          when 'y', 'yr', 'yrs', 'year', 'years'
                            i.years
