@@ -135,6 +135,9 @@ class Account < ApplicationRecord
            :max_public_history,
            :max_public_access,
            :roar_lifespan,
+           :roar_lifespan_old,
+           :roar_defederate,
+           :roar_defederate_old,
            :delayed_roars?,
 
            :hides_public_profile?,

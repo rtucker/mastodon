@@ -16,22 +16,24 @@ class RemoveStatusService < BaseService
     @stream_entry = status.stream_entry
     @options      = options
 
-    RedisLock.acquire(lock_options) do |lock|
-      if lock.acquired?
-        remove_from_queued
-        remove_from_self if status.account.local?
-        remove_from_followers
-        remove_from_lists
-        remove_from_affected
-        remove_reblogs
-        remove_from_hashtags
-        remove_from_public
-        remove_from_media if status.media_attachments.any?
-        remove_from_direct if status.direct_visibility?
+    unless options[:defederate_only]
+      RedisLock.acquire(lock_options) do |lock|
+        if lock.acquired?
+          remove_from_queued
+          remove_from_self if status.account.local?
+          remove_from_followers
+          remove_from_lists
+          remove_from_affected
+          remove_reblogs
+          remove_from_hashtags
+          remove_from_public
+          remove_from_media if status.media_attachments.any?
+          remove_from_direct if status.direct_visibility?
 
-        @status.destroy!
-      else
-        raise Mastodon::RaceConditionError
+          @status.destroy!
+        else
+          raise Mastodon::RaceConditionError
+        end
       end
     end
 
@@ -44,6 +46,9 @@ class RemoveStatusService < BaseService
 
     remove_from_remote_followers
     remove_from_remote_affected
+
+    @status.update(local_only: true) if options[:defederate_only]
+    Rails.cache.delete("statuses/#{@status.id}")
   end
 
   private

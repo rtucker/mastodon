@@ -12,6 +12,12 @@ class Settings::PreferencesController < Settings::BaseController
   def update
     user_settings.update(user_settings_params.to_h)
 
+    MarkExpiredStatusesWorker.perform_async(
+      current_account.id,
+      truthy_param?(:setting_defederate_old),
+      truthy_param?(:setting_lifespan_old)
+    )
+
     if current_user.update(user_params)
       I18n.locale = current_user.locale
       toggle_filters
@@ -85,6 +91,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_max_public_history,
       :setting_max_public_access,
       :setting_roar_lifespan,
+      :setting_roar_defederate,
       :setting_delayed_roars,
       :setting_delayed_for,
       :setting_boost_interval,

@@ -131,6 +131,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
     let favouriteLink = '';
     let sharekeyLinks = '';
     let destructIcon = '';
+    let defederateIcon = '';
     let rejectIcon = '';
 
     if (this.props.measureHeight) {
@@ -256,6 +257,14 @@ export default class DetailedStatus extends ImmutablePureComponent {
       )
     }
 
+    if (status.get('defederate_after')) {
+      defederateIcon = (
+        <span>
+          <i className='fa fa-calendar-times-o' title={new Date(status.get('defederate_after'))} /> ·
+        </span>
+      )
+    }
+
     if (status.get('reject_replies')) {
       rejectIcon = (
         <span>
@@ -285,7 +294,7 @@ export default class DetailedStatus extends ImmutablePureComponent {
           />
 
           <div className='detailed-status__meta'>
-            {sharekeyLinks} {reblogLink} · {favouriteLink} · {destructIcon} {rejectIcon} <VisibilityIcon visibility={status.get('visibility')} />
+            {sharekeyLinks} {reblogLink} · {favouriteLink} · {defederateIcon} {destructIcon} {rejectIcon} <VisibilityIcon visibility={status.get('visibility')} />
             <a className='detailed-status__datetime' href={status.get('url')} target='_blank' rel='noopener'>
               <FormattedDate value={new Date(status.get('created_at'))} hour12={false} year='numeric' month='short' day='2-digit' hour='2-digit' minute='2-digit' />
             </a>

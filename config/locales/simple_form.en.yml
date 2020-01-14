@@ -49,6 +49,8 @@ en:
         media_only: Hides text-only posts
         filters_enabled: Enables custom timeline filters which can be configured in the Filters tab.
         monsterfork_api: How much of Monsterfork features should be exposed to clients.  Set to Basic or Vanilla if your Mastodon app is having problems with Monsterfork.
+        setting_roar_lifespan_old: "<strong>This is a destructive operation!</strong><br>Back up your account before saving changes!<br>Will deselect after save"
+        setting_roar_defederate_old: "<strong>This is an irreversible operation!</strong><br>Will deselect after save"
       featured_tag:
         name: 'You might want to use one of these:'
       imports:
@@ -131,6 +133,9 @@ en:
         setting_default_language: Posting language
         setting_default_privacy: Post privacy
         setting_roar_lifespan: Auto-delete new roars after
+        setting_roar_lifespan_old: Include past roars
+        setting_roar_defederate: Auto-defederate new roars after
+        setting_roar_defederate_old: Include past roars
         setting_delayed_roars: Delayed publishing of roars for proofreading
         setting_delayed_for: Delay for
         setting_boost_interval: Automatically space out consecutive boosts

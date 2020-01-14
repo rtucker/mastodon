@@ -53,6 +53,7 @@ class Api::V1::StatusesController < Api::BaseController
                                          visibility: status_params[:visibility],
                                          scheduled_at: status_params[:scheduled_at],
                                          delete_after: status_params[:delete_after],
+                                         defederate_after: status_params[:defederate_after],
                                          sharekey: status_params[:sharekey],
                                          application: doorkeeper_token.application,
                                          poll: status_params[:poll],
@@ -100,6 +101,7 @@ class Api::V1::StatusesController < Api::BaseController
       :sharekey,
       :scheduled_at,
       :delete_after,
+      :defederate_after,
       :content_type,
       media_ids: [],
       poll: [

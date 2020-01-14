@@ -13,6 +13,9 @@
   destructing_statuses_scheduler:
     every: '1m'
     class: Scheduler::DestructingStatusesScheduler
+  defederatinging_statuses_scheduler:
+    every: '1m'
+    class: Scheduler::DefederatingStatusesScheduler
   boosts_scheduler:
     every: '1m'
     class: Scheduler::BoostsScheduler

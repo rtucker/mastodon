@@ -11,6 +11,7 @@ class DestructingStatus < ApplicationRecord
   belongs_to :status, inverse_of: :destructing_status
 
   validate :validate_future_date
+  validates :status_id, uniqueness: true
 
   private
 

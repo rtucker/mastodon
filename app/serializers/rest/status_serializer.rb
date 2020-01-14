@@ -16,6 +16,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   attribute :local_only if :local?
   attribute :sharekey, if: :has_sharekey?
   attribute :delete_after, if: :current_user?
+  attribute :defederate_after, if: :current_user?
 
   attribute :content, unless: :source_requested?
   attribute :text, if: :source_requested?
@@ -152,6 +153,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
 
   def delete_after
     object.delete_after
+  end
+
+  def defederate_after
+    object.defederate_after
   end
 
   def reject_replies

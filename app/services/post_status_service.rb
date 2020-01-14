@@ -30,6 +30,7 @@ class PostStatusService < BaseService
   # @option [String] :language
   # @option [String] :scheduled_at
   # @option [String] :delete_after
+  # @option [String] :defederate_after
   # @option [Account] :mentions Optional accounts to mention out-of-body
   # @option [Boolean] :noreplies Author does not accept replies
   # @option [Boolean] :nocrawl Optional skip link card generation
@@ -76,6 +77,7 @@ class PostStatusService < BaseService
         distribute: @options[:distribute],
         nocrawl: @options[:nocrawl],
         delete_after: @delete_after.nil? ? nil : @delete_after + 1.minute,
+        defederate_after: @defederate_after.nil? ? nil : @defederate_after + 1.minute,
         reject_replies: @options[:noreplies] || false,
       }.compact
 
@@ -201,6 +203,18 @@ class PostStatusService < BaseService
     end
     @delete_after = nil if @delete_after.present? && (@delete_after < MIN_DESTRUCT_OFFSET)
 
+    case @options[:defederate_after].class
+    when NilClass
+      @defederate_after = @account.user.setting_roar_defederate.to_i.days
+    when ActiveSupport::Duration
+      @defederate_after = @options[:defederate_after]
+    when Integer
+      @defederate_after = @options[:defederate_after].minutes
+    when Float
+      @defederate_after = @options[:defederate_after].minutes
+    end
+    @defederate_after = nil if @defederate_after.present? && (@defederate_after < MIN_DESTRUCT_OFFSET)
+
   rescue ArgumentError
     raise ActiveRecord::RecordInvalid
   end
@@ -310,6 +324,7 @@ class PostStatusService < BaseService
       visibility: @visibility,
       local_only: @local_only,
       delete_after: @delete_after,
+      defederate_after: @defederate_after,
       reject_replies: @options[:noreplies] || false,
       sharekey: @options[:sharekey],
       language: language_from_option(@options[:language]) || @account.user_default_language&.presence || 'en',

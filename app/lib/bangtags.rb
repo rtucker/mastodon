@@ -59,6 +59,21 @@ class Bangtags
       ['all', 'live'] => ['live', 'all'],
       ['all', 'lifespan'] => ['lifespan', 'all'],
       ['all', 'delete_in'] => ['delete_in', 'all'],
+
+      ['parent', 'd'] => ['defederate_in', 'parent'],
+      ['parent', 'defed'] => ['defederate_in', 'parent'],
+      ['parent', 'defed_in'] => ['defederate_in', 'parent'],
+      ['parent', 'defederate'] => ['defederate_in', 'parent'],
+
+      ['thread', 'd'] => ['defederate_in', 'thread'],
+      ['thread', 'defed'] => ['defederate_in', 'thread'],
+      ['thread', 'defed_in'] => ['defederate_in', 'thread'],
+      ['thread', 'defederate'] => ['defederate_in', 'thread'],
+
+      ['all', 'd'] => ['defederate_in', 'all'],
+      ['all', 'defed'] => ['defederate_in', 'all'],
+      ['all', 'defed_in'] => ['defederate_in', 'all'],
+      ['all', 'defederate'] => ['defederate_in', 'all'],
     }
 
     # sections of the final status text
@@ -728,6 +743,50 @@ class Bangtags
             end
           else
             s.delete_after = delete_after
+            Rails.cache.delete("statuses/#{s.id}")
+          end
+        when 'd', 'defed', 'defed_in', 'defederate', 'defederate_in'
+          chunk = nil
+          next if cmd[1].nil?
+          case cmd[1].downcase
+          when 'parent', 'thread', 'all'
+            s = cmd[1].downcase.to_sym
+            s = @parent_status if s == :parent
+            next unless s == :all ||  @parent_status.present?
+            next unless s == :thread || s == :all || @parent_status.account_id == @account.id
+            i = cmd[2].to_i
+            unit = cmd[3].present? ? cmd[3].downcase : 'minutes'
+          else
+            s = @status
+            i = cmd[1].to_i
+            unit = cmd[2].present? ? cmd[2].downcase : 'minutes'
+          end
+          defederate_after = case unit
+                         when 'min', 'mins', 'minute', 'minutes'
+                           i.minutes
+                         when 'h', 'hr', 'hrs', 'hour', 'hours'
+                           i.hours
+                         when 'd', 'dy', 'dys', 'day', 'days'
+                           i.days
+                         when 'w', 'wk', 'wks', 'week', 'weeks'
+                           i.weeks
+                         when 'm', 'mn', 'mns', 'month', 'months'
+                           i.months
+                         when 'y', 'yr', 'yrs', 'year', 'years'
+                           i.years
+                         end
+          if s == :thread
+            @parent_status.conversation.statuses.where(account_id: @account.id).find_each do |s|
+              s.defederate_after = defederate_after
+              Rails.cache.delete("statuses/#{s.id}")
+            end
+          elsif s == :all
+            @account.statuses.find_each do |s|
+              s.defederate_after = defederate_after
+              Rails.cache.delete("statuses/#{s.id}")
+            end
+          else
+            s.defederate_after = defederate_after
             Rails.cache.delete("statuses/#{s.id}")
           end
         when 'keysmash'

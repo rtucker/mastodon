@@ -82,6 +82,7 @@ class Status < ApplicationRecord
   has_one :status_stat, inverse_of: :status
   has_one :poll, inverse_of: :status, dependent: :destroy
   has_one :destructing_status, inverse_of: :status, dependent: :destroy
+  has_one :defederating_status, inverse_of: :status, dependent: :destroy
   has_one :imported_status, inverse_of: :status, dependent: :destroy
   has_one :sharekey, inverse_of: :status, dependent: :destroy
 
@@ -284,10 +285,28 @@ class Status < ApplicationRecord
   end
 
   def delete_after=(value)
+    if defederate_after && defederate_after < (Time.now.utc + 5.minutes + value)
+      value = 5.minutes + value
+    end
+
     if destructing_status.nil?
       DestructingStatus.create!(status_id: id, delete_after: Time.now.utc + value)
     else
       destructing_status.delete_after = Time.now.utc + value
+    end
+  end
+
+  def defederate_after
+    defederating_status&.defederate_after
+  end
+
+  def defederate_after=(value)
+    return unless delete_after.nil? || delete_after >= (Time.now.utc + 5.minutes + value)
+
+    if defederating_status.nil?
+      DefederatingStatus.create!(status_id: id, defederate_after: Time.now.utc + value)
+    else
+      defederating_status.defederate_after = Time.now.utc + value
     end
   end
 

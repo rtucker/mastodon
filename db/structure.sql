@@ -897,6 +897,36 @@ ALTER SEQUENCE public.custom_filters_id_seq OWNED BY public.custom_filters.id;
 
 
 --
+-- Name: defederating_statuses; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.defederating_statuses (
+    id bigint NOT NULL,
+    status_id bigint,
+    defederate_after timestamp without time zone
+);
+
+
+--
+-- Name: defederating_statuses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.defederating_statuses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: defederating_statuses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.defederating_statuses_id_seq OWNED BY public.defederating_statuses.id;
+
+
+--
 -- Name: destructing_statuses; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2624,6 +2654,13 @@ ALTER TABLE ONLY public.custom_filters ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
+-- Name: defederating_statuses id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.defederating_statuses ALTER COLUMN id SET DEFAULT nextval('public.defederating_statuses_id_seq'::regclass);
+
+
+--
 -- Name: destructing_statuses id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3082,6 +3119,14 @@ ALTER TABLE ONLY public.custom_emojis
 
 ALTER TABLE ONLY public.custom_filters
     ADD CONSTRAINT custom_filters_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: defederating_statuses defederating_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.defederating_statuses
+    ADD CONSTRAINT defederating_statuses_pkey PRIMARY KEY (id);
 
 
 --
@@ -3697,6 +3742,20 @@ CREATE INDEX index_custom_filters_on_account_id ON public.custom_filters USING b
 
 
 --
+-- Name: index_defederating_statuses_on_defederate_after; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_defederating_statuses_on_defederate_after ON public.defederating_statuses USING btree (defederate_after);
+
+
+--
+-- Name: index_defederating_statuses_on_status_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_defederating_statuses_on_status_id ON public.defederating_statuses USING btree (status_id);
+
+
+--
 -- Name: index_destructing_statuses_on_delete_after; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3707,7 +3766,7 @@ CREATE INDEX index_destructing_statuses_on_delete_after ON public.destructing_st
 -- Name: index_destructing_statuses_on_status_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_destructing_statuses_on_status_id ON public.destructing_statuses USING btree (status_id);
+CREATE UNIQUE INDEX index_destructing_statuses_on_status_id ON public.destructing_statuses USING btree (status_id);
 
 
 --
@@ -4980,6 +5039,14 @@ ALTER TABLE ONLY public.account_warnings
 
 
 --
+-- Name: defederating_statuses fk_rails_af4e2f2cab; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.defederating_statuses
+    ADD CONSTRAINT fk_rails_af4e2f2cab FOREIGN KEY (status_id) REFERENCES public.statuses(id);
+
+
+--
 -- Name: web_push_subscriptions fk_rails_b006f28dac; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5399,6 +5466,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200110214031'),
 ('20200110221801'),
 ('20200110221920'),
-('20200111042543');
+('20200111042543'),
+('20200114011918'),
+('20200114030940');
 
 

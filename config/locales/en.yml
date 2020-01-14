@@ -885,6 +885,8 @@ en:
     too_soon: The scheduled timeframe must be at least 5 minutes into the future
   destructing_statuses:
     too_soon: The destruction timeframe must be at least 5 minutes into the future
+  defederating_statuses:
+    too_soon: The destruction timeframe must be at least 5 minutes into the future
   sessions:
     activity: Last activity
     browser: Browser

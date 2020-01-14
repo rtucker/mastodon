@@ -148,6 +148,9 @@ class User < ApplicationRecord
     :max_public_history,
     :max_public_access,
     :roar_lifespan,
+    :roar_lifespan_old,
+    :roar_defederate,
+    :roar_defederate_old,
     :delayed_roars,
     :delayed_for,
     :boost_interval,
@@ -338,6 +341,18 @@ class User < ApplicationRecord
 
   def roar_lifespan
     @_roar_lifespan ||= [0, (settings.roar_lifespan || 0).to_i].max
+  end
+
+  def roar_lifespan_old
+    @_roar_lifespan_old ||= (settings.roar_lifespan_old || false)
+  end
+
+  def roar_defederate
+    @_roar_defederate ||= [0, (settings.roar_defederate || 0).to_i].max
+  end
+
+  def roar_defederate_old
+    @_roar_defederate_old ||= (settings.roar_defederate_old || false)
   end
 
   def delayed_roars?

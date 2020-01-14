@@ -42,6 +42,9 @@ class UserSettingsDecorator
     user.settings['max_public_history']  = max_public_history_preference if change?('setting_max_public_history')
     user.settings['max_public_access']   = max_public_access_preference if change?('setting_max_public_access')
     user.settings['roar_lifespan']       = roar_lifespan_preference if change?('setting_roar_lifespan')
+    user.settings['roar_lifespan_old']   = roar_lifespan_old_preference if change?('setting_roar_lifespan_old')
+    user.settings['roar_defederate']     = roar_defederate_preference if change?('setting_roar_defederate')
+    user.settings['roar_defederate_old'] = roar_defederate_old_preference if change?('setting_roar_defederate_old')
     user.settings['delayed_roars']       = delayed_roars_preference if change?('setting_delayed_roars')
     user.settings['delayed_for']         = delayed_for_preference if change?('setting_delayed_for')
     user.settings['boost_interval']      = boost_interval_preference if change?('setting_boost_interval')
@@ -158,6 +161,18 @@ class UserSettingsDecorator
 
   def roar_lifespan_preference
     settings['setting_roar_lifespan']
+  end
+
+  def roar_lifespan_old_preference
+    settings['setting_roar_lifespan_old']
+  end
+
+  def roar_defederate_preference
+    settings['setting_roar_defederate']
+  end
+
+  def roar_defederate_old_preference
+    settings['setting_roar_defederate_old']
   end
 
   def delayed_for_preference
