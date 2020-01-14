@@ -54,6 +54,10 @@ class PostStatusService < BaseService
     @preloaded_tags = @options[:preloaded_tags] || []
     @preloaded_mentions = @options[:preloaded_mentions] || []
 
+    @is_delayed = @options[:delayed].present? || @account&.user&.delayed_roars?
+    @delay_for = @is_delayed ? [5, @account&.user&.delayed_for.to_i].max : 1
+    @delay_until = Time.now.utc + @delay_for.seconds
+
     raise Mastodon::LengthValidationError, I18n.t('statuses.replies_rejected') if recipient_rejects_replies?
     raise Mastodon::LengthValidationError, I18n.t('statuses.kicked') if kicked?
 
@@ -67,9 +71,6 @@ class PostStatusService < BaseService
     else
       return unless process_status!
 
-      is_delayed = @options[:delayed].present? || @account&.user&.delayed_roars?
-      delay_for = is_delayed ? [5, @account&.user&.delayed_for.to_i].max : 1
-      delay_until = Time.now.utc + delay_for.seconds
       opts = {
         visibility: @visibility,
         local_only: @local_only,
@@ -81,7 +82,7 @@ class PostStatusService < BaseService
         reject_replies: @options[:noreplies] || false,
       }.compact
 
-      PostStatusWorker.perform_at(delay_until, @status.id, opts)
+      PostStatusWorker.perform_at(@delay_until, @status.id, opts)
       DistributionWorker.perform_async(@status.id, delayed = true) unless @options[:distribute] == false
     end
 
@@ -192,29 +193,30 @@ class PostStatusService < BaseService
     @scheduled_at = nil if scheduled_in_the_past?
 
     case @options[:delete_after].class
-    when NilClass
-      @delete_after = @account.user.setting_roar_lifespan.to_i.days
     when ActiveSupport::Duration
       @delete_after = @options[:delete_after]
     when Integer
       @delete_after = @options[:delete_after].minutes
     when Float
       @delete_after = @options[:delete_after].minutes
+    else
+      @delete_after = @account.user.roar_lifespan.days
     end
     @delete_after = nil if @delete_after.present? && (@delete_after < MIN_DESTRUCT_OFFSET)
+    @delete_after += @delay_for.seconds if @delete_after && @is_delayed
 
     case @options[:defederate_after].class
-    when NilClass
-      @defederate_after = @account.user.setting_roar_defederate.to_i.days
     when ActiveSupport::Duration
       @defederate_after = @options[:defederate_after]
     when Integer
       @defederate_after = @options[:defederate_after].minutes
     when Float
       @defederate_after = @options[:defederate_after].minutes
+    else
+      @defederate_after = @account.user.roar_defederate.days
     end
     @defederate_after = nil if @defederate_after.present? && (@defederate_after < MIN_DESTRUCT_OFFSET)
-
+    @defederate_after += @delay_for.seconds if @defederate_after && @is_delayed
   rescue ArgumentError
     raise ActiveRecord::RecordInvalid
   end
@@ -229,6 +231,7 @@ class PostStatusService < BaseService
 
     return false if @status.destroyed?
 
+    set_expirations
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
     process_mentions
     true
@@ -273,6 +276,11 @@ class PostStatusService < BaseService
 
   def language_from_option(str)
     ISO_639.find(str)&.alpha2
+  end
+
+  def set_expirations
+    @status.delete_after = @delete_after if @delete_after
+    @status.defederate_after = @defederate_after if @defederate_after
   end
 
   def process_hashtags_service
@@ -323,8 +331,6 @@ class PostStatusService < BaseService
       spoiler_text: @options[:spoiler_text] || '',
       visibility: @visibility,
       local_only: @local_only,
-      delete_after: @delete_after,
-      defederate_after: @defederate_after,
       reject_replies: @options[:noreplies] || false,
       sharekey: @options[:sharekey],
       language: language_from_option(@options[:language]) || @account.user_default_language&.presence || 'en',
