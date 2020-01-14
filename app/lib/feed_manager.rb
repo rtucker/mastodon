@@ -166,7 +166,7 @@ class FeedManager
   def _filter_from_home?(status, receiver_id)
     return false if receiver_id == status.account_id
     return true  if status.reply? && (status.in_reply_to_id.nil? || status.in_reply_to_account_id.nil?)
-    return true  if phrase_filtered?(status, receiver_id)
+    return true  if phrase_filtered?(status, receiver_id, skip_redis: true)
 
     check_for_blocks = status.active_mentions.pluck(:account_id)
     check_for_blocks.concat([status.account_id])
