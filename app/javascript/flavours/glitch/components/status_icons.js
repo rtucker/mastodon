@@ -70,6 +70,9 @@ export default class StatusIcons extends React.PureComponent {
         {status.get('reject_replies') ? (
           <i className='fa fa-microphone-slash' title='Rejecting replies' aria-hidden='true' />
         ) : null}
+        {status.get('local_only') ? (
+          <i className='fa fa-chain-broken' title='Local-only' aria-hidden='true' />
+        ) : null}
         {!directMessage && <VisibilityIcon visibility={status.get('visibility')} />}
         {collapsible ? (
           <IconButton

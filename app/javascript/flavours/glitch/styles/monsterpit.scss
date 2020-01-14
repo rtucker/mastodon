@@ -1,3 +1,9 @@
+.status {
+  &.status-local-only {
+    background: darken($ui-base-color, 4%);
+  }
+}
+
 .composer--reply > .content,
 .status__content__text,
 .e-content

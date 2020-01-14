@@ -619,7 +619,7 @@ export default class Status extends ImmutablePureComponent {
       toggleSensitive: this.handleHotkeyToggleSensitive,
     };
 
-    const computedClass = classNames('status', `status-${status.get('visibility')}`, {
+    const computedClass = classNames('status', `status-${status.get('visibility')}`, `status-${status.get('local_only') ? 'local-only' : 'federatable'}`, {
       collapsed: isCollapsed,
       'has-background': isCollapsed && background,
       'status__wrapper-reply': !!status.get('in_reply_to_id'),
