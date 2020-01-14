@@ -1152,7 +1152,7 @@ en:
     invalid_email: The e-mail address is invalid
     invalid_otp_token: Invalid two-factor code
     otp_lost_help_html: If you lost access to both, you may get in touch with %{email}
-    seamless_external_login: You are logged in via an external service, so password and e-mail settings are not available.
+    seamless_external_login: This Monsterfork server is using a single sign-on system, such as LDAP or SAML, to host your account.  You will need to use your community or organization's account self-service tool to change your password and/or e-mail.  Please contact your admin for this information.
     signed_in_as: 'Signed in as:'
   verification:
     explanation_html: 'You can <strong>verify yourself as the owner of the links in your profile metadata</strong>. For that, the linked website must contain a link back to your Monsterpit profile. The link back <strong>must</strong> have a <code>rel="me"</code> attribute. The text content of the link does not matter. Here is an example:'
