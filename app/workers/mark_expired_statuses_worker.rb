@@ -5,16 +5,15 @@ class MarkExpiredStatusesWorker
 
   sidekiq_options queue: 'bulk'
 
-  def perform(account_id, defederate = false, lifespan = false)
+  def perform(account_id)
     @account = Account.find(account_id)
     return if @account&.user.nil?
-    @user = @account.user
 
-    @roar_defederate = @user.roar_defederate.to_i
-    @roar_lifespan = @user.roar_lifespan.to_i
+    @roar_defederate = @account.user.roar_defederate
+    @roar_lifespan = @account.user.roar_lifespan
 
-    defederate = false if @roar_defederate == 0
-    lifespan = false if @roar_lifespan == 0
+    defederate = @account.user.roar_defederate_old && @roar_defederate != 0
+    lifespan = @account.user.roar_lifespan_old && @roar_lifespan != 0
 
     return unless defederate || lifespan
 
@@ -38,6 +37,11 @@ class MarkExpiredStatusesWorker
         offset += 1.second
       end
     end
+
+    UserSettingsDecorator.new(@account.user).update({
+      'setting_roar_defederate_old' => false,
+      'setting_roar_lifespan_old' => false,
+    })
   rescue ActiveRecord::RecordNotFound
     true
   end
