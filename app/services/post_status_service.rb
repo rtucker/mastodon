@@ -54,8 +54,8 @@ class PostStatusService < BaseService
     @preloaded_tags = @options[:preloaded_tags] || []
     @preloaded_mentions = @options[:preloaded_mentions] || []
 
-    @is_delayed = @options[:delayed].present? || @account&.user&.delayed_roars?
-    @delay_for = @is_delayed ? [5, @account&.user&.delayed_for.to_i].max : 1
+    @is_delayed = @options[:delayed].present? || @account.user.delayed_roars?
+    @delay_for = @is_delayed ? [5, @account.user.delayed_for].max : 1
     @delay_until = Time.now.utc + @delay_for.seconds
 
     raise Mastodon::LengthValidationError, I18n.t('statuses.replies_rejected') if recipient_rejects_replies?
@@ -200,9 +200,9 @@ class PostStatusService < BaseService
     when Float
       @delete_after = @options[:delete_after].minutes
     else
-      @delete_after = @account.user.roar_lifespan.days
+      @delete_after = @account.user.roar_lifespan.days unless @account.user.roar_lifespan == 0
     end
-    @delete_after = nil if @delete_after.present? && (@delete_after < MIN_DESTRUCT_OFFSET)
+    @delete_after = MIN_DESTRUCT_OFFSET if @delete_after.present? && (@delete_after < MIN_DESTRUCT_OFFSET)
     @delete_after += @delay_for.seconds if @delete_after && @is_delayed
 
     case @options[:defederate_after].class
@@ -213,9 +213,9 @@ class PostStatusService < BaseService
     when Float
       @defederate_after = @options[:defederate_after].minutes
     else
-      @defederate_after = @account.user.roar_defederate.days
+      @defederate_after = @account.user.roar_defederate.days unless @account.user.roar_defederate == 0
     end
-    @defederate_after = nil if @defederate_after.present? && (@defederate_after < MIN_DESTRUCT_OFFSET)
+    @defederate_after = MIN_DESTRUCT_OFFSET if @defederate_after.present? && (@defederate_after < MIN_DESTRUCT_OFFSET)
     @defederate_after += @delay_for.seconds if @defederate_after && @is_delayed
   rescue ArgumentError
     raise ActiveRecord::RecordInvalid
@@ -279,8 +279,8 @@ class PostStatusService < BaseService
   end
 
   def set_expirations
-    @status.delete_after = @delete_after if @delete_after
-    @status.defederate_after = @defederate_after if @defederate_after
+    @status.delete_after = @delete_after if @delete_after && @status.delete_after.nil?
+    @status.defederate_after = @defederate_after if @defederate_after && @status.defederate_after.nil?
   end
 
   def process_hashtags_service
