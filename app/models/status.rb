@@ -285,15 +285,25 @@ class Status < ApplicationRecord
   end
 
   def delete_after=(value)
+    @no_clobber_expirations = true
+
+    if value.to_i == 0
+      DestructingStatus.where(status_id: id).destroy_all
+      return
+    end
+
     if defederate_after && defederate_after < (Time.now.utc + 5.minutes + value)
       value = 5.minutes + value
     end
 
+    delete_after = Time.now.utc + value
     if destructing_status.nil?
-      DestructingStatus.create!(status_id: id, delete_after: Time.now.utc + value)
+      DestructingStatus.create!(status_id: id, delete_after: delete_after)
     else
-      destructing_status.update(delete_after: Time.now.utc + value)
+      destructing_status.update(delete_after: delete_after)
     end
+
+    delete_after
   end
 
   def defederate_after
@@ -301,13 +311,27 @@ class Status < ApplicationRecord
   end
 
   def defederate_after=(value)
+    @no_clobber_expirations = true
+
+    if value.to_i == 0
+      DefederatingStatus.where(status_id: id).destroy_all
+      return
+    end
+
     return unless delete_after.nil? || delete_after >= (Time.now.utc + 5.minutes + value)
 
+    defederate_after = Time.now.utc + value
     if defederating_status.nil?
-      DefederatingStatus.create!(status_id: id, defederate_after: Time.now.utc + value)
+      DefederatingStatus.create!(status_id: id, defederate_after: defederate_after)
     else
-      defederating_status.update(defederate_after: Time.now.utc + value)
+      defederating_status.update(defederate_after: defederate_after)
     end
+
+    defederate_after
+  end
+
+  def no_clobber_expirations?
+    @no_clobber_expirations || false
   end
 
   def mark_for_mass_destruction!

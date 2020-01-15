@@ -762,19 +762,19 @@ class Bangtags
             unit = cmd[2].present? ? cmd[2].downcase : 'minutes'
           end
           defederate_after = case unit
-                         when 'm', 'min', 'mins', 'minute', 'minutes'
-                           i.minutes
-                         when 'h', 'hr', 'hrs', 'hour', 'hours'
-                           i.hours
-                         when 'd', 'dy', 'dys', 'day', 'days'
-                           i.days
-                         when 'w', 'wk', 'wks', 'week', 'weeks'
-                           i.weeks
-                         when 'mn', 'mns', 'month', 'months'
-                           i.months
-                         when 'y', 'yr', 'yrs', 'year', 'years'
-                           i.years
-                         end
+                             when 'm', 'min', 'mins', 'minute', 'minutes'
+                               i.minutes
+                             when 'h', 'hr', 'hrs', 'hour', 'hours'
+                               i.hours
+                             when 'd', 'dy', 'dys', 'day', 'days'
+                               i.days
+                             when 'w', 'wk', 'wks', 'week', 'weeks'
+                               i.weeks
+                             when 'mn', 'mns', 'month', 'months'
+                               i.months
+                             when 'y', 'yr', 'yrs', 'year', 'years'
+                               i.years
+                             end
           if s == :thread
             @parent_status.conversation.statuses.where(account_id: @account.id).find_each do |s|
               s.defederate_after = defederate_after

@@ -279,6 +279,7 @@ class PostStatusService < BaseService
   end
 
   def set_expirations
+    return if @status.no_clobber_expirations?
     @status.delete_after = @delete_after if @delete_after && @status.delete_after.nil?
     @status.defederate_after = @defederate_after if @defederate_after && @status.defederate_after.nil?
   end
