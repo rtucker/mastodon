@@ -70,6 +70,11 @@
   %hr/
 
   .fields-group
+    = f.input :allow_unknown_follows, as: :boolean, wrapper: :with_label
+
+  %hr/
+
+  .fields-group
     = f.input :only_known, as: :boolean, wrapper: :with_label
     = f.input :hide_boosts, as: :boolean, wrapper: :with_label
     = f.input :media_only, as: :boolean, wrapper: :with_label

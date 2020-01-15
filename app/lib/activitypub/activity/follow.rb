@@ -14,6 +14,11 @@ class ActivityPub::Activity::Follow < ActivityPub::Activity
       return
     end
 
+    if !target_account.user.allow_unknown_follows? && !(target_account.following?(@account) || ever_mentioned_by?(target_account))
+      reject_follow_request!(target_account)
+      return
+    end
+
     # Fast-forward repeat follow requests
     if @account.following?(target_account)
       AuthorizeFollowService.new.call(@account, target_account, skip_follow_request: true, follow_request_uri: @json['id'])
@@ -33,5 +38,11 @@ class ActivityPub::Activity::Follow < ActivityPub::Activity
   def reject_follow_request!(target_account)
     json = Oj.dump(serialize_payload(FollowRequest.new(account: @account, target_account: target_account, uri: @json['id']), ActivityPub::RejectFollowSerializer))
     ActivityPub::DeliveryWorker.perform_async(json, target_account.id, @account.inbox_url)
+  endA
+
+  private
+
+  def ever_mentioned_by?(target_account)
+    Status.joins(:mentions).merge(target_account.mentions).where(account_id: @account.id).exists?
   end
 end

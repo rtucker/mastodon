@@ -54,6 +54,7 @@ class Settings::PreferencesController < Settings::BaseController
       :invert_filters,
       :filter_timelines_only,
       :monsterpit_api,
+      :allow_unknown_follows,
       chosen_languages: []
     )
   end

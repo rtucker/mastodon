@@ -2429,7 +2429,8 @@ CREATE TABLE public.users (
     media_only boolean DEFAULT false NOT NULL,
     filter_undescribed boolean DEFAULT false NOT NULL,
     filters_enabled boolean DEFAULT false NOT NULL,
-    monsterfork_api smallint DEFAULT 2 NOT NULL
+    monsterfork_api smallint DEFAULT 2 NOT NULL,
+    allow_unknown_follows boolean DEFAULT false NOT NULL
 );
 
 
@@ -5468,6 +5469,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200110221920'),
 ('20200111042543'),
 ('20200114011918'),
-('20200114030940');
+('20200114030940'),
+('20200115201524');
 
 

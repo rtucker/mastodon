@@ -47,6 +47,7 @@
 #  filter_undescribed        :boolean          default(FALSE), not null
 #  filters_enabled           :boolean          default(FALSE), not null
 #  monsterfork_api           :integer          default("full"), not null
+#  allow_unknown_follows     :boolean          default(FALSE), not null
 #
 
 class User < ApplicationRecord
