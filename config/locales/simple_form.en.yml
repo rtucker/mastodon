@@ -51,6 +51,7 @@ en:
         monsterfork_api: How much of Monsterfork features should be exposed to clients.  Set to Basic or Vanilla if your Mastodon app is having problems with Monsterfork.
         setting_roar_lifespan_old: "<strong>This is a destructive operation!</strong><br>Back up your account before saving changes!<br>Will deselect after save"
         setting_roar_defederate_old: "<strong>This is an irreversible operation!</strong><br>Will deselect after save"
+        allow_unknown_follows: If disabled, packmate requests from accounts you've never interacted with before will be automatically rejected
       featured_tag:
         name: 'You might want to use one of these:'
       imports:
@@ -153,7 +154,6 @@ en:
         setting_larger_drawer: Increase width of compose drawer column
         setting_larger_emoji: Increase size of emoji
         setting_filter_mentions: Apply filters to mentions
-        setting_unknown_follows: Allow packmate requests from accounts you've never interacted with
         setting_hide_replies_muted: Filter replies to those who you are muting
         setting_hide_replies_blocked: Filter replies to those who you are blocking
         setting_hide_replies_blocker: Filter replies to those who are blocking you
@@ -207,6 +207,7 @@ en:
         media_only: Media gallery mode
         filters_enabled: Enable custom filters
         monsterfork_api: Monsterfork API exposure
+        allow_unknown_follows: Allow packmate request from unknown accounts
       monsterfork_api:
         vanilla: Vanilla
         basic: Basic
