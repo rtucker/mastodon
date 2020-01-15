@@ -38,7 +38,7 @@ class ActivityPub::Activity::Follow < ActivityPub::Activity
   def reject_follow_request!(target_account)
     json = Oj.dump(serialize_payload(FollowRequest.new(account: @account, target_account: target_account, uri: @json['id']), ActivityPub::RejectFollowSerializer))
     ActivityPub::DeliveryWorker.perform_async(json, target_account.id, @account.inbox_url)
-  endA
+  end
 
   private
 
