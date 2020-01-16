@@ -94,6 +94,6 @@ class ActivityPub::FetchAccountStatusesService < BaseService
     ActivityPub::Activity.factory(item, @account, requested: true)&.perform
   rescue => e
     Rails.logger.error("Failed to process #{item['type']} #{item['id']} due to #{e}: #{e.message}")
-    Rails.logger.error("Stack trace: #{backtrace.map {|l| "  #{l}\n"}.join}")
+    Rails.logger.error("Stack trace: #{e.backtrace.map {|l| "  #{l}\n"}.join}")
   end
 end
