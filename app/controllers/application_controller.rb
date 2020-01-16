@@ -22,7 +22,12 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from ActionController::InvalidAuthenticityToken, with: :unprocessable_entity
   rescue_from ActionController::UnknownFormat, with: :not_acceptable
+  rescue_from ActionController::ParameterMissing, with: :bad_request
+  rescue_from Paperclip::AdapterRegistry::NoHandlerError, with: :bad_request
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from Mastodon::NotPermittedError, with: :forbidden
+  rescue_from HTTP::Error, OpenSSL::SSL::SSLError, with: :internal_server_error
+  rescue_from Mastodon::RaceConditionError, with: :service_unavailable
 
   before_action :store_current_location, except: :raise_not_found, unless: :devise_controller?
   before_action :check_user_permissions, if: :user_signed_in?
@@ -162,8 +167,20 @@ class ApplicationController < ActionController::Base
     respond_with_error(406)
   end
 
+  def bad_request
+    respond_with_error(400)
+  end
+
+  def internal_server_error
+    respond_with_error(500)
+  end
+
+  def service_unavailable
+    respond_with_error(503)
+  end
+
   def single_user_mode?
-    @single_user_mode ||= Rails.configuration.x.single_user_mode && Account.exists?
+    @single_user_mode ||= Rails.configuration.x.single_user_mode && Account.where('id > 0').exists?
   end
 
   def use_seamless_external_login?
@@ -171,11 +188,15 @@ class ApplicationController < ActionController::Base
   end
 
   def current_account
-    @current_account ||= current_user.try(:account)
+    return @current_account if defined?(@current_account)
+
+    @current_account = current_user&.account
   end
 
   def current_session
-    @current_session ||= SessionActivation.find_by(session_id: cookies.signed['_session_id'])
+    return @current_session if defined?(@current_session)
+
+    @current_session = SessionActivation.find_by(session_id: cookies.signed['_session_id']) if cookies.signed['_session_id'].present?
   end
 
   def current_flavour
@@ -210,13 +231,11 @@ class ApplicationController < ActionController::Base
 
   def respond_with_error(code)
     respond_to do |format|
-      format.any  { head code }
-
-      format.html do
-        set_locale
+      format.any do
         use_pack 'error'
-        render "errors/#{code}", layout: 'error', status: code
+        render "errors/#{code}", layout: 'error', status: code, formats: [:html]
       end
+      format.json { render json: { error: Rack::Utils::HTTP_STATUS_CODES[code] }, status: code }
     end
   end
 
