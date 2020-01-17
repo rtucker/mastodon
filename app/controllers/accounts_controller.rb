@@ -41,7 +41,8 @@ class AccountsController < ApplicationController
 
       format.json do
         # TODO: Remember to add authorized_fetch_mode, restrict_fields_to when ported
-        expires_in 3.minutes, public: !(signed_request_account.present?)
+#        expires_in 3.minutes, public: !(signed_request_account.present?)
+        expires_in 3.minutes, public: true
         render_with_cache json: @account, content_type: 'application/activity+json', serializer: ActivityPub::ActorSerializer, adapter: ActivityPub::Adapter
       end
     end
