@@ -40,9 +40,9 @@ class AccountsController < ApplicationController
       end
 
       format.json do
-        render_cached_json(['activitypub', 'actor', @account], content_type: 'application/activity+json') do
-          ActiveModelSerializers::SerializableResource.new(@account, serializer: ActivityPub::ActorSerializer, adapter: ActivityPub::Adapter)
-        end
+        # TODO: Remember to add authorized_fetch_mode, restrict_fields_to when ported
+        expires_in 3.minutes, public: !(signed_request_account.present?)
+        render_with_cache json: @account, content_type: 'application/activity+json', serializer: ActivityPub::ActorSerializer, adapter: ActivityPub::Adapter
       end
     end
   end

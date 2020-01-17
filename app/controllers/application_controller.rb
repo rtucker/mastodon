@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   include Localized
   include UserTrackingConcern
   include SessionTrackingConcern
+  include CacheConcern
 
   helper_method :current_account
   helper_method :current_session

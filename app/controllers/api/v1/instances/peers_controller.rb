@@ -7,7 +7,8 @@ class Api::V1::Instances::PeersController < Api::BaseController
   respond_to :json
 
   def index
-    render_cached_json('api:v1:instances:peers:index', expires_in: 1.day) { actively_federated_domains }
+    expires_in 1.day, public: true
+    render_with_cache(expires_in: 1.day) { actively_federated_domains }
   end
 
   private

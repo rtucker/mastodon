@@ -42,17 +42,15 @@ class StatusesController < ApplicationController
       end
 
       format.json do
-        render_cached_json(['activitypub', 'note', @status], content_type: 'application/activity+json', public: !@stream_entry.hidden?) do
-          ActiveModelSerializers::SerializableResource.new(@status, serializer: ActivityPub::NoteSerializer, adapter: ActivityPub::Adapter)
-        end
+        expires_in 3.minutes, public: @status.distributable?
+        render_with_cache json: @status, content_type: 'application/activity+json', serializer: ActivityPub::NoteSerializer, adapter: ActivityPub::Adapter
       end
     end
   end
 
   def activity
-    render_cached_json(['activitypub', 'activity', @status], content_type: 'application/activity+json', public: !@stream_entry.hidden?) do
-      ActiveModelSerializers::SerializableResource.new(@status, serializer: ActivityPub::ActivitySerializer, adapter: ActivityPub::Adapter)
-    end
+    expires_in 3.minutes, public: @status.distributable? 
+    render_with_cache json: @status, content_type: 'application/activity+json', serializer: ActivityPub::NoteSerializer, adapter: ActivityPub::Adapter
   end
 
   def embed
