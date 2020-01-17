@@ -25,7 +25,9 @@ module CacheConcern
   end
 
   def set_cache_headers
-    response.headers['Vary'] = public_fetch_mode? ? 'Accept' : 'Accept, Signature'
+# TODO: Uncomment the following line if and when public_fetch_mode exists
+#    response.headers['Vary'] = public_fetch_mode? ? 'Accept' : 'Accept, Signature'
+    response.headers['Vary'] = 'Accept'
   end
 
   def cache_collection(raw, klass)
