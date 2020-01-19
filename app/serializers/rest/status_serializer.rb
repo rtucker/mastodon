@@ -6,7 +6,8 @@ class REST::StatusSerializer < ActiveModel::Serializer
   attributes :id, :created_at, :updated_at, :in_reply_to_id,
              :in_reply_to_account_id, :sensitive, :spoiler_text, :visibility,
              :language, :uri, :url, :replies_count, :reblogs_count,
-             :favourites_count, :network, :curated, :reject_replies, :trans
+             :favourites_count, :network, :curated, :reject_replies, :trans,
+             :chest
 
   attribute :favourited, if: :current_user?
   attribute :reblogged, if: :current_user?
@@ -36,6 +37,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
 
   def trans
     'rights'
+  end
+
+  def chest
+    'floof'
   end
 
   def id

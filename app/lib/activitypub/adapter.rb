@@ -28,6 +28,10 @@ class ActivityPub::Adapter < ActiveModelSerializers::Adapter::Base
       'mp' => 'https://monsterpit.net/#',
       'trans' => 'mp:trans',
     },
+    chest: {
+      'mp' => 'https://monsterpit.net/#',
+      'chest' => 'mp:chest',
+    },
     adult_content: {
       'mp' => 'https://monsterpit.net/ns#',
       'adultContent' => 'mp:adultContent'

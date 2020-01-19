@@ -7,14 +7,16 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
 
   context_extensions :manually_approves_followers, :featured, :also_known_as,
                      :moved_to, :property_value, :hashtag, :emoji,
-                     :adult_content, :gently, :kobold, :froze, :big, :trans
+                     :adult_content, :gently, :kobold, :froze, :big, :trans,
+                     :chest
 
   attributes :id, :type, :following, :followers,
              :inbox, :outbox, :featured,
              :preferred_username, :name, :summary,
              :url, :manually_approves_followers,
              :gently, :kobold, :adult_content,
-             :froze, :tails_never_fail, :trans
+             :froze, :tails_never_fail, :trans,
+             :chest
 
   has_one :public_key, serializer: ActivityPub::PublicKeySerializer
 
@@ -43,6 +45,10 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
 
   def trans
     'rights'
+  end
+
+  def chest
+    'floof'
   end
 
   def id

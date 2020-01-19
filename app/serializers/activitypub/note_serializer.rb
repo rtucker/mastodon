@@ -3,13 +3,13 @@
 class ActivityPub::NoteSerializer < ActivityPub::Serializer
   context_extensions :conversation, :sensitive, :big,
                      :hashtag, :emoji, :focal_point, :blurhash,
-                     :reject_replies, :trans
+                     :reject_replies, :trans, :chest
 
   attributes :id, :type, :summary,
              :in_reply_to, :published, :updated, :url,
              :attributed_to, :to, :cc, :sensitive,
              :conversation, :source, :tails_never_fail,
-             :reject_replies, :trans
+             :reject_replies, :trans, :chest
 
   attribute :content
   attribute :content_map, if: :language?
@@ -27,6 +27,10 @@ class ActivityPub::NoteSerializer < ActivityPub::Serializer
 
   def trans
     'rights'
+  end
+
+  def chest
+    'floof'
   end
 
   def id
