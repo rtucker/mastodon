@@ -67,6 +67,7 @@ gem 'posix-spawn', git: 'https://github.com/rtomayko/posix-spawn', ref: '58465d2
 gem 'pundit', '~> 2.0'
 gem 'premailer-rails'
 gem 'rack', git: 'https://github.com/rack/rack.git', :ref => 'f690bb71425aa31d7b9b3113829af773950d8ab5'
+gem 'rack-attack', '~> 6.1'
 gem 'rack-cors', '~> 1.0', require: 'rack/cors'
 gem 'rails-i18n', '~> 5.1'
 gem 'rails-settings-cached', '~> 0.6'

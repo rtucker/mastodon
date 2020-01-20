@@ -551,6 +551,8 @@ CREATE TABLE public.accounts (
     force_private boolean DEFAULT false NOT NULL,
     unboostable boolean DEFAULT false NOT NULL,
     block_anon boolean DEFAULT false NOT NULL
+    block_anon boolean DEFAULT false NOT NULL,
+    trust_level integer
 );
 
 
@@ -2249,40 +2251,6 @@ CREATE TABLE public.statuses_tags (
 
 
 --
--- Name: stream_entries; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.stream_entries (
-    id bigint NOT NULL,
-    activity_id bigint,
-    activity_type character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    hidden boolean DEFAULT false NOT NULL,
-    account_id bigint
-);
-
-
---
--- Name: stream_entries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.stream_entries_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: stream_entries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.stream_entries_id_seq OWNED BY public.stream_entries.id;
-
-
---
 -- Name: tags; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2914,13 +2882,6 @@ ALTER TABLE ONLY public.status_stats ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- Name: stream_entries id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.stream_entries ALTER COLUMN id SET DEFAULT nextval('public.stream_entries_id_seq'::regclass);
-
-
---
 -- Name: tags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3432,14 +3393,6 @@ ALTER TABLE ONLY public.status_stats
 
 ALTER TABLE ONLY public.statuses
     ADD CONSTRAINT statuses_pkey PRIMARY KEY (id);
-
-
---
--- Name: stream_entries stream_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.stream_entries
-    ADD CONSTRAINT stream_entries_pkey PRIMARY KEY (id);
 
 
 --
@@ -4282,20 +4235,6 @@ CREATE UNIQUE INDEX index_statuses_tags_on_tag_id_and_status_id ON public.status
 
 
 --
--- Name: index_stream_entries_on_account_id_and_activity_type_and_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_stream_entries_on_account_id_and_activity_type_and_id ON public.stream_entries USING btree (account_id, activity_type, id);
-
-
---
--- Name: index_stream_entries_on_activity_id_and_activity_type; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_stream_entries_on_activity_id_and_activity_type ON public.stream_entries USING btree (activity_id, activity_type);
-
-
---
 -- Name: index_tags_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4477,14 +4416,6 @@ ALTER TABLE ONLY public.reports
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT fk_50500f500d FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
-
-
---
--- Name: stream_entries fk_5659b17554; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.stream_entries
-    ADD CONSTRAINT fk_5659b17554 FOREIGN KEY (account_id) REFERENCES public.accounts(id) ON DELETE CASCADE;
 
 
 --
@@ -5413,8 +5344,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190531082330'),
 ('20190531082452'),
 ('20190531084425'),
+('20190701022101'),
+('20190706233204'),
 ('20190714172440'),
 ('20190714172721'),
+('20190715164535'),
 ('20190719121326'),
 ('20190719212820'),
 ('20190722014444'),
