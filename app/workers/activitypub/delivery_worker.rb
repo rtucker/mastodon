@@ -66,4 +66,8 @@ class ActivityPub::DeliveryWorker
   def failure_tracker
     @failure_tracker ||= DeliveryFailureTracker.new(@inbox_url)
   end
+
+  def request_pool
+    RequestPool.current
+  end
 end
