@@ -13,7 +13,7 @@ class FollowService < BaseService
     target_account = ResolveAccountService.new.call(target_account, skip_webfinger: true)
 
     raise ActiveRecord::RecordNotFound if target_account.nil? || target_account.id == source_account.id || target_account.suspended?
-    raise Mastodon::NotPermittedError  if target_account.blocking?(source_account) || source_account.blocking?(target_account) || target_account.moved? || (!target_account.local? && target_account.ostatus?)
+    raise Mastodon::NotPermittedError  if target_account.blocking?(source_account) || source_account.blocking?(target_account) || target_account.moved?
 
     target_account.mark_known! unless !Setting.auto_mark_known || target_account.known?
 
@@ -52,7 +52,7 @@ class FollowService < BaseService
 
     if target_account.local?
       LocalNotificationWorker.perform_async(target_account.id, follow_request.id, follow_request.class.name)
-    elsif target_account.activitypub?
+    else
       ActivityPub::DeliveryWorker.perform_async(build_json(follow_request), source_account.id, target_account.inbox_url)
     end
 

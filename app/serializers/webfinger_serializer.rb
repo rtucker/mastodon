@@ -26,8 +26,6 @@ class WebfingerSerializer < ActiveModel::Serializer
     else
       [
         { rel: 'http://webfinger.net/rel/profile-page', type: 'text/html', href: short_account_url(object) },
-      # TODO: Make sure commenting the next line doesn't cause other instances to catch on fire
-#        { rel: 'http://schemas.google.com/g/2010#updates-from', type: 'application/atom+xml', href: account_url(object, format: 'atom') },
         { rel: 'self', type: 'application/activity+json', href: account_url(object) },
       ]
     end

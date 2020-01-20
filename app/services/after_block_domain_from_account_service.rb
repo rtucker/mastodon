@@ -31,7 +31,7 @@ class AfterBlockDomainFromAccountService < BaseService
   def reject_follow!(follow)
     follow.destroy
 
-    return unless follow.account.activitypub?
+#    return unless follow.account.activitypub?
 
     ActivityPub::DeliveryWorker.perform_async(Oj.dump(serialize_payload(follow, ActivityPub::RejectFollowSerializer)), @account.id, follow.account.inbox_url)
   end

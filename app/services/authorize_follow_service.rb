@@ -11,7 +11,7 @@ class AuthorizeFollowService < BaseService
       follow_request.authorize!
     end
 
-    create_notification(follow_request) if !source_account.local? && source_account.activitypub?
+    create_notification(follow_request) if !source_account.local?
     follow_request
   end
 

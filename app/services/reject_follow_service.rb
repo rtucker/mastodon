@@ -6,7 +6,7 @@ class RejectFollowService < BaseService
   def call(source_account, target_account)
     follow_request = FollowRequest.find_by!(account: source_account, target_account: target_account)
     follow_request.reject!
-    create_notification(follow_request) if !source_account.local? && source_account.activitypub?
+    create_notification(follow_request) if !source_account.local?
     follow_request
   end
 
