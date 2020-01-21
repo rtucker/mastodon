@@ -10,7 +10,7 @@ module WellKnown
       @account = Account.find_local!(username_from_resource)
 
       expires_in 3.days, public: true
-      render json: @account, serializer: WebfingerSErializer, content_type: 'application/jrd+json'
+      render json: @account, serializer: WebfingerSerializer, content_type: 'application/jrd+json'
     rescue ActiveRecord::RecordNotFound
       head 404
     end
