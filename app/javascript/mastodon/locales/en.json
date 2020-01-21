@@ -326,12 +326,8 @@
   "search_popout.tips.user": "creature",
   "search_results.accounts": "Monsters",
   "search_results.hashtags": "Hashtags",
-<<<<<<< HEAD
   "search_results.statuses": "Roars",
-=======
-  "search_results.statuses": "TF spells",
   "search_results.statuses_fts_disabled": "Searching toots by their content is not enabled on this Mastodon server.",
->>>>>>> af0c4b345... Make a shoddy attempt to merge pull request #1158 from ThibG/glitch-soc/merge-upstream
   "search_results.total": "{count, number} {count, plural, one {result} other {results}}",
   "status.admin_account": "Moderate @{name}",
   "status.admin_status": "Moderate roar",
