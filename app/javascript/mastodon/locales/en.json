@@ -290,7 +290,7 @@
   "notification.mention": "{name} mentioned you",
   "notification.own_poll": "Your poll has ended",
   "notification.poll": "A poll you have voted in has ended",
-  "notification.reblog": "{name} awooed your status",
+  "notification.reblog": "{name} awooed your rawr",
   "notifications.clear": "Clear notifications",
   "notifications.clear_confirmation": "Are you sure you want to permanently clear all your notifications?",
   "notifications.column_settings.alert": "Desktop notifications",
