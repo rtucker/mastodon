@@ -67,7 +67,13 @@ class StatusesController < ApplicationController
 
   def set_status
     @status = @account.statuses.find(params[:id])
-    authorize @status, :show?
+    @sharekey = params[:key]
+
+    if @status.sharekey.present? && @sharekey == @status.sharekey.key
+      skip_authorization
+    else
+      authorize @status, :show?
+    end
   rescue Mastodon::NotPermittedError
     raise ActiveRecord::RecordNotFound
   end
