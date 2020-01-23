@@ -550,7 +550,6 @@ CREATE TABLE public.accounts (
     known boolean DEFAULT false NOT NULL,
     force_private boolean DEFAULT false NOT NULL,
     unboostable boolean DEFAULT false NOT NULL,
-    block_anon boolean DEFAULT false NOT NULL
     block_anon boolean DEFAULT false NOT NULL,
     trust_level integer
 );
