@@ -47,7 +47,7 @@ class StatusesController < ApplicationController
   end
 
   def embed
-    raise ActiveRecord::RecordNotFound unless @status.distributable?
+    return not_found unless @status.distributable?
 
     expires_in 180, public: true
     response.headers['X-Frame-Options'] = 'ALLOWALL'
@@ -75,7 +75,7 @@ class StatusesController < ApplicationController
       authorize @status, :show?
     end
   rescue Mastodon::NotPermittedError
-    raise ActiveRecord::RecordNotFound
+    not_found
   end
 
   def handle_sharekey_change
