@@ -21,7 +21,7 @@ gem 'fog-openstack', '~> 0.3', require: false
 gem 'paperclip', '~> 6.0'
 gem 'paperclip-av-transcoder', '~> 0.6'
 gem 'streamio-ffmpeg', '~> 3.0'
-gem 'blurhash', '~> 0.1'
+gem 'blurhash', '~> 0.1', git: 'https://monsterware.dev/monsterpit/blurhash.git', ref: '8fbf184802b65d4a2c45ba1a1c2bad73916eeeec'
 
 gem 'active_model_serializers', '~> 0.10'
 gem 'addressable', '~> 2.6'
@@ -142,7 +142,7 @@ group :development do
   gem 'capistrano-yarn', '~> 2.0'
 
   gem 'derailed_benchmarks'
-  gem 'stackprof'
+  gem 'fast_stack'
 end
 
 group :production do
@@ -158,3 +158,5 @@ gem "ruby-bbcode", "~> 2.0"
 gem "sun_calc", "~> 0.1.0"
 
 gem "sixarm_ruby_unaccent", "~> 1.2"
+
+gem "sys-proctable", "~> 1.2"

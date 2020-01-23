@@ -26,6 +26,14 @@ GIT
   specs:
     nilsimsa (1.1.2)
 
+GIT
+  remote: https://monsterware.dev/monsterpit/blurhash.git
+  revision: 8fbf184802b65d4a2c45ba1a1c2bad73916eeeec
+  ref: 8fbf184802b65d4a2c45ba1a1c2bad73916eeeec
+  specs:
+    blurhash (0.1.4)
+      ffi (~> 1.10.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -113,8 +121,6 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    blurhash (0.1.4)
-      ffi (~> 1.10.0)
     bootsnap (1.4.5)
       msgpack (~> 1.0)
     brakeman (4.7.2)
@@ -225,8 +231,10 @@ GEM
     faraday (1.0.0)
       multipart-post (>= 1.2, < 3)
     fast_blank (1.0.0)
+    fast_stack (0.2.0)
     fastimage (2.1.7)
     ffi (1.10.0)
+    ffi (1.10.0-x64-mingw32)
     fog-core (2.1.0)
       builder
       excon (~> 0.58)
@@ -368,6 +376,7 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.14.0)
     msgpack (1.3.1)
+    msgpack (1.3.1-x64-mingw32)
     multi_json (1.14.1)
     multipart-post (2.1.1)
     necromancer (0.5.1)
@@ -377,6 +386,8 @@ GEM
     net-ssh (5.2.0)
     nio4r (2.5.2)
     nokogiri (1.10.7)
+      mini_portile2 (~> 2.4.0)
+    nokogiri (1.10.7-x64-mingw32)
       mini_portile2 (~> 2.4.0)
     nokogumbo (2.0.2)
       nokogiri (~> 1.8, >= 1.8.4)
@@ -416,6 +427,7 @@ GEM
       equatable (~> 0.6)
       tty-color (~> 0.5)
     pg (1.2.2)
+    pg (1.2.2-x64-mingw32)
     pghero (2.4.1)
       activerecord (>= 5)
     pkg-config (1.4.0)
@@ -601,7 +613,6 @@ GEM
     sshkit (1.20.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
-    stackprof (0.2.15)
     statsd-ruby (1.4.0)
     stoplight (2.1.3)
     streamio-ffmpeg (3.0.2)
@@ -609,6 +620,8 @@ GEM
     strong_migrations (0.5.1)
       activerecord (>= 5)
     sun_calc (0.1.0)
+    sys-proctable (1.2.2)
+      ffi
     temple (0.8.2)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
@@ -663,6 +676,7 @@ GEM
 
 PLATFORMS
   ruby
+  x64-mingw32
 
 DEPENDENCIES
   active_model_serializers (~> 0.10)
@@ -672,7 +686,7 @@ DEPENDENCIES
   aws-sdk-s3 (~> 1.41)
   better_errors (~> 2.5)
   binding_of_caller (~> 0.7)
-  blurhash (~> 0.1)
+  blurhash (~> 0.1)!
   bootsnap (~> 1.4)
   brakeman (~> 4.5)
   browser
@@ -697,6 +711,7 @@ DEPENDENCIES
   fabrication (~> 2.20)
   faker (~> 1.9)
   fast_blank (~> 1.0)
+  fast_stack
   fastimage
   fog-core (<= 2.1.0)
   fog-openstack (~> 0.3)
@@ -775,11 +790,11 @@ DEPENDENCIES
   simplecov (~> 0.16)
   sixarm_ruby_unaccent (~> 1.2)
   sprockets-rails (~> 3.2)
-  stackprof
   stoplight (~> 2.1.3)
   streamio-ffmpeg (~> 3.0)
   strong_migrations (~> 0.4)
   sun_calc (~> 0.1.0)
+  sys-proctable (~> 1.2)
   thor (~> 0.20)
   tty-command (~> 0.8)
   tty-prompt (~> 0.19)
@@ -793,4 +808,4 @@ RUBY VERSION
    ruby 2.6.1p33
 
 BUNDLED WITH
-   1.17.3
+   2.1.4
