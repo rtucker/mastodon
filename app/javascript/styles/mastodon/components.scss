@@ -3,6 +3,14 @@
   -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
+.animated-number {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  position: relative;
+}
+
 .link-button {
   display: block;
   font-size: 15px;
@@ -3216,13 +3224,16 @@ a.status-card.compact:hover {
 .column-header__wrapper {
   position: relative;
   flex: 0 0 auto;
+  z-index: 1;
 
   &.active {
+    box-shadow: 0 1px 0 rgba($highlight-text-color, 0.3);
+
     &::before {
       display: block;
       content: "";
       position: absolute;
-      top: 35px;
+      bottom: -13px;
       left: 0;
       right: 0;
       margin: 0 auto;
@@ -3232,6 +3243,11 @@ a.status-card.compact:hover {
       z-index: 1;
       background: radial-gradient(ellipse, rgba($ui-highlight-color, 0.23) 0%, rgba($ui-highlight-color, 0) 60%);
     }
+  }
+
+  .announcements {
+    z-index: 1;
+    position: relative;
   }
 }
 
@@ -3265,8 +3281,6 @@ a.status-card.compact:hover {
   }
 
   &.active {
-    box-shadow: 0 1px 0 rgba($highlight-text-color, 0.3);
-
     .column-header__icon {
       color: $highlight-text-color;
       text-shadow: 0 0 10px rgba($highlight-text-color, 0.4);
@@ -3322,6 +3336,8 @@ a.status-card.compact:hover {
   color: $darker-text-color;
   transition: max-height 150ms ease-in-out, opacity 300ms linear;
   opacity: 1;
+  z-index: 1;
+  position: relative;
 
   &.collapsed {
     max-height: 0;
@@ -5731,6 +5747,8 @@ a.status-card.compact:hover {
     text-align: center;
     text-decoration: none;
     position: relative;
+    overflow: hidden;
+    width: 100%;
 
     &.active {
       color: $secondary-text-color;
@@ -6621,8 +6639,7 @@ noscript {
 }
 
 .announcements {
-  background: lighten($ui-base-color, 4%);
-  border-top: 1px solid $ui-base-color;
+  background: lighten($ui-base-color, 8%);
   font-size: 13px;
   display: flex;
   align-items: flex-end;
@@ -6652,17 +6669,15 @@ noscript {
     padding: 15px;
     padding-right: 15px + 18px;
     position: relative;
+    font-size: 15px;
+    line-height: 20px;
+    word-wrap: break-word;
+    font-weight: 400;
 
     &__range {
       display: block;
       font-weight: 500;
       margin-bottom: 10px;
-    }
-
-    &__dismiss-icon {
-      position: absolute;
-      top: 12px;
-      right: 12px;
     }
   }
 
@@ -6748,10 +6763,10 @@ noscript {
     &.active {
       transition: all 100ms ease-in;
       transition-property: background-color, color;
-      background-color: mix(lighten($ui-base-color, 12%), $ui-highlight-color, 90%);
+      background-color: mix(lighten($ui-base-color, 12%), $ui-highlight-color, 80%);
 
       .reactions-bar__item__count {
-        color: $highlight-text-color;
+        color: lighten($highlight-text-color, 8%);
       }
     }
   }
