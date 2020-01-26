@@ -21,7 +21,7 @@ class Tag < ApplicationRecord
 
   has_one :account_tag_stat, dependent: :destroy
 
-  HASHTAG_NAME_RE = '([[:word:]_][[:word:]_·]*[[:alpha:]_·][[:word:]_·]*[[:word:]_])|([[:word:]_]*[[:alpha:]][[:word:]_]*)'
+  HASHTAG_NAME_RE =  '[[:word:]:._\-]*[[:alpha:]:._·\-][[:word:]:._\-]*'
   HASHTAG_RE = /(?:^|[^\/\)\w])#(#{HASHTAG_NAME_RE})/i
 
   validates :name, presence: true, uniqueness: true, format: { with: /\A(#{HASHTAG_NAME_RE})\z/i }
