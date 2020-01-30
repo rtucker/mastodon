@@ -489,11 +489,6 @@ class User < ApplicationRecord
     super
   end
 
-  def send_confirmation_instructions
-    return false if detect_spam!
-    super
-  end
-
   def send_reset_password_instructions
     return false if encrypted_password.blank? && (Devise.pam_authentication || Devise.ldap_authentication)
     super
@@ -555,25 +550,6 @@ class User < ApplicationRecord
       next unless u.allows_pending_account_emails?
       AdminMailer.new_pending_account(u.account, self).deliver_later
     end
-  end
-
-  def detect_spam!
-    return false if valid_invitation? || external? || Setting.registrations_mode == 'none'
-
-    janitor = janitor_account || Account.representative
-
-    intro = self.invite_request&.text
-    # normalize it
-    intro = intro.gsub(/[\u200b-\u200d\ufeff\u200e\u200f]/, '').strip.downcase unless intro.nil?
-
-    return false unless intro.blank? || intro.split.count < 5 || SPAM_TRIGGERS.match?(intro)
-
-    user_friendly_action_log(janitor, :reject_registration, self.account.username, "Registration was spam filtered.")
-    Form::AccountBatch.new(current_account: janitor, account_ids: account_id, action: 'reject').save
-
-    true
-  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
-    false
   end
 
   def janitor_account
