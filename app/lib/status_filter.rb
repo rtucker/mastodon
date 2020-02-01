@@ -13,13 +13,15 @@ class StatusFilter
   end
 
   def filtered?
-    return true if status.nil?
-    return false if !account.nil? && account.id == status.account_id || account.nil?
+    return true if status.nil? || blocked_by_policy?
+    return false if account.nil? || account.id == status.account_id
     return true if redis.sismember("filtered_statuses:#{account.id}", status.id)
-    if blocked_by_policy? || (account_present? && filtered_status?) || silenced_account?
+
+    if filtered_status? || silenced_account?
       redis.sadd("filtered_statuses:#{account.id}", status.id)
       return true
     end
+
     false
   end
 
