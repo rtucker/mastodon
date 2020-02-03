@@ -12,7 +12,7 @@ import { pollLimits } from 'flavours/glitch/util/initial_state';
 const messages = defineMessages({
   option_placeholder: { id: 'compose_form.poll.option_placeholder', defaultMessage: 'Choice {number}' },
   add_option: { id: 'compose_form.poll.add_option', defaultMessage: 'Add choice' },
-  add_spiderman: { id: 'compose_form.poll.add_spiderman', defaultMessage: 'Add spiderman' },
+  add_spiderman: { id: 'compose_form.poll.add_spiderman', defaultMessage: 'Spiderman' },
   remove_option: { id: 'compose_form.poll.remove_option', defaultMessage: 'Remove this choice' },
   poll_duration: { id: 'compose_form.poll.duration', defaultMessage: 'Poll duration' },
   single_choice: { id: 'compose_form.poll.single_choice', defaultMessage: 'Allow one choice' },

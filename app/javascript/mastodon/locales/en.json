@@ -79,7 +79,7 @@
   "compose_form.lock_disclaimer.lock": "locked",
   "compose_form.placeholder": "Roar shamelessly!",
   "compose_form.placeholder_as": "Signing as {signature}.\nRoar shamelessly!",
-  "compose_form.poll.add_option": "Add a choice",
+  "compose_form.poll.add_option": "Add choice",
   "compose_form.poll.duration": "Poll duration",
   "compose_form.poll.option_placeholder": "Choice {number}",
   "compose_form.poll.remove_option": "Remove this choice",
