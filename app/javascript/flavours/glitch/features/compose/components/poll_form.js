@@ -11,7 +11,8 @@ import { pollLimits } from 'flavours/glitch/util/initial_state';
 
 const messages = defineMessages({
   option_placeholder: { id: 'compose_form.poll.option_placeholder', defaultMessage: 'Choice {number}' },
-  add_option: { id: 'compose_form.poll.add_option', defaultMessage: 'Add a choice' },
+  add_option: { id: 'compose_form.poll.add_option', defaultMessage: 'Add choice' },
+  add_spiderman: { id: 'compose_form.poll.add_spiderman', defaultMessage: 'Add spiderman' },
   remove_option: { id: 'compose_form.poll.remove_option', defaultMessage: 'Remove this choice' },
   poll_duration: { id: 'compose_form.poll.duration', defaultMessage: 'Poll duration' },
   single_choice: { id: 'compose_form.poll.single_choice', defaultMessage: 'Allow one choice' },
@@ -57,7 +58,7 @@ class Option extends React.PureComponent {
     this.props.onSuggestionSelected(tokenStart, token, value, ['poll', 'options', this.props.index]);
   }
 
-  render () {
+  render() {
     const { isPollMultiple, title, index, intl } = this.props;
 
     return (
@@ -110,6 +111,10 @@ class PollForm extends ImmutablePureComponent {
     this.props.onAddOption('');
   };
 
+  handleAddSpiderman = () => {
+    this.props.onAddOption('spiderman');
+  }
+
   handleSelectDuration = e => {
     this.props.onChangeSettings(e.target.value, this.props.isMultiple);
   };
@@ -118,7 +123,7 @@ class PollForm extends ImmutablePureComponent {
     this.props.onChangeSettings(this.props.expiresIn, e.target.value === 'true');
   };
 
-  render () {
+  render() {
     const { options, expiresIn, isMultiple, onChangeOption, onRemoveOption, intl, ...other } = this.props;
 
     if (!options) {
@@ -133,6 +138,7 @@ class PollForm extends ImmutablePureComponent {
             <label className='poll__text editable'>
               <span className={classNames('poll__input')} style={{ opacity: 0 }} />
               <button className='button button-secondary' onClick={this.handleAddOption}><Icon icon='plus' /> <FormattedMessage {...messages.add_option} /></button>
+              <button className='button button-secondary' onClick={this.handleAddSpiderman}><Icon icon='asterisk' /> <FormattedMessage {...messages.add_spiderman} /></button>
             </label>
           )}
         </ul>
