@@ -388,7 +388,7 @@ class User < ApplicationRecord
   end
 
   def allows_rss?
-    @allows_rss ||= (setting.allow_rss || false)
+    @allows_rss ||= (settings.allow_rss || false)
   end
 
   def defaults_to_local_only?
