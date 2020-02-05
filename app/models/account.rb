@@ -421,12 +421,6 @@ class Account < ApplicationRecord
     self.fields = tmp
   end
 
-## TODO: See if I need to follow the below advice
-  # needs to be removed after migration
-#  def vars
-#    self[:vars]
-#  end
-
   def subscription(webhook_url)
     @subscription ||= OStatus2::Subscription.new(remote_url, secret: secret, webhook: webhook_url, hub: hub_url)
   end
