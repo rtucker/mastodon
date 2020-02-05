@@ -29,8 +29,14 @@ class Scheduler::BoostsScheduler
       interval = rand(from_interval .. to_interval).minutes
 
       redis.setex("queued_boost:#{account.id}", interval, 1)
-      ReblogStatusWorker.perform_async(account.id, q.first.status_id, distribute: true)
-      q.destroy_all
+
+      begin
+        ReblogStatusWorker.perform_async(account.id, q.first.status_id, distribute: true)
+      rescue Mastodon::NotPermittedError
+        false
+      ensure
+        q.destroy_all
+      end
     end
   end
 
