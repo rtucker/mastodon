@@ -104,6 +104,7 @@ group :development, :test do
   gem 'pry-byebug', '~> 3.7'
   gem 'pry-rails', '~> 0.3'
   gem 'rspec-rails', '~> 3.8'
+  gem 'reek'
 end
 
 group :production, :test do
