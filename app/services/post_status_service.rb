@@ -121,6 +121,8 @@ class PostStatusService < BaseService
   end
 
   def limit_visibility_to_reply
+    return if @in_reply_to.visibility.nil?
+
     @visibility = @in_reply_to.visibility if @visibility.nil? ||
       VISIBILITY_RANK[@visibility] < VISIBILITY_RANK[@in_reply_to.visibility]
   end
