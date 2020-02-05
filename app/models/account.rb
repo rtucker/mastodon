@@ -455,6 +455,18 @@ class Account < ApplicationRecord
     shared_inbox_url.presence || inbox_url
   end
 
+  def ever_mentioned_by?(target_account)
+    return false if target_account.nil?
+
+    Status.joins(:mentions).merge(target_account.mentions).where(account_id: id).exists?
+  end
+
+  def ever_interacted_with?(target_account)
+    return false if target_account.nil?
+
+    target_account.following?(this) || ever_mentioned_by?(target_account)
+  end
+
   class Field < ActiveModelSerializers::Model
     attributes :name, :value, :verified_at, :account, :errors
 

@@ -14,7 +14,7 @@ class ActivityPub::Activity::Follow < ActivityPub::Activity
       return
     end
 
-    if !target_account.user.allow_unknown_follows? && !(target_account.following?(@account) || ever_mentioned_by?(target_account))
+    if !target_account.user.allow_unknown_follows? && !@account.ever_interacted_with(target_account)
       reject_follow_request!(target_account)
       return
     end
@@ -38,11 +38,5 @@ class ActivityPub::Activity::Follow < ActivityPub::Activity
   def reject_follow_request!(target_account)
     json = Oj.dump(serialize_payload(FollowRequest.new(account: @account, target_account: target_account, uri: @json['id']), ActivityPub::RejectFollowSerializer))
     ActivityPub::DeliveryWorker.perform_async(json, target_account.id, @account.inbox_url)
-  end
-
-  private
-
-  def ever_mentioned_by?(target_account)
-    Status.joins(:mentions).merge(target_account.mentions).where(account_id: @account.id).exists?
   end
 end
