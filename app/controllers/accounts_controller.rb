@@ -14,9 +14,9 @@ class AccountsController < ApplicationController
       format.html do
         use_pack 'public'
         unless current_account && current_account.id == @account.id
-          not_found if @account.hidden
+          raise_not_found if @account.hidden
           if @account&.user && @account.user.hides_public_profile?
-            not_found unless current_account && current_account.following?(@account)
+            raise_not_found unless current_account&.following?(@account)
           end
         end
         expires_in 0, public: true unless user_signed_in?
@@ -43,7 +43,7 @@ class AccountsController < ApplicationController
       format.rss do
         expires_in 1.minute, public: true
 
-        not_found unless current_account&.user&.allows_rss?
+        raise_not_found unless current_account&.user&.allows_rss?
 
         @statuses = filtered_statuses.without_reblogs.without_replies.limit(PAGE_SIZE)
         @statuses = cache_collection(@statuses, Status)
