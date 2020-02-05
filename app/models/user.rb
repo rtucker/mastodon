@@ -159,6 +159,7 @@ class User < ApplicationRecord
     :boost_interval_from,
     :boost_interval_to,
     :show_cursor,
+    :allow_rss,
 
     :auto_play_gif,
     :default_sensitive,
@@ -384,6 +385,10 @@ class User < ApplicationRecord
 
   def shows_cursor?
     @show_cursor ||= (settings.show_cursor || false)
+  end
+
+  def allows_rss?
+    @allows_rss ||= (setting.allow_rss || false)
   end
 
   def defaults_to_local_only?

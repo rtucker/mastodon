@@ -29,15 +29,27 @@ class AccountsController < ApplicationController
           return
         end
 
-
         @pinned_statuses = cache_collection(pinned_statuses, Status) if show_pinned_statuses?
         @statuses        = filtered_status_page(params)
         @statuses        = cache_collection(@statuses, Status)
+        @rss_url         = rss_url
 
         unless @statuses.empty?
           @older_url = older_url if @statuses.last.id > filtered_statuses.last.id
           @newer_url = newer_url if @statuses.first.id < filtered_statuses.first.id
         end
+      end
+
+      format.rss do
+        expires_in 1.minute, public: true
+
+        if current_account&.user&.allows_rss?
+          @statuses = filtered_statuses.without_reblogs.without_replies.limit(PAGE_SIZE)
+          @statuses = cache_collection(@statuses, Status)
+        else
+          @statuses = []
+        end
+        render xml: RSS::AccountSerializer.render(@account, @statuses, params[:tag])
       end
 
       format.json do
@@ -104,6 +116,14 @@ class AccountsController < ApplicationController
 
   def username_param
     params[:username]
+  end
+
+  def rss_url
+    if tag_requested?
+      short_account_tag_url(@account, params[:tag], format: 'rss')
+    else
+      short_account_url(@account, format: 'rss')
+    end
   end
 
   def older_url
