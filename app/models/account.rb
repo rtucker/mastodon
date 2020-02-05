@@ -213,6 +213,10 @@ class Account < ApplicationRecord
     local? ? username : "#{username}@#{domain}"
   end
 
+  def pretty_acct
+    local? ? username : "#{username}@#{Addressable::IDNA.to_unicode(domain)}"
+  end
+
   def local_username_and_domain
     "#{username}@#{Rails.configuration.x.local_domain}"
   end
@@ -223,6 +227,10 @@ class Account < ApplicationRecord
 
   def to_webfinger_s
     "acct:#{local_username_and_domain}"
+  end
+
+  def searchable?
+    !(suspended? || moved?)
   end
 
   def possibly_stale?
