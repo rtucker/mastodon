@@ -33,9 +33,9 @@ if Rails.env.production?
     p.frame_ancestors :none
     p.script_src      :self, assets_host
     p.font_src        :self, assets_host
-    p.img_src         :self, :data, :blob, *data_hosts, "assets.vulpine.club", "direct.vulpine.club"
+    p.img_src         :self, :data, :blob, *data_hosts
     p.style_src       :self, :unsafe_inline, assets_host
-    p.media_src       :self, :data, *data_hosts, "assets.vulpine.club", "direct.vulpine.club"
+    p.media_src       :self, :data, *data_hosts
     p.frame_src       :self, :https
     p.worker_src      :self, :blob, assets_host
     p.connect_src     :self, :blob, :data, Rails.configuration.x.streaming_api_base_url, *data_hosts
