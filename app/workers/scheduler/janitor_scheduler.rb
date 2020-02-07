@@ -34,7 +34,7 @@ class Scheduler::JanitorScheduler
   end
 
   def suspend_abandoned_accounts!
-    reason = "Appears to be abandoned. Freeing up the username for someone else."
+    reason = 'Appears to be abandoned. Freeing up the username for someone else.'
     abandoned_accounts.find_each do |account|
       account_policy(account.username, nil, :suspend, reason)
     end
@@ -51,6 +51,7 @@ class Scheduler::JanitorScheduler
     blocks = merged_blocklist.reject { |entry| entry[:domain].in?(@exclude_domains) }
     blocks.each do |entry|
       next unless domain_exists?(entry[:domain])
+
       block = DomainBlock.create!(entry)
       Admin::ActionLog.create(account: @account, action: :create, target: block)
       user_friendly_action_log(@account, :create, block)
@@ -61,6 +62,7 @@ class Scheduler::JanitorScheduler
     outfile = ENV.fetch('JANITOR_BLOCKLIST_OUTPUT', '')
     return if outfile.blank?
     return unless File.file?(outfile)
+
     File.open(outfile, 'w:UTF-8') do |file|
       file.puts(DomainBlock.suspend.pluck(:domain))
     end
@@ -70,6 +72,7 @@ class Scheduler::JanitorScheduler
     outfile = ENV.fetch('ACTIVITYRELAY_OUTPUT', '')
     return if outfile.blank?
     return unless File.file?(outfile)
+
     File.open(outfile, 'w:UTF-8') do |file|
       formatted_allowlist = allowed_domains.uniq.map { |d| "  - '#{d}'" }
       formatted_blocklist = DomainBlock.suspend.pluck(:domain).map { |d| "  - '#{d}'" }
@@ -88,10 +91,9 @@ class Scheduler::JanitorScheduler
     end
   end
 
-
   def markov_accounts
     Account.reorder(nil).where(silenced_at: nil).where.not(id: @exclude_markov)
-      .where('username LIKE ? OR note ILIKE ?', '%ebooks%', '%markov%')
+           .where('username LIKE ? OR note ILIKE ?', '%ebooks%', '%markov%')
   end
 
   def abandoned_accounts
@@ -99,7 +101,7 @@ class Scheduler::JanitorScheduler
   end
 
   def abandoned_users
-    User.select(:account_id).where(admin: false, moderator: false).where('last_sign_in_at < ?', 1.months.ago)
+    User.select(:account_id).where(admin: false, moderator: false, instance_actor: false, actor_type: %w(Person Group)).where('last_sign_in_at < ?', 1.month.ago)
   end
 
   def excluded_domains
@@ -110,11 +112,10 @@ class Scheduler::JanitorScheduler
     domains_from_account_ids | excluded_from_env('DOMAINS')
   end
 
-
   def abandoned_account_ids
     AccountStat.select(:account_id)
-      .where(account_id: abandoned_users)
-      .where('statuses_count < ?', MIN_POSTS)
+               .where(account_id: abandoned_users)
+               .where('statuses_count < ?', MIN_POSTS)
   end
 
   def excluded_account_ids
@@ -134,9 +135,8 @@ class Scheduler::JanitorScheduler
   end
 
   def outgoing_follow_ids
-    Account.local.reorder(nil).flat_map { |account| account.following_ids }
+    Account.local.reorder(nil).flat_map(&:following_ids)
   end
-
 
   def excluded_accounts_from_env(suffix)
     excluded_usernames = ENV.fetch("JANITOR_EXCLUDE_#{suffix.upcase}", '').split
