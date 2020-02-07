@@ -248,6 +248,7 @@ class Formatter
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
 
+<<<<<<< HEAD
   def format_screenreader(html)
     html.gsub(/\ufdd3(.*)\ufdd4/m, '<span aria-hidden="true">\1</span>')
   end
@@ -278,6 +279,8 @@ class Formatter
     html.gsub!("\r\n", "\n")
     html.gsub!("\n\r", "\n")
     html.gsub("\r", "\n")
+  rescue ArgumentError
+    ''
   end
 
   def plaintext(status)
