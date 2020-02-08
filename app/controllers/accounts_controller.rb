@@ -13,12 +13,13 @@ class AccountsController < ApplicationController
     respond_to do |format|
       format.html do
         use_pack 'public'
-        unless current_account && current_account.id == @account.id
-          raise_not_found if @account.hidden
-          if @account&.user && @account.user.hides_public_profile?
-            raise_not_found unless current_account&.following?(@account)
+
+        unless current_account&.id == @account.id
+          if @account.hidden || @account&.user&.hides_public_profile?
+            return not_found unless current_account&.following?(@account)
           end
         end
+
         expires_in 0, public: true unless user_signed_in?
 
         @pinned_statuses   = []
@@ -43,10 +44,11 @@ class AccountsController < ApplicationController
       format.rss do
         expires_in 1.minute, public: true
 
-        raise_not_found unless current_account&.user&.allows_rss?
+        return not_found unless current_account&.user&.allows_rss?
 
         @statuses = filtered_statuses.without_reblogs.without_replies.limit(PAGE_SIZE)
         @statuses = cache_collection(@statuses, Status)
+
         render xml: RSS::AccountSerializer.render(@account, @statuses, params[:tag])
       end
 
