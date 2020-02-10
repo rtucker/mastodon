@@ -97,11 +97,11 @@ class Scheduler::JanitorScheduler
   end
 
   def abandoned_accounts
-    Account.reorder(nil).where(id: abandoned_account_ids)
+    Account.reorder(nil).where(id: abandoned_account_ids, instance_actor: false, actor_type: %w(Person Group))
   end
 
   def abandoned_users
-    User.select(:account_id).where(admin: false, moderator: false, instance_actor: false, actor_type: %w(Person Group)).where('last_sign_in_at < ?', 1.month.ago)
+    User.select(:account_id).where(admin: false, moderator: false).where('last_sign_in_at < ?', 1.month.ago)
   end
 
   def excluded_domains
