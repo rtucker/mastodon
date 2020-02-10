@@ -14,7 +14,7 @@ class ActivityPub::Activity::Follow < ActivityPub::Activity
       return
     end
 
-    if !target_account.user.allow_unknown_follows? && !@account.ever_interacted_with(target_account)
+    if !target_account.user.allow_unknown_follows? && !@account.ever_interacted_with?(target_account)
       reject_follow_request!(target_account)
       return
     end
