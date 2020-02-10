@@ -464,7 +464,7 @@ class Account < ApplicationRecord
   def ever_interacted_with?(target_account)
     return false if target_account.nil?
 
-    target_account.following?(this) || ever_mentioned_by?(target_account)
+    target_account.following?(self) || ever_mentioned_by?(target_account)
   end
 
   class Field < ActiveModelSerializers::Model
