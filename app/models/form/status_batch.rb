@@ -18,10 +18,8 @@ class Form::StatusBatch
   private
 
   def change_sensitive(sensitive)
-    media_attached_status_ids = MediaAttachment.where(status_id: status_ids).pluck(:status_id)
-
     ApplicationRecord.transaction do
-      Status.where(id: media_attached_status_ids).reorder(nil).find_each do |status|
+      Status.where(id: status_ids).reorder(nil).find_each do |status|
         status.update!(sensitive: sensitive)
         log_action :update, status
       end
