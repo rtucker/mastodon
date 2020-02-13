@@ -153,7 +153,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   end
 
   def card_not_filtered?
-    !(current_user? && current_user.hides_sensitive_cards? && object.sensitive?)
+    current_user.nil? || !(current_user.hides_sensitive_cards? && object.sensitive?)
   end
 
   def ordered_mentions
