@@ -99,6 +99,7 @@ class Settings::PreferencesController < Settings::BaseController
       :setting_boost_interval_to,
       :setting_show_cursor,
       :setting_allow_rss,
+      :setting_hide_sensitive_cards,
 
       :setting_default_privacy,
       :setting_default_sensitive,

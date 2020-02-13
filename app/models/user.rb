@@ -160,6 +160,7 @@ class User < ApplicationRecord
     :boost_interval_to,
     :show_cursor,
     :allow_rss,
+    :setting_hide_sensitive_cards,
 
     :auto_play_gif,
     :default_sensitive,
@@ -389,6 +390,10 @@ class User < ApplicationRecord
 
   def allows_rss?
     @allows_rss ||= (settings.allow_rss || false)
+  end
+
+  def hides_sensitive_cards?
+    @hide_sensitive_cards ||= (setting.hide_sensitive_cards || true)
   end
 
   def defaults_to_local_only?

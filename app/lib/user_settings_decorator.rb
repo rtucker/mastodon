@@ -53,6 +53,7 @@ class UserSettingsDecorator
     user.settings['boost_interval_to']   = boost_interval_to_preference if change?('setting_boost_interval_to')
     user.settings['show_cursor']         = show_cursor_preference if change?('setting_show_cursor')
     user.settings['allow_rss']           = allow_rss_preference if change?('setting_allow_rss')
+    user.settings['hide_sensitive_cards']= hide_sensitive_cards_preference if change?('setting_hide_sensitive_cards')
 
     user.settings['notification_emails'] = merged_notification_emails if change?('notification_emails')
     user.settings['interactions']        = merged_interactions if change?('interactions')
@@ -204,8 +205,8 @@ class UserSettingsDecorator
     settings['setting_boost_interval_to']
   end
 
-  def delayed_for_preference
-    settings['setting_delayed_for']
+  def hide_sensitive_cards_preference
+    boolean_cast_setting 'setting_hide_sensitive_cards'
   end
 
   def allow_rss_preference

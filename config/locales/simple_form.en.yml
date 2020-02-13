@@ -164,6 +164,7 @@ en:
         setting_hide_mntions_packm8: Filter group chat branches addressed to participants you aren't a packmate of
         setting_hide_mascot: Don't show the mascot image
         setting_hide_interactions: Make your roar interaction lists private
+        setting_hide_sensitive_cards: Disable off-site preview cards in sensitive roars
         setting_aggregate_reblogs: Group repeats in timelines
         setting_auto_play_gif: Auto-play animated GIFs
         setting_boost_modal: Show confirmation dialog before repeating

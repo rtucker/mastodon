@@ -32,7 +32,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   has_many :tags
   has_many :emojis, serializer: REST::CustomEmojiSerializer
 
-  has_one :preview_card, key: :card, serializer: REST::PreviewCardSerializer
+  has_one :preview_card, key: :card, serializer: REST::PreviewCardSerializer, if: :card_not_filtered?
   has_one :preloadable_poll, key: :poll, serializer: REST::PollSerializer
 
   def trans
@@ -150,6 +150,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
 
   def source_requested?
     instance_options[:source_requested]
+  end
+
+  def card_not_filtered?
+    !(current_user? && current_user.hides_sensitive_cards? && object.sensitive?)
   end
 
   def ordered_mentions
