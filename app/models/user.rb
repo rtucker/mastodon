@@ -160,7 +160,7 @@ class User < ApplicationRecord
     :boost_interval_to,
     :show_cursor,
     :allow_rss,
-    :setting_hide_sensitive_cards,
+    :hide_sensitive_cards,
 
     :auto_play_gif,
     :default_sensitive,
