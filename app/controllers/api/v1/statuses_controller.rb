@@ -36,7 +36,7 @@ class Api::V1::StatusesController < Api::BaseController
   def card
     @card = @status.preview_cards.first
 
-    if @card.nil?
+    if @card.nil? || card_filtered?
       render_empty
     else
       render json: @card, serializer: REST::PreviewCardSerializer, monsterfork_api: monsterfork_api
@@ -115,5 +115,9 @@ class Api::V1::StatusesController < Api::BaseController
 
   def pagination_params(core_params)
     params.slice(:limit).permit(:limit).merge(core_params)
+  end
+
+  def card_filtered?
+    !current_user.nil? && current_user.hides_sensitive_cards? && @status.sensitive?
   end
 end
