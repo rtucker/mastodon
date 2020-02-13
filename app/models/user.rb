@@ -393,7 +393,7 @@ class User < ApplicationRecord
   end
 
   def hides_sensitive_cards?
-    @hide_sensitive_cards ||= (setting.hide_sensitive_cards || true)
+    @hide_sensitive_cards ||= (settings.hide_sensitive_cards || true)
   end
 
   def defaults_to_local_only?
