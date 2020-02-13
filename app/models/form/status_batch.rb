@@ -22,6 +22,7 @@ class Form::StatusBatch
       Status.where(id: status_ids).reorder(nil).find_each do |status|
         status.update!(sensitive: sensitive)
         log_action :update, status
+        Rails.cache.delete("statuses/#{status.id}")
       end
     end
 
