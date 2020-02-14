@@ -36,6 +36,7 @@ class Form::AdminSettings
     show_replies_in_public_timelines
     auto_reject_unknown
     auto_mark_known
+    auto_mark_instance_actors_known
     werewolf_status
     spam_check_enabled
   ).freeze
@@ -55,6 +56,7 @@ class Form::AdminSettings
     show_replies_in_public_timelines
     auto_reject_unknown
     auto_mark_known
+    auto_mark_instance_actors_known
     werewolf_status
     spam_check_enabled
   ).freeze

@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorized_fetch_mode?
-    ENV['AUTHORIZED_FETCH'] == 'true'
+    ENV['AUTHORIZED_FETCH'] == 'true' || Setting.auto_reject_unknown
   end
 
   def public_fetch_mode?
