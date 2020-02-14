@@ -24,7 +24,15 @@ module SignatureVerification
   end
 
   def signed_request_account
-    return @signed_request_account if defined?(@signed_request_account)
+    if defined?(@signed_request_account)
+      if @signed_request_account.known?
+        return @signed_request_account
+      else
+        @signature_verification_failure_reason = 'Not authorized'
+        @signed_request_account = nil
+        return
+      end
+    end
 
     unless signed_request?
       @signature_verification_failure_reason = 'Request not signed'
@@ -57,6 +65,10 @@ module SignatureVerification
 
     if account.nil?
       @signature_verification_failure_reason = "Public key not found for key #{signature_params['keyId']}"
+      @signed_request_account = nil
+      return
+    elsif !account.known?
+      @signature_verification_failure_reason = 'Not authorized'
       @signed_request_account = nil
       return
     end
