@@ -251,6 +251,13 @@ class Account < ApplicationRecord
 
   def mark_known!
     update!(known: true)
+
+    unless local? || !Setting.auto_mark_known || domain == username
+      _instance_actor = Account.find_remote(domain, domain)
+      return if _instance_actor.nil? || _instance_actor.known?
+
+      _instance_actor.mark_known!
+    end
   end
 
   def force_unlisted!
