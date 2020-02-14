@@ -521,7 +521,7 @@ en:
         desc_html: Learn known accounts from outgoing interactions and incoming repeats from packmates.
         title: Auto-learn known accounts
       auto_mark_instance_actors_known:
-        desc_html: <strong>Disabling this will put the server in must-consent federation mode and require staff to manually approve server actors.</strong>
+        desc_html: <strong>Disabling this will put the server in must-consent federation mode and require staff to manually approve server actors if graylist mode is also disabled.</strong>
         title: Always mark server actor accounts as known
       werewolf_status:
         desc_html: Enable werewolf status Easter egg (requires an announcer account)
