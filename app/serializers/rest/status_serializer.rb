@@ -16,8 +16,8 @@ class REST::StatusSerializer < ActiveModel::Serializer
   attribute :pinned, if: :pinnable?
   attribute :local_only if :local?
   attribute :sharekey, if: :has_sharekey?
-  attribute :delete_after, if: :current_user?
-  attribute :defederate_after, if: :current_user?
+  attribute :delete_after, if: :owner?
+  attribute :defederate_after, if: :owner?
 
   attribute :content, unless: :source_requested?
   attribute :text, if: :source_requested?
