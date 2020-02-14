@@ -62,6 +62,7 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.silenced_at      = domain_block.created_at if auto_silence?
     @account.force_unlisted   = true if auto_force_unlisted?
     @account.force_sensitive  = true if auto_force_sensitive?
+    @account.known            = !Setting.auto_reject_unknown && Setting.auto_mark_known
   end
 
   def update_account
@@ -84,7 +85,6 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.display_name            = @json['name'] || ''
     @account.note                    = @json['summary'] || ''
     @account.locked                  = @json['manuallyApprovesFollowers'] || false
-    @account.known                   = !Setting.auto_reject_unknown && Setting.auto_mark_known
     @account.froze                   = @json['froze'] || false
     @account.adult_content           = @json['adultContent'] || (@json['suggestedMinAge'].to_i >= 18)
     @account.gently                  = @json['gently'] || false
