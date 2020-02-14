@@ -32,7 +32,7 @@ class DomainBlock < ApplicationRecord
   before_save :set_processing
 
   def self.blocked?(domain)
-    where(domain: domain, severity: :suspend).exists?
+    suspend.where(domain: domain).or(suspend.where('domain LIKE ?', "%.#{domain}")).exists?
   end
 
   def self.force_unlisted?(domain)
