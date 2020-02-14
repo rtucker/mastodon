@@ -526,6 +526,11 @@ en:
       always_mark_instance_actors_known:
         desc_html: Always allow server actor accounts to fetch resources from this server.  May reduce privacy.
         title: Always trust server actors
+      mark_known_from:
+        follows: Trust accounts when someone joins their pack
+        mentions: Trust accounts when locally mentioned
+        boosts: Trust accounts shared by known creatures
+        favourites: Trust accounts when locally admired
       werewolf_status:
         desc_html: Enable werewolf status Easter egg (requires an announcer account)
         title: Werewolf status

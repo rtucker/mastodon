@@ -40,6 +40,10 @@ class Form::AdminSettings
     always_mark_instance_actors_known
     werewolf_status
     spam_check_enabled
+    mark_known_from_follows
+    mark_known_from_mentions
+    mark_known_from_boosts
+    mark_known_from_favourites
   ).freeze
 
   BOOLEAN_KEYS = %i(
@@ -61,6 +65,10 @@ class Form::AdminSettings
     always_mark_instance_actors_known
     werewolf_status
     spam_check_enabled
+    mark_known_from_follows
+    mark_known_from_mentions
+    mark_known_from_boosts
+    mark_known_from_favourites
   ).freeze
 
   UPLOAD_KEYS = %i(

@@ -72,6 +72,10 @@ defaults: &defaults
   spam_check_enabled: true
   auto_mark_instance_actors_known: true
   always_mark_instance_actors_known: false
+  mark_known_from_follows: true
+  mark_known_from_mentions: true
+  mark_known_from_boosts: true
+  mark_known_from_favourites: false
 
 development:
   <<: *defaults
