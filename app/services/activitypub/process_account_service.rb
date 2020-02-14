@@ -62,7 +62,7 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.silenced_at      = domain_block.created_at if auto_silence?
     @account.force_unlisted   = true if auto_force_unlisted?
     @account.force_sensitive  = true if auto_force_sensitive?
-    @account.known            = @username == @domain ? Setting.auto_mark_instance_actors_known : (!Setting.auto_reject_unknown && Setting.auto_mark_known)
+    @account.known            = @username == @domain ? Setting.always_mark_instance_actors_known : (!Setting.auto_reject_unknown && Setting.auto_mark_known)
   end
 
   def update_account

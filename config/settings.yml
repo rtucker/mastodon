@@ -71,6 +71,7 @@ defaults: &defaults
   werewolf_status: true
   spam_check_enabled: true
   auto_mark_instance_actors_known: true
+  always_mark_instance_actors_known: false
 
 development:
   <<: *defaults
