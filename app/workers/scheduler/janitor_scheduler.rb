@@ -97,7 +97,7 @@ class Scheduler::JanitorScheduler
   end
 
   def abandoned_accounts
-    Account.reorder(nil).where(id: abandoned_account_ids, instance_actor: false, actor_type: %w(Person Group))
+    Account.reorder(nil).where(id: abandoned_account_ids, actor_type: %w(Person Group))
   end
 
   def abandoned_users
