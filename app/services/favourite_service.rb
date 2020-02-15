@@ -15,7 +15,7 @@ class FavouriteService < BaseService
 
     return favourite unless favourite.nil?
 
-    account.mark_known! unless !Setting.auto_mark_known || !Setting.mark_known_from_favourites || account.known?
+    account.mark_known! if account.can_be_marked_known? && Setting.mark_known_from_favourites
     favourite = Favourite.create!(account: account, status: status)
 
     curate_status(status)

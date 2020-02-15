@@ -101,7 +101,7 @@ class PostStatusService < BaseService
   end
 
   def mark_recipient_known
-    @in_reply_to.account.mark_known! unless !Setting.auto_mark_known || !Setting.mark_known_from_mentions || @in_reply_to.account.known?
+    @in_reply_to.account.mark_known! if @in_reply_to.account.can_be_marked_known? && Setting.mark_known_from_mentions
   end
 
   def set_footer_from_i_am

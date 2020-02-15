@@ -474,6 +474,14 @@ class Account < ApplicationRecord
     target_account.following?(self) || ever_mentioned_by?(target_account)
   end
 
+  def service?
+    @_is_service ||= actor_type == "Application" || actor_type == "Service" || username == "relay" || username == domain
+  end
+
+  def can_be_marked_known?
+    !known && (!service || (service? && Setting.auto_mark_services_known)) && Setting.auto_mark_known
+  end
+
   class Field < ActiveModelSerializers::Model
     attributes :name, :value, :verified_at, :account, :errors
 

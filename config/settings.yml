@@ -71,6 +71,7 @@ defaults: &defaults
   werewolf_status: true
   spam_check_enabled: true
   auto_mark_instance_actors_known: true
+  auto_mark_services_known: false
   always_mark_instance_actors_known: false
   mark_known_from_follows: true
   mark_known_from_mentions: true

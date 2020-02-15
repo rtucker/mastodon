@@ -46,6 +46,7 @@
     .fields-row__column.fields-row__column-6.fields-group
       = f.input :auto_reject_unknown, as: :boolean, wrapper: :with_label, label: t('admin.settings.auto_reject_unknown.title'), hint: t('admin.settings.auto_reject_unknown.desc_html')
       = f.input :auto_mark_known, as: :boolean, wrapper: :with_label, label: t('admin.settings.auto_mark_known.title'), hint: t('admin.settings.auto_mark_known.desc_html')
+      = f.input :auto_mark_services_known, as: :boolean, wrapper: :with_label, label: t('admin.settings.auto_mark_services_known.title'), hint: t('admin.settings.auto_mark_services_known.desc_html')
       = f.input :auto_mark_instance_actors_known, as: :boolean, wrapper: :with_label, label: t('admin.settings.auto_mark_instance_actors_known.title'), hint: t('admin.settings.auto_mark_instance_actors_known.desc_html')
       = f.input :always_mark_instance_actors_known, as: :boolean, wrapper: :with_label, label: t('admin.settings.always_mark_instance_actors_known.title'), hint: t('admin.settings.always_mark_instance_actors_known.desc_html')
     .fields-row__column.fields-row__column-6.fields-group

@@ -515,22 +515,25 @@ en:
         desc_html: Display public timeline on landing page
         title: Timeline preview
       auto_reject_unknown:
-        desc_html: Automatically reject unknown accounts from newly-federated servers.  <strong>Enables secure mode.</strong>
-        title: Graylist federation mode
+        desc_html: Automatically reject unknown peers from newly-federated servers.  <strong>Enables secure mode.</strong>
+        title: Restricted federation mode
       auto_mark_known:
-        desc_html: Learn known accounts from outgoing interactions and incoming repeats from packmates.
-        title: Auto-learn known accounts
+        desc_html: Automatically trust remote peers based on community interactions.
+        title: Learn to trust peers
+      auto_mark_services_known:
+        desc_html: Allow instance services, such as relays, to be automatically trusted.  <strong>Will make restricted mode less effective.</strong>
+        title: Auto-trust instance applicatons and services
       auto_mark_instance_actors_known:
-        desc_html: Automatically allow server actor accounts to fetch resources from this server when marking accounts known.
-        title: Auto-trust server actors
+        desc_html: Allow instance actors to interact with this server when trusting peers.
+        title: Auto-trust instance actors
       always_mark_instance_actors_known:
-        desc_html: Always allow server actor accounts to fetch resources from this server.  May reduce privacy.
+        desc_html: Always allow server actor accounts to fetch resources from this server.  <strong>Will make restricted mode less effective.</strong>
         title: Always trust server actors
       mark_known_from:
-        follows: Trust accounts when someone joins their pack
-        mentions: Trust accounts when locally mentioned
-        boosts: Trust accounts shared by known creatures
-        favourites: Trust accounts when locally admired
+        follows: Trust new peers when someone joins their pack
+        mentions: Trust new peers when they're mentioned locally
+        boosts: Trust new peers whose roars are shared by known creatures
+        favourites: Trust new peers whose roars are admired locally
       werewolf_status:
         desc_html: Enable werewolf status Easter egg (requires an announcer account)
         title: Werewolf status

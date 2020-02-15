@@ -15,7 +15,7 @@ class FollowService < BaseService
     raise ActiveRecord::RecordNotFound if target_account.nil? || target_account.id == source_account.id || target_account.suspended?
     raise Mastodon::NotPermittedError  if target_account.blocking?(source_account) || source_account.blocking?(target_account) || target_account.moved?
 
-    target_account.mark_known! unless !Setting.auto_mark_known || !Setting.mark_known_from_follows || target_account.known?
+    target_account.mark_known! if target_account.can_be_marked_known? && Setting.mark_known_from_follows
 
     SyncRemoteAccountWorker.perform_async(target_account.id) unless target_account.local? || target_account.passive_relationships.exists?
 

@@ -191,7 +191,8 @@ class ActivityPub::Activity
   def known?(account = nil)
     account = @account if account.nil?
     return true if account.known?
-    account.passive_relationships.exists?
+
+    !account.service? && account.passive_relationships.exists?
   end
 
   def reject_payload!
