@@ -31,6 +31,7 @@
 #  boostable              :boolean
 #  reject_replies         :boolean
 #  tsv                    :tsvector
+#  hidden                 :boolean
 #
 
 class Status < ApplicationRecord
@@ -250,7 +251,7 @@ class Status < ApplicationRecord
   end
 
   def hidden?
-    !distributable?
+    hidden || !distributable?
   end
 
   def distributable?

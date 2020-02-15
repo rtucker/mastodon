@@ -3,10 +3,11 @@
 #
 # Table name: conversations
 #
-#  id         :bigint(8)        not null, primary key
-#  uri        :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id            :bigint(8)        not null, primary key
+#  uri           :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  limit_replies :integer
 #
 
 class Conversation < ApplicationRecord

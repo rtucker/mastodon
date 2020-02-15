@@ -800,7 +800,8 @@ CREATE TABLE public.conversations (
     id bigint NOT NULL,
     uri character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    limit_replies smallint
 );
 
 
@@ -2223,7 +2224,8 @@ CREATE TABLE public.statuses (
     edited boolean,
     boostable boolean,
     reject_replies boolean,
-    tsv tsvector GENERATED ALWAYS AS (to_tsvector('public.fedi'::regconfig, public.f_strip_mentions(((spoiler_text || ' '::text) || text)))) STORED
+    tsv tsvector GENERATED ALWAYS AS (to_tsvector('public.fedi'::regconfig, public.f_strip_mentions(((spoiler_text || ' '::text) || text)))) STORED,
+    hidden boolean
 );
 
 
@@ -4185,6 +4187,13 @@ CREATE INDEX index_statuses_on_account_id_and_id_and_visibility ON public.status
 
 
 --
+-- Name: index_statuses_on_account_id_and_id_and_visibility_not_hidden; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_on_account_id_and_id_and_visibility_not_hidden ON public.statuses USING btree (account_id, id, visibility) WHERE (NOT hidden);
+
+
+--
 -- Name: index_statuses_on_in_reply_to_account_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5403,6 +5412,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200111042543'),
 ('20200114011918'),
 ('20200114030940'),
-('20200115201524');
+('20200115201524'),
+('20200205194250'),
+('20200215014558'),
+('20200215020121');
 
 
