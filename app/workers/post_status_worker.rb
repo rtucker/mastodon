@@ -7,7 +7,7 @@ class PostStatusWorker
     status = Status.find(status_id)
     return false if status.destroyed?
 
-    status.update(options.slice(:visibility, :local_only, :reject_replies).compact)
+    status.update(options.slice(:visibility, :local_only, :reject_replies, :hidden).compact)
     process_mentions_service.call(status, skip_process: true) unless options[:nomentions]
 
     LinkCrawlWorker.perform_async(status.id) unless options[:nocrawl] || status.spoiler_text.present?
@@ -18,8 +18,6 @@ class PostStatusWorker
     end
 
     PollExpirationNotifyWorker.perform_at(status.poll.expires_at, status.poll.id) if status.poll
-
-    status.delete_after = options[:delete_after] if options[:delete_after]
 
     return true if !status.reply? || status.account.id == status.in_reply_to_account_id
     ActivityTracker.increment('activity:interactions')
