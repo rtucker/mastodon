@@ -77,9 +77,8 @@ class PostStatusService < BaseService
         federate: @options[:federate],
         distribute: @options[:distribute],
         nocrawl: @options[:nocrawl],
-        delete_after: @delete_after.nil? ? nil : @delete_after + 1.minute,
-        defederate_after: @defederate_after.nil? ? nil : @defederate_after + 1.minute,
         reject_replies: @options[:noreplies] || false,
+        hidden: false,
       }.compact
 
       PostStatusWorker.perform_at(@delay_until, @status.id, opts)
@@ -346,6 +345,7 @@ class PostStatusService < BaseService
       language: language_from_option(@options[:language]) || @account.user_default_language&.presence || 'en',
       application: @options[:application],
       content_type: @options[:content_type] || @account.user&.setting_default_content_type,
+      hidden: true,
     }.compact
   end
 

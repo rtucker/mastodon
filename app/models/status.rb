@@ -101,13 +101,14 @@ class Status < ApplicationRecord
   scope :local,  -> { where(local: true).or(where(uri: nil)) }
   scope :network, -> { where(network: true) }
   scope :curated, -> { where(curated: true) }
+  scope :hidden, -> { where(hidden: true) }
 
   scope :without_replies, -> { where('statuses.reply = FALSE OR statuses.in_reply_to_account_id = statuses.account_id') }
   scope :without_reblogs, -> { where('statuses.reblog_of_id IS NULL') }
   scope :reblogs, -> { where('statuses.reblog_of_id IS NOT NULL') } # all reblogs
-  scope :with_public_visibility, -> { where(visibility: :public) }
-  scope :public_local_visibility, -> { where(visibility: [:public, :local]) }
-  scope :public_browsable, -> { where(visibility: [:public, :unlisted, :local]) }
+  scope :with_public_visibility, -> { where(visibility: :public, hidden: false) }
+  scope :public_local_visibility, -> { where(visibility: [:public, :local], hidden: false) }
+  scope :public_browsable, -> { where(visibility: [:public, :unlisted, :local], hidden: false) }
   scope :tagged_with, ->(tag) { joins(:statuses_tags).where(statuses_tags: { tag_id: tag }) }
   scope :excluding_silenced_accounts, -> { left_outer_joins(:account).where(accounts: { silenced_at: nil }) }
   scope :including_silenced_accounts, -> { left_outer_joins(:account).where.not(accounts: { silenced_at: nil }) }
@@ -406,10 +407,11 @@ class Status < ApplicationRecord
         term = term.split(nil, 2)[1]
         query = account.statuses
       else
+        scope = Status.where(hidden: false)
         query = Status.where(account_id: account.id)
-          .or(Status.where(visibility: [:local, :public]))
-          .or(Status.where(account_id: account.following, visibility: [:private, :unlisted]))
-          .or(Status.where(id: account.mentions.select(:status_id)))
+          .or(scope.where(visibility: [:local, :public]))
+          .or(scope.where(account_id: account.following, visibility: [:private, :unlisted]))
+          .or(scope.where(id: account.mentions.select(:status_id)))
       end
       return none if term.blank?
       query = query.without_reblogs
@@ -429,7 +431,7 @@ class Status < ApplicationRecord
     end
 
     def as_home_timeline(account, reblogs_only: false)
-      query = where(account: [account] + account.following, visibility: [:public, :unlisted, :local, :private])
+      query = where(account: [account] + account.following, visibility: [:public, :unlisted, :local, :private], hidden: false)
       query = query.without_reblogs if !reblogs_only && account.present? && account&.user&.hide_boosts
       query = query.reblogs if reblogs_only
       query
@@ -455,6 +457,7 @@ class Status < ApplicationRecord
                     .limit(limit)
                     .order('mentions.status_id DESC')
                     .not_excluded_by_account(account)
+                    .where(hidden: false)
 
       if max_id.present?
         query_from_me = query_from_me.where('statuses.id < ?', max_id)
@@ -547,7 +550,7 @@ class Status < ApplicationRecord
       visibility = [:public, :unlisted, :local]
 
       if account.nil?
-        query = where(visibility: visibility).not_local_only
+        query = where(visibility: visibility, hidden: false).not_local_only
         target_account.replies ? query : query.without_replies
       elsif target_account.blocking?(account) # get rid of blocked peeps
         none
@@ -556,7 +559,7 @@ class Status < ApplicationRecord
       else
         # followers can see followers-only stuff, but also things they are mentioned in.
         # non-followers can see everything that isn't private/direct, but can see stuff they are mentioned in.
-        scope = left_outer_joins(:reblog)
+        scope = left_outer_joins(:reblog).where(hidden: false)
 
         query = scope.where(visibility: visibility).or(scope.where(id: account.mentions.select(:status_id)))
         if account.following?(target_account) then
