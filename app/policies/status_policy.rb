@@ -99,7 +99,7 @@ class StatusPolicy < ApplicationPolicy
   end
 
   def hidden?
-    record.hidden?
+    record.hidden
   end
 
   def still_accessible?
