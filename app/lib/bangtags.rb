@@ -698,8 +698,8 @@ class Bangtags
 
         when 'draft'
           chunk = nil
-          @status.visibility = :direct
           @status.local_only = true
+          @status.hidden = true
           @vore_stack.push('_draft')
           @component_stack.push(:var)
           add_tags(status, 'self.draft')
