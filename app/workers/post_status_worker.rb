@@ -4,6 +4,8 @@ class PostStatusWorker
   include Sidekiq::Worker
 
   def perform(status_id, options = {})
+    options.symbolize_keys!
+
     status = Status.find(status_id)
     return false if status.destroyed?
 
