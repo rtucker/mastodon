@@ -27,6 +27,8 @@ class Bangtags
       'quit' => ['thread'],
       'kick' => ['thread'],
       'unkick' => ['thread'],
+
+      'publish' => ['parent'],
     }
 
     @aliases = {
@@ -551,6 +553,13 @@ class Bangtags
             media_ids = @parent_status.media_attachments.pluck(:id)
             BatchFetchMediaWorker.perform_async(media_ids) unless media_ids.empty?
             FetchAvatarWorker.perform_async(@parent_status.account.id)
+
+          when 'publish'
+            chunk = nil
+            del_tags(@parent_status, 'self.draft', 'draft')
+            Bangtags.new(@parent_status).process
+            @parent_status.save
+            PostStatusWorker.perform_async(@parent_status.id, hidden: false, process_mentions: true)
           end
 
         when 'media'
