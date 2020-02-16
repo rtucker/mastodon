@@ -7,7 +7,7 @@ class PostStatusWorker
     status = Status.find(status_id)
     return false if status.destroyed?
 
-    status.update(options.slice(:visibility, :local_only, :reject_replies, :hidden).compact)
+    status.update!(options.slice(:visibility, :local_only, :reject_replies, :hidden).compact)
     status.reload
 
     process_mentions_service.call(status, skip_process: options[:process_mentions] != true) unless options[:nomentions] || status.hidden
