@@ -51,7 +51,7 @@ class PostStatusService < BaseService
     @tags        = @options[:tags] || []
     @local_only  = @options[:local_only]
     @sensitive   = (@account.force_sensitive? ? true : @options[:sensitive])
-    @hidden      = @options[:hidden] || false
+    @hidden      = @options[:hidden]
 
     @preloaded_tags = @options[:preloaded_tags] || []
     @preloaded_mentions = @options[:preloaded_mentions] || []
@@ -233,7 +233,7 @@ class PostStatusService < BaseService
 
     return false if @status.destroyed?
 
-    @hidden = @status.keep_hidden? if @options[:hidden].blank?
+    @hidden = @status.keep_hidden? if @hidden.blank?
 
     set_expirations
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
