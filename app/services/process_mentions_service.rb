@@ -8,7 +8,7 @@ class ProcessMentionsService < BaseService
   # remote users
   # @param [Status] status
   def call(status, skip_process: false, skip_notify: false)
-    return unless status.local? && !status.draft?
+    return unless status.local? && (!status.draft? || !status.hidden)
 
     @status  = status
     mentions = Mention.where(status: status).to_a
