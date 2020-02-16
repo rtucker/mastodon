@@ -12,6 +12,7 @@ class StatusPolicy < ApplicationPolicy
   end
 
   def show?
+    return false if hidden? && !owned?
     return false if local_only? && (current_account.nil? || !current_account.local?)
     return true if owned? || mention_exists?
     return false if direct?
@@ -95,6 +96,10 @@ class StatusPolicy < ApplicationPolicy
 
   def local_only?
     record.local_only?
+  end
+
+  def hidden?
+    record.hidden?
   end
 
   def still_accessible?
