@@ -23,6 +23,8 @@ class PostStatusWorker
 
     PollExpirationNotifyWorker.perform_at(status.poll.expires_at, status.poll.id) if status.poll
 
+    Rails.cache.delete("statuses/#{status.id}")
+
     return true if !status.reply? || status.account.id == status.in_reply_to_account_id || status.hidden
     ActivityTracker.increment('activity:interactions')
     return if status.account.following?(status.in_reply_to_account_id)
