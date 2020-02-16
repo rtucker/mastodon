@@ -7,7 +7,7 @@ class FanOutOnWriteService < BaseService
     raise Mastodon::RaceConditionError if status.visibility.nil?
 
     deliver_to_self(status) if status.account.local?
-    return if delayed
+    return if delayed || status.hidden?
 
     render_anonymous_payload(status)
 
