@@ -8,7 +8,7 @@ class ProcessMentionsService < BaseService
   # remote users
   # @param [Status] status
   def call(status, skip_process: false, skip_notify: false)
-    return if status.hidden || !status.local? || status.draft?
+    return if !status.local? || status.draft?
 
     @status  = status
     mentions = Mention.where(status: status).to_a
@@ -38,7 +38,7 @@ class ProcessMentionsService < BaseService
       status.save!
     end
 
-    return if skip_notify
+    return if skip_notify || status.hidden?
     mentions.uniq.each { |mention| create_notification(mention) }
   end
 
