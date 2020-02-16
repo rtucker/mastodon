@@ -7,6 +7,8 @@ class PostStatusWorker
     status = Status.find(status_id)
     return false if status.destroyed?
 
+    options[:hidden] = false unless options[:hidden].blank?
+
     status.update!(options.slice(:visibility, :local_only, :reject_replies, :hidden).compact)
     status.reload
 
