@@ -130,7 +130,6 @@ class PostStatusService < BaseService
 
   def limit_visibility_if_draft
     if @tags.include?('self.draft') || @preloaded_tags.include?('self.draft')
-      @local_only = true
       @hidden = true
     end
   end

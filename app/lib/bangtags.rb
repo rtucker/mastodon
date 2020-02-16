@@ -707,7 +707,6 @@ class Bangtags
 
         when 'draft'
           chunk = nil
-          @status.local_only = true
           @status.hidden = true
           @vore_stack.push('_draft')
           @component_stack.push(:var)
