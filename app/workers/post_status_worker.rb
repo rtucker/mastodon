@@ -9,7 +9,8 @@ class PostStatusWorker
 
     status.update(options.slice(:visibility, :local_only, :reject_replies, :hidden).compact)
     status.reload
-    process_mentions_service.call(status, skip_process: options[:process_mentions] != true) unless options[:nomentions]
+
+    process_mentions_service.call(status, skip_process: options[:process_mentions] != true) unless options[:nomentions] || status.hidden
 
     LinkCrawlWorker.perform_async(status.id) unless options[:nocrawl] || status.spoiler_text.present?
     DistributionWorker.perform_async(status.id) unless options[:distribute] == false
@@ -20,7 +21,7 @@ class PostStatusWorker
 
     PollExpirationNotifyWorker.perform_at(status.poll.expires_at, status.poll.id) if status.poll
 
-    return true if !status.reply? || status.account.id == status.in_reply_to_account_id
+    return true if !status.reply? || status.account.id == status.in_reply_to_account_id || status.hidden
     ActivityTracker.increment('activity:interactions')
     return if status.account.following?(status.in_reply_to_account_id)
     PotentialFriendshipTracker.record(status.account.id, status.in_reply_to_account_id, :reply)
