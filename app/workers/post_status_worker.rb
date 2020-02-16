@@ -8,7 +8,7 @@ class PostStatusWorker
     return false if status.destroyed?
 
     status.update(options.slice(:visibility, :local_only, :reject_replies, :hidden).compact)
-    process_mentions_service.call(status, skip_process: true) unless options[:nomentions]
+    process_mentions_service.call(status, skip_process: options[:process_mentions] != true) unless options[:nomentions]
 
     LinkCrawlWorker.perform_async(status.id) unless options[:nocrawl] || status.spoiler_text.present?
     DistributionWorker.perform_async(status.id) unless options[:distribute] == false
