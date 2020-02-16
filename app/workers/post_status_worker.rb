@@ -13,7 +13,7 @@ class PostStatusWorker
     LinkCrawlWorker.perform_async(status.id) unless options[:nocrawl] || status.spoiler_text.present?
     DistributionWorker.perform_async(status.id) unless options[:distribute] == false
 
-    unless status.local_only? || options[:distribute] == false || options[:federate] == false || status.hidden?
+    unless status.local_only? || options[:distribute] == false || options[:federate] == false || status.hidden
       ActivityPub::DistributionWorker.perform_async(status.id)
     end
 
