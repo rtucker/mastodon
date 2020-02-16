@@ -233,6 +233,8 @@ class PostStatusService < BaseService
 
     return false if @status.destroyed?
 
+    @hidden = @status.keep_hidden? if @options[:hidden].blank?
+
     set_expirations
     process_hashtags_service.call(@status, @tags, @preloaded_tags)
     process_mentions

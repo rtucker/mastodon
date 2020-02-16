@@ -328,6 +328,18 @@ class Status < ApplicationRecord
     @no_clobber_expirations || false
   end
 
+  def keep_hidden!
+    @keep_hidden = true
+  end
+
+  def keep_unhidden!
+    @keep_hidden = false
+  end
+
+  def keep_hidden?
+    @keep_hidden || false
+  end
+
   def mark_for_mass_destruction!
     @marked_for_mass_destruction = true
   end

@@ -558,7 +558,6 @@ class Bangtags
             chunk = nil
             del_tags(@parent_status, 'self.draft', 'draft')
             Bangtags.new(@parent_status).process
-            @parent_status.save
             PostStatusWorker.perform_async(@parent_status.id, hidden: false, process_mentions: true)
           end
 
@@ -708,6 +707,7 @@ class Bangtags
         when 'draft'
           chunk = nil
           @status.hidden = true
+          @status.keep_hidden!
           @vore_stack.push('_draft')
           @component_stack.push(:var)
           add_tags(status, 'self.draft')
