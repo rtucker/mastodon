@@ -250,10 +250,6 @@ class Status < ApplicationRecord
     end
   end
 
-  def hidden?
-    hidden || !distributable?
-  end
-
   def distributable?
     public_visibility? || unlisted_visibility? || local_visibility?
   end

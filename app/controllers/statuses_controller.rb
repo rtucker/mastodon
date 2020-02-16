@@ -47,7 +47,7 @@ class StatusesController < ApplicationController
   end
 
   def embed
-    raise ActiveRecord::RecordNotFound if @status.hidden?
+    raise ActiveRecord::RecordNotFound unless @status.distributable?
 
     expires_in 180, public: true
     response.headers['X-Frame-Options'] = 'ALLOWALL'
