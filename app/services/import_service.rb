@@ -23,6 +23,7 @@ class ImportService < BaseService
     'sensitive',
     'language',
     'local_only',
+    'hidden',
     'visibility',
   ].freeze
 
@@ -150,6 +151,7 @@ class ImportService < BaseService
       json['language'] = ISO_639.find(json['language'])&.alpha2 || @account.user_default_language&.presence || 'en'
       json['local_only'] = @account.user_always_local_only? || [true, 1, "1"].include?(json['local_only'])
       json['visibility'] = VISIBILITIES[json['visibility'].to_i] || :unlisted
+      json['hidden'] = [true, 1, "1"].include?(json['hidden'])
       json['imported'] = true
 
       # drop a nonexistant conversation id
