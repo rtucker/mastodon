@@ -18,6 +18,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
   attribute :sharekey, if: :has_sharekey?
   attribute :delete_after, if: :owner?
   attribute :defederate_after, if: :owner?
+  attribute :hidden, if: :owner?
 
   attribute :content, unless: :source_requested?
   attribute :text, if: :source_requested?
