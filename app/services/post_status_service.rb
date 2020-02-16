@@ -24,6 +24,7 @@ class PostStatusService < BaseService
   # @option [Time] :created_at Optional time which status was originally posted
   # @option [Boolean] :sensitive
   # @option [String] :visibility
+  # @option [Boolean] :hidden
   # @option [Boolean] :local_only
   # @option [String] :sharekey
   # @option [String] :spoiler_text
@@ -50,6 +51,7 @@ class PostStatusService < BaseService
     @tags        = @options[:tags] || []
     @local_only  = @options[:local_only]
     @sensitive   = (@account.force_sensitive? ? true : @options[:sensitive])
+    @hidden      = @options[:hidden] || false
 
     @preloaded_tags = @options[:preloaded_tags] || []
     @preloaded_mentions = @options[:preloaded_mentions] || []
@@ -78,7 +80,7 @@ class PostStatusService < BaseService
         distribute: @options[:distribute],
         nocrawl: @options[:nocrawl],
         reject_replies: @options[:noreplies] || false,
-        hidden: false,
+        hidden: @hidden,
       }.compact
 
       PostStatusWorker.perform_at(@delay_until, @status.id, opts)
@@ -128,8 +130,8 @@ class PostStatusService < BaseService
 
   def limit_visibility_if_draft
     if @tags.include?('self.draft') || @preloaded_tags.include?('self.draft')
-      @visibility = :direct
       @local_only = true
+      @hidden = true
     end
   end
 
