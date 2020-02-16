@@ -4,12 +4,10 @@ class PostStatusWorker
   include Sidekiq::Worker
 
   def perform(status_id, options = {})
-    options.symbolize_keys!
-
     status = Status.find(status_id)
     return false if status.destroyed?
 
-    options[:hidden] = false unless options[:hidden].blank?
+    options.symbolize_keys!
 
     status.update!(options.slice(:visibility, :local_only, :reject_replies, :hidden).compact)
     status.reload
