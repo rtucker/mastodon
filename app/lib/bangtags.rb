@@ -712,6 +712,11 @@ class Bangtags
           @component_stack.push(:var)
           add_tags(status, 'self.draft')
 
+        when 'hidden'
+          chunk = nil
+          @status.hidden = true
+          @status.keep_hidden!
+
         when 'format', 'type'
           chunk = nil
           next if cmd[1].nil?
