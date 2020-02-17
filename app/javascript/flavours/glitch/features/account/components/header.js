@@ -185,9 +185,9 @@ class Header extends ImmutablePureComponent {
     const displayNameHtml = { __html: account.get('display_name_html') };
     const fields          = account.get('fields');
 
-    const badge_limited   = account.get('limited') ? (<div className='account-role limited'><FormattedMessage id='account.badges.limited' defaultMessage='⏯️ Limited by admin' /></div>) : null;
+    const badge_limited   = account.get('limited') ? (<div className='account-role limited'><FormattedMessage id='account.badges.limited' defaultMessage='⏯️ Limited' /></div>) : null;
     const badge_locked    = account.get('locked') ? (<div className='account-role locked'><FormattedMessage id='account.badges.locked' defaultMessage='🔒 Locked' /></div>) : null;
-    const badge_froze     = account.get('froze') ? (<div className='account-role froze'><FormattedMessage id='account.badges.froze' defaultMessage='❄️ Frozen by admin' /></div>) : null;
+    const badge_froze     = account.get('froze') ? (<div className='account-role froze'><FormattedMessage id='account.badges.froze' defaultMessage='❄️ Frozen' /></div>) : null;
     const badge_bot       = account.get('bot') ? (<div className='account-role bot'><FormattedMessage id='account.badges.bot' defaultMessage='Bot' /></div>) : null;
     const badge_ac        = account.get('adult_content') ? (<div className='account-role adult'><FormattedMessage id='account.badges.adult' defaultMessage="🔞 Adult content" /></div>) : null;
     const badge_gently    = account.get('gently') ? (<div className='account-role gently'><FormattedMessage id='account.badges.gently' defaultMessage="Gentlies kobolds" /></div>) : null;

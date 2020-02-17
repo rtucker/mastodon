@@ -79,8 +79,8 @@ en:
       gently: Gentlies kobolds
       adult: 🔞 Adult content
       locked: 🔒 Locked
-      froze: ❄️ Frozen by admin
-      limited: ⏯️ Limited by admin
+      froze: ❄️ Frozen
+      limited: ⏯️ Limited
     unavailable: Profile unavailable
     unfollow: Unfollow
   admin:
