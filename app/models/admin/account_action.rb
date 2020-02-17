@@ -13,6 +13,7 @@ class Admin::AccountAction
     silence
     suspend
     mark_unknown
+    manual_only
   ).freeze
 
   attr_accessor :target_account,
@@ -69,6 +70,8 @@ class Admin::AccountAction
       handle_suspend!
     when 'mark_unknown'
       handle_mark_unknown!
+    when 'manual_only'
+      handle_manual_only!
     end
   end
 
@@ -135,6 +138,12 @@ class Admin::AccountAction
     authorize(target_account, :mark_unknown?)
     log_action(:mark_unknown, target_account)
     target_account.mark_unknown!
+  end
+
+  def handle_manual_only!
+    authorize(target_account, :manual_only?)
+    log_action(:manual_only, target_account)
+    target_account.manual_only!
   end
 
   def text_for_warning

@@ -62,7 +62,8 @@ class ActivityPub::ProcessAccountService < BaseService
     @account.silenced_at      = domain_block.created_at if auto_silence?
     @account.force_unlisted   = true if auto_force_unlisted?
     @account.force_sensitive  = true if auto_force_sensitive?
-    @account.known            = @username == @domain ? Setting.always_mark_instance_actors_known : (!Setting.auto_reject_unknown && Setting.auto_mark_known)
+    @account.manual_only      = true if auto_manual_only?
+    @account.known            = auto_mark_known?
   end
 
   def update_account
@@ -121,7 +122,7 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def set_reject_unknown_policy
-    policy = DomainBlock.create!(domain: @domain, severity: :noop, reject_unknown: true)
+    DomainBlock.create!(domain: @domain, severity: :noop, reject_unknown: true)
     user_friendly_action_log(nil, :mark_unknown, @domain)
   end
 
@@ -183,6 +184,7 @@ class ActivityPub::ProcessAccountService < BaseService
 
   def property_values
     return unless @json['attachment'].is_a?(Array)
+
     as_array(@json['attachment']).select { |attachment| attachment['type'] == 'PropertyValue' }.map { |attachment| attachment.slice('name', 'value') }
   end
 
@@ -223,7 +225,7 @@ class ActivityPub::ProcessAccountService < BaseService
   end
 
   def skip_download?
-    @account.suspended? || domain_block&.reject_media?
+    @account.suspended? || !@account.known? || domain_block&.reject_media?
   end
 
   def auto_suspend?
@@ -242,8 +244,19 @@ class ActivityPub::ProcessAccountService < BaseService
     domain_block&.force_sensitive?
   end
 
+  def auto_manual_only?
+    domain_block&.manual_only?
+  end
+
+  def auto_mark_known?
+    return false if @account.manual_only
+
+    @username == @domain ? Setting.always_mark_instance_actors_known : (!Setting.auto_reject_unknown && Setting.auto_mark_known)
+  end
+
   def domain_block
     return @domain_block if defined?(@domain_block)
+
     @domain_block = DomainBlock.find_by(domain: @domain)
   end
 
@@ -275,11 +288,13 @@ class ActivityPub::ProcessAccountService < BaseService
 
     as_array(@json['attachment']).each do |attachment|
       next unless equals_or_includes?(attachment['type'], 'IdentityProof')
+
       current_proofs << process_identity_proof(attachment)
     end
 
     previous_proofs.each do |previous_proof|
       next if current_proofs.any? { |current_proof| current_proof.id == previous_proof.id }
+
       previous_proof.delete
     end
   end

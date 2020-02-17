@@ -17,6 +17,8 @@ class FollowService < BaseService
 
     target_account.mark_known! if target_account.can_be_marked_known? && Setting.mark_known_from_follows
 
+    raise Mastodon::NotPermittedError("Account @#{target_account.acct} is restricted by an admin policy.") unless target_account.known?
+
     SyncRemoteAccountWorker.perform_async(target_account.id) unless target_account.local? || target_account.passive_relationships.exists?
 
     if source_account.following?(target_account)

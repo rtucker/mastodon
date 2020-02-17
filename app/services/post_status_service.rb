@@ -104,6 +104,7 @@ class PostStatusService < BaseService
 
   def mark_recipient_known
     @in_reply_to.account.mark_known! if @in_reply_to.account.can_be_marked_known? && Setting.mark_known_from_mentions
+    raise Mastodon::NotPermittedError("Account @#{@in_reply_to.account.acct} is restricted by an admin policy.") unless @in_reply_to.account.known?
   end
 
   def set_footer_from_i_am

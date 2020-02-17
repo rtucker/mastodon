@@ -77,7 +77,7 @@ class REST::AccountSerializer < ActiveModel::Serializer
   end
 
   def limited
-    object.silenced? || object.force_unlisted? || object.force_sensitive?
+    object.silenced? || object.force_unlisted? || object.force_sensitive? || !object.known?
   end
 
   def identity

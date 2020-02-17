@@ -21,6 +21,14 @@ class AccountPolicy < ApplicationPolicy
     staff?
   end
 
+  def manual_only?
+    staff?
+  end
+
+  def auto_trust?
+    staff?
+  end
+
   def suspend?
     staff? && !record.user&.staff?
   end

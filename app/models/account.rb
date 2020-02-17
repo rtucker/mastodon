@@ -56,6 +56,7 @@
 #  unboostable             :boolean          default(FALSE), not null
 #  block_anon              :boolean          default(FALSE), not null
 #  trust_level             :integer
+#  manual_only             :boolean          default(FALSE), not null
 #
 
 class Account < ApplicationRecord
@@ -192,7 +193,7 @@ class Account < ApplicationRecord
   end
 
   def froze?
-    local? ? (self&.user.nil? ? true : user.disabled?) : froze
+    local? ? (self&.user.nil? ? true : user.disabled?) : froze || !known
   end
 
   def bot?
@@ -246,11 +247,17 @@ class Account < ApplicationRecord
   end
 
   def mark_unknown!
-    update!(known: false)
+    known = false
+    avatar = nil
+    header = nil
+    self[:avatar_remote_url] = ''
+    self[:header_remote_url] = ''
+    save!
   end
 
   def mark_known!
-    update!(known: true)
+    update!(known: true, last_webfingered_at: nil)
+    refresh!
 
     unless local? || !Setting.auto_mark_instance_actors_known || domain == username
       _instance_actor = Account.find_remote(domain, domain)
@@ -258,6 +265,14 @@ class Account < ApplicationRecord
 
       _instance_actor.mark_known!
     end
+  end
+
+  def manual_only!
+    update!(manual_only: true)
+  end
+
+  def auto_trust!
+    update!(manual_only: false)
   end
 
   def force_unlisted!
@@ -479,7 +494,7 @@ class Account < ApplicationRecord
   end
 
   def can_be_marked_known?
-    !known && (!service || (service? && Setting.auto_mark_services_known)) && Setting.auto_mark_known
+    !known && !manual_only && (!service || (service? && Setting.auto_mark_services_known)) && Setting.auto_mark_known
   end
 
   class Field < ActiveModelSerializers::Model

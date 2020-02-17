@@ -551,7 +551,8 @@ CREATE TABLE public.accounts (
     force_private boolean DEFAULT false NOT NULL,
     unboostable boolean DEFAULT false NOT NULL,
     block_anon boolean DEFAULT false NOT NULL,
-    trust_level integer
+    trust_level integer,
+    manual_only boolean DEFAULT false NOT NULL
 );
 
 
@@ -973,7 +974,8 @@ CREATE TABLE public.domain_blocks (
     force_sensitive boolean DEFAULT false NOT NULL,
     reason text,
     reject_unknown boolean DEFAULT false NOT NULL,
-    processing boolean DEFAULT true NOT NULL
+    processing boolean DEFAULT true NOT NULL,
+    manual_only boolean DEFAULT false NOT NULL
 );
 
 
@@ -2225,7 +2227,8 @@ CREATE TABLE public.statuses (
     boostable boolean,
     reject_replies boolean,
     tsv tsvector GENERATED ALWAYS AS (to_tsvector('public.fedi'::regconfig, public.f_strip_mentions(((spoiler_text || ' '::text) || text)))) STORED,
-    hidden boolean
+    hidden boolean,
+    CONSTRAINT statuses_hidden_null CHECK ((hidden IS NOT NULL))
 );
 
 
@@ -5415,6 +5418,12 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200115201524'),
 ('20200205194250'),
 ('20200215014558'),
-('20200215020121');
+('20200215020121'),
+('20200215021014'),
+('20200215021731'),
+('20200215021732'),
+('20200216000613'),
+('20200217052742'),
+('20200217055054');
 
 

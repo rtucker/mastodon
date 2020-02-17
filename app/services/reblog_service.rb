@@ -11,6 +11,7 @@ class ReblogService < BaseService
   # @return [Status]
   def call(account, reblogged_status, options = {})
     reblogged_status = reblogged_status.reblog if reblogged_status.reblog?
+    reblogged_account = reblogged_status&.account
 
     authorize_with account, reblogged_status, :reblog?
 
@@ -18,8 +19,11 @@ class ReblogService < BaseService
     new_reblog = reblog.nil?
 
     if new_reblog
-      reblogged_status.account.mark_known! if reblogged_status.account.can_be_marked_known? && Setting.mark_known_from_boosts
-      reblogged_status.touch if reblogged_status.account.id == account.id
+      reblogged_account.mark_known! if reblogged_account.can_be_marked_known? && Setting.mark_known_from_boosts
+
+      raise Mastodon::NotPermittedError("Account @#{reblogged_account.acct} is restricted by an admin policy.") unless reblogged_account.known?
+
+      reblogged_status.touch if reblogged_account.id == account.id
 
       visibility = options[:visibility] || account.user&.setting_default_privacy
       visibility = reblogged_status.visibility if reblogged_status.hidden?

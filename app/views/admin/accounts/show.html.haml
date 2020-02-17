@@ -149,6 +149,11 @@
     - else
       = link_to t('admin.accounts.known'), mark_known_admin_account_path(@account.id), method: :post, class: 'button' if can?(:mark_known, @account)
 
+    - if @account.manual_only?
+      = link_to t('admin.accounts.auto_trust'), auto_trust_admin_account_path(@account.id), method: :post, class: 'button' if can?(:auto_trust, @account)
+    - else
+      = link_to t('admin.accounts.manual_only'), manual_only_admin_account_path(@account.id), method: :post, class: 'button' if can?(:manual_only, @account)
+
     - if @account.force_sensitive?
       = link_to t('admin.accounts.allow_nonsensitive'), allow_nonsensitive_admin_account_path(@account.id), method: :post, class: 'button' if can?(:allow_nonsensitive, @account)
     - elsif !@account.local? || @account.user_approved?

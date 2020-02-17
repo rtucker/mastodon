@@ -137,11 +137,12 @@ class ActivityPub::Activity
     redis.setex("delete_upon_arrival:#{@account.id}:#{uri}", 6.hours.seconds, uri)
   end
 
-  def status_from_object(announced_by: nil)
+  def status_from_object(announced_by: nil, local_only: false, existing_only: false)
     # If the status is already known, return it
     status = status_from_uri(object_uri)
 
-    return status unless status.nil?
+    return status unless status.nil? || (local_only && !status.local?)
+    return if existing_only || local_only
 
     # If the boosted toot is embedded and it is a self-boost, handle it like a Create
     unless unsupported_object_type?
@@ -188,11 +189,21 @@ class ActivityPub::Activity
     DomainBlock.where(domain: account.domain, reject_unknown: true).exists?
   end
 
+  def manual_only?(account = nil)
+    account = @account if account.nil?
+    DomainBlock.where(domain: account.domain, manual_only: true).exists?
+  end
+
   def known?(account = nil)
     account = @account if account.nil?
     return true if account.known?
 
     !account.service? && account.passive_relationships.exists?
+  end
+
+  def manual_only?(account = nil)
+    account = @account if account.nil?
+    account.manual_only?
   end
 
   def reject_payload!

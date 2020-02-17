@@ -16,6 +16,9 @@ class FavouriteService < BaseService
     return favourite unless favourite.nil?
 
     account.mark_known! if account.can_be_marked_known? && Setting.mark_known_from_favourites
+
+    raise Mastodon::NotPermittedError("Account @#{account.acct} is restricted by an admin policy.") unless account.known?
+
     favourite = Favourite.create!(account: account, status: status)
 
     curate_status(status)

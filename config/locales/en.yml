@@ -204,6 +204,8 @@ en:
       warn: Warn
       known: Mark known
       unknown: Mark unknown
+      manual_only: Manual trust
+      auto_trust: Auto trust
       web: Web
     action_logs:
       actions:
@@ -245,6 +247,8 @@ en:
         update_status: "%{name} updated roar by %{target}"
         mark_known_account: "%{name} marked %{target}'s account known"
         mark_unknown_account: "%{name} marked %{target}'s account unknown"
+        manual_only_account: "%{name} marked %{target}'s account manual trust only"
+        auto_trust_account: "%{name} marked %{target}'s account auto-trustable"
       deleted_status: "(deleted roar)"
       title: Audit log
     custom_emojis:
@@ -318,6 +322,8 @@ en:
       force_sensitive_hint: Forces all media from this domain to be marked sensitive.
       reject_unknown: Reject unknown accounts
       reject_unknown_hint: Rejects content and requests from accounts that haven't been interacted with by the community or immediate packmates.
+      manual_only: Manual trust only
+      manual_only_hint: Never automatically trust accounts from this server.
       reason: Add notes here.
       reject_media: Reject media files
       reject_media_hint: Removes locally stored media files and refuses to download any in the future. Irrelevant for suspensions

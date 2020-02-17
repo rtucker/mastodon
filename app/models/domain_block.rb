@@ -14,6 +14,7 @@
 #  reason          :text
 #  reject_unknown  :boolean          default(FALSE), not null
 #  processing      :boolean          default(TRUE), not null
+#  manual_only     :boolean          default(FALSE), not null
 #
 
 class DomainBlock < ApplicationRecord
@@ -58,6 +59,7 @@ class DomainBlock < ApplicationRecord
     additionals << "reject media" if reject_media?
     additionals << "reject reports" if reject_reports?
     additionals << "reject unknown accounts" if reject_unknown?
+    additionals << "manual trust only" if manual_only?
     additionals
   end
 
@@ -67,14 +69,15 @@ class DomainBlock < ApplicationRecord
 
   # workaround for the domain policy editor
   def undo
-    return false
+    false
   end
 
   private
 
   def set_processing
     return if processing
-    return unless (changed & %w(severity suspended_at silenced_at force_sensitive reject_media reject_reports reject_unknown)).any?
+    return unless (changed & %w(severity suspended_at silenced_at force_sensitive reject_media reject_reports reject_unknown manual_only)).any?
+
     self.processing = true
   end
 end

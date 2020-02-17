@@ -18,6 +18,9 @@
     = f.input :reject_unknown, as: :boolean, wrapper: :with_label, label: I18n.t('admin.domain_blocks.reject_unknown'), hint: I18n.t('admin.domain_blocks.reject_unknown_hint')
 
   .fields-group
+    = f.input :manual_only, as: :boolean, wrapper: :with_label, label: I18n.t('admin.domain_blocks.manual_only'), hint: I18n.t('admin.domain_blocks.manual_only_hint')
+
+  .fields-group
     = f.input :reject_media, as: :boolean, wrapper: :with_label, label: I18n.t('admin.domain_blocks.reject_media'), hint: I18n.t('admin.domain_blocks.reject_media_hint')
 
   .fields-group

@@ -2,7 +2,7 @@
 
 module Admin
   class AccountsController < BaseController
-    before_action :set_account, only: [:show, :redownload, :remove_avatar, :remove_header, :enable, :mark_known, :mark_unknown, :allow_public, :allow_nonsensitive, :unsilence, :unsuspend, :memorialize, :approve, :reject, :sync]
+    before_action :set_account, only: [:show, :redownload, :remove_avatar, :remove_header, :enable, :mark_known, :mark_unknown, :manual_only, :auto_trust, :allow_public, :allow_nonsensitive, :unsilence, :unsuspend, :memorialize, :approve, :reject, :sync]
     before_action :require_remote_account!, only: [:redownload, :sync]
     before_action :require_local_account!, only: [:enable, :memorialize, :approve, :reject]
 
@@ -56,6 +56,20 @@ module Admin
       authorize @account, :mark_known?
       @account.mark_known!
       log_action :mark_known, @account
+      redirect_to admin_account_path(@account.id)
+    end
+
+    def manual_only
+      authorize @account, :manual_only?
+      @account.manual_only!
+      log_action :manual_only, @account
+      redirect_to admin_account_path(@account.id)
+    end
+
+    def auto_trust
+      authorize @account, :auto_trust?
+      @account.auto_trust!
+      log_action :auto_trust, @account
       redirect_to admin_account_path(@account.id)
     end
 

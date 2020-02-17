@@ -187,6 +187,8 @@ Rails.application.routes.draw do
         post :enable
         post :mark_known
         post :mark_unknown
+        post :manual_only
+        post :auto_trust
         post :force_sensitive
         post :force_unlisted
         post :allow_public

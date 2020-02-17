@@ -45,7 +45,7 @@ module StatusesHelper
   def account_badge(account, all: false)
     content_tag(:div, class: 'roles') do
       froze = account.local? ? (account&.user.nil? ? true : account.user.disabled?) : account.froze?
-      limited = account.silenced? || account.force_unlisted? || account.force_sensitive?
+      limited = account.silenced? || account.force_unlisted? || account.force_sensitive? || !account.known?
 
       roles = []
       roles << content_tag(:div, t('accounts.roles.limited'), class: 'account-role limited') if limited

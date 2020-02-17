@@ -24,6 +24,7 @@ class BlockDomainService < BaseService
     clear_media! if domain_block.reject_media? || domain_block.suspend?
     force_accounts_sensitive! if domain_block.force_sensitive?
     mark_unknown_accounts! if domain_block.reject_unknown?
+    mark_accounts_manual_only! if domain_block.manual_only?
 
     if domain_block.force_unlisted?
       force_accounts_unlisted!
@@ -52,8 +53,19 @@ class BlockDomainService < BaseService
     end
   end
 
+  def mark_accounts_manual_only!
+    blocked_domain_accounts.in_batches.update_all(manual_only: true)
+  end
+
   def mark_unknown_accounts!
-    unknown_accounts.in_batches.update_all(known: false)
+    ApplicationRecord.transaction do
+      unknown_accounts.in_batches.update_all(known: false)
+      unknown_accounts.find_each do |account|
+        account.avatar = nil
+        account.header = nil
+        account.save!
+      end
+    end
   end
 
   def force_accounts_unlisted!
