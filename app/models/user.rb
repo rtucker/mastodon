@@ -536,6 +536,14 @@ class User < ApplicationRecord
   def set_last_fanged_at
     return unless defanged_changed? && !last_fanged_at_changed?
     self.last_fanged_at = (defanged? ? nil : Time.now.utc)
+
+    return unless usernme&.account?
+
+    if defanged?
+      LogWorker.perform_async("\u23ec <#{self.account.username}> is no longer in fanged #{role} mode.")
+    else
+      LogWorker.perform_async("\u23eb <#{self.account.username}> switched to fanged #{role} mode.")
+    end
   end
 
   def open_registrations?
