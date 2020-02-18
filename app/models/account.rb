@@ -136,8 +136,6 @@ class Account < ApplicationRecord
            :staff?,
            :can_moderate?,
            :defanged?,
-           :defanged,
-           :defanged=,
            :locale,
 
            :default_language,

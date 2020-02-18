@@ -55,6 +55,7 @@ class Settings::PreferencesController < Settings::BaseController
       :filter_timelines_only,
       :monsterpit_api,
       :allow_unknown_follows,
+      :defanged,
       chosen_languages: []
     )
   end

@@ -119,6 +119,7 @@ class User < ApplicationRecord
 
   before_validation :sanitize_languages
   before_create :set_approved
+  before_save :set_last_fanged_at
 
   # This avoids a deprecation warning from Rails 5.1
   # It seems possible that a future release of devise-two-factor will
@@ -530,6 +531,11 @@ class User < ApplicationRecord
 
   def set_approved
     self.approved = open_registrations? || valid_invitation? || external?
+  end
+
+  def set_last_fanged_at
+    return unless defanged_changed? && !last_fanged_at_changed?
+    self.last_fanged_at = (defanged? ? nil : Time.now.utc)
   end
 
   def open_registrations?

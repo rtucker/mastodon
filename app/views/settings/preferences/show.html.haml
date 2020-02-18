@@ -11,6 +11,12 @@
 = simple_form_for current_user, url: settings_preferences_path, html: { method: :put } do |f|
   = render 'shared/error_messages', object: current_user
 
+  - if current_user.can_moderate?
+    %hr/
+
+    .fields-group
+      = f.input :defanged, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.defanged')
+
   %hr#settings_publishing/
 
   .fields-group

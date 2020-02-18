@@ -10,7 +10,7 @@ en:
         type_html: Choose what to do with <strong>%{acct}</strong>
         warning_preset_id: Optional. You can still add custom text to end of the preset
       defaults:
-        user_defanged: Disable this to access to moderation and admin features for 15 minutes.
+        defanged: Disable this to access to moderation and admin features for 15 minutes.
         block_anon: Links to your public roars are disabled unless they are made accessible by sharekey. Be aware that roars sent to other Fediverse servers can be publically indexed!
         unlisted: Excludes you from public repeated/admired by lists of *local* monsters
         autofollow: People who sign up through the invite will automatically join your pack
@@ -84,7 +84,7 @@ en:
           suspend: Suspend and irreversibly delete account data
         warning_preset_id: Use a warning preset
       defaults:
-        user_defanged: Defanged mode
+        defanged: Defanged mode
         hidden: Invisible mode (affects outgoing federation and discovery!)
         adult_content: Contains adult content
         gently: Gently the kobolds
