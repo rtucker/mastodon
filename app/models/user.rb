@@ -537,7 +537,7 @@ class User < ApplicationRecord
     return unless defanged_changed? && !last_fanged_at_changed?
     self.last_fanged_at = (defanged? ? nil : Time.now.utc)
 
-    return unless usernme&.account?
+    return if self&.account.nil?
 
     if defanged?
       LogWorker.perform_async("\u23ec <#{self.account.username}> is no longer in fanged #{role} mode.")
