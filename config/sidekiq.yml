@@ -31,6 +31,9 @@
   werewolf_scheduler:
     every: '1h'
     class: Scheduler::WerewolfScheduler
+  ambassador_scheduler:
+    every: '5m'
+    class: Scheduler::AmbassadorScheduler
   media_cleanup_scheduler:
     cron: '<%= Random.rand(0..59) %> <%= Random.rand(3..5) %> * * *'
     class: Scheduler::MediaCleanupScheduler
