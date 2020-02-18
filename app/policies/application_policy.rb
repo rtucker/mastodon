@@ -8,7 +8,7 @@ class ApplicationPolicy
     @record          = record
   end
 
-  delegate :admin?, :moderator?, :halfmod?, :staff?, :can_moderate?, :has_more_authority_than?, to: :current_user, allow_nil: true
+  delegate :admin?, :moderator?, :halfmod?, :staff?, :can_moderate?, :defanged?, :has_more_authority_than?, to: :current_user, allow_nil: true
 
   private
 
