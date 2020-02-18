@@ -69,6 +69,7 @@ class REST::AccountSerializer < ActiveModel::Serializer
   def role
     return 'admin' if object.user_admin?
     return 'moderator' if object.user_moderator?
+    return 'halfmod' if object.user_halfmod?
     'user'
   end
 

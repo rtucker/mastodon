@@ -2,10 +2,10 @@
 
 class SettingsPolicy < ApplicationPolicy
   def update?
-    admin?
+    !defanged? && admin?
   end
 
   def show?
-    admin?
+    !defanged? && admin?
   end
 end

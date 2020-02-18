@@ -2,14 +2,14 @@
 
 class ReportPolicy < ApplicationPolicy
   def update?
-    staff?
+    !defanged? && staff?
   end
 
   def index?
-    staff?
+    !defanged? && staff?
   end
 
   def show?
-    staff?
+    !defanged? && staff?
   end
 end

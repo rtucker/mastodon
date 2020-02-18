@@ -18,6 +18,12 @@
 
       = f.input :avatar, wrapper: :with_label, input_html: { accept: AccountAvatar::IMAGE_MIME_TYPES.join(',') }, hint: t('simple_form.hints.defaults.avatar', dimensions: '400x400', size: number_to_human_size(AccountAvatar::LIMIT))
 
+  - if @account.user_can_moderate?
+    %hr.spacer/
+
+    .fields-group
+      = f.input :user_defanged, as: :boolean, wrapper: :with_label, hint: t('simple_form.hints.defaults.user_defanged')
+
   %hr.spacer/
 
   .fields-group

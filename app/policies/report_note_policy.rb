@@ -2,11 +2,11 @@
 
 class ReportNotePolicy < ApplicationPolicy
   def create?
-    staff?
+    !defanged? && staff?
   end
 
   def destroy?
-    admin? || owner?
+    (!defanged? && admin?) || owner?
   end
 
   private

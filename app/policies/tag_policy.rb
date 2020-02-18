@@ -2,14 +2,14 @@
 
 class TagPolicy < ApplicationPolicy
   def index?
-    staff?
+    !defanged? && can_moderate?
   end
 
   def hide?
-    staff?
+    !defanged? && can_moderate?
   end
 
   def unhide?
-    staff?
+    !defanged? && can_moderate?
   end
 end

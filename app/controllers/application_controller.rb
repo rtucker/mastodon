@@ -63,6 +63,10 @@ class ApplicationController < ActionController::Base
     forbidden unless current_user&.staff?
   end
 
+  def require_halfmod!
+    forbidden unless current_user&.halfmod?
+  end
+
   def check_user_permissions
     forbidden if current_user.disabled? || current_user.account.suspended?
   end

@@ -2,52 +2,52 @@
 
 class UserPolicy < ApplicationPolicy
   def reset_password?
-    staff? && !record.staff?
+    !defanged? && staff? && has_more_authority_than?(record)
   end
 
   def change_email?
-    staff? && !record.staff?
+    !defanged? && staff? && has_more_authority_than?(record)
   end
 
   def disable_2fa?
-    admin? && !record.staff?
+    !defanged? && admin? && has_more_authority_than?(record)
   end
 
   def confirm?
-    staff? && !record.confirmed?
+    !defanged? && staff? && !record.confirmed?
   end
 
   def enable?
-    staff?
+    !defanged? && staff?
   end
 
   def approve?
-    staff? && !record.approved?
+    !defanged? && staff? && !record.approved?
   end
 
   def reject?
-    staff? && !record.approved?
+    !defanged? && staff? && !record.approved?
   end
 
   def disable?
-    staff? && !record.admin?
+    !defanged? && staff? && has_more_authority_than?(record)
   end
 
   def promote?
-    admin? && promoteable?
+    !defanged? && admin? && promoteable?
   end
 
   def demote?
-    admin? && !record.admin? && demoteable?
+    !defanged? && admin? && has_more_authority_than?(record) && demoteable?
   end
 
   private
 
   def promoteable?
-    record.approved? && (!record.staff? || !record.admin?)
+    record.approved? && !record.can_moderate?
   end
 
   def demoteable?
-    record.staff?
+    record.can_moderate?
   end
 end

@@ -16,7 +16,8 @@ class AccountsController < ApplicationController
 
         unless current_account&.id == @account.id
           if @account.hidden || @account&.user&.hides_public_profile?
-            return not_found unless current_account&.following?(@account)
+            not_found unless current_account&.following?(@account)
+            return
           end
         end
 
@@ -44,10 +45,12 @@ class AccountsController < ApplicationController
       format.rss do
         expires_in 1.minute, public: true
 
-        return not_found unless current_account&.user&.allows_rss?
-
-        @statuses = filtered_statuses.without_reblogs.without_replies.limit(PAGE_SIZE)
-        @statuses = cache_collection(@statuses, Status)
+        if current_account&.user&.allows_rss?
+          @statuses = filtered_statuses.without_reblogs.without_replies.limit(PAGE_SIZE)
+          @statuses = cache_collection(@statuses, Status)
+        else
+          @statuses = []
+        end
 
         render xml: RSS::AccountSerializer.render(@account, @statuses, params[:tag])
       end

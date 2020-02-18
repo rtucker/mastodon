@@ -157,6 +157,7 @@ en_GB:
       roles:
         admin: Administrator
         moderator: Moderator
+        halfmod: Half-moderator
         staff: Staff
         user: User
       salmon_url: Salmon URL

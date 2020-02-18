@@ -160,7 +160,7 @@ de:
       role: Berechtigungen
       roles:
         admin: Administrator
-        moderator: Moderator:in
+        moderator: Moderator
         staff: Mitarbeiter
         user: Nutzer
       salmon_url: Salmon-URL

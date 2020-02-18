@@ -2,10 +2,10 @@
 
 class InstancePolicy < ApplicationPolicy
   def index?
-    admin?
+    !defanged? && admin?
   end
 
   def show?
-    admin?
+    !defanged? && admin?
   end
 end

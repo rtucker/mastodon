@@ -8,7 +8,7 @@ class StatusPolicy < ApplicationPolicy
   end
 
   def index?
-    staff?
+    !defanged? && staff?
   end
 
   def show?
@@ -33,13 +33,13 @@ class StatusPolicy < ApplicationPolicy
   end
 
   def destroy?
-    staff? || owned?
+    (!defanged? && staff?) || owned?
   end
 
   alias unreblog? destroy?
 
   def update?
-    staff?
+    (!defanged? && staff?) || owned?
   end
 
   private

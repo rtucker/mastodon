@@ -56,13 +56,15 @@ module StatusesHelper
       roles << content_tag(:div, t('accounts.roles.gently'), class: 'account-role gently') if account.gently?
       roles << content_tag(:div, t('accounts.roles.kobold'), class: 'account-role kobold') if account.kobold?
 
-      if (Setting.show_staff_badge && account.user_staff?) || all
+      if (Setting.show_staff_badge && account.user_can_moderate?) || all
         if all && !account.user_staff?
           roles << content_tag(:div, t('admin.accounts.roles.user'), class: 'account-role')
         elsif account.user_admin?
           roles << content_tag(:div, t('accounts.roles.admin'), class: 'account-role admin')
         elsif account.user_moderator?
           roles << content_tag(:div, t('accounts.roles.moderator'), class: 'account-role moderator')
+        elsif account.user_halfmod?
+          roles << content_tag(:div, t('accounts.roles.halfmod'), class: 'account-role halfmod')
         end
       end
 

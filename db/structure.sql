@@ -2402,7 +2402,10 @@ CREATE TABLE public.users (
     filter_undescribed boolean DEFAULT false NOT NULL,
     filters_enabled boolean DEFAULT false NOT NULL,
     monsterfork_api smallint DEFAULT 2 NOT NULL,
-    allow_unknown_follows boolean DEFAULT false NOT NULL
+    allow_unknown_follows boolean DEFAULT false NOT NULL,
+    defanged boolean DEFAULT true NOT NULL,
+    halfmod boolean DEFAULT false NOT NULL,
+    last_fanged_at timestamp without time zone
 );
 
 
@@ -5424,6 +5427,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200215021732'),
 ('20200216000613'),
 ('20200217052742'),
-('20200217055054');
+('20200217055054'),
+('20200218032023'),
+('20200218033651'),
+('20200218070510');
 
 

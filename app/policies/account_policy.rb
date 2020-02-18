@@ -2,90 +2,90 @@
 
 class AccountPolicy < ApplicationPolicy
   def index?
-    staff?
+    !defanged? && can_moderate?
   end
 
   def show?
-    staff?
+    !defanged? && can_moderate?
   end
 
   def warn?
-    staff? && !record.user&.staff?
+    !defanged? && staff? && has_more_authority_than?(record&.user)
   end
 
   def mark_known?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def mark_unknown?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def manual_only?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def auto_trust?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def suspend?
-    staff? && !record.user&.staff?
+    !defanged? && staff? && has_more_authority_than?(record&.user)
   end
 
   def unsuspend?
-    staff?
+    !defanged? && staff? && has_more_authority_than?(record&.user)
   end
 
   def silence?
-    staff? && !record.user&.staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record.user)
   end
 
   def unsilence?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def force_unlisted?
-    staff?
+    !defanged? && staff? && has_more_authority_than?(record&.user)
   end
 
   def allow_public?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def force_sensitive?
-    staff?
+    !defanged? && staff? && has_more_authority_than?(record&.user)
   end
 
   def allow_nonsensitive?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def redownload?
-    staff?
+    !defanged? && can_moderate?
   end
 
   def sync?
-    staff?
+    !defanged? && can_moderate?
   end
 
   def remove_avatar?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def remove_header?
-    staff?
+    !defanged? && can_moderate? && has_more_authority_than?(record&.user)
   end
 
   def subscribe?
-    admin?
+    !defanged? && admin?
   end
 
   def unsubscribe?
-    admin?
+    !defanged? && admin?
   end
 
   def memorialize?
-    admin? && !record.user&.admin?
+    !defanged? && staff? && !record.user&.staff?
   end
 end

@@ -2,11 +2,11 @@
 
 class AccountModerationNotePolicy < ApplicationPolicy
   def create?
-    staff?
+    !defanged? && can_moderate?
   end
 
   def destroy?
-    admin? || owner?
+    (!defanged? && admin?) || owner?
   end
 
   private

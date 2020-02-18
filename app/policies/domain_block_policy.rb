@@ -2,22 +2,22 @@
 
 class DomainBlockPolicy < ApplicationPolicy
   def index?
-    staff?
+    !defanged? && staff?
   end
 
   def show?
-    staff?
+    !defanged? && staff?
   end
 
   def create?
-    staff?
+    !defanged? && staff?
   end
 
   def destroy?
-    staff?
+    !defanged? && staff?
   end
 
   def update?
-    staff?
+    !defanged? && staff?
   end
 end

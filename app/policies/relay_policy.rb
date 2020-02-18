@@ -2,6 +2,6 @@
 
 class RelayPolicy < ApplicationPolicy
   def update?
-    admin?
+    !defanged? && admin?
   end
 end

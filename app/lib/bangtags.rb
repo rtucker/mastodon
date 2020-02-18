@@ -1299,6 +1299,18 @@ class Bangtags
           @vars.delete("_media:#{media_idx}:desc")
         end
 
+      when 'op', 'oper', 'fang', 'fangs'
+        chunk = nil
+        next unless @user.can_moderate? && @user.defanged?
+        @user.fangs_out!
+        service_dm('announcements', @account, "You are now in #{@user.role} mode. This will expire after 15 minutes.", footer: '#!fangs')
+
+      when 'deop', 'deoper', 'defang'
+        chunk = nil
+        next if @user.defanged?
+        @user.defang!
+        service_dm('announcements', @account, "You are no longer in #{@user.role} mode.", footer: '#!defang')
+
       when 'admin'
         next unless @user.admin?
         next if post_cmd[1].nil?

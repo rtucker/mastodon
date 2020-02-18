@@ -2,7 +2,7 @@
 
 class InvitePolicy < ApplicationPolicy
   def index?
-    staff?
+    !defanged? && can_moderate?
   end
 
   def create?
@@ -10,11 +10,11 @@ class InvitePolicy < ApplicationPolicy
   end
 
   def deactivate_all?
-    admin?
+    !defanged? && admin?
   end
 
   def destroy?
-    owner? || (Setting.min_invite_role == 'admin' ? admin? : staff?)
+    owner? || (!defanged? && (Setting.min_invite_role == 'admin' ? admin? : can_moderate?))
   end
 
   private

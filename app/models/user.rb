@@ -48,6 +48,9 @@
 #  filters_enabled           :boolean          default(FALSE), not null
 #  monsterfork_api           :integer          default("full"), not null
 #  allow_unknown_follows     :boolean          default(FALSE), not null
+#  defanged                  :boolean          default(TRUE), not null
+#  halfmod                   :boolean          default(FALSE), not null
+#  last_fanged_at            :datetime
 #
 
 class User < ApplicationRecord

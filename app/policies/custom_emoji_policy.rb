@@ -10,7 +10,7 @@ class CustomEmojiPolicy < ApplicationPolicy
   end
 
   def update?
-    staff?
+    can_moderate?
   end
 
   def copy?
@@ -18,11 +18,11 @@ class CustomEmojiPolicy < ApplicationPolicy
   end
 
   def enable?
-    staff?
+    can_moderate?
   end
 
   def disable?
-    staff?
+    can_moderate?
   end
 
   def destroy?

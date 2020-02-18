@@ -34,6 +34,9 @@
   ambassador_scheduler:
     every: '<%= ENV['AMBASSADOR_DELAY'] || 10 %>m'
     class: Scheduler::AmbassadorScheduler
+  defang_scheduler:
+    every: '15m'
+    class: Scheduler::DefangScheduler
   media_cleanup_scheduler:
     cron: '<%= Random.rand(0..59) %> <%= Random.rand(3..5) %> * * *'
     class: Scheduler::MediaCleanupScheduler

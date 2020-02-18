@@ -12,7 +12,7 @@
       = ff.input :favourite, as: :boolean, wrapper: :with_label
       = ff.input :mention, as: :boolean, wrapper: :with_label
 
-      - if current_user.staff?
+      - if current_user.can_moderate?
         = ff.input :report, as: :boolean, wrapper: :with_label
         = ff.input :pending_account, as: :boolean, wrapper: :with_label
 

@@ -212,6 +212,12 @@
   background-color: rgba($ui-secondary-color, 0.1);
   border: 1px solid rgba($ui-secondary-color, 0.5);
 
+  &.halfmod {
+    color: lighten($success-green, 10%);
+    background-color: rgba(lighten($success-green, 10%), 0.1);
+    border-color: rgba(lighten(success-green, 10%), 0.5);
+  }
+
   &.moderator {
     color: $success-green;
     background-color: rgba($success-green, 0.1);

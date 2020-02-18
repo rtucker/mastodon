@@ -132,7 +132,12 @@ class Account < ApplicationRecord
            :pending?,
            :admin?,
            :moderator?,
+           :halfmod?,
            :staff?,
+           :can_moderate?,
+           :defanged?,
+           :defanged,
+           :defanged=,
            :locale,
 
            :default_language,

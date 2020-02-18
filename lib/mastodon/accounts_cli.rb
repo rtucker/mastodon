@@ -61,8 +61,8 @@ module Mastodon
       With the --confirmed option, the confirmation e-mail will
       be skipped and the account will be active straight away.
 
-      With the --role option one of  "user", "admin" or "moderator"
-      can be supplied. Defaults to "user"
+      With the --role option one of  "user", "admin", "moderator",
+      or "halfmod" can be supplied. Defaults to "user"
 
       With the --reattach option, the new user will be reattached
       to a given existing username of an old account. If the old
@@ -73,7 +73,7 @@ module Mastodon
     def create(username)
       account  = Account.new(username: username)
       password = SecureRandom.hex
-      user     = User.new(email: options[:email], password: password, agreement: true, approved: true, admin: options[:role] == 'admin', moderator: options[:role] == 'moderator', confirmed_at: options[:confirmed] ? Time.now.utc : nil)
+      user     = User.new(email: options[:email], password: password, agreement: true, approved: true, admin: options[:role] == 'admin', moderator: options[:role] == 'moderator', halfmod: options[:role] == 'halfmod', confirmed_at: options[:confirmed] ? Time.now.utc : nil)
 
       if options[:reattach]
         account = Account.find_local(username) || Account.new(username: username)

@@ -2,14 +2,14 @@
 
 class EmailDomainBlockPolicy < ApplicationPolicy
   def index?
-    admin?
+    !defanged? && staff?
   end
 
   def create?
-    admin?
+    !defanged? && staff?
   end
 
   def destroy?
-    admin?
+    !defanged? && staff?
   end
 end

@@ -74,7 +74,9 @@ en:
     roles:
       admin: Admin
       bot: Bot
+      halfmod: Half-mod
       moderator: Mod
+      halfmod: Half-mod
       kobold: Gently the kobold
       gently: Gentlies kobolds
       adult: 🔞 Adult content
@@ -177,6 +179,7 @@ en:
       roles:
         admin: Administrator
         moderator: Moderator
+        halfmod: Half-moderator
         staff: Staff
         user: User
       salmon_url: Salmon URL

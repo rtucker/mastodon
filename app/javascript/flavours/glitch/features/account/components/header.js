@@ -193,6 +193,7 @@ class Header extends ImmutablePureComponent {
     const badge_gently    = account.get('gently') ? (<div className='account-role gently'><FormattedMessage id='account.badges.gently' defaultMessage="Gentlies kobolds" /></div>) : null;
     const badge_kobold    = account.get('kobold') ? (<div className='account-role kobold'><FormattedMessage id='account.badges.kobold' defaultMessage="Gently the kobold" /></div>) : null;
     const badge_mod       = account.get('role') == 'moderator' ? (<div className='account-role moderator'><FormattedMessage id='account.badges.moderator' defaultMessage="Moderator" /></div>) : null;
+    const badge_halfmod   = account.get('role') == 'halfmod' ? (<div className='account-role halfmod'><FormattedMessage id='account.badges.halfmod' defaultMessage="Half-moderator" /></div>) : null;
     const badge_admin     = account.get('role') == 'admin' ? (<div className='account-role admin'><FormattedMessage id='account.badges.admin' defaultMessage="Admin" /></div>) : null;
     const acct            = account.get('acct').indexOf('@') === -1 && domain ? `${account.get('acct')}@${domain}` : account.get('acct');
 
@@ -225,7 +226,7 @@ class Header extends ImmutablePureComponent {
             <h1>
               <span dangerouslySetInnerHTML={displayNameHtml} />
               <small>@{acct}</small>
-              <div className='roles'>{badge_admin}{badge_mod}{badge_froze}{badge_locked}{badge_limited}{badge_ac}{badge_bot}{badge_gently}{badge_kobold}</div>
+              <div className='roles'>{badge_admin}{badge_mod}{badge_halfmod}{badge_froze}{badge_locked}{badge_limited}{badge_ac}{badge_bot}{badge_gently}{badge_kobold}</div>
             </h1>
           </div>
 
