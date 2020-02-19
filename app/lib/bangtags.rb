@@ -1193,8 +1193,6 @@ class Bangtags
         end
       end
 
-      chunk.gsub!("#\ufdd6!", '#!') unless chunk.blank? || chunk.frozen?
-
       if chunk.present? && @tf_cmds.present?
         @tf_cmds.each do |tf_cmd|
           next if chunk.nil? || tf_cmd[0].nil?
@@ -1313,6 +1311,8 @@ class Bangtags
     @user.save
 
     text = @chunks.join
+    text.gsub!("#\ufdd6!", '#!')
+    text.gsub!(/\ufdd3(.*)\ufdd4/m, '<span aria-hidden="true">\1</span>')
     text.gsub!(/\n\n+/, "\n") if @crunch_newlines
     text.strip!
     text = text.split("\n").map(&:strip).join("\n") if @strip_lines
