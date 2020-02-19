@@ -106,7 +106,12 @@ class Bangtags
         chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
         chunk.sub!(/{(.*)}\Z/, '\1')
 
-        if @vore_stack.last != '_comment'
+        if @vars['_bangtags:off']
+          if chunk.in?('#!bangtags:on', '#!bangtags:enable')
+            @vars.delete('_bangtags:off')
+            next
+          end
+        elsif @vore_stack.last != '_comment'
           cmd = chunk[2..-1].strip
           next if cmd.blank?
 
@@ -139,6 +144,18 @@ class Bangtags
         end
 
         case cmd[0].downcase
+
+        when 'bangtags'
+          chunk = nil
+          next if cmd[1].nil?
+
+          case cmd[1].downcase
+          when 'off', 'disable'
+            @vars['_bangtags:off'] = true
+            next
+          when 'break', 'skip'
+            break
+          end
 
         when 'var'
           chunk = nil
