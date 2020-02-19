@@ -116,7 +116,7 @@ class Bangtags
         chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
         chunk.sub!(/{(.*)}\Z/, '\1')
 
-        elsif @vore_stack.last != '_comment'
+        if @vore_stack.last != '_comment'
           cmd = chunk[2..-1].strip
           next if cmd.blank?
 
