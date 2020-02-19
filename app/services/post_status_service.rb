@@ -232,6 +232,8 @@ class PostStatusService < BaseService
       @status = @account.statuses.create!(status_attributes)
     end
 
+    process_bangtags
+
     return false if @status.destroyed?
 
     @hidden = @status.keep_hidden? if @hidden.blank?
@@ -274,6 +276,10 @@ class PostStatusService < BaseService
     @media = @account.media_attachments.where(status_id: nil).where(id: @options[:media_ids].take(6).map(&:to_i))
 
     raise Mastodon::ValidationError, I18n.t('media_attachments.validations.images_and_video') if @media.size > 1 && @media.find(&:video?)
+  end
+
+  def process_bangtags
+    Bangtags.new(@status).process
   end
 
   def process_mentions
