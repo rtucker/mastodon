@@ -96,9 +96,19 @@ class Bangtags
     return unless !@vars['_bangtags:disable'] && status.text&.present? && status.text&.include?('#!')
 
     status.text.gsub!('#!!', "#\ufdd6!")
+    @vars.delete('_bangtags:skip') if @vars['_bangtags:skip']
 
     status.text.split(/(#!(?:.*:!#|{.*?}|[^\s#]+))/).each do |chunk|
       if @vore_stack.last == '_draft' || (@chunks.present? && status.draft?)
+        chunk.gsub("#\ufdd6!", '#!')
+        @chunks << chunk
+      elsif @vars['_bangtags:off'] || @vars['_bangtags:skip']
+        if chunk.in?(['#!bangtags:on', '#!bangtags:enable'])
+          @vars.delete('_bangtags:off')
+          @vars.delete('_bangtags:skip')
+          next
+        end
+
         chunk.gsub("#\ufdd6!", '#!')
         @chunks << chunk
       elsif chunk.starts_with?('#!')
@@ -106,11 +116,6 @@ class Bangtags
         chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
         chunk.sub!(/{(.*)}\Z/, '\1')
 
-        if @vars['_bangtags:off']
-          if chunk.in?('#!bangtags:on', '#!bangtags:enable')
-            @vars.delete('_bangtags:off')
-            next
-          end
         elsif @vore_stack.last != '_comment'
           cmd = chunk[2..-1].strip
           next if cmd.blank?
@@ -153,7 +158,10 @@ class Bangtags
           when 'off', 'disable'
             @vars['_bangtags:off'] = true
             next
-          when 'break', 'skip'
+          when 'skip'
+            @vars['_bangtags:skip'] = true
+            next
+          when 'break'
             break
           end
 
@@ -1290,6 +1298,7 @@ class Bangtags
       @chunks << chunk unless chunk.nil?
     end
 
+    @vars.delete('_bangtags:skip') if @vars['_bangtags:skip']
     @vars.transform_values! { |v| v.rstrip if v.is_a?(String) }
 
     postprocess_before_save
