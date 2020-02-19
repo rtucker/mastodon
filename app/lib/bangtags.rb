@@ -102,21 +102,32 @@ class Bangtags
       if @vore_stack.last == '_draft' || (@chunks.present? && status.draft?)
         chunk.gsub("#\ufdd6!", '#!')
         @chunks << chunk
-      elsif @vars['_bangtags:off'] || @vars['_bangtags:skip']
-        if chunk.in?(['#!bangtags:on', '#!bangtags:enable'])
-          @vars.delete('_bangtags:off')
-          @vars.delete('_bangtags:skip')
-          next
-        end
+        next
+      end
 
-        chunk.gsub("#\ufdd6!", '#!')
-        @chunks << chunk
-      elsif chunk.starts_with?('#!')
+      if chunk.starts_with?('#!')
         orig_chunk = chunk
         chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
         chunk.sub!(/{(.*)}\Z/, '\1')
+        chunk.strip!
 
-        if @vore_stack.last != '_comment'
+        if @vore_stack.last == '_comment'
+          if chunk.in?(['#!comment:end', '#!comment:stop', '#!comment:endall', '#!comment:stopall'])
+            @vore_stack.pop
+            @component_stack.pop
+          end
+
+          next
+        elsif @vars['_bangtags:off'] || @vars['_bangtags:skip']
+          if chunk.in?(['#!bangtags:on', '#!bangtags:enable'])
+            @vars.delete('_bangtags:off')
+            @vars.delete('_bangtags:skip')
+            next
+          end
+
+          @chunks << orig_chunk.gsub("#\ufdd6!", '#!')
+          next
+        else
           cmd = chunk[2..-1].strip
           next if cmd.blank?
 
@@ -132,12 +143,6 @@ class Bangtags
           @aliases.each_key do |old_cmd|
             cmd = @aliases[old_cmd] + cmd.drop(old_cmd.length) if cmd.take(old_cmd.length) == old_cmd
           end
-        elsif chunk.in?(['#!comment:end', '#!comment:stop', '#!comment:endall', '#!comment:stopall'])
-          @vore_stack.pop
-          @component_stack.pop
-          next
-        else
-          next
         end
 
         next if cmd[0].nil?
@@ -149,7 +154,6 @@ class Bangtags
         end
 
         case cmd[0].downcase
-
         when 'bangtags'
           chunk = nil
           next if cmd[1].nil?
