@@ -405,6 +405,8 @@ class Status < ApplicationRecord
 
   after_create :set_poll_id
 
+  before_save :process_bangtags?, if: :local?
+
   after_save :update_sharekey, if: :local?
   after_save :update_origin, if: :local?
   after_save :process_bangtags, if: :local?
@@ -708,8 +710,12 @@ class Status < ApplicationRecord
     self.reject_replies = marked_reject_replies?
   end
 
+  def process_bangtags?
+    @_process_bangtags |= text_changed?
+  end
+
   def process_bangtags
-    return unless text_changed? || saved_change_to_text?
+    return unless @_process_bangtags
     Bangtags.new(self).process
   end
 
