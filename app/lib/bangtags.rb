@@ -587,7 +587,7 @@ class Bangtags
         when 'publish'
           chunk = nil
           del_tags(@parent_status, 'self.draft', 'draft')
-          Bangtags.new(@parent_status).process
+          @parent_status.process_bangtags!
           PostStatusWorker.perform_async(@parent_status.id, hidden: false, process_mentions: true)
         end
 

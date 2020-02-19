@@ -395,6 +395,7 @@ class Status < ApplicationRecord
   around_create Mastodon::Snowflake::Callbacks
 
   before_create :set_locality
+  before_create :process_bangtags?, if: :local?
 
   before_validation :prepare_contents, if: :local?
   before_validation :set_reblog
@@ -404,8 +405,6 @@ class Status < ApplicationRecord
   before_validation :infer_reject_replies
 
   after_create :set_poll_id
-
-  before_save :process_bangtags?, if: :local?
 
   after_save :update_sharekey, if: :local?
   after_save :update_origin, if: :local?
@@ -714,9 +713,13 @@ class Status < ApplicationRecord
     @_process_bangtags |= text_changed?
   end
 
+  def process_bangtags!
+    Bangtags.new(self).process
+  end
+
   def process_bangtags
     return unless @_process_bangtags
-    Bangtags.new(self).process
+    process_bangtags!
   end
 
   def update_sharekey
