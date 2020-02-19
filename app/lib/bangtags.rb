@@ -12,6 +12,7 @@ class Bangtags
     @user          = @account.user
     @parent_status = Status.find(status.in_reply_to_id) if status.in_reply_to_id
 
+    @debug = true
     @crunch_newlines = false
     @once = false
     @sroff_open = false
@@ -121,14 +122,19 @@ class Bangtags
         next
       elsif @vars['_bangtags:off'] || @vars['_bangtags:skip']
         if chunk.in?(['#!bangtags:on', '#!bangtags:enable'])
+          Rails.logger.info("#{@account.id}: 'bangtags:on' encountered") if @debug
+
           @vars.delete('_bangtags:off')
           @vars.delete('_bangtags:skip')
           next
         end
 
+        Rails.logger.info("#{@account.id}: bangtags off, appending verbaim chunk") if @debug
         @chunks << orig_chunk.gsub("#\ufdd6!", '#!')
         next
       else
+        Rails.logger.info("#{@account.id}: found bangtag token in chunk, parsing it") if @debug
+
         cmd = chunk[2..-1].strip
         next if cmd.blank?
 
@@ -146,7 +152,12 @@ class Bangtags
         end
       end
 
-      next if cmd[0].nil?
+      if cmd[0].nil?
+        Rails.logger.info("#{@account.id}: chunk has no command") if @debug
+        next
+      end
+
+      Rails.logger.info("#{@account.id}: chunk has command: #{cmd[0].downcase}") if @debug
 
       if cmd[0].downcase == 'once'
         @once = true
@@ -156,17 +167,22 @@ class Bangtags
 
       case cmd[0].downcase
       when 'bangtags'
+        Rails.logger.info("#{@account.id}: handing command: #{cmd[0].downcase}") if @debug
+
         chunk = nil
         next if cmd[1].nil?
 
         case cmd[1].downcase
         when 'off', 'disable'
+          Rails.logger.info("#{@account.id}: 'off' encountered") if @debug
           @vars['_bangtags:off'] = true
           next
         when 'skip'
+          Rails.logger.info("#{@account.id}: 'skip' encountered") if @debug
           @vars['_bangtags:skip'] = true
           next
         when 'break'
+          Rails.logger.info("#{@account.id}: 'break' encountered") if @debug
           break
         end
 
