@@ -106,7 +106,10 @@ class Bangtags
         next
       end
 
-      next unless chunk.starts_with?('#!')
+      unless chunk.starts_with?('#!')
+        @chunks << chunk
+        next
+      end
 
       orig_chunk = chunk
       chunk.sub!(/(\\:)?+:+?!#\Z/, '\1')
