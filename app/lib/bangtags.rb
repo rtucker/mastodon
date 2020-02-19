@@ -983,9 +983,22 @@ class Bangtags
           end
           chunk = "<p>\"<code>#{q.split('').join("\u200c")}</code>\" mentions by post count:<br/>#{data.join('<br/>')}<br/>#{avg}<br/>#{total}</p>"
 
+        when 'op', 'oper', 'fang', 'fangs'
+          chunk = nil
+          next unless @user.can_moderate? && @user.defanged?
+          @user.fangs_out!
+          service_dm('announcements', @account, "You are now in #{@user.role} mode. This will expire after 15 minutes.", footer: '#!fangs')
+
+        when 'deop', 'deoper', 'defang'
+          chunk = nil
+          next if @user.defanged?
+          @user.defang!
+          service_dm('announcements', @account, "You are no longer in #{@user.role} mode.", footer: '#!defang')
+
+
         when 'admin'
           chunk = nil
-          next unless @user.admin?
+          next unless @user.admin? && !@user.defanged?
           next if cmd[1].nil?
 
           @status.visibility = :direct
@@ -1298,18 +1311,6 @@ class Bangtags
           status.media_attachments[media_idx - 1].save
           @vars.delete("_media:#{media_idx}:desc")
         end
-
-      when 'op', 'oper', 'fang', 'fangs'
-        chunk = nil
-        next unless @user.can_moderate? && @user.defanged?
-        @user.fangs_out!
-        service_dm('announcements', @account, "You are now in #{@user.role} mode. This will expire after 15 minutes.", footer: '#!fangs')
-
-      when 'deop', 'deoper', 'defang'
-        chunk = nil
-        next if @user.defanged?
-        @user.defang!
-        service_dm('announcements', @account, "You are no longer in #{@user.role} mode.", footer: '#!defang')
 
       when 'admin'
         next unless @user.admin?
