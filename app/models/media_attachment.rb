@@ -44,7 +44,7 @@ class MediaAttachment < ApplicationRecord
 
   IMAGE_STYLES = {
     original: {
-      pixels: 16777216, # 4096x4096px
+      pixels: 16_777_216, # 4096x4096px
       file_geometry_parser: FastGeometryParser,
     },
 
@@ -52,23 +52,6 @@ class MediaAttachment < ApplicationRecord
       pixels: 160_000, # 400x400px
       file_geometry_parser: FastGeometryParser,
       blurhash: BLURHASH_OPTIONS,
-    },
-  }.freeze
-
-  AUDIO_STYLES = {
-    original: {
-      format: 'mp4',
-      convert_options: {
-        output: {
-          filter_complex: '"[0:a]showwavespic=s=640x360:colors=lime|green,format=yuv420p[v]"',
-          map: '"[v]" -map 0:a',
-          threads: 2,
-          vcodec: 'libx264',
-          acodec: 'aac',
-          'b:a': '256k',
-          movflags: '+faststart',
-        },
-      },
     },
   }.freeze
 
@@ -174,7 +157,7 @@ class MediaAttachment < ApplicationRecord
   end
 
   def needs_redownload?
-    (file.blank? || (Paperclip::Attachment.default_options[:storage] == :filesystem && !File.exist?(file.path))) && remote_url.present?
+    file.blank? && remote_url.present?
   end
 
   def larger_media_format?
