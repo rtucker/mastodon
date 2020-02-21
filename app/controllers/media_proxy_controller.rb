@@ -12,7 +12,7 @@ class MediaProxyController < ApplicationController
     RedisLock.acquire(lock_options) do |lock|
       if lock.acquired?
         @media_attachment = MediaAttachment.remote.find(params[:id])
-        redownload! if !@media_attachment.blocked? && @media_attachment.needs_redownload?
+        redownload! if @media_attachment.needs_redownload? && !reject_media?
       else
         raise Mastodon::RaceConditionError
       end
