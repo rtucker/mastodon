@@ -47,7 +47,6 @@ class AccountsController < ApplicationController
 
       format.rss do
         expires_in 1.minute, public: true
-<<<<<<< HEAD
 
         if current_account&.user&.allows_rss?
           @statuses = filtered_statuses.without_reblogs.without_replies.limit(PAGE_SIZE)
@@ -55,8 +54,6 @@ class AccountsController < ApplicationController
         else
           @statuses = []
         end
-=======
->>>>>>> 699f53c46... Fix RSS caching (but disable localization) (#12054)
 
         render xml: RSS::AccountSerializer.render(@account, @statuses, params[:tag])
       end
