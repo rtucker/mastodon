@@ -274,7 +274,7 @@ class ActivityPub::Activity::Create < ActivityPub::Activity
   end
 
   def process_emoji(tag)
-    return if @options[:imported] || skip_download?(tag['icon']['url'])
+    return if @options[:imported] || skip_download?
     return if tag['name'].blank? || tag['icon'].blank? || tag['icon']['url'].blank?
 
     shortcode = tag['name'].delete(':')
