@@ -7,8 +7,10 @@ class FetchMediaWorker
 
   def perform(media_attachment_id, remote_url: nil, force: false)
     object = MediaAttachment.find(media_attachment_id.to_i)
-    return if object.blocked?
+
+    return if object&.account.nil? || DomainBlock.reject_media?(object.account.domain)
     return unless force || object.needs_redownload?
+
     if remote_url.nil?
       return if object.remote_url.nil?
     else
