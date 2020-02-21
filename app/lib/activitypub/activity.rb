@@ -2,7 +2,6 @@
 
 class ActivityPub::Activity
   include JsonLdHelper
-  include AutorejectHelper
   include Redisable
 
   SUPPORTED_TYPES = %w(Note Question).freeze

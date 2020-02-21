@@ -2,7 +2,6 @@
 
 class ActivityPub::FetchRepliesService < BaseService
   include JsonLdHelper
-  include AutorejectHelper
 
   def call(parent_status, collection_or_uri, allow_synchronous_requests = true)
     @account = parent_status.account

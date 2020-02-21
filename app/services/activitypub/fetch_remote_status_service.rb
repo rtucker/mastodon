@@ -2,7 +2,6 @@
 
 class ActivityPub::FetchRemoteStatusService < BaseService
   include JsonLdHelper
-  include AutorejectHelper
 
   # Should be called when uri has already been checked for locality
   def call(uri, id: true, prefetched_body: nil, on_behalf_of: nil, announced_by: nil, requested: false)

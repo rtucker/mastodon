@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class FetchOEmbedService
-  include AutorejectHelper
-
   attr_reader :url, :options, :format, :endpoint_url
 
   def call(url, options = {})

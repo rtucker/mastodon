@@ -2,7 +2,6 @@
 
 class ActivityPub::FetchRemoteAccountService < BaseService
   include JsonLdHelper
-  include AutorejectHelper
   include DomainControlHelper
 
   SUPPORTED_TYPES = %w(Application Group Organization Person Service).freeze

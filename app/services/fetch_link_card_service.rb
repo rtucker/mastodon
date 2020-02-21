@@ -2,7 +2,6 @@
 
 class FetchLinkCardService < BaseService
   include UrlHelper
-  include AutorejectHelper
 
   URL_PATTERN = %r{
     (                                                                                                 #   $1 URL
