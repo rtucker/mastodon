@@ -94,19 +94,19 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
   end
 
   def name
-    object.display_name
+    object.hidden? ? '' : object.display_name
   end
 
   def summary
-    Formatter.instance.simplified_format(object)
+    object.hidden? ? '' : Formatter.instance.simplified_format(object)
   end
 
   def icon
-    object.avatar
+    object.hidden? ? nil : object.avatar
   end
 
   def image
-    object.header
+    object.hidden? ? nil : object.header
   end
 
   def public_key
@@ -118,11 +118,11 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
   end
 
   def avatar_exists?
-    object.avatar?
+    object.hidden? ? false : object.avatar?
   end
 
   def header_exists?
-    object.header?
+    object.hidden? ? false : object.header?
   end
 
   def manually_approves_followers
@@ -134,15 +134,15 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
   end
 
   def virtual_tags
-    object.emojis + object.tags
+    object.hidden? ? nil : (object.emojis + object.tags)
   end
 
   def virtual_attachments
-    object.fields
+    object.hidden? ? nil : object.fields
   end
 
   def moved_to
-    ActivityPub::TagManager.instance.uri_for(object.moved_to_account)
+    object.hidden? ? nil : ActivityPub::TagManager.instance.uri_for(object.moved_to_account)
   end
 
   def also_known_as?
@@ -182,7 +182,7 @@ class ActivityPub::ActorSerializer < ActivityPub::Serializer
     end
 
     def value
-      Formatter.instance.format_field(object.account, object.value)
+      object.account.hidden? ? '' : Formatter.instance.format_field(object.account, object.value)
     end
   end
 end

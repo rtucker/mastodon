@@ -10,7 +10,7 @@ module AccountControllerConcern
   included do
     layout 'public'
 
-    before_action :check_account_hidden
+    before_action :check_account_hidden, if: -> { request.format.nil? || request.format == :html }
     before_action :set_instance_presenter
     before_action :set_link_headers, if: -> { request.format.nil? || request.format == :html }
   end

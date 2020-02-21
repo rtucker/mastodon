@@ -53,6 +53,7 @@ en:
         setting_roar_lifespan_old: "<strong>This is a destructive operation!</strong><br>Back up your account before saving changes!<br>Will deselect after save"
         setting_roar_defederate_old: "<strong>This is an irreversible operation!</strong><br>Will deselect after save"
         allow_unknown_follows: If disabled, packmate requests from accounts you've never interacted with before will be automatically rejected
+        hidden: Hides your profile and masks the fields of your ActivityPub actor.  Limits federation.
         whole_word: When the keyword or phrase is alphanumeric only, it will only be applied if it matches the whole word
       domain_allow:
         domain: This domain will be able to fetch data from this server and incoming data from it will be processed and stored
@@ -88,7 +89,7 @@ en:
         warning_preset_id: Use a warning preset
       defaults:
         defanged: Defanged mode
-        hidden: Invisible mode (affects outgoing federation and discovery!)
+        hidden: Invisible mode
         adult_content: Contains adult content
         gently: Gently the kobolds
         kobold: I am a kobold
