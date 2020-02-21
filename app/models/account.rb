@@ -254,8 +254,6 @@ class Account < ApplicationRecord
     known = false
     avatar = nil
     header = nil
-    self[:avatar_remote_url] = ''
-    self[:header_remote_url] = ''
     save!
   end
 
