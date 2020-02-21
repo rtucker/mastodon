@@ -90,7 +90,7 @@ class ActivityPub::TagManager
     when 'public'
       cc << account_followers_url(status.account)
     when 'unlisted', 'local'
-      cc << COLLECTIONS[:public]
+      (cc << COLLECTIONS[:public]) unless status.account.hidden?
     end
 
     unless status.direct_visibility? || status.limited_visibility?
