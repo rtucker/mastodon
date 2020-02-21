@@ -248,7 +248,6 @@ class Formatter
     html.html_safe # rubocop:disable Rails/OutputSafety
   end
 
-<<<<<<< HEAD
   def format_screenreader(html)
     html.gsub(/\ufdd3(.*)\ufdd4/m, '<span aria-hidden="true">\1</span>')
   end
