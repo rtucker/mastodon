@@ -2,7 +2,6 @@
 
 class ActivityPub::Activity::Like < ActivityPub::Activity
   def perform
-    return if autoreject?
     original_status = status_from_uri(object_uri)
 
     return if original_status.nil? || !original_status.account.local? || delete_arrived_first?(@json['id']) || @account.favourited?(original_status)

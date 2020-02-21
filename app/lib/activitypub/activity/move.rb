@@ -4,7 +4,6 @@ class ActivityPub::Activity::Move < ActivityPub::Activity
   PROCESSING_COOLDOWN = 7.days.seconds
 
   def perform
-    return if autoreject?
     return if origin_account.uri != object_uri || processed?
 
     mark_as_processing!

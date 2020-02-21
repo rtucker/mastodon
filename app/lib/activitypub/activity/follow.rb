@@ -4,7 +4,6 @@ class ActivityPub::Activity::Follow < ActivityPub::Activity
   include Payloadable
 
   def perform
-    return if autoreject?
     target_account = account_from_uri(object_uri)
 
     return if target_account.nil? || !target_account.local? || delete_arrived_first?(@json['id']) || @account.requested?(target_account)

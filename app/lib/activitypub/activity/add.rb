@@ -2,7 +2,6 @@
 
 class ActivityPub::Activity::Add < ActivityPub::Activity
   def perform
-    return if autoreject?
     return unless @json['target'].present? && value_or_id(@json['target']) == @account.featured_collection_url
 
     status   = status_from_uri(object_uri)

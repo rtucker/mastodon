@@ -6,7 +6,6 @@ class ActivityPub::FetchRemoteStatusService < BaseService
 
   # Should be called when uri has already been checked for locality
   def call(uri, id: true, prefetched_body: nil, on_behalf_of: nil, announced_by: nil, requested: false)
-    return if autoreject?(uri)
     @json = begin
       if prefetched_body.nil?
         fetch_resource(uri, id, on_behalf_of)
@@ -15,7 +14,6 @@ class ActivityPub::FetchRemoteStatusService < BaseService
       end
     end
 
-    return if autoreject?
     return if !(supported_context? && expected_type?) || actor_id.nil? || !trustworthy_attribution?(@json['id'], actor_id)
 
     actor = ActivityPub::TagManager.instance.uri_to_resource(actor_id, Account)

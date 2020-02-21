@@ -2,7 +2,6 @@
 
 class ActivityPub::Activity::Flag < ActivityPub::Activity
   def perform
-    return if autoreject?
     return if skip_reports?
 
     target_accounts            = object_uris.map { |uri| account_from_uri(uri) }.compact.select(&:local?)

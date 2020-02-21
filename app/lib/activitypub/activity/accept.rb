@@ -11,7 +11,6 @@ class ActivityPub::Activity::Accept < ActivityPub::Activity
   private
 
   def accept_follow
-    return if autoreject?
     return accept_follow_for_relay if relay_follow?
 
     target_account = account_from_uri(target_uri)

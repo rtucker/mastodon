@@ -45,7 +45,7 @@ class ActivityPub::FetchRepliesService < BaseService
     # amplification attacks.
 
     # Also limit to 5 fetched replies to limit potential for DoS.
-    @items.map { |item| value_or_id(item) }.reject { |uri| autoreject?(uri) || invalid_origin?(uri) }.take(5)
+    @items.map { |item| value_or_id(item) }.reject { |uri| invalid_origin?(uri) }.take(5)
   end
 
   def object_uri
