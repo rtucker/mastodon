@@ -237,7 +237,6 @@ class Header extends ImmutablePureComponent {
                 {badge_bot}
                 {badge_gently}
                 {badge_kobold}
-
                 {fields.filter(pair => pair.get('name') === 'badge').map((pair, i) => (
                   <div key={50+i} className='account-role custom'><span dangerouslySetInnerHTML={{ __html: pair.get('value_emojified') }} /></div>)
                 )}
