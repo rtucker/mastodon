@@ -16,8 +16,13 @@ class Api::V1::Instances::PeersController < Api::BaseController
   private
 
   def actively_federated_domains
-    blocks = DomainBlock.suspend
-    Account.remote.where(suspended_at: nil).domains.reject { |domain| blocks.where('domain LIKE ?', "%.#{domain}").exists? }
+    scope = if Settings.auto_reject_unknown
+              Account.remote.where(suspended_at: nil, known: true)
+            else
+              Account.remote.where(suspended_at: nil)
+            end
+
+    scope.select(:domain).distinct(:domain).reorder(:domain).pluck(:domain)
   end
 
   def require_enabled_api!
