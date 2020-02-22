@@ -61,7 +61,7 @@ module StatusesHelper
         .map { |field| field.value.strip }
         .uniq
 
-      roles |= user_badges.map do |field|
+      roles |= user_badges.map do |badge_text|
         content_tag(:div, badge_text, class: 'account-role custom')
       end
 
