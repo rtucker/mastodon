@@ -1353,7 +1353,7 @@ class Bangtags
 
         when 'eval'
           @crunch_newlines = true
-          @vars['_admin:eval'].strip!
+          @vars['_admin:eval']&.strip!
           @chunks << "\n<strong>Input:</strong>"
           @chunks << '<pre><code>'
           @chunks << html_entities.encode(@vars['_admin:eval']).gsub("\n", '<br/>')
