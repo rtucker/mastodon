@@ -19,7 +19,7 @@ class FetchMediaWorker
     object.file_remote_url = object.remote_url
     object.created_at      = Time.now.utc
     object.save!
-  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid
+  rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid, HTTP::ConnectionError, Mastodon::UnexpectedResponseError
     true
   end
 end
