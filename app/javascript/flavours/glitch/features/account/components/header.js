@@ -226,7 +226,22 @@ class Header extends ImmutablePureComponent {
             <h1>
               <span dangerouslySetInnerHTML={displayNameHtml} />
               <small>@{acct}</small>
-              <div className='roles'>{badge_admin}{badge_mod}{badge_halfmod}{badge_froze}{badge_locked}{badge_limited}{badge_ac}{badge_bot}{badge_gently}{badge_kobold}</div>
+              <div className='roles'>
+                {badge_admin}
+                {badge_mod}
+                {badge_halfmod}
+                {badge_froze}
+                {badge_locked}
+                {badge_limited}
+                {badge_ac}
+                {badge_bot}
+                {badge_gently}
+                {badge_kobold}
+
+                {fields.filter(pair => pair.get('name') === 'badge').map((pair, i) => (
+                  <div key={50+i} className='account-role custom'><span dangerouslySetInnerHTML={{ __html: pair.get('value_emojified') }} /></div>)
+                )}
+              </div>
             </h1>
           </div>
 
@@ -246,7 +261,7 @@ class Header extends ImmutablePureComponent {
                       </dd>
                     </dl>
                   ))}
-                  {fields.map((pair, i) => (
+                  {fields.filter(pair => pair.get('name') !== 'badge').map((pair, i) => (
                     <dl key={i}>
                       <dt dangerouslySetInnerHTML={{ __html: pair.get('name_emojified') }} title={pair.get('name')} />
 

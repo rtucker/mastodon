@@ -56,6 +56,15 @@ module StatusesHelper
       roles << content_tag(:div, t('accounts.roles.gently'), class: 'account-role gently') if account.gently?
       roles << content_tag(:div, t('accounts.roles.kobold'), class: 'account-role kobold') if account.kobold?
 
+      user_badges = account.fields
+        .select { |field| field.name == 'badge' && !field.value&.strip.blank? }
+        .map { |field| field.value.strip }
+        .uniq
+
+      roles |= user_badges.map do |field|
+        content_tag(:div, badge_text, class: 'account-role custom')
+      end
+
       if (Setting.show_staff_badge && account.user_can_moderate?) || all
         if all && !account.user_staff?
           roles << content_tag(:div, t('admin.accounts.roles.user'), class: 'account-role')
