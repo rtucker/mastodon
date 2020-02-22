@@ -10,8 +10,10 @@ class Auth::SessionsController < Devise::SessionsController
 
   prepend_before_action :authenticate_with_two_factor, if: :two_factor_enabled?, only: [:create]
   prepend_before_action :switch_user
+  prepend_before_action :set_pack
   before_action :set_instance_presenter, only: [:new]
   before_action :set_body_classes
+
 
   def new
     Devise.omniauth_configs.each do |provider, config|
