@@ -101,7 +101,7 @@ class AccountsController < ApplicationController
   end
 
   def default_statuses
-    @account.statuses.not_local_only.where(visibility: [:public, :unlisted])
+    @account.statuses.not_local_only.where(visibility: [:public, :unlisted, :local])
   end
 
   def account_media_status_ids
