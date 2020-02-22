@@ -2,7 +2,7 @@
   "name": "mastodon",
   "license": "AGPL-3.0-or-later",
   "engines": {
-    "node": ">=8.12 <13"
+    "node": ">=8.12 <14"
   },
   "scripts": {
     "postversion": "git push --tags",
@@ -123,6 +123,7 @@
     "pg": "^6.4.0",
     "postcss-loader": "^3.0.0",
     "postcss-object-fit-images": "^1.1.2",
+    "promise.prototype.finally": "^3.1.2",
     "prop-types": "^15.5.10",
     "punycode": "^2.1.0",
     "rails-ujs": "^5.2.3",
