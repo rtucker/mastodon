@@ -39,6 +39,10 @@ class Form::AdminSettings
     auto_mark_instance_actors_known
     auto_mark_services_known
     always_mark_instance_actors_known
+    mark_known_from_follows
+    mark_known_from_mentions
+    mark_known_from_boosts
+    mark_known_from_favourites
     werewolf_status
     spam_check_enabled
     show_domain_blocks
