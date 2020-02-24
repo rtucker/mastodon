@@ -251,7 +251,7 @@ class Status < ApplicationRecord
   end
 
   def distributable?
-    !hidden? || public_visibility? || unlisted_visibility? || local_visibility?
+    !hidden? && (public_visibility? || unlisted_visibility? || local_visibility?)
   end
 
   alias sign? distributable?
