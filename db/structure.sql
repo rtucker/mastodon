@@ -960,6 +960,37 @@ ALTER SEQUENCE public.destructing_statuses_id_seq OWNED BY public.destructing_st
 
 
 --
+-- Name: domain_allows; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.domain_allows (
+    id bigint NOT NULL,
+    domain character varying DEFAULT ''::character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: domain_allows_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.domain_allows_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: domain_allows_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.domain_allows_id_seq OWNED BY public.domain_allows.id;
+
+
+--
 -- Name: domain_blocks; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2644,6 +2675,13 @@ ALTER TABLE ONLY public.destructing_statuses ALTER COLUMN id SET DEFAULT nextval
 
 
 --
+-- Name: domain_allows id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.domain_allows ALTER COLUMN id SET DEFAULT nextval('public.domain_allows_id_seq'::regclass);
+
+
+--
 -- Name: domain_blocks id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3104,6 +3142,14 @@ ALTER TABLE ONLY public.defederating_statuses
 
 ALTER TABLE ONLY public.destructing_statuses
     ADD CONSTRAINT destructing_statuses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: domain_allows domain_allows_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.domain_allows
+    ADD CONSTRAINT domain_allows_pkey PRIMARY KEY (id);
 
 
 --
@@ -3728,6 +3774,13 @@ CREATE INDEX index_destructing_statuses_on_delete_after ON public.destructing_st
 --
 
 CREATE UNIQUE INDEX index_destructing_statuses_on_status_id ON public.destructing_statuses USING btree (status_id);
+
+
+--
+-- Name: index_domain_allows_on_domain; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_domain_allows_on_domain ON public.domain_allows USING btree (domain);
 
 
 --
@@ -5359,6 +5412,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190531082452'),
 ('20190531084425'),
 ('20190701022101'),
+('20190705002136'),
 ('20190706233204'),
 ('20190714172440'),
 ('20190714172721'),
@@ -5430,6 +5484,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200217055054'),
 ('20200218032023'),
 ('20200218033651'),
-('20200218070510');
+('20200218070510'),
+('20200224150903');
 
 
