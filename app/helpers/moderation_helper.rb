@@ -45,7 +45,7 @@ module ModerationHelper
     when 'unsilence'
       acct.unsilence!
     when 'suspend'
-      SuspendAccountService.new.call(acct, include_user: true)
+      SuspendAccountService.new.call(acct, reserve_username: false, reserve_email: false)
       return true
     when 'unsuspend'
       acct.unsuspend!
