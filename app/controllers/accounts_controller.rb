@@ -97,7 +97,7 @@ class AccountsController < ApplicationController
     end
     return scope if current_user
     return Status.none unless @account&.user
-    scope.where(created_at: @account.user.max_public_history.to_i.days.ago..Time.current)
+    scope.where(hidden: false, created_at: @account.user.max_public_history.to_i.days.ago..Time.current)
   end
 
   def default_statuses
