@@ -76,12 +76,8 @@ en:
       account_warning_preset:
         text: Preset text
       admin_account_action:
-<<<<<<< HEAD
         send_email_notification: Notify the creature per e-mail
-=======
         include_statuses: Include reported toots in the e-mail
-        send_email_notification: Notify the user per e-mail
->>>>>>> 73ca0bb92... Add option to include reported statuses in warning e-mail (#11639)
         text: Custom warning
         type: Action
         types:
