@@ -86,7 +86,7 @@ module StatusThreadingConcern
     domains     = statuses.map(&:account_domain).compact.uniq
     relations   = relations_map_for_account(account, account_ids, domains)
 
-    statuses.reject! { |status| StatusFilter.new(status, account, relations).filtered? }
+    statuses.reject! { |status| ConversationKick.where(account_id: status.account_id, conversation_id: status.conversation_id).exists? || StatusFilter.new(status, account, relations).filtered? }
 
     # Order ancestors/descendants by tree path
     statuses.sort_by! { |status| ids.index(status.id) }
