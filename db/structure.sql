@@ -2259,6 +2259,7 @@ CREATE TABLE public.statuses (
     reject_replies boolean,
     tsv tsvector GENERATED ALWAYS AS (to_tsvector('public.fedi'::regconfig, public.f_strip_mentions(((spoiler_text || ' '::text) || text)))) STORED,
     hidden boolean,
+    deleted_at timestamp without time zone,
     CONSTRAINT statuses_hidden_null CHECK ((hidden IS NOT NULL))
 );
 
@@ -4232,10 +4233,10 @@ CREATE UNIQUE INDEX index_status_stats_on_status_id ON public.status_stats USING
 
 
 --
--- Name: index_statuses_20180106; Type: INDEX; Schema: public; Owner: -
+-- Name: index_statuses_20190820; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_statuses_20180106 ON public.statuses USING btree (account_id, id DESC, visibility, updated_at);
+CREATE INDEX index_statuses_20190820 ON public.statuses USING btree (account_id, id DESC, visibility, updated_at) WHERE (deleted_at IS NULL);
 
 
 --
@@ -5438,6 +5439,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190807172051'),
 ('20190807221924'),
 ('20190815232125'),
+('20190819134503'),
+('20190820003045'),
 ('20190831022432'),
 ('20191009231327'),
 ('20191010005320'),
