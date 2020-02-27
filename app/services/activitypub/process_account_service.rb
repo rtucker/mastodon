@@ -234,7 +234,7 @@ class ActivityPub::ProcessAccountService < BaseService
   def auto_mark_known?
     return false if @account.manual_only
 
-    @username == @domain ? Setting.always_mark_instance_actors_known : (!Setting.auto_reject_unknown && Setting.auto_mark_known)
+    @username.in?([@domain, 'internal.fetch']) ? Setting.always_mark_instance_actors_known : (!Setting.auto_reject_unknown && Setting.auto_mark_known)
   end
 
   def domain_block

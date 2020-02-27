@@ -494,7 +494,7 @@ class Account < ApplicationRecord
   end
 
   def service?
-    @_is_service ||= actor_type == "Application" || actor_type == "Service" || username == "relay" || username == domain
+    @_is_service ||= actor_type == "Application" || actor_type == "Service" || username == "relay" || username.in?([domain, 'internal.fetch'])
   end
 
   def can_be_marked_known?
