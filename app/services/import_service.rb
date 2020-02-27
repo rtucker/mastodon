@@ -154,14 +154,17 @@ class ImportService < BaseService
       json['hidden'] = [true, 1, "1"].include?(json['hidden'])
       json['imported'] = true
 
-      # drop a nonexistant conversation id
-      unless (json['conversation_id'] != 0 ? Conversation.where(id: json['conversation_id']).exists? : false)
+      # nullify a missing reply
+      s = Status.find_by(id: json['in_reply_to_id'])
+      if json['in_reply_to_id'] == 0 || s.nil? || s.account_id != @account.id
         json['conversation_id'] = nil
+      else
+        json['in_reply_to_id'] = nil
       end
 
-      # nullify a missing reply
-      unless (json['in_reply_to_id'] != 0 ? Status.where(id: json['in_reply_to_id']).exists? : false)
-        json['in_reply_to_id'] = nil
+      # drop a nonexistant conversation id
+      unless json['conversation_id'] == 0 || Conversation.where(id: json['conversation_id']).exists?
+        json['conversation_id'] = nil
       end
 
       ApplicationRecord.transaction do
@@ -209,6 +212,7 @@ class ImportService < BaseService
         object['attributedTo'] = account_uri
         object['to'] = activity['to']
         object['cc'] = activity['cc']
+        object['inReplyTo'] = nil
         object.delete('attachment')
       end
 
