@@ -498,7 +498,7 @@ class Account < ApplicationRecord
   end
 
   def can_be_marked_known?
-    !known && !manual_only && (!service || (service? && Setting.auto_mark_services_known)) && Setting.auto_mark_known
+    !known && !manual_only && (!service? || (service? && Setting.auto_mark_services_known)) && Setting.auto_mark_known
   end
 
   class Field < ActiveModelSerializers::Model
