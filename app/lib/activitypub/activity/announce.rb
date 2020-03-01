@@ -2,7 +2,7 @@
 
 class ActivityPub::Activity::Announce < ActivityPub::Activity
   def perform
-    return reject_payload! if !@options[:imported] && (delete_arrived_first?(@json['id']) || !related_to_local_activity?)
+    return reject_payload! if blocked? || !@options[:imported] && (delete_arrived_first?(@json['id']) || !related_to_local_activity?)
 
     original_status = status_from_object(announced_by: @account, local_only: !@account.known?)
 

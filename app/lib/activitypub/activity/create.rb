@@ -2,7 +2,7 @@
 
 class ActivityPub::Activity::Create < ActivityPub::Activity
   def perform
-    return reject_payload! if unsupported_object_type? || !@options[:imported] && (invalid_origin?(@object['id']) || Tombstone.exists?(uri: @object['id']) || !related_to_local_activity?)
+    return reject_payload! if blocked? || unsupported_object_type? || !@options[:imported] && (invalid_origin?(@object['id']) || Tombstone.exists?(uri: @object['id']) || !related_to_local_activity?)
 
     unless known?
       if @options[:announced_by].nil?

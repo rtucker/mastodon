@@ -205,6 +205,12 @@ class ActivityPub::Activity
     account.manual_only?
   end
 
+  def blocked?
+    uri = object_uri.start_with?('http') ? object_uri : @object['url']
+    domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
+    domain.blank? ? true : DomainBlock.suspend?(domain)
+  end
+
   def reject_payload!
     Rails.logger.info("Rejected #{@json['type']} activity #{@json['id']} from #{@account.uri}#{@options[:relayed_through_account] && "via #{@options[:relayed_through_account].uri}"}")
     nil
