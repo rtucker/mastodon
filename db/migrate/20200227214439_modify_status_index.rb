@@ -1,9 +1,15 @@
 class ModifyStatusIndex < ActiveRecord::Migration[5.2]
   def up
     remove_index :statuses, name: :index_statuses_20190820
-    remove_index :statuses, name: :index_statuses_on_account_id_and_id_and_visibility_not_hidden
+    if index_exists? :statuses, name: :index_statuses_on_account_id_and_id_and_visibility_not_hidden
+      remove_index :statuses, name: :index_statuses_on_account_id_and_id_and_visibility_not_hidden
+    end
+
     remove_index :statuses, name: :index_statuses_on_account_id_and_id_and_visibility
-    remove_index :statuses, name: :index_statuses_local_20190824
+
+    if index_exists? :statuses, name: :index_statuses_local_20190824
+      remove_index :statuses, name: :index_statuses_local_20190824
+    end
 
     safety_assured do
       add_index :statuses, [:account_id, :id, :visibility, :updated_at], where: '(deleted_at IS NULL) AND (NOT hidden)', order: { id: :desc }, name: :index_statuses_20200301
