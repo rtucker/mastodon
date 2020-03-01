@@ -4240,6 +4240,34 @@ CREATE INDEX index_statuses_20190820 ON public.statuses USING btree (account_id,
 
 
 --
+-- Name: index_statuses_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_20200301 ON public.statuses USING btree (account_id, id DESC, visibility, updated_at) WHERE ((deleted_at IS NULL) AND (NOT hidden));
+
+
+--
+-- Name: index_statuses_curated_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_curated_20200301 ON public.statuses USING btree (id DESC, account_id) WHERE (curated AND (NOT hidden) AND (deleted_at IS NULL));
+
+
+--
+-- Name: index_statuses_hidden_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_hidden_20200301 ON public.statuses USING btree (id, account_id) WHERE hidden;
+
+
+--
+-- Name: index_statuses_local_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_local_20200301 ON public.statuses USING btree (id DESC, account_id) WHERE (network AND (NOT hidden) AND ((local OR (uri IS NULL)) AND (deleted_at IS NULL) AND (visibility = ANY (ARRAY[0, 5])) AND (reblog_of_id IS NULL) AND ((NOT reply) OR (in_reply_to_account_id = account_id))));
+
+
+--
 -- Name: index_statuses_on_account_id_and_id_and_visibility; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4286,6 +4314,13 @@ CREATE INDEX index_statuses_on_reblog_of_id_and_account_id ON public.statuses US
 --
 
 CREATE UNIQUE INDEX index_statuses_on_uri ON public.statuses USING btree (uri);
+
+
+--
+-- Name: index_statuses_public_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_public_20200301 ON public.statuses USING btree (id DESC, account_id) WHERE ((NOT hidden) AND ((deleted_at IS NULL) AND (visibility = ANY (ARRAY[0, 1, 5])) AND (reblog_of_id IS NULL) AND ((NOT reply) OR (in_reply_to_account_id = account_id))));
 
 
 --
@@ -5488,6 +5523,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200218032023'),
 ('20200218033651'),
 ('20200218070510'),
-('20200224150903');
+('20200224150903'),
+('20200227214439'),
+('20200227214440');
 
 
