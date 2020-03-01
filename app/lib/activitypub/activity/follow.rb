@@ -13,14 +13,14 @@ class ActivityPub::Activity::Follow < ActivityPub::Activity
       return
     end
 
-    if !target_account.user.allow_unknown_follows? && !@account.ever_interacted_with?(target_account)
-      reject_follow_request!(target_account)
-      return
-    end
-
     # Fast-forward repeat follow requests
     if @account.following?(target_account)
       AuthorizeFollowService.new.call(@account, target_account, skip_follow_request: true, follow_request_uri: @json['id'])
+      return
+    end
+
+    if !target_account.user.allow_unknown_follows? && !@account.ever_interacted_with?(target_account)
+      reject_follow_request!(target_account)
       return
     end
 
