@@ -154,7 +154,6 @@ en:
         setting_boost_interval_to: Maximum boost interval
         setting_default_local: Default to Monsterpit-only roars (in Glitch flavour)
         setting_always_local: Don't send your roars outside Monsterpit
-        setting_rawr_federated: Show raw world timeline (may contain offensive content!)
         setting_hide_stats: Hide statistics on public pages
         setting_force_lowercase: make everything lowercase
         setting_hide_captions: Hide media captions

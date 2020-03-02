@@ -21,7 +21,7 @@ class FanOutOnWriteService < BaseService
       deliver_to_mentioned_followers(status)
     elsif status.local_visibility?
       deliver_to_followers(status) unless public_only || status.curated
-      return if status.reblog? && !Setting.show_reblogs_in_public_timelines
+      return if status.reblog?
       deliver_to_lists(status) unless public_only || status.curated
       deliver_to_local(status) unless filtered?(status)
     else
@@ -30,7 +30,7 @@ class FanOutOnWriteService < BaseService
         deliver_to_lists(status)
       end
 
-      return if status.reblog? && !Setting.show_reblogs_in_public_timelines
+      return if status.reblog?
       return if filtered?(status) || (status.reblog? && filtered?(status.reblog))
 
       if !status.reblog? && status.distributable?
@@ -53,7 +53,7 @@ class FanOutOnWriteService < BaseService
   private
 
   def filtered?(status)
-    status.account.silenced? || !Setting.show_replies_in_public_timelines && status.reply? && status.in_reply_to_account_id != status.account_id
+    status.account.silenced? || status.reply? && status.in_reply_to_account_id != status.account_id
   end
 
   def deliver_to_self(status)

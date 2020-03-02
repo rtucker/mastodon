@@ -32,8 +32,6 @@ class Form::AdminSettings
     thumbnail
     hero
     mascot
-    show_reblogs_in_public_timelines
-    show_replies_in_public_timelines
     auto_reject_unknown
     auto_mark_known
     auto_mark_instance_actors_known
@@ -60,8 +58,6 @@ class Form::AdminSettings
     profile_directory
     hide_followers_count
     enable_keybase
-    show_reblogs_in_public_timelines
-    show_replies_in_public_timelines
     auto_reject_unknown
     auto_mark_known
     auto_mark_instance_actors_known

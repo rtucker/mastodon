@@ -130,7 +130,6 @@ class User < ApplicationRecord
 
   delegate :default_local,
     :always_local,
-    :rawr_federated,
     :hide_stats,
     :force_lowercase,
     :hide_captions,
@@ -414,10 +413,6 @@ class User < ApplicationRecord
 
   def always_local_only?
     @always_local_only ||= (settings.always_local || false)
-  end
-
-  def wants_raw_federated?
-    @wants_raw_federated ||= (settings.rawr_federated || false)
   end
 
   def hides_stats?

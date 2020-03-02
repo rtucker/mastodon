@@ -17,7 +17,6 @@ class UserSettingsDecorator
   def process_update
     user.settings['default_local']       = default_local_preference if change?('setting_default_local')
     user.settings['always_local']        = always_local_preference if change?('setting_always_local')
-    user.settings['rawr_federated']      = rawr_federated_preference if change?('setting_rawr_federated')
     user.settings['hide_stats']          = hide_stats_preference if change?('setting_hide_stats')
     user.settings['larger_menus']        = larger_menus_preference if change?('setting_larger_menus')
     user.settings['larger_buttons']      = larger_buttons_preference if change?('setting_larger_buttons')
@@ -231,10 +230,6 @@ class UserSettingsDecorator
 
   def always_local_preference
     boolean_cast_setting 'setting_always_local'
-  end
-
-  def rawr_federated_preference
-    boolean_cast_setting 'setting_rawr_federated'
   end
 
   def hide_stats_preference

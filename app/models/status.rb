@@ -500,25 +500,17 @@ class Status < ApplicationRecord
     end
 
     def as_public_timeline(account = nil, local_only = false)
-      if local_only || account.nil? || account&.user&.setting_rawr_federated
-        query = timeline_scope(local_only)
-      else
-        query = Status.curated
-      end
-
-      query = query.without_replies unless Setting.show_replies_in_public_timelines
-
-      if account.present? && account.local?
+      query = (local_only || account.nil?) ? timeline_scope(local_only) : curated
+      if account&.local?
         query = query.without_reblogs if account&.user&.hide_boosts
-        query = query.only_followers_of(account) if account&.user&.only_known
+        query = query.only_followers_of(account) if account&.user&.only_known?
       end
-
       apply_timeline_filters(query, account, local_only)
     end
 
     def as_tag_timeline(tag, account = nil, local_only = false, priv = false)
       query = tag_timeline_scope(account, local_only, priv).tagged_with(tag)
-      query = query.only_followers_of(account) if account.present? && account.local? && account&.user&.only_known?
+      query = query.only_followers_of(account) if account&.local? && account&.user&.only_known?
       apply_timeline_filters(query, account, local_only, true)
     end
 
@@ -592,23 +584,13 @@ class Status < ApplicationRecord
     private
 
     def timeline_scope(local_only = false)
-      starting_scope = local_only ? Status.network : Status
-      starting_scope = local_only ? starting_scope.public_local_visibility : starting_scope.with_public_visibility
-      if Setting.show_reblogs_in_public_timelines
-        starting_scope
-      else
-        starting_scope.without_reblogs
-      end
+      starting_scope = local_only ? Status.network.public_local_visibility : Status.with_public_visibility
+      starting_scope.without_reblogs
     end
 
     def browsable_timeline_scope(local_only = false)
       starting_scope = local_only ? Status.network : Status
-      starting_scope = starting_scope.public_browsable
-      if Setting.show_reblogs_in_public_timelines
-        starting_scope
-      else
-        starting_scope.without_reblogs
-      end
+      starting_scope.public_browsable.without_reblogs
     end
 
     def tag_timeline_scope(account = nil, local_only = false, priv = false)
@@ -616,15 +598,10 @@ class Status < ApplicationRecord
         return Status.none if account.nil?
         starting_scope = account.statuses
       else
-        starting_scope = local_only ? Status.network : Status
-        starting_scope = starting_scope.public_browsable
+        starting_scope = (local_only ? Status.network : Status).public_browsable
       end
 
-      if Setting.show_reblogs_in_public_timelines
-        starting_scope
-      else
-        starting_scope.without_reblogs
-      end
+      starting_scope.without_reblogs
     end
 
     def apply_timeline_filters(query, account = nil, local_only = false, tag_timeline = false)
