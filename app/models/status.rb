@@ -639,8 +639,6 @@ class Status < ApplicationRecord
       query = query.not_excluded_by_account(account)
       query = query.not_domain_blocked_by_account(account) unless local_only
       query = query.in_chosen_languages(account) if account.chosen_languages.present?
-      query = query.reply_not_excluded_by_account(account) unless tag_timeline
-      query = query.mention_not_excluded_by_account(account)
       unless !account.user.filters_enabled || account.custom_filters.enabled.blank?
         if account.user.invert_filters
           query = query.search_filtered_by_account(account.id)
