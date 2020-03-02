@@ -3750,6 +3750,13 @@ CREATE INDEX index_custom_filters_on_account_id ON public.custom_filters USING b
 
 
 --
+-- Name: index_custom_filters_on_account_id_and_phrase; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_custom_filters_on_account_id_and_phrase ON public.custom_filters USING btree (account_id, phrase);
+
+
+--
 -- Name: index_defederating_statuses_on_defederate_after; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3789,6 +3796,13 @@ CREATE UNIQUE INDEX index_domain_allows_on_domain ON public.domain_allows USING 
 --
 
 CREATE UNIQUE INDEX index_domain_blocks_on_domain ON public.domain_blocks USING btree (domain);
+
+
+--
+-- Name: index_domain_blocks_on_severity; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_domain_blocks_on_severity ON public.domain_blocks USING btree (severity);
 
 
 --
@@ -4243,14 +4257,14 @@ CREATE INDEX index_statuses_20190820 ON public.statuses USING btree (account_id,
 -- Name: index_statuses_20200301; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_statuses_20200301 ON public.statuses USING btree (account_id, id DESC, visibility, updated_at) WHERE ((deleted_at IS NULL) AND (NOT hidden));
+CREATE INDEX index_statuses_20200301 ON public.statuses USING btree (id DESC, account_id, visibility, created_at, updated_at) WHERE (deleted_at IS NULL);
 
 
 --
 -- Name: index_statuses_curated_20200301; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_statuses_curated_20200301 ON public.statuses USING btree (id DESC, account_id) WHERE (curated AND (NOT hidden) AND (deleted_at IS NULL));
+CREATE INDEX index_statuses_curated_20200301 ON public.statuses USING btree (id DESC, account_id, visibility) WHERE (curated OR (curated = true) OR (curated IS TRUE));
 
 
 --
@@ -4264,7 +4278,14 @@ CREATE INDEX index_statuses_hidden_20200301 ON public.statuses USING btree (id, 
 -- Name: index_statuses_local_20200301; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_statuses_local_20200301 ON public.statuses USING btree (id DESC, account_id) WHERE (network AND (NOT hidden) AND ((local OR (uri IS NULL)) AND (deleted_at IS NULL) AND (visibility = ANY (ARRAY[0, 5])) AND (reblog_of_id IS NULL) AND ((NOT reply) OR (in_reply_to_account_id = account_id))));
+CREATE INDEX index_statuses_local_20200301 ON public.statuses USING btree (id DESC, account_id, visibility) WHERE ((local OR (local = true) OR (uri IS NULL)) AND (deleted_at IS NULL));
+
+
+--
+-- Name: index_statuses_network_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_network_20200301 ON public.statuses USING btree (id DESC, account_id, visibility) WHERE (network OR (network = true) OR (network IS TRUE));
 
 
 --
@@ -4320,7 +4341,14 @@ CREATE UNIQUE INDEX index_statuses_on_uri ON public.statuses USING btree (uri);
 -- Name: index_statuses_public_20200301; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_statuses_public_20200301 ON public.statuses USING btree (id DESC, account_id) WHERE ((NOT hidden) AND ((deleted_at IS NULL) AND (visibility = ANY (ARRAY[0, 1, 5])) AND (reblog_of_id IS NULL) AND ((NOT reply) OR (in_reply_to_account_id = account_id))));
+CREATE INDEX index_statuses_public_20200301 ON public.statuses USING btree (id DESC, account_id, visibility) WHERE ((visibility = ANY (ARRAY[0, 5])) OR (visibility = 0) OR (visibility = 5));
+
+
+--
+-- Name: index_statuses_public_unlisted_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_public_unlisted_20200301 ON public.statuses USING btree (id DESC, account_id, visibility) WHERE ((visibility = ANY (ARRAY[0, 1, 5])) OR (visibility = 0) OR (visibility = 1) OR (visibility = 5));
 
 
 --
@@ -4335,6 +4363,20 @@ CREATE INDEX index_statuses_tags_on_status_id ON public.statuses_tags USING btre
 --
 
 CREATE UNIQUE INDEX index_statuses_tags_on_tag_id_and_status_id ON public.statuses_tags USING btree (tag_id, status_id);
+
+
+--
+-- Name: index_statuses_without_reblogs_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_without_reblogs_20200301 ON public.statuses USING btree (id, account_id, visibility) WHERE (reblog_of_id IS NULL);
+
+
+--
+-- Name: index_statuses_without_replies_20200301; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_without_replies_20200301 ON public.statuses USING btree (id, account_id, visibility) WHERE ((NOT reply) OR (reply = false) OR (reply IS FALSE) OR (in_reply_to_account_id = account_id));
 
 
 --
@@ -5525,6 +5567,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200218070510'),
 ('20200224150903'),
 ('20200227214439'),
-('20200227214440');
+('20200227214440'),
+('20200227214441'),
+('20200302214442');
 
 
