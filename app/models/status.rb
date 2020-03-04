@@ -501,6 +501,7 @@ class Status < ApplicationRecord
 
     def as_public_timeline(account = nil, local_only = false)
       query = (local_only || account.nil?) ? timeline_scope(local_only) : curated
+      query = query.without_replies
       if account&.local?
         query = query.without_reblogs if account&.user&.hide_boosts
         query = query.only_followers_of(account) if account&.user&.only_known?
