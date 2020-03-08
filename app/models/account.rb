@@ -200,7 +200,7 @@ class Account < ApplicationRecord
   end
 
   def froze?
-    local? ? (self&.user.nil? ? true : user.disabled?) : froze || !known
+    (local? ? (self&.user.nil? ? true : user.disabled?) : froze) || !known
   end
 
   def bot?
