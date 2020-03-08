@@ -550,6 +550,7 @@ en:
         desc_html: Always allow server actor accounts to fetch resources from this server.  <strong>Will make restricted mode less effective.</strong>
         title: Always trust server actors
       mark_known_from:
+        posts: Trust new peers when receiving posts from unrestricted servers
         follows: Trust new peers when someone joins their pack
         mentions: Trust new peers when they're mentioned locally
         boosts: Trust new peers whose roars are shared by known creatures
