@@ -207,6 +207,7 @@ class ActivityPub::Activity
 
   def blocked?
     uri = object_uri.start_with?('http') ? object_uri : @object['url']
+    return true if object_uri.nil?
     domain = uri.scan(/[\w\-]+\.[\w\-]+(?:\.[\w\-]+)*/).first
     domain.blank? ? true : DomainBlock.suspend?(domain)
   end
