@@ -264,8 +264,9 @@ class Account < ApplicationRecord
     update!(known: true, last_webfingered_at: nil)
     refresh!
 
-    unless local? || !Setting.auto_mark_instance_actors_known || domain == username
+    unless local? || !Setting.auto_mark_instance_actors_known || username.in?([domain, 'internal.fetch'])
       _instance_actor = Account.find_remote(domain, domain)
+      _instance_actor = Account.find_remote('internal.fetch', domain) if _instance_actor.nil?
       return if _instance_actor.nil? || _instance_actor.known?
 
       _instance_actor.mark_known!
