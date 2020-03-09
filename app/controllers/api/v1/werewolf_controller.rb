@@ -3,6 +3,7 @@
 class Api::V1::WerewolfController < Api::BaseController
   respond_to :json
   skip_before_action :set_cache_headers
+  skip_before_action :require_authenticated_user!
 
   def index
     render json: werewolf_info
