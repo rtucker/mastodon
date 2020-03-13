@@ -550,6 +550,9 @@ en:
       trends:
         desc_html: Publicly display previously reviewed hashtags that are currently trending
         title: Trending hashtags
+    site_uploads:
+      delete: Delete uploaded file
+      destroyed_msg: Site upload successfully deleted!
     statuses:
       back_to_account: Back to account page
       batch:
@@ -737,8 +740,8 @@ en:
     '410': The page you were looking for doesn't exist here anymore.
     '422':
       content: Security verification failed. Are you blocking cookies? They are delicious and important. (422)
-      title: 422 Security verification failed
-    '429': Throttled (chill the f out, yo) (429)
+      title: Security verification failed
+    '429': Too many requests (chill the f out, yo) (429)
     '500':
       content: We're sorry, but something went wrong on our end. Please try again in a few moments. (500)
       title: 500 Internal Fox Error
