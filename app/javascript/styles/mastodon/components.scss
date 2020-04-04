@@ -1028,12 +1028,10 @@
     }
 
     .display-name {
+      color: $light-text-color;
+
       strong {
         color: $inverted-text-color;
-      }
-
-      span {
-        color: $light-text-color;
       }
     }
 
@@ -1333,7 +1331,6 @@
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-    cursor: default;
 
     & > div {
       float: left;
@@ -3803,7 +3800,8 @@ a.status-card.compact:hover {
 }
 
 .empty-column-indicator,
-.error-column {
+.error-column,
+.follow_requests-unlocked_explanation {
   color: $dark-text-color;
   background: $ui-base-color;
   text-align: center;
@@ -3832,6 +3830,11 @@ a.status-card.compact:hover {
       text-decoration: underline;
     }
   }
+}
+
+.follow_requests-unlocked_explanation {
+  background: darken($ui-base-color, 4%);
+  contain: initial;
 }
 
 .error-column {
@@ -6570,6 +6573,7 @@ noscript {
     padding: 10px;
     padding-top: 12px;
     position: relative;
+    cursor: pointer;
   }
 
   &__unread {
