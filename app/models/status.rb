@@ -45,7 +45,7 @@ class Status < ApplicationRecord
 
   # match both with and without U+FE0F (the emoji variation selector)
   LOCAL_ONLY_TOKENS = /(?:#!|\u{1f441}\ufe0f?)\u200b?\z/
-  REJECT_REPLIES_TOKENS = /^(?:please )?(?:ms_dont_at_me|no (?:replie|mention)s|(?:dont|do not) (?:@|at|reply|mention|interact)(?: (?:me|us))?)\b/i
+  REJECT_REPLIES_TOKENS = /^(?:please )?(?:ms_dont_at_me|dont_at_me|no (?:replie|mention)s|(?:dont|do not) (?:@|at|reply|mention|interact)(?: (?:me|us))?)\b/i
   SIMPLIFIED = /[^\w\s@_\"\'\-]+/
   self.discard_column = :deleted_at
 
