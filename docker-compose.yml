@@ -5,6 +5,7 @@ services:
   db:
     restart: always
     image: postgres:9.6-alpine
+    shm_size: 256mb
     networks:
       - db_network
     healthcheck:
