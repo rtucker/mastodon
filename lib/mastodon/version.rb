@@ -21,7 +21,7 @@ module Mastodon
     end
 
     def suffix
-      '+glitch+vulpine'
+      '+glitchfox'
     end
 
     def to_a
