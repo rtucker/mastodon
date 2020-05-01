@@ -334,9 +334,9 @@ en:
       hidden_service: Federation with hidden services
       keybase: Keybase integration
       open_reports: open reports
-      pending_tags: hashtags waiting for review
-      pending_users: users waiting for review
-      recent_users: Recent users
+      pending_tags: garbage fires waiting for review
+      pending_users: critters waiting for review
+      recent_users: Recent critters
       search: Full-text search
       single_user_mode: Single user mode
       software: Software
@@ -346,7 +346,7 @@ en:
       trends: Garbage fires
       week_interactions: interactions this week
       week_users_active: active this week
-      week_users_new: users this week
+      week_users_new: critters this week
       whitelist_mode: Whitelist mode
     domain_allows:
       add_new: Whitelist domain
