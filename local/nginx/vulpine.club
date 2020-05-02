@@ -61,6 +61,7 @@ server {
   server_name vulpine.club 0.vulpine.club 1.vulpine.club 2.vulpine.club 3.vulpine.club nginx;
 
   include /etc/nginx/ssl-include.conf;
+  include /etc/nginx/cloudflare-real-ip.conf;
 
   ssl_certificate     /etc/letsencrypt/live/vulpine.club/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/vulpine.club/privkey.pem;
@@ -335,10 +336,11 @@ server {
     proxy_cache_valid 200 302 10m;
     proxy_cache_valid 301      1h;
 
+    rewrite /failover/(.+) /failover/vulpineclub/$1 break;
     rewrite /(.+) /vulpineclub/$1 break;
 
     proxy_pass https://pool.jortage.com;
-  
+
     add_header X-Cache-Status $upstream_cache_status;
   }
 
