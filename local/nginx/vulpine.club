@@ -336,10 +336,11 @@ server {
     proxy_cache_valid 200 302 10m;
     proxy_cache_valid 301      1h;
 
+    rewrite /failover/(.+) /failover/vulpineclub/$1 break;
     rewrite /(.+) /vulpineclub/$1 break;
 
     proxy_pass https://pool.jortage.com;
-  
+
     add_header X-Cache-Status $upstream_cache_status;
   }
 
