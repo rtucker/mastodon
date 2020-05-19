@@ -29,7 +29,7 @@ module Mastodon
     end
 
     def to_s
-      [to_a.join('.'), flags, suffix, source_tag].join
+      [to_a.join('.'), flags, suffix, '-', source_tag].join
     end
 
     def repository
