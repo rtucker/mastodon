@@ -18,7 +18,7 @@ pushd $builddir
 time docker build --pull \
     --tag vulpineclub/mastodon:production \
     --tag vulpineclub/mastodon:${tag} \
-    --build-arg SOURCE_TAG="-${tag}" \
+    --build-arg SOURCE_TAG="${tag}" \
     .
 
 if [ -n "$(which trickle)" ]; then
