@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-MAX_KBYTES_PER_SEC=625
+if [ -z "${MAX_KBYTES_PER_SEC}" ]; then
+    MAX_KBYTES_PER_SEC=625
+fi
 
 set -e
 
@@ -21,12 +23,14 @@ time docker build --pull \
     --build-arg SOURCE_TAG="${tag}" \
     .
 
-if [ -n "$(which trickle)" ]; then
+TRICKLE=""
+if [ -n "${SKIP_TRICKLE}" ]; then
+    echo "*** Skipping rate limiting by request"
+elif [ -n "$(which trickle)" ]; then
     echo "--- Will rate limit to ${MAX_KBYTES_PER_SEC} KB/s"
     TRICKLE="trickle -u ${MAX_KBYTES_PER_SEC}"
 else
     echo "*** No 'trickle' command. Sorry about your upstream. <3"
-    TRICKLE=""
 fi
 
 ${TRICKLE} docker push vulpineclub/mastodon:production
