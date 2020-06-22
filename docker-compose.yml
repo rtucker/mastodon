@@ -25,20 +25,22 @@ services:
 
   es:
     restart: always
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.9
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.10
     environment:
-      - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      - "cluster.name=es-mastodon"
+      - "discovery.type=single-node"
+      - "bootstrap.memory_lock=true"
     networks:
       - es_network
     healthcheck:
       test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
     volumes:
       - /srv/mastodon/vulpine.club/elasticsearch:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
 
   web:
     image: vulpineclub/mastodon:production
