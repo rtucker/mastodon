@@ -6,9 +6,9 @@ import { FormattedMessage } from 'react-intl';
 import punycode from 'punycode';
 import classnames from 'classnames';
 import Icon from 'mastodon/components/icon';
-import classNames from 'classnames';
 import { useBlurhash } from 'mastodon/initial_state';
 import { decode } from 'blurhash';
+import { debounce } from 'lodash';
 
 const IDNA_PREFIX = 'xn--';
 
@@ -92,13 +92,20 @@ export default class Card extends React.PureComponent {
   }
 
   componentDidMount () {
+    window.addEventListener('resize', this.handleResize, { passive: true });
+
     if (this.props.card && this.props.card.get('blurhash')) {
       this._decode();
     }
   }
 
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
   componentDidUpdate (prevProps) {
     const { card } = this.props;
+
     if (card.get('blurhash') && (!prevProps.card || prevProps.card.get('blurhash') !== card.get('blurhash'))) {
       this._decode();
     }
@@ -117,6 +124,24 @@ export default class Card extends React.PureComponent {
       ctx.putImageData(imageData, 0, 0);
     }
   }
+
+  _setDimensions () {
+    const width = this.node.offsetWidth;
+
+    if (this.props.cacheWidth) {
+      this.props.cacheWidth(width);
+    }
+
+    this.setState({ width });
+  }
+
+  handleResize = debounce(() => {
+    if (this.node) {
+      this._setDimensions();
+    }
+  }, 250, {
+    trailing: true,
+  });
 
   handlePhotoClick = () => {
     const { card, onOpenMedia } = this.props;
@@ -150,9 +175,10 @@ export default class Card extends React.PureComponent {
   }
 
   setRef = c => {
-    if (c) {
-      if (this.props.cacheWidth) this.props.cacheWidth(c.offsetWidth);
-      this.setState({ width: c.offsetWidth });
+    this.node = c;
+
+    if (this.node) {
+      this._setDimensions();
     }
   }
 
@@ -164,7 +190,9 @@ export default class Card extends React.PureComponent {
     this.setState({ previewLoaded: true });
   }
 
-  handleReveal = () => {
+  handleReveal = e => {
+    e.preventDefault();
+    e.stopPropagation();
     this.setState({ revealed: true });
   }
 
@@ -202,7 +230,7 @@ export default class Card extends React.PureComponent {
     const height      = (compact && !embedded) ? (width / (16 / 9)) : (width / ratio);
 
     const description = (
-      <div className={classNames('status-card__content', { 'status-card__content--blurred': !revealed })}>
+      <div className='status-card__content'>
         {title}
         {!(horizontal || compact) && <p className='status-card__description'>{trim(card.get('description') || '', maxDescription)}</p>}
         <span className='status-card__host'>{provider}</span>
@@ -210,7 +238,7 @@ export default class Card extends React.PureComponent {
     );
 
     let embed     = '';
-    let canvas = <canvas width={32} height={32} ref={this.setCanvasRef} className={classNames('status-card__image-preview', { 'status-card__image-preview--hidden' : revealed && this.state.previewLoaded })} />;
+    let canvas = <canvas width={32} height={32} ref={this.setCanvasRef} className={classnames('status-card__image-preview', { 'status-card__image-preview--hidden' : revealed && this.state.previewLoaded })} />;
     let thumbnail = <img src={card.get('image')} alt='' style={{ width: horizontal ? width : null, height: horizontal ? height : null, visibility: revealed ? null : 'hidden' }} onLoad={this.handleImageLoad} className='status-card__image-image' />;
     let spoilerButton = (
       <button type='button' onClick={this.handleReveal} className='spoiler-button__overlay'>
@@ -218,7 +246,7 @@ export default class Card extends React.PureComponent {
       </button>
     );
     spoilerButton = (
-      <div className={classNames('spoiler-button', { 'spoiler-button--minified': revealed })}>
+      <div className={classnames('spoiler-button', { 'spoiler-button--minified': revealed })}>
         {spoilerButton}
       </div>
     );
@@ -252,7 +280,7 @@ export default class Card extends React.PureComponent {
       }
 
       return (
-        <div className={className} ref={this.setRef}>
+        <div className={className} ref={this.setRef} onClick={revealed ? null : this.handleReveal} role={revealed ? 'button' : null}>
           {embed}
           {!compact && description}
         </div>
@@ -262,14 +290,12 @@ export default class Card extends React.PureComponent {
         <div className='status-card__image'>
           {canvas}
           {thumbnail}
-          {!revealed && spoilerButton}
         </div>
       );
     } else {
       embed = (
         <div className='status-card__image'>
           <Icon id='file-text' />
-          {!revealed && spoilerButton}
         </div>
       );
     }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_08_113046) do
+ActiveRecord::Schema.define(version: 2020_06_28_133322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,7 +33,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.integer "lock_version", default: 0, null: false
     t.boolean "unread", default: false, null: false
     t.index ["account_id", "conversation_id", "participant_account_ids"], name: "index_unique_conversations", unique: true
-    t.index ["account_id"], name: "index_account_conversations_on_account_id"
     t.index ["conversation_id"], name: "index_account_conversations_on_conversation_id"
   end
 
@@ -55,7 +54,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "provider", "provider_username"], name: "index_account_proofs_on_account_and_provider_and_username", unique: true
-    t.index ["account_id"], name: "index_account_identity_proofs_on_account_id"
   end
 
   create_table "account_migrations", force: :cascade do |t|
@@ -85,7 +83,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "target_account_id"], name: "index_account_pins_on_account_id_and_target_account_id", unique: true
-    t.index ["account_id"], name: "index_account_pins_on_account_id"
     t.index ["target_account_id"], name: "index_account_pins_on_target_account_id"
   end
 
@@ -176,7 +173,7 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.integer "header_storage_schema_version"
     t.string "devices_url"
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
-    t.index "lower((username)::text), lower((domain)::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
+    t.index "lower((username)::text), COALESCE(lower((domain)::text), ''::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
     t.index ["moved_to_account_id"], name: "index_accounts_on_moved_to_account_id"
     t.index ["uri"], name: "index_accounts_on_uri"
     t.index ["url"], name: "index_accounts_on_url"
@@ -207,7 +204,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "announcement_id"], name: "index_announcement_mutes_on_account_id_and_announcement_id", unique: true
-    t.index ["account_id"], name: "index_announcement_mutes_on_account_id"
     t.index ["announcement_id"], name: "index_announcement_mutes_on_announcement_id"
   end
 
@@ -219,7 +215,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "announcement_id", "name"], name: "index_announcement_reactions_on_account_id_and_announcement_id", unique: true
-    t.index ["account_id"], name: "index_announcement_reactions_on_account_id"
     t.index ["announcement_id"], name: "index_announcement_reactions_on_announcement_id"
     t.index ["custom_emoji_id"], name: "index_announcement_reactions_on_custom_emoji_id"
   end
@@ -264,7 +259,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id", "status_id"], name: "index_bookmarks_on_account_id_and_status_id", unique: true
-    t.index ["account_id"], name: "index_bookmarks_on_account_id"
     t.index ["status_id"], name: "index_bookmarks_on_status_id"
   end
 
@@ -476,7 +470,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "timeline"], name: "index_markers_on_user_id_and_timeline", unique: true
-    t.index ["user_id"], name: "index_markers_on_user_id"
   end
 
   create_table "media_attachments", force: :cascade do |t|
@@ -497,6 +490,11 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.string "blurhash"
     t.integer "processing"
     t.integer "file_storage_schema_version"
+    t.string "thumbnail_file_name"
+    t.string "thumbnail_content_type"
+    t.integer "thumbnail_file_size"
+    t.datetime "thumbnail_updated_at"
+    t.string "thumbnail_remote_url"
     t.index ["account_id"], name: "index_media_attachments_on_account_id"
     t.index ["scheduled_status_id"], name: "index_media_attachments_on_scheduled_status_id"
     t.index ["shortcode"], name: "index_media_attachments_on_shortcode", unique: true
@@ -838,6 +836,16 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
     t.index ["user_id"], name: "index_user_invite_requests_on_user_id"
   end
 
+  create_table "account_notes", force: :cascade do |t|
+    t.bigint "account_id"
+    t.bigint "target_account_id"
+    t.text "comment", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "target_account_id"], name: "index_account_notes_on_account_id_and_target_account_id", unique: true
+    t.index ["target_account_id"], name: "index_account_notes_on_target_account_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.datetime "created_at", null: false
@@ -994,6 +1002,8 @@ ActiveRecord::Schema.define(version: 2020_06_08_113046) do
   add_foreign_key "statuses_tags", "tags", name: "fk_3081861e21", on_delete: :cascade
   add_foreign_key "tombstones", "accounts", on_delete: :cascade
   add_foreign_key "user_invite_requests", "users", on_delete: :cascade
+  add_foreign_key "account_notes", "accounts", column: "target_account_id", on_delete: :cascade
+  add_foreign_key "account_notes", "accounts", on_delete: :cascade
   add_foreign_key "users", "accounts", name: "fk_50500f500d", on_delete: :cascade
   add_foreign_key "users", "invites", on_delete: :nullify
   add_foreign_key "users", "oauth_applications", column: "created_by_application_id", on_delete: :nullify
