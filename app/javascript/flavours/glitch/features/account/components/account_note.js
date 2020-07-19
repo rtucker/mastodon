@@ -7,7 +7,7 @@ import Icon from 'flavours/glitch/components/icon';
 import Textarea from 'react-textarea-autosize';
 
 const messages = defineMessages({
-  placeholder: { id: 'account_note.placeholder', defaultMessage: 'No comment provided' },
+  placeholder: { id: 'account_note.glitch_placeholder', defaultMessage: 'No comment provided' },
 });
 
 export default @injectIntl
@@ -54,12 +54,20 @@ class Header extends ImmutablePureComponent {
     if (isEditing) {
       action_buttons = (
         <div className='account__header__account-note__buttons'>
-          <button className='text-btn' tabIndex='0' onClick={this.props.onCancelAccountNote} disabled={isSubmitting}>
+          <button className='icon-button' tabIndex='0' onClick={this.props.onCancelAccountNote} disabled={isSubmitting}>
             <Icon id='times' size={15} /> <FormattedMessage id='account_note.cancel' defaultMessage='Cancel' />
           </button>
           <div className='flex-spacer' />
-          <button className='text-btn' tabIndex='0' onClick={this.props.onSaveAccountNote} disabled={isSubmitting}>
+          <button className='icon-button' tabIndex='0' onClick={this.props.onSaveAccountNote} disabled={isSubmitting}>
             <Icon id='check' size={15} /> <FormattedMessage id='account_note.save' defaultMessage='Save' />
+          </button>
+        </div>
+      );
+    } else {
+      action_buttons = (
+        <div className='account__header__account-note__buttons'>
+          <button className='icon-button' tabIndex='0' onClick={this.props.onEditAccountNote} disabled={isSubmitting}>
+            <Icon id='pencil' size={15} /> <FormattedMessage id='account_note.edit' defaultMessage='Edit' />
           </button>
         </div>
       );
@@ -85,17 +93,10 @@ class Header extends ImmutablePureComponent {
     return (
       <div className='account__header__account-note'>
         <div className='account__header__account-note__header'>
-          <strong><FormattedMessage id='account.account_note_header' defaultMessage='Your note for @{name}' values={{ name: account.get('username') }} /></strong>
-          {!isEditing && (
-            <div>
-              <button className='text-btn' tabIndex='0' onClick={this.props.onEditAccountNote} disabled={isSubmitting}>
-                <Icon id='pencil' size={15} /> <FormattedMessage id='account_note.edit' defaultMessage='Edit' />
-              </button>
-            </div>
-          )}
+          <strong><FormattedMessage id='account.account_note_header' defaultMessage='Note' /></strong>
+          {action_buttons}
         </div>
         {note_container}
-        {action_buttons}
       </div>
     );
   }

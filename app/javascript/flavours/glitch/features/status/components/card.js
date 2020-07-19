@@ -8,7 +8,8 @@ import classnames from 'classnames';
 import { decode as decodeIDNA } from 'flavours/glitch/util/idna';
 import Icon from 'flavours/glitch/components/icon';
 import { useBlurhash } from 'flavours/glitch/util/initial_state';
-import { decode } from 'blurhash';
+import Blurhash from 'flavours/glitch/components/blurhash';
+import { debounce } from 'lodash';
 
 const getHostname = url => {
   const parser = document.createElement('a');
@@ -83,31 +84,30 @@ export default class Card extends React.PureComponent {
   }
 
   componentDidMount () {
-    if (this.props.card && this.props.card.get('blurhash')) {
-      this._decode();
-    }
+    window.addEventListener('resize', this.handleResize, { passive: true });
   }
 
-  componentDidUpdate (prevProps) {
-    const { card } = this.props;
-    if (card.get('blurhash') && (!prevProps.card || prevProps.card.get('blurhash') !== card.get('blurhash'))) {
-      this._decode();
-    }
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.handleResize);
   }
 
-  _decode () {
-    if (!useBlurhash) return;
+  _setDimensions () {
+    const width = this.node.offsetWidth;
 
-    const hash   = this.props.card.get('blurhash');
-    const pixels = decode(hash, 32, 32);
-
-    if (pixels) {
-      const ctx       = this.canvas.getContext('2d');
-      const imageData = new ImageData(pixels, 32, 32);
-
-      ctx.putImageData(imageData, 0, 0);
+    if (this.props.cacheWidth) {
+      this.props.cacheWidth(width);
     }
+
+    this.setState({ width });
   }
+
+  handleResize = debounce(() => {
+    if (this.node) {
+      this._setDimensions();
+    }
+  }, 250, {
+    trailing: true,
+  });
 
   handlePhotoClick = () => {
     const { card, onOpenMedia } = this.props;
@@ -141,14 +141,11 @@ export default class Card extends React.PureComponent {
   }
 
   setRef = c => {
-    if (c) {
-      if (this.props.cacheWidth) this.props.cacheWidth(c.offsetWidth);
-      this.setState({ width: c.offsetWidth });
-    }
-  }
+    this.node = c;
 
-  setCanvasRef = c => {
-    this.canvas = c;
+    if (this.node) {
+      this._setDimensions();
+    }
   }
 
   handleImageLoad = () => {
@@ -203,7 +200,15 @@ export default class Card extends React.PureComponent {
     );
 
     let embed     = '';
-    let canvas = <canvas width={32} height={32} ref={this.setCanvasRef} className={classnames('status-card__image-preview', { 'status-card__image-preview--hidden' : revealed && this.state.previewLoaded })} />;
+    let canvas = (
+      <Blurhash
+        className={classnames('status-card__image-preview', {
+          'status-card__image-preview--hidden': revealed && this.state.previewLoaded,
+        })}
+        hash={card.get('blurhash')}
+        dummy={!useBlurhash}
+      />
+    );
     let thumbnail = <img src={card.get('image')} alt='' style={{ width: horizontal ? width : null, height: horizontal ? height : null, visibility: revealed ? null : 'hidden' }} onLoad={this.handleImageLoad} className='status-card__image-image' />;
     let spoilerButton = (
       <button type='button' onClick={this.handleReveal} className='spoiler-button__overlay'>
