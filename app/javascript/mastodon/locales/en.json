@@ -16,7 +16,7 @@
   "account.followers": "Followers",
   "account.followers.empty": "No one follows this creature yet.",
   "account.followers_counter": "{count, plural, one {{counter} Follower} other {{counter} Followers}}",
-  "account.following_counter": "{count, plural, other {{counter} Following}}",
+  "account.following_counter": "{count, plural, one {{counter} Following} other {{counter} Following}}",
   "account.follows.empty": "This creature doesn't follow anyone yet.",
   "account.follows_you": "Follows you",
   "account.hide_reblogs": "Hide awoos from @{name}",
