@@ -133,12 +133,15 @@ ENV GITHUB_REPOSITORY=vulpineclub/mastodon
 # add to the RUN to use this: CDN_HOST=${BUILD_CDN_HOST} \
 #ARG BUILD_CDN_HOST=https://assets.vulpine.club
 
+ENV STREAMING_API_BASE_URL=direct.vulpine.club
+
 ARG SOURCE_TAG
 ENV SOURCE_TAG ${SOURCE_TAG}
 
 # Precompile assets
 RUN cd ~ && \
 	GITHUB_REPOSITORY=${GITHUB_REPOSITORY} \
+	STREAMING_API_BASE_URL=${STREAMING_API_BASE_URL} \
 	OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder rails assets:precompile && \
 	yarn cache clean
 
