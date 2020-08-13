@@ -5,7 +5,7 @@ cd `dirname $0`
 cp /etc/nginx/nginx.conf nginx/
 cp /etc/nginx/bad-actors.conf nginx/
 cp /etc/nginx/cloudflare-real-ip.conf nginx/
-cp /etc/nginx/sites-available/vulpine.club nginx/
+cp /etc/nginx/sites-available/* nginx/
 cp /etc/nginx/ssl-include.conf nginx/
 cp /etc/nginx/vulpine-headers-include.conf nginx/
 cp /etc/logrotate.d/nginx nginx/logrotate-nginx

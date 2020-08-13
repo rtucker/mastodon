@@ -1,0 +1,77 @@
+# LE certs generated with:
+# certbot certonly --webroot -w /srv/mastodon/vulpine.club/public/ -d vulpine.club -d assets.vulpine.club -d www.vulpine.club
+#
+# LE certs renewal check (/etc/cron.daily/certbot):
+# /usr/bin/certbot renew --renew-hook "/usr/sbin/service nginx reload"
+
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  ''      close;
+}
+
+# this file defines $badactor.
+include /etc/nginx/bad-actors.conf;
+
+limit_conn_zone $binary_remote_addr zone=streamaddr:10m;
+limit_conn_status 429;
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  server_name assets.vulpine.club;
+
+  include /etc/nginx/ssl-include.conf;
+
+  ssl_certificate     /etc/letsencrypt/live/vulpine.club/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/vulpine.club/privkey.pem;
+
+  keepalive_timeout    70;
+  sendfile             on;
+  client_max_body_size 0;
+  #gzip off;
+  gzip on;
+  gzip_types text/plain application/javascript text/css;
+
+  #root /srv/mastodon/vulpine.club/media/vulpine-club-assets;
+
+  # block fedichive.tk https://elekk.xyz/@noelle/102629143383192216
+  deny 71.234.189.151;
+
+  if ($badactor) {
+	  return 444;
+  }
+
+  add_header Referrer-Policy "strict-origin-when-cross-origin";
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+  # precompiled static assets
+  location ~ ^/(emoji|packs) {
+    #add_header Cache-Control "public, max-age=31536000, immutable";
+    #try_files $uri;
+
+    #return 301 https://vulpine.club$request_uri;
+
+    proxy_pass https://vulpine.club;
+  }
+
+  location / {
+    proxy_cache CACHE;
+    proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+    proxy_cache_lock on;
+
+    proxy_cache_valid 200 302 10m;
+    proxy_cache_valid 301      1h;
+
+    rewrite /failover/(.+) /failover/vulpineclub/$1 break;
+    rewrite /(.+) /vulpineclub/$1 break;
+
+    proxy_pass https://pool.jortage.com;
+
+    add_header X-Cache-Status $upstream_cache_status;
+  }
+
+  error_page 500 501 502 503 504 /500.html;
+}
+
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=7d max_size=1g use_temp_path=off;
+

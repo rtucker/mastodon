@@ -16,52 +16,11 @@ limit_conn_zone $binary_remote_addr zone=streamaddr:10m;
 limit_conn_status 429;
 
 server {
-  listen 80;
-  listen [::]:80;
-  server_name vulpine.club assets.vulpine.club direct.vulpine.club www.vulpine.club 0.vulpine.club 1.vulpine.club 2.vulpine.club 3.vulpine.club nginx;
-
-  root /srv/mastodon/vulpine.club/public;
-
-  # block fedichive.tk https://elekk.xyz/@noelle/102629143383192216
-  deny 71.234.189.151;
-
-  # ask sariya about bad actors stuff if you're curious
-  if ($badactor) {
-	  return 444;
-  }
-
-  # Useful for Let's Encrypt
-  location /.well-known/acme-challenge/ { allow all; }
-
-  location /stub_stats {
-    # Disallow anyone external from accessing this.
-    allow 127.0.0.0/24;
-    allow 172.16.0.0/12;
-    deny all;
-
-    stub_status;
-  }
-
-  location /vts_stats {
-    # Disallow anyone external from accessing this.
-    allow 127.0.0.0/24;
-    allow 172.16.0.0/12;
-    deny all;
-
-    vhost_traffic_status_display;
-    vhost_traffic_status_display_format json;
-  }
-
-  location / { return 301 https://$host$request_uri; }
-}
-
-server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
-  server_name vulpine.club 0.vulpine.club 1.vulpine.club 2.vulpine.club 3.vulpine.club nginx;
+  server_name direct.vulpine.club;
 
   include /etc/nginx/ssl-include.conf;
-  include /etc/nginx/cloudflare-real-ip.conf;
 
   ssl_certificate     /etc/letsencrypt/live/vulpine.club/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/vulpine.club/privkey.pem;
@@ -99,25 +58,11 @@ server {
     try_files $uri @proxy;
   }
 
-  location /grafana/ {
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto https;
-    proxy_set_header Proxy "";
-
-    proxy_pass_header Server;
-
-    proxy_pass http://grafana:3000/;
-    proxy_buffering on;
-    proxy_redirect off;
-    proxy_http_version 1.1;
-  }
-
-  location / {
+  # web UI, client API
+  location ~ ^/(sounds|web|api|favicon.ico|manifest.json|android-chrome-192x192.png|headers|avatars|about|auth|$) {
     try_files $uri @proxy;
   }
-
+  
   # proxy requests to mastodon
   location @proxy {
     proxy_set_header Host $host;
@@ -128,7 +73,7 @@ server {
 
     proxy_pass_header Server;
 
-    proxy_pass http://fe_web:3000;
+    proxy_pass http://fe_webdirect:3000;
     proxy_buffering on;
     proxy_redirect off;
     proxy_http_version 1.1;
@@ -163,7 +108,7 @@ server {
     # block fedichive.tk https://elekk.xyz/@noelle/102629143383192216
     deny 71.234.189.151;
 
-    proxy_pass http://fe_streaming:4000;
+    proxy_pass http://fe_streamingdirect:4000;
     proxy_buffering off;
     proxy_redirect off;
     proxy_http_version 1.1;
@@ -175,31 +120,24 @@ server {
     limit_conn streamaddr 32;
   }
 
-  # error pages...
-  error_page 500 501 502 503 504 /500.html;
-}
+  location /grafana/ {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header Proxy "";
 
-server {
-  listen 443 ssl;
-  listen [::]:443 ssl;
-  server_name www.vulpine.club;
+    proxy_pass_header Server;
 
-  include /etc/nginx/ssl-include.conf;
-
-  ssl_certificate     /etc/letsencrypt/live/vulpine.club/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/vulpine.club/privkey.pem;
-
-  add_header Referrer-Policy "strict-origin-when-cross-origin";
-  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-  # block fedichive.tk https://elekk.xyz/@noelle/102629143383192216
-  deny 71.234.189.151;
-
-  if ($badactor) {
-	  return 444;
+    proxy_pass http://grafana:3000/;
+    proxy_buffering on;
+    proxy_redirect off;
+    proxy_http_version 1.1;
   }
 
-  return 301 https://vulpine.club$request_uri;
+
+  # error pages...
+  error_page 500 501 502 503 504 /500.html;
 }
 
 proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=7d max_size=1g use_temp_path=off;
