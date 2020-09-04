@@ -184,7 +184,7 @@ function continueThread (state, status) {
     map.set('in_reply_to', status.id);
     map.update(
       'advanced_options',
-      map => map.merge(new ImmutableMap({ do_not_federate: /👁\ufe0f?\u200b?(?:<\/p>)?$/.test(status.content) }))
+      map => map.merge(new ImmutableMap({ do_not_federate: status.local_only }))
     );
     map.set('privacy', status.visibility);
     map.set('sensitive', false);
@@ -383,7 +383,7 @@ export default function compose(state = initialState, action) {
       map.set('privacy', privacyPreference(action.status.get('visibility'), state.get('default_privacy')));
       map.update(
         'advanced_options',
-        map => map.merge(new ImmutableMap({ do_not_federate: /👁\ufe0f?\u200b?(?:<\/p>)?$/.test(action.status.get('content')) }))
+        map => map.merge(new ImmutableMap({ do_not_federate: action.status.get('local_only') }))
       );
       map.set('focusDate', new Date());
       map.set('caretPosition', null);
@@ -501,8 +501,11 @@ export default function compose(state = initialState, action) {
   case COMPOSE_DOODLE_SET:
     return state.mergeIn(['doodle'], action.options);
   case REDRAFT:
+    const do_not_federate = action.status.get('local_only', false);
+    let text = action.raw_text || unescapeHTML(expandMentions(action.status));
+    if (do_not_federate) text = text.replace(/ ?👁\ufe0f?\u200b?$/, '');
     return state.withMutations(map => {
-      map.set('text', action.raw_text || unescapeHTML(expandMentions(action.status)));
+      map.set('text', text);
       map.set('content_type', action.content_type || 'text/plain');
       map.set('in_reply_to', action.status.get('in_reply_to_id'));
       map.set('privacy', action.status.get('visibility'));
@@ -511,6 +514,10 @@ export default function compose(state = initialState, action) {
       map.set('caretPosition', null);
       map.set('idempotencyKey', uuid());
       map.set('sensitive', action.status.get('sensitive'));
+      map.update(
+        'advanced_options',
+        map => map.merge(new ImmutableMap({ do_not_federate }))
+      );
 
       if (action.status.get('spoiler_text').length > 0) {
         map.set('spoiler', true);

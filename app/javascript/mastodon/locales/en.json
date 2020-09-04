@@ -395,7 +395,7 @@
   "status.pinned": "Pinned post",
   "status.read_more": "Read more",
   "status.reblog": "Awoo",
-  "status.reblog_private": "Awoo to original audience",
+  "status.reblog_private": "Awoo with original visibility",
   "status.reblogged_by": "{name} awooed",
   "status.reblogs.empty": "No one has awooed this post yet. When someone does, they will show up here.",
   "status.redraft": "Delete & re-draft",
