@@ -16,6 +16,7 @@ import {
   NOTIFICATIONS_DELETE_MARKED_FAIL,
   NOTIFICATIONS_ENTER_CLEARING_MODE,
   NOTIFICATIONS_MARK_ALL_FOR_DELETE,
+  NOTIFICATIONS_MARK_AS_READ,
 } from 'flavours/glitch/actions/notifications';
 import {
   ACCOUNT_BLOCK_SUCCESS,
@@ -39,6 +40,7 @@ const initialState = ImmutableMap({
   mounted: 0,
   unread: 0,
   lastReadId: '0',
+  readMarkerId: '0',
   isLoading: false,
   cleaningMode: false,
   isTabVisible: true,
@@ -55,16 +57,16 @@ const notificationToMap = (state, notification) => ImmutableMap({
 });
 
 const normalizeNotification = (state, notification, usePendingItems) => {
-  const top = !shouldCountUnreadNotifications(state);
+  const top = state.get('top');
 
   if (usePendingItems || !state.get('pendingItems').isEmpty()) {
     return state.update('pendingItems', list => list.unshift(notificationToMap(state, notification))).update('unread', unread => unread + 1);
   }
 
-  if (top) {
-    state = state.set('lastReadId', notification.id);
-  } else {
+  if (shouldCountUnreadNotifications(state)) {
     state = state.update('unread', unread => unread + 1);
+  } else {
+    state = state.set('lastReadId', notification.id);
   }
 
   return state.update('items', list => {
@@ -77,7 +79,6 @@ const normalizeNotification = (state, notification, usePendingItems) => {
 };
 
 const expandNormalizedNotifications = (state, notifications, next, isLoadingRecent, usePendingItems) => {
-  const top = !(shouldCountUnreadNotifications(state));
   const lastReadId = state.get('lastReadId');
   let items = ImmutableList();
 
@@ -102,16 +103,17 @@ const expandNormalizedNotifications = (state, notifications, next, isLoadingRece
       });
     }
 
-    if (top) {
-      if (!items.isEmpty()) {
-        mutable.update('lastReadId', id => compareId(id, items.first().get('id')) > 0 ? id : items.first().get('id'));
-      }
-    } else {
-      mutable.update('unread', unread => unread + items.count(item => compareId(item.get('id'), lastReadId) > 0));
-    }
-
     if (!next) {
       mutable.set('hasMore', false);
+    }
+
+    if (shouldCountUnreadNotifications(state)) {
+      mutable.update('unread', unread => unread + items.count(item => compareId(item.get('id'), lastReadId) > 0));
+    } else {
+      const mostRecent = items.find(item => item !== null);
+      if (mostRecent && compareId(lastReadId, mostRecent.get('id')) < 0) {
+        mutable.set('lastReadId', mostRecent.get('id'));
+      }
     }
 
     mutable.set('isLoading', false);
@@ -127,7 +129,7 @@ const clearUnread = (state) => {
   state = state.set('unread', state.get('pendingItems').size);
   const lastNotification = state.get('items').find(item => item !== null);
   return state.set('lastReadId', lastNotification ? lastNotification.get('id') : '0');
-}
+};
 
 const updateTop = (state, top) => {
   state = state.set('top', top);
@@ -136,16 +138,17 @@ const updateTop = (state, top) => {
     state = clearUnread(state);
   }
 
-  return state.set('top', top);
+  return state;
 };
 
 const deleteByStatus = (state, statusId) => {
-  const top = !(shouldCountUnreadNotifications(state));
-  if (!top) {
-    const lastReadId = state.get('lastReadId');
+  const lastReadId = state.get('lastReadId');
+
+  if (shouldCountUnreadNotifications(state)) {
     const deletedUnread = state.get('items').filter(item => item !== null && item.get('status') === statusId && compareId(item.get('id'), lastReadId) > 0);
     state = state.update('unread', unread => unread - deletedUnread.size);
   }
+
   const helper = list => list.filterNot(item => item !== null && item.get('status') === statusId);
   const deletedUnread = state.get('pendingItems').filter(item => item !== null && item.get('status') === statusId && compareId(item.get('id'), lastReadId) > 0);
   state = state.update('unread', unread => unread - deletedUnread.size);
@@ -183,6 +186,7 @@ const deleteMarkedNotifs = (state) => {
 const updateMounted = (state) => {
   state = state.update('mounted', count => count + 1);
   if (!shouldCountUnreadNotifications(state)) {
+    state = state.set('readMarkerId', state.get('lastReadId'));
     state = clearUnread(state);
   }
   return state;
@@ -191,13 +195,20 @@ const updateMounted = (state) => {
 const updateVisibility = (state, visibility) => {
   state = state.set('isTabVisible', visibility);
   if (!shouldCountUnreadNotifications(state)) {
+    state = state.set('readMarkerId', state.get('lastReadId'));
     state = clearUnread(state);
   }
   return state;
 };
 
 const shouldCountUnreadNotifications = (state) => {
-  return !(state.get('isTabVisible') && state.get('top') && state.get('mounted') > 0);
+  const isTabVisible   = state.get('isTabVisible');
+  const isOnTop        = state.get('top');
+  const isMounted      = state.get('mounted') > 0;
+  const lastReadId     = state.get('lastReadId');
+  const lastItemReached = !state.get('hasMore') || lastReadId === '0' || (!state.get('items').isEmpty() && compareId(state.get('items').last().get('id'), lastReadId) <= 0);
+
+  return !(isTabVisible && isOnTop && isMounted && lastItemReached);
 };
 
 const recountUnread = (state, last_read_id) => {
@@ -206,11 +217,15 @@ const recountUnread = (state, last_read_id) => {
       mutable.set('lastReadId', last_read_id);
     }
 
+    if (compareId(last_read_id, mutable.get('readMarkerId')) > 0) {
+      mutable.set('readMarkerId', last_read_id);
+    }
+
     if (state.get('unread') > 0 || shouldCountUnreadNotifications(state)) {
       mutable.set('unread', mutable.get('pendingItems').count(item => item !== null) + mutable.get('items').count(item => item && compareId(item.get('id'), last_read_id) > 0));
     }
   });
-}
+};
 
 export default function notifications(state = initialState, action) {
   let st;
@@ -283,6 +298,10 @@ export default function notifications(state = initialState, action) {
       st = st.set('markNewForDelete', action.yes);
     }
     return markAllForDelete(st, action.yes);
+
+  case NOTIFICATIONS_MARK_AS_READ:
+    const lastNotification = state.get('items').find(item => item !== null);
+    return lastNotification ? recountUnread(state, lastNotification.get('id')) : state;
 
   default:
     return state;

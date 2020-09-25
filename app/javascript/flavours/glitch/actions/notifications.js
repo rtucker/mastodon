@@ -18,6 +18,7 @@ import compareId from 'flavours/glitch/util/compare_id';
 import { searchTextFromRawStatus } from 'flavours/glitch/actions/importer/normalizer';
 
 export const NOTIFICATIONS_UPDATE = 'NOTIFICATIONS_UPDATE';
+export const NOTIFICATIONS_UPDATE_NOOP = 'NOTIFICATIONS_UPDATE_NOOP';
 
 // tracking the notif cleaning request
 export const NOTIFICATIONS_DELETE_MARKED_REQUEST = 'NOTIFICATIONS_DELETE_MARKED_REQUEST';
@@ -44,6 +45,8 @@ export const NOTIFICATIONS_MOUNT   = 'NOTIFICATIONS_MOUNT';
 export const NOTIFICATIONS_UNMOUNT = 'NOTIFICATIONS_UNMOUNT';
 
 export const NOTIFICATIONS_SET_VISIBILITY = 'NOTIFICATIONS_SET_VISIBILITY';
+
+export const NOTIFICATIONS_MARK_AS_READ = 'NOTIFICATIONS_MARK_AS_READ';
 
 defineMessages({
   mention: { id: 'notification.mention', defaultMessage: '{name} mentioned you' },
@@ -316,5 +319,11 @@ export function setFilter (filterType) {
     });
     dispatch(expandNotifications());
     dispatch(saveSettings());
+  };
+};
+
+export function markNotificationsAsRead() {
+  return {
+    type: NOTIFICATIONS_MARK_AS_READ,
   };
 };
