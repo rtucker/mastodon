@@ -279,12 +279,8 @@
   "loading_indicator.label": "Loading...",
   "media_gallery.toggle_visible": "Hide {number, plural, one {image} other {images}}",
   "missing_indicator.label": "Not found",
-<<<<<<< HEAD
   "missing_indicator.sublabel": "This resource could not be found. I did find a box of other random things, though!",
-=======
-  "missing_indicator.sublabel": "This resource could not be found",
   "mute_modal.duration": "Duration",
->>>>>>> main-glitchsoc
   "mute_modal.hide_notifications": "Hide notifications from this user?",
   "mute_modal.indefinite": "Indefinite",
   "navigation_bar.apps": "Mobile apps",
@@ -317,12 +313,8 @@
   "notification.mention": "{name} mentioned you",
   "notification.own_poll": "Your poll has ended",
   "notification.poll": "A poll you have voted in has ended",
-<<<<<<< HEAD
   "notification.reblog": "{name} awooed your rawr",
-=======
-  "notification.reblog": "{name} boosted your toot",
   "notification.status": "{name} just posted",
->>>>>>> main-glitchsoc
   "notifications.clear": "Clear notifications",
   "notifications.clear_confirmation": "Are you sure you want to permanently clear all your notifications?",
   "notifications.column_settings.alert": "Desktop notifications",

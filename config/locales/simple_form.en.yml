@@ -177,10 +177,7 @@ en:
       invite:
         comment: Comment
       invite_request:
-<<<<<<< HEAD
         text: Briefly tell us something interesting about yourself!
-=======
-        text: Why do you want to join?
       ip_block:
         comment: Comment
         ip: IP
@@ -188,7 +185,6 @@ en:
           no_access: Block access
           sign_up_requires_approval: Limit sign-ups
         severity: Rule
->>>>>>> main-glitchsoc
       notification_emails:
         digest: Send digest e-mails
         favourite: Someone favourited your status
