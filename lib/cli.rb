@@ -14,6 +14,7 @@ require_relative 'mastodon/cache_cli'
 require_relative 'mastodon/upgrade_cli'
 require_relative 'mastodon/email_domain_blocks_cli'
 require_relative 'mastodon/ip_blocks_cli'
+require_relative 'mastodon/maintenance_cli'
 require_relative 'mastodon/version'
 
 require_relative 'mastodon/vulpine_cli'
@@ -65,6 +66,9 @@ module Mastodon
 
     desc 'ip_blocks SUBCOMMAND ...ARGS', 'Manage IP blocks'
     subcommand 'ip_blocks', Mastodon::IpBlocksCLI
+
+    desc 'maintenance SUBCOMMAND ...ARGS', 'Various maintenance utilities'
+    subcommand 'maintenance', Mastodon::MaintenanceCLI
 
     option :dry_run, type: :boolean
     desc 'self-destruct', 'Erase the server from the federation'
