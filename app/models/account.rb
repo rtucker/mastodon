@@ -67,6 +67,7 @@ class Account < ApplicationRecord
   include Paginable
   include AccountCounters
   include DomainNormalizable
+  include DomainMaterializable
   include AccountMerging
 
   MAX_DISPLAY_NAME_LENGTH = (ENV['MAX_DISPLAY_NAME_CHARS'] || 30).to_i
@@ -103,11 +104,11 @@ class Account < ApplicationRecord
   scope :sensitized, -> { where.not(sensitized_at: nil) }
   scope :without_suspended, -> { where(suspended_at: nil) }
   scope :without_silenced, -> { where(silenced_at: nil) }
+  scope :without_instance_actor, -> { where.not(id: -99) }
   scope :recent, -> { reorder(id: :desc) }
   scope :bots, -> { where(actor_type: %w(Application Service)) }
   scope :groups, -> { where(actor_type: 'Group') }
   scope :alphabetic, -> { order(domain: :asc, username: :asc) }
-  scope :by_domain_accounts, -> { group(:domain).select(:domain, 'COUNT(*) AS accounts_count').order('accounts_count desc') }
   scope :matches_username, ->(value) { where(arel_table[:username].matches("#{value}%")) }
   scope :matches_display_name, ->(value) { where(arel_table[:display_name].matches("#{value}%")) }
   scope :matches_domain, ->(value) { where(arel_table[:domain].matches("%#{value}%")) }
@@ -226,7 +227,7 @@ class Account < ApplicationRecord
   end
 
   def suspended?
-    suspended_at.present?
+    suspended_at.present? && !instance_actor?
   end
 
   def suspended_permanently?
@@ -440,12 +441,8 @@ class Account < ApplicationRecord
       super - %w(statuses_count following_count followers_count)
     end
 
-    def domains
-      reorder(nil).pluck(Arel.sql('distinct accounts.domain'))
-    end
-
     def inboxes
-      urls = reorder(nil).where(protocol: :activitypub).pluck(Arel.sql("distinct coalesce(nullif(accounts.shared_inbox_url, ''), accounts.inbox_url)"))
+      urls = reorder(nil).where(protocol: :activitypub).group(:preferred_inbox_url).pluck(Arel.sql("coalesce(nullif(accounts.shared_inbox_url, ''), accounts.inbox_url) AS preferred_inbox_url"))
       DeliveryFailureTracker.without_unavailable(urls)
     end
 
@@ -583,17 +580,6 @@ class Account < ApplicationRecord
   end
 
   def clean_feed_manager
-    reblog_key       = FeedManager.instance.key(:home, id, 'reblogs')
-    reblogged_id_set = Redis.current.zrange(reblog_key, 0, -1)
-
-    Redis.current.pipelined do
-      Redis.current.del(FeedManager.instance.key(:home, id))
-      Redis.current.del(reblog_key)
-
-      reblogged_id_set.each do |reblogged_id|
-        reblog_set_key = FeedManager.instance.key(:home, id, "reblogs:#{reblogged_id}")
-        Redis.current.del(reblog_set_key)
-      end
-    end
+    FeedManager.instance.clean_feeds!(:home, [id])
   end
 end

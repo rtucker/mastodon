@@ -511,7 +511,7 @@ class Status < ApplicationRecord
   end
 
   def decrement_counter_caches
-    return if direct_visibility? || marked_for_mass_destruction?
+    return if direct_visibility?
 
     account&.decrement_count!(:statuses_count)
     reblog&.decrement_count!(:reblogs_count) if reblog?
@@ -521,7 +521,7 @@ class Status < ApplicationRecord
   def unlink_from_conversations
     return unless direct_visibility?
 
-    mentioned_accounts = mentions.includes(:account).map(&:account)
+    mentioned_accounts = (association(:mentions).loaded? ? mentions : mentions.includes(:account)).map(&:account)
     inbox_owners       = mentioned_accounts.select(&:local?) + (account.local? ? [account] : [])
 
     inbox_owners.each do |inbox_owner|

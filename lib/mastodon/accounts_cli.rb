@@ -77,7 +77,7 @@ module Mastodon
     def create(username)
       account  = Account.new(username: username)
       password = SecureRandom.hex
-      user     = User.new(email: options[:email], password: password, agreement: true, approved: true, admin: options[:role] == 'admin', moderator: options[:role] == 'moderator', confirmed_at: options[:confirmed] ? Time.now.utc : nil)
+      user     = User.new(email: options[:email], password: password, agreement: true, approved: true, admin: options[:role] == 'admin', moderator: options[:role] == 'moderator', confirmed_at: options[:confirmed] ? Time.now.utc : nil, bypass_invite_request_check: true)
 
       if options[:reattach]
         account = Account.find_local(username) || Account.new(username: username)
@@ -234,6 +234,25 @@ module Mastodon
       from_account.destroy
 
       say('OK', :green)
+    end
+
+    desc 'fix-duplicates', 'Find duplicate remote accounts and merge them'
+    option :dry_run, type: :boolean
+    long_desc <<-LONG_DESC
+      Merge known remote accounts sharing an ActivityPub actor identifier.
+
+      Such duplicates can occur when a remote server admin misconfigures their
+      domain configuration.
+    LONG_DESC
+    def fix_duplicates
+      Account.remote.select(:uri, 'count(*)').group(:uri).having('count(*) > 1').pluck(:uri).each do |uri|
+        say("Duplicates found for #{uri}")
+        begin
+          ActivityPub::FetchRemoteAccountService.new.call(uri) unless options[:dry_run]
+        rescue => e
+          say("Error processing #{uri}: #{e}", :red)
+        end
+      end
     end
 
     desc 'backup USERNAME', 'Request a backup for a user'

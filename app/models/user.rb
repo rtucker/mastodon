@@ -82,12 +82,20 @@ class User < ApplicationRecord
   has_many :webauthn_credentials, dependent: :destroy
 
   has_one :invite_request, class_name: 'UserInviteRequest', inverse_of: :user, dependent: :destroy
-  accepts_nested_attributes_for :invite_request, reject_if: ->(attributes) { attributes['text'].blank? }
+  accepts_nested_attributes_for :invite_request, reject_if: ->(attributes) { attributes['text'].blank? && !Setting.require_invite_text }
+  validates :invite_request, presence: true, on: :create, if: :invite_text_required?
 
   validates :locale, inclusion: I18n.available_locales.map(&:to_s), if: :locale?
   validates_with BlacklistedEmailValidator, on: :create
   validates_with EmailMxValidator, if: :validate_email_dns?
   validates :agreement, acceptance: { allow_nil: false, accept: [true, 'true', '1'] }, on: :create
+
+  # Those are honeypot/antispam fields
+  attr_accessor :registration_form_time, :website, :confirm_password
+
+  validates_with RegistrationFormTimeValidator, on: :create
+  validates :website, absence: true, on: :create
+  validates :confirm_password, absence: true, on: :create
 
   scope :recent, -> { order(id: :desc) }
   scope :pending, -> { where(approved: false) }
@@ -120,7 +128,7 @@ class User < ApplicationRecord
            to: :settings, prefix: :setting, allow_nil: false
 
   attr_reader :invite_code, :sign_in_token_attempt
-  attr_writer :external
+  attr_writer :external, :bypass_invite_request_check
 
   def confirmed?
     confirmed_at.present?
@@ -421,6 +429,10 @@ class User < ApplicationRecord
     !!@external
   end
 
+  def bypass_invite_request_check?
+    @bypass_invite_request_check
+  end
+
   def sanitize_languages
     return if chosen_languages.nil?
     chosen_languages.reject!(&:blank?)
@@ -457,5 +469,9 @@ class User < ApplicationRecord
 
   def validate_email_dns?
     email_changed? && !(Rails.env.test? || Rails.env.development?)
+  end
+
+  def invite_text_required?
+    Setting.require_invite_text && !invited? && !external? && !bypass_invite_request_check?
   end
 end
