@@ -92,11 +92,11 @@ class Notification < ApplicationRecord
     end
 
     def reload_stale_associations!(cached_items)
-      account_ids = (cached_items.map(&:from_account_id) + cached_items.map { |item| item.target_status&.account_id }.compact).uniq
+      account_ids = (cached_items.map(&:from_account_id) + cached_items.filter_map { |item| item.target_status&.account_id }).uniq
 
       return if account_ids.empty?
 
-      accounts = Account.where(id: account_ids).includes(:account_stat).each_with_object({}) { |a, h| h[a.id] = a }
+      accounts = Account.where(id: account_ids).includes(:account_stat).index_by(&:id)
 
       cached_items.each do |item|
         item.from_account = accounts[item.from_account_id]

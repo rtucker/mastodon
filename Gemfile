@@ -66,7 +66,7 @@ gem 'mime-types', '~> 3.3.1', require: 'mime/types/columnar'
 gem 'nilsimsa', git: 'https://github.com/witgo/nilsimsa', ref: 'fd184883048b922b176939f851338d0a4971a532'
 gem 'nokogiri', '~> 1.11'
 gem 'nsa', '~> 0.2'
-gem 'oj', '~> 3.10'
+gem 'oj', '~> 3.11'
 gem 'ox', '~> 2.14'
 gem 'parslet'
 gem 'parallel', '~> 1.20'
@@ -135,7 +135,7 @@ group :development do
   gem 'active_record_query_trace', '~> 1.8'
   gem 'annotate', '~> 3.1'
   gem 'better_errors', '~> 2.9'
-  gem 'binding_of_caller', '~> 0.7'
+  gem 'binding_of_caller', '~> 1.0'
   gem 'bullet', '~> 6.1'
   gem 'letter_opener', '~> 1.7'
   gem 'letter_opener_web', '~> 1.4'
@@ -145,7 +145,7 @@ group :development do
   gem 'brakeman', '~> 4.10', require: false
   gem 'bundler-audit', '~> 0.7', require: false
 
-  gem 'capistrano', '~> 3.14'
+  gem 'capistrano', '~> 3.15'
   gem 'capistrano-rails', '~> 1.6'
   gem 'capistrano-rbenv', '~> 2.2'
   gem 'capistrano-yarn', '~> 2.0'
