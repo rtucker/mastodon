@@ -1,5 +1,5 @@
 # LE certs generated with:
-# certbot certonly --webroot -w /srv/mastodon/vulpine.club/public/ -d vulpine.club -d assets.vulpine.club -d www.vulpine.club
+# sudo certbot certonly --webroot -w /srv/mastodon/vulpine.club/public/ -d vulpine.club -d assets.vulpine.club -d www.vulpine.club -d 0.vulpine.club -d 1.vulpine.club -d 2.vulpine.club -d 3.vulpine.club -d direct.vulpine.club -d streaming.vulpine.club
 #
 # LE certs renewal check (/etc/cron.daily/certbot):
 # /usr/bin/certbot renew --renew-hook "/usr/sbin/service nginx reload"
@@ -18,7 +18,7 @@ limit_conn_status 429;
 server {
   listen 80;
   listen [::]:80;
-  server_name vulpine.club assets.vulpine.club direct.vulpine.club www.vulpine.club 0.vulpine.club 1.vulpine.club 2.vulpine.club 3.vulpine.club nginx;
+  server_name vulpine.club assets.vulpine.club direct.vulpine.club www.vulpine.club 0.vulpine.club 1.vulpine.club 2.vulpine.club 3.vulpine.club streaming.vulpine.club nginx;
 
   root /srv/mastodon/vulpine.club/public;
 
