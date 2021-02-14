@@ -42,13 +42,13 @@ server {
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
   # precompiled static assets
-  location ~ ^/(emoji|packs) {
+  location ~ ^/(emoji|packs|avatars/original|inert.css|favicon.ico) {
     #add_header Cache-Control "public, max-age=31536000, immutable";
     #try_files $uri;
 
     #return 301 https://vulpine.club$request_uri;
 
-    proxy_pass https://vulpine.club;
+    proxy_pass https://direct.vulpine.club;
   }
 
   location / {
