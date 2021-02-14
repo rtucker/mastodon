@@ -3,6 +3,6 @@
 # Note: .certbot-pingurl should contain one URL, which will be hit when
 # this process completes successfully.
 
-/usr/bin/certbot renew --renew-hook "sh -c \"cd /srv/mastodon/vulpine.club/mastodon && docker-compose restart nginx\"" \
+/usr/bin/certbot renew --webroot-path /srv/mastodon/vulpine.club/public --renew-hook "sh -c \"cd /srv/mastodon/vulpine.club/mastodon && docker-compose restart nginx\"" \
   && curl "$(cat `dirname $0`/.certbot-pingurl)"
 
