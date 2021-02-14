@@ -458,6 +458,10 @@
   }
 }
 
+.favourite-modal .status-direct {
+  background-color: inherit;
+}
+
 .actions-modal {
   .status {
     background: $white;
@@ -1026,4 +1030,13 @@
       text-decoration: underline
     }
   }
+}
+
+.modal-root__container .composer--options--dropdown {
+  flex-grow: 0;
+}
+
+.modal-root__container .composer--options--dropdown--content {
+  pointer-events: auto;
+  z-index: 9999;
 }
