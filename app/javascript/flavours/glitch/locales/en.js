@@ -1,4 +1,5 @@
 import inherited from 'mastodon/locales/en.json';
+import { sample } from 'lodash';
 
 const messages = {
   'getting_started.open_source_notice': 'Glitchsoc (Vulpine Trip-Hop remix) is free open source software forked from {Mastodon}. You can contribute or report issues on GitHub at {github}.',
@@ -62,6 +63,9 @@ const messages = {
   'advanced_options.threaded_mode.short': 'Threaded mode',
   'advanced_options.threaded_mode.long': 'Automatically opens a reply on posting',
   'advanced_options.threaded_mode.tooltip': 'Threaded mode enabled',
+
+  "bundle_column_error.body": "Something went wrong while loading this component, and it was probably " + sample(['the network', 'your network', 'a network', 'a skulk of foxes', 'the cloud', "someone else's computer"]) + ".",
+  "bundle_modal_error.message": "Something went wrong while loading this component, and it was probably " + sample(['the network', 'your network', 'a network', 'a skulk of foxes', 'the cloud', "someone else's computer"]) + ".",
 };
 
 export default Object.assign({}, inherited, messages);
