@@ -4,6 +4,7 @@ require 'sidekiq/api'
 module Admin
   class DashboardController < BaseController
     def index
+      @system_checks         = Admin::SystemCheck.perform
       @users_count           = User.count
       @pending_users_count   = User.pending.count
       @registrations_week    = Redis.current.get("activity:accounts:local:#{current_week}") || 0
