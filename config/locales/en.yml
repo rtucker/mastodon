@@ -1,7 +1,7 @@
 ---
 en:
   about:
-    about_hashtag_html: These are public toots tagged with <strong>#%{hashtag}</strong>. You can interact with them if you have an account anywhere in the fediverse.
+    about_hashtag_html: These are public posts tagged with <strong>#%{hashtag}</strong>. You can interact with them if you have an account anywhere in the fediverse.
     about_mastodon_html: 'The social network of the future: No ads, no corporate surveillance, ethical design, and decentralization! Own your data with Mastodon!'
     about_this: About
     active_count_after: active
@@ -32,9 +32,9 @@ en:
     server_stats: 'Server stats:'
     source_code: Source code
     status_count_after:
-      one: status
-      other: statuses
-    status_count_before: Who authored
+      one: post
+      other: posts
+    status_count_before: Who published
     tagline: Follow friends and discover new ones
     terms: Terms of service
     unavailable_content: Moderated servers
@@ -199,7 +199,7 @@ en:
         targeted_reports: Reported by others
       silence: Limit
       silenced: Limited
-      statuses: Statuses
+      statuses: Posts
       subscribe: Subscribe
       suspended: Suspended
       suspension_irreversible: The data of this account has been irreversibly deleted. You can unsuspend the account to make it usable but it will not recover any data it previously had.
@@ -230,6 +230,7 @@ en:
         create_domain_block: Create Domain Block
         create_email_domain_block: Create E-mail Domain Block
         create_ip_block: Create IP rule
+        create_unavailable_domain: Create Unavailable Domain
         demote_user: Demote User
         destroy_announcement: Delete Announcement
         destroy_custom_emoji: Delete Custom Emoji
@@ -237,7 +238,8 @@ en:
         destroy_domain_block: Delete Domain Block
         destroy_email_domain_block: Delete e-mail domain block
         destroy_ip_block: Delete IP rule
-        destroy_status: Delete Status
+        destroy_status: Delete Post
+        destroy_unavailable_domain: Delete Unavailable Domain
         disable_2fa_user: Disable 2FA
         disable_custom_emoji: Disable Custom Emoji
         disable_user: Disable User
@@ -259,7 +261,7 @@ en:
         update_announcement: Update Announcement
         update_custom_emoji: Update Custom Emoji
         update_domain_block: Update Domain Block
-        update_status: Update Status
+        update_status: Update Post
       actions:
         assigned_to_self_report_html: "%{name} assigned report %{target} to themselves"
         change_email_user_html: "%{name} changed the e-mail address of user %{target}"
@@ -271,6 +273,7 @@ en:
         create_domain_block_html: "%{name} blocked domain %{target}"
         create_email_domain_block_html: "%{name} blocked e-mail domain %{target}"
         create_ip_block_html: "%{name} created rule for IP %{target}"
+        create_unavailable_domain_html: "%{name} stopped delivery to domain %{target}"
         demote_user_html: "%{name} demoted user %{target}"
         destroy_announcement_html: "%{name} deleted announcement %{target}"
         destroy_custom_emoji_html: "%{name} destroyed emoji %{target}"
@@ -278,7 +281,8 @@ en:
         destroy_domain_block_html: "%{name} unblocked domain %{target}"
         destroy_email_domain_block_html: "%{name} unblocked e-mail domain %{target}"
         destroy_ip_block_html: "%{name} deleted rule for IP %{target}"
-        destroy_status_html: "%{name} removed status by %{target}"
+        destroy_status_html: "%{name} removed post by %{target}"
+        destroy_unavailable_domain_html: "%{name} resumed delivery to domain %{target}"
         disable_2fa_user_html: "%{name} disabled two factor requirement for user %{target}"
         disable_custom_emoji_html: "%{name} disabled emoji %{target}"
         disable_user_html: "%{name} disabled login for user %{target}"
@@ -300,8 +304,8 @@ en:
         update_announcement_html: "%{name} updated announcement %{target}"
         update_custom_emoji_html: "%{name} updated emoji %{target}"
         update_domain_block_html: "%{name} updated domain block for %{target}"
-        update_status_html: "%{name} updated status by %{target}"
-      deleted_status: "(deleted status)"
+        update_status_html: "%{name} updated post by %{target}"
+      deleted_status: "(deleted post)"
       empty: No logs found.
       filter_by_action: Filter by action
       filter_by_user: Filter by user
@@ -451,8 +455,25 @@ en:
       title: Follow recommendations
       unsuppress: Restore follow recommendation
     instances:
+      back_to_all: All
+      back_to_limited: Limited
+      back_to_warning: Warning
       by_domain: Domain
+      delivery:
+        all: All
+        clear: Clear delivery errors
+        restart: Restart delivery
+        stop: Stop delivery
+        title: Delivery
+        unavailable: Unavailable
+        unavailable_message: Delivery unavailable
+        warning: Warning
+        warning_message:
+          one: Delivery failure %{count} day
+          other: Delivery failure %{count} days
       delivery_available: Delivery is available
+      delivery_error_days: Delivery error days
+      delivery_error_hint: If delivery is not possible for %{count} days, it will be automatically marked as undeliverable.
       empty: No domains found.
       known_accounts:
         one: "%{count} known account"
@@ -499,7 +520,7 @@ en:
     relays:
       add_new: Add new relay
       delete: Delete
-      description_html: A <strong>federation relay</strong> is an intermediary server that exchanges large volumes of public posts between servers that subscribe and publish to it. <strong>It can help small and medium servers discover content from the fediverse</strong>, which would otherwise require local critters manually following folks on remote servers.
+      description_html: A <strong>federation relay</strong> is an intermediary server that exchanges large volumes of public posts between servers that subscribe and publish to it. <strong>It can help small and medium servers discover content from the fediverse</strong>, which would otherwise require local users manually following other people on remote servers.
       disable: Disable
       disabled: Disabled
       enable: Enable
@@ -561,11 +582,11 @@ en:
       title: Server rules
     settings:
       activity_api_enabled:
-        desc_html: Counts of locally posted statuses, active users, and new registrations in weekly buckets
+        desc_html: Counts of locally published posts, active users, and new registrations in weekly buckets
         title: Publish aggregate statistics about user activity in the API
       bootstrap_timeline_accounts:
-        desc_html: Separate multiple usernames by comma. Only local and unlocked accounts will work. Default when empty is all local admins.
-        title: Default follows for new users
+        desc_html: Separate multiple usernames by comma. These accounts will be guaranteed to be shown in follow recommendations
+        title: Recommend these accounts to new users
       contact_information:
         email: Business e-mail
         username: Contact username
@@ -582,9 +603,6 @@ en:
         users: To logged-in local users
       domain_blocks_rationale:
         title: Show rationale
-      enable_bootstrap_timeline_accounts:
-        desc_html: Make new users automatically follow configured accounts so their home feed doesn't start out empty
-        title: Enable default follows for new users
       hero:
         desc_html: Displayed on the frontpage. At least 600x100px recommended. When not set, falls back to server thumbnail
         title: Hero image
@@ -665,8 +683,8 @@ en:
       media:
         title: Media
       no_media: No media
-      no_status_selected: No statuses were changed as none were selected
-      title: Account statuses
+      no_status_selected: No posts were changed as none were selected
+      title: Account posts
       with_media: With media
     system_checks:
       database_schema_check:
@@ -680,12 +698,9 @@ en:
       accounts_today: Unique uses today
       accounts_week: Unique uses this week
       breakdown: Breakdown of today's usage by source
-      context: Context
-      directory: In directory
-      in_directory: "%{count} in directory"
-      last_active: Last active
+      last_active: Recently used
       most_popular: Most popular
-      most_recent: Most recent
+      most_recent: Recently created
       name: Hashtag
       review: Review status
       reviewed: Reviewed
@@ -715,7 +730,7 @@ en:
   aliases:
     add_new: Create alias
     created_msg: Successfully created a new alias. You can now initiate the move from the old account.
-    deleted_msg: Successfully remove the alias. Moving from that account to this one will no longer be possible.
+    deleted_msg: Successfully removed the alias. Moving from that account to this one will no longer be possible.
     empty: You have no aliases.
     hint_html: If you want to move from another account to this one, here you can create an alias, which is required before you can proceed with moving followers from the old account to this one. This action by itself is <strong>harmless and reversible</strong>. <strong>The account migration is initiated from the old account</strong>.
     remove: Unlink alias
@@ -730,14 +745,14 @@ en:
       guide_link: https://crowdin.com/project/mastodon
       guide_link_text: Everyone can contribute.
     sensitive_content: Sensitive content
-    toot_layout: Toot layout
+    toot_layout: Post layout
   application_mailer:
     notification_preferences: Change e-mail preferences
     salutation: "%{name},"
     settings: 'Change e-mail preferences: %{link}'
     view: 'View:'
     view_profile: View profile
-    view_status: View status
+    view_status: View post
   applications:
     created: Application successfully created
     destroyed: Application successfully deleted
@@ -955,7 +970,7 @@ en:
       overwrite: Overwrite
       overwrite_long: Replace current records with the new ones
     preface: You can import data that you have exported from another server, such as a list of the people you are following or blocking.
-    success: Your data was successfully uploaded and will now be processed in due time
+    success: Your data was successfully uploaded and will be processed in due time
     types:
       blocking: Blocking list
       bookmarks: Bookmarks
@@ -991,7 +1006,7 @@ en:
       limit: You have somehow reached the maximum amount of lists
   media_attachments:
     validations:
-      images_and_video: Cannot attach a video to a status that already contains images
+      images_and_video: Cannot attach a video to a post that already contains images
       not_ready: Cannot attach files that have not finished processing. Try again in a moment!
       too_many: Cannot attach more than 4 files
   migrations:
@@ -1019,7 +1034,7 @@ en:
     warning:
       backreference_required: The new account must first be configured to back-reference this one
       before: 'Before proceeding, please read these notes carefully:'
-      cooldown: After moving there is a cooldown period during which you will not be able to move again
+      cooldown: After moving there is a waiting period during which you will not be able to move again
       disabled_account: Your current account will not be fully usable afterwards. However, you will have access to data export as well as re-activation.
       followers: This action will move all followers from the current account to the new account
       only_redirect_html: Alternatively, you can <a href="%{path}">only put up a redirect on your profile</a>.
@@ -1088,7 +1103,7 @@ en:
     code_hint: Enter the code generated by your authenticator app to confirm
     description_html: If you enable <strong>two-factor authentication</strong> using an authenticator app, logging in will require you to be in possession of your phone, which will generate tokens for you to enter.
     enable: Enable
-    instructions_html: "<strong>Scan this QR code into Google Authenticator or a similiar TOTP app on your phone</strong>. From now on, that app will generate tokens that you will have to enter when logging in."
+    instructions_html: "<strong>Scan this QR code into Google Authenticator or a similar TOTP app on your phone</strong>. From now on, that app will generate tokens that you will have to enter when logging in."
     manual_instructions: 'If you can''t scan the QR code and need to enter it manually, here is the plain-text secret:'
     setup: Set up
     wrong_code: The entered code was invalid! Are server time and device time correct?
@@ -1152,7 +1167,7 @@ en:
       proceed: Proceed to reply
       prompt: 'You want to reply to this post:'
   scheduled_statuses:
-    over_daily_limit: You have exceeded the limit of %{limit} scheduled posts for that day
+    over_daily_limit: You have exceeded the limit of %{limit} scheduled posts for today
     over_total_limit: You have exceeded the limit of %{limit} scheduled posts
     too_soon: The scheduled date must be in the future
   sessions:
@@ -1185,7 +1200,7 @@ en:
       adobe_air: Adobe Air
       android: Android
       blackberry: Blackberry
-      chrome_os: ChromeOS
+      chrome_os: Chrome OS
       firefox_os: Firefox OS
       ios: iOS
       linux: Linux
@@ -1237,14 +1252,14 @@ en:
       one: 'contained a disallowed hashtag: %{tags}'
       other: 'contained the disallowed hashtags: %{tags}'
     errors:
-      in_reply_not_found: The status you are trying to reply to does not appear to exist.
+      in_reply_not_found: The post you are trying to reply to does not appear to exist.
     language_detection: Automatically detect language
     open_in_web: Open in web
     over_character_limit: character limit of %{max} exceeded
     pin_errors:
       limit: You have already pinned the maximum number of posts
       ownership: Someone else's post cannot be pinned
-      private: Non-public post cannot be pinned
+      private: Non-public posts cannot be pinned
       reblog: An awoo cannot be pinned
     poll:
       total_people:
@@ -1261,6 +1276,7 @@ en:
     sign_in_to_participate: Sign in to participate in the conversation
     title: '%{name}: "%{quote}"'
     visibilities:
+      direct: Direct
       private: Followers-only
       private_long: Only show to followers
       public: Public
@@ -1394,7 +1410,7 @@ en:
       explanation:
         disable: You can no longer login to your account or use it in any other way, but your profile and other data remains intact.
         sensitive: Your uploaded media files and linked media will be treated as sensitive.
-        silence: You can still use your account but only people who are already following you will see your toots on this server, and you may be excluded from various public listings. However, others may still manually follow you.
+        silence: You can still use your account but only people who are already following you will see your posts on this server, and you may be excluded from various public listings. However, others may still manually follow you.
         suspend: You can no longer use your account, and your profile and other data are no longer accessible. You can still login to request a backup of your data until the data is fully removed, but we will retain some data to prevent you from evading the suspension.
       get_in_touch: You can reply to this e-mail to get in touch with the staff of %{instance}.
       review_server_policies: Review server policies
@@ -1416,7 +1432,7 @@ en:
       edit_profile_step: You can customize your profile by uploading an avatar, header, changing your display name and more. If you’d like to review new followers before they’re allowed to follow you, you can lock your account.
       explanation: Here are some tips to get you started
       final_action: Start posting
-      final_step: 'Start posting! Even without followers your public messages may be seen by others, for example on the local timeline and in hashtags. You may want to introduce yourself on the #introductions hashtag.'
+      final_step: 'Start posting! Even without followers your public posts may be seen by others, for example on the local timeline and in hashtags. You may want to introduce yourself on the #introductions hashtag.'
       full_handle: Your full handle
       full_handle_hint: This is what you would tell your friends so they can message or follow you from another server.
       review_preferences_action: Change preferences
