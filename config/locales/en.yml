@@ -985,7 +985,7 @@ en:
     table:
       expires_at: Expires
       uses: Uses
-    title: Invite people
+    title: Invite critters
   lists:
     errors:
       limit: You have somehow reached the maximum amount of lists
